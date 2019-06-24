@@ -1,0 +1,8 @@
+﻿Group: Widgets
+FriendlyName: Google Analytics
+SystemName: Widgets.GoogleAnalytics
+Version: 1.0
+Author: Devesprit.DigiCommerce team
+DisplayOrder: 1
+FileName: Plugin.Widgets.GoogleAnalytics.dll
+Description: This plugin integrates with Google Analytics.

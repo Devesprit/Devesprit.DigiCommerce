@@ -1,0 +1,114 @@
+﻿@using Devesprit.WebFramework.Helpers
+@model Plugin.Widgets.Slider.Models.SliderViewModel
+@{
+    Layout = Html.GetCurrentThemeAdminAreaLayoutAddress(true);
+    @* https://CKEditor.com *@
+    Html.AddScriptParts(ResourceLocation.Footer, "~/Scripts/CKEditor/ckeditor.js", true);
+}
+
+<div class="container-fluid">
+    <div class="panel mar-v-35">
+        <div class="fs-14 pad-20">
+            @using (Html.BeginForm())
+            {
+                @Html.AntiForgeryToken()
+                @Html.HiddenFor(p => p.Id)
+
+                <div class="row">
+                    <div class="col-12">
+                        <div class="form-group">
+                            @Html.LabelFor(p => p.Title)
+                            @Html.LocalizedTextBoxFor(p => p.Title, null, new { @class = "form-control form-control-sm" })
+                            @Html.ValidationMessageFor(p => p.Title, "", new { @class = "form-text text-danger fs-12" })
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="form-group">
+                            @Html.LabelFor(p => p.Description)
+                            @Html.LocalizedTextAreaFor(p => p.Description, new { @class = "ckeditor" })
+                            @Html.ValidationMessageFor(p => p.Description, "", new { @class = "form-text text-danger fs-12" })
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="form-group">
+                            @Html.LabelFor(p => p.ImageUrl)
+                            @Html.LocalizedTextBoxFor(p => p.ImageUrl, null, new { @class = "form-control form-control-sm ltr-dir" })
+                            <button type="button" onclick="ShowFileExplorerForLocalizedEntity('ImageUrl');" class="btn btn-outline-success btn-xs float-end t-mar-5"><i class="fa fa-folder-open"></i> ...</button>
+                            <span class="form-text text-muted fs-11">@T("DesiredImageUrl")</span>
+                            @Html.ValidationMessageFor(p => p.ImageUrl, "", new { @class = "form-text text-danger fs-12" })
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="form-group">
+                            @Html.LabelFor(p => p.Link)
+                            @Html.LocalizedTextBoxFor(p => p.Link, null, new { @class = "form-control form-control-sm ltr-dir" })
+                            @Html.ValidationMessageFor(p => p.Link, "", new { @class = "form-text text-danger fs-12" })
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="form-group">
+                            @Html.LabelFor(p => p.Target)
+                            @Html.TextBoxFor(p => p.Target, null, new { @class = "form-control form-control-sm ltr-dir" })
+                            @Html.ValidationMessageFor(p => p.Target, "", new { @class = "form-text text-danger fs-12" })
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="form-group">
+                            @Html.LabelFor(p => p.OnClickJs)
+                            @Html.LocalizedTextAreaFor(p => p.OnClickJs, new { @class = "form-control form-control-sm ltr-dir", rows = 5 })
+                            @Html.ValidationMessageFor(p => p.OnClickJs, "", new { @class = "form-text text-danger fs-12" })
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <div class="form-group">
+                            @Html.LabelFor(p => p.Zone)
+                            @Html.DropDownListFor(p => p.Zone, Model.ZonesList, new { @class = "form-control custom-select form-control-sm" })
+                            @Html.ValidationMessageFor(p => p.Zone, "", new { @class = "form-text text-danger fs-12" })
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <div class="form-group">
+                            @Html.LabelFor(p => p.DisplayOrder)
+                            @Html.TextBoxFor(p => p.DisplayOrder, new { @class = "form-control form-control-sm ltr-dir", type = "number" })
+                            @Html.ValidationMessageFor(p => p.DisplayOrder, "", new { @class = "form-text text-danger fs-12" })
+                        </div>
+                    </div>
+
+                </div>
+                <div class="row">
+                    <div class="col-12 ">
+                        <div class="form-group">
+                            <div class="form-check">
+                                @Html.CheckBoxFor(p => p.Visible, new { @class = "form-check-input" })
+                                @Html.LabelFor(p => p.Visible, new { @class = "form-check-label" })
+                            </div>
+                            @Html.ValidationMessageFor(p => p.Visible, "", new { @class = "form-text text-danger fs-12" })
+                        </div>
+                    </div>
+                </div>
+
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" }).ToMvcHtmlString()
+
+                <div class="text-center t-mar-20">
+                    <button type="submit" class="btn btn-sm btn-warning">@T("Save")</button>
+                    <button type="button" onclick="SaveAndContinue($(this).closest('form'));" class="btn btn-sm btn-warning">@T("SaveAndContinue")</button>
+                    <button type="button" onclick="window.close();" class="btn btn-sm btn-success">@T("Close")</button>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@{
+    Html.AddInlineScript(ResourceLocation.Footer,
+@<script>
+    //Init Zone List
+    $('#Zone').select2({
+        tags: true,
+        dropdownAutoWidth: true,
+        width: 'auto',
+        dir: "ltr",
+        theme: "bootstrap"
+    });
+</script>);
+}

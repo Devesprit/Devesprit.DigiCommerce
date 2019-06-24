@@ -1,0 +1,393 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:wsap="http://schemas.xmlsoap.org/ws/2004/08/addressing/policy" xmlns:wsa10="http://www.w3.org/2005/08/addressing" xmlns:tns="http://tempuri.org/" xmlns:msc="http://schemas.microsoft.com/ws/2005/12/wsdl/contract" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:wsx="http://schemas.xmlsoap.org/ws/2004/09/mex" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="FileManagerService" targetNamespace="http://tempuri.org/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsp:Policy wsu:Id="WSHttpBinding_IFileManagerService_policy">
+    <wsp:ExactlyOne>
+      <wsp:All>
+        <sp:TransportBinding xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy">
+          <wsp:Policy>
+            <sp:TransportToken>
+              <wsp:Policy>
+                <sp:HttpsToken RequireClientCertificate="false" />
+              </wsp:Policy>
+            </sp:TransportToken>
+            <sp:AlgorithmSuite>
+              <wsp:Policy>
+                <sp:Basic256 />
+              </wsp:Policy>
+            </sp:AlgorithmSuite>
+            <sp:Layout>
+              <wsp:Policy>
+                <sp:Strict />
+              </wsp:Policy>
+            </sp:Layout>
+            <sp:IncludeTimestamp />
+          </wsp:Policy>
+        </sp:TransportBinding>
+        <sp:SignedSupportingTokens xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy">
+          <wsp:Policy>
+            <sp:UsernameToken sp:IncludeToken="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy/IncludeToken/AlwaysToRecipient">
+              <wsp:Policy>
+                <sp:WssUsernameToken10 />
+              </wsp:Policy>
+            </sp:UsernameToken>
+          </wsp:Policy>
+        </sp:SignedSupportingTokens>
+        <sp:Wss11 xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy">
+          <wsp:Policy />
+        </sp:Wss11>
+        <sp:Trust10 xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy">
+          <wsp:Policy>
+            <sp:MustSupportIssuedTokens />
+            <sp:RequireClientEntropy />
+            <sp:RequireServerEntropy />
+          </wsp:Policy>
+        </sp:Trust10>
+        <wsaw:UsingAddressing />
+      </wsp:All>
+    </wsp:ExactlyOne>
+  </wsp:Policy>
+  <wsdl:types>
+    <xsd:schema targetNamespace="http://tempuri.org/Imports">
+      <xsd:import schemaLocation="http://localhost:57738/FileManagerService.svc?xsd=xsd0" namespace="http://tempuri.org/" />
+      <xsd:import schemaLocation="http://localhost:57738/FileManagerService.svc?xsd=xsd1" namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
+      <xsd:import schemaLocation="http://localhost:57738/FileManagerService.svc?xsd=xsd2" namespace="http://schemas.datacontract.org/2004/07/Devesprit.FileServer" />
+    </xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="IFileManagerService_EnumerateDirectoryEntries_InputMessage">
+    <wsdl:part name="parameters" element="tns:EnumerateDirectoryEntries" />
+  </wsdl:message>
+  <wsdl:message name="IFileManagerService_EnumerateDirectoryEntries_OutputMessage">
+    <wsdl:part name="parameters" element="tns:EnumerateDirectoryEntriesResponse" />
+  </wsdl:message>
+  <wsdl:message name="IFileManagerService_EnumerateDirectories_InputMessage">
+    <wsdl:part name="parameters" element="tns:EnumerateDirectories" />
+  </wsdl:message>
+  <wsdl:message name="IFileManagerService_EnumerateDirectories_OutputMessage">
+    <wsdl:part name="parameters" element="tns:EnumerateDirectoriesResponse" />
+  </wsdl:message>
+  <wsdl:message name="IFileManagerService_EnumerateFiles_InputMessage">
+    <wsdl:part name="parameters" element="tns:EnumerateFiles" />
+  </wsdl:message>
+  <wsdl:message name="IFileManagerService_EnumerateFiles_OutputMessage">
+    <wsdl:part name="parameters" element="tns:EnumerateFilesResponse" />
+  </wsdl:message>
+  <wsdl:message name="IFileManagerService_GetFileInfo_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetFileInfo" />
+  </wsdl:message>
+  <wsdl:message name="IFileManagerService_GetFileInfo_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetFileInfoResponse" />
+  </wsdl:message>
+  <wsdl:message name="IFileManagerService_GetDirectoryInfo_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetDirectoryInfo" />
+  </wsdl:message>
+  <wsdl:message name="IFileManagerService_GetDirectoryInfo_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetDirectoryInfoResponse" />
+  </wsdl:message>
+  <wsdl:message name="IFileManagerService_DeleteFile_InputMessage">
+    <wsdl:part name="parameters" element="tns:DeleteFile" />
+  </wsdl:message>
+  <wsdl:message name="IFileManagerService_DeleteFile_OutputMessage">
+    <wsdl:part name="parameters" element="tns:DeleteFileResponse" />
+  </wsdl:message>
+  <wsdl:message name="IFileManagerService_DeleteDirectory_InputMessage">
+    <wsdl:part name="parameters" element="tns:DeleteDirectory" />
+  </wsdl:message>
+  <wsdl:message name="IFileManagerService_DeleteDirectory_OutputMessage">
+    <wsdl:part name="parameters" element="tns:DeleteDirectoryResponse" />
+  </wsdl:message>
+  <wsdl:message name="IFileManagerService_CreateDirectory_InputMessage">
+    <wsdl:part name="parameters" element="tns:CreateDirectory" />
+  </wsdl:message>
+  <wsdl:message name="IFileManagerService_CreateDirectory_OutputMessage">
+    <wsdl:part name="parameters" element="tns:CreateDirectoryResponse" />
+  </wsdl:message>
+  <wsdl:message name="IFileManagerService_CopyFile_InputMessage">
+    <wsdl:part name="parameters" element="tns:CopyFile" />
+  </wsdl:message>
+  <wsdl:message name="IFileManagerService_CopyFile_OutputMessage">
+    <wsdl:part name="parameters" element="tns:CopyFileResponse" />
+  </wsdl:message>
+  <wsdl:message name="IFileManagerService_MoveFile_InputMessage">
+    <wsdl:part name="parameters" element="tns:MoveFile" />
+  </wsdl:message>
+  <wsdl:message name="IFileManagerService_MoveFile_OutputMessage">
+    <wsdl:part name="parameters" element="tns:MoveFileResponse" />
+  </wsdl:message>
+  <wsdl:message name="IFileManagerService_CopyDirectory_InputMessage">
+    <wsdl:part name="parameters" element="tns:CopyDirectory" />
+  </wsdl:message>
+  <wsdl:message name="IFileManagerService_CopyDirectory_OutputMessage">
+    <wsdl:part name="parameters" element="tns:CopyDirectoryResponse" />
+  </wsdl:message>
+  <wsdl:message name="IFileManagerService_MoveDirectory_InputMessage">
+    <wsdl:part name="parameters" element="tns:MoveDirectory" />
+  </wsdl:message>
+  <wsdl:message name="IFileManagerService_MoveDirectory_OutputMessage">
+    <wsdl:part name="parameters" element="tns:MoveDirectoryResponse" />
+  </wsdl:message>
+  <wsdl:message name="IFileManagerService_GenerateDownloadLink_InputMessage">
+    <wsdl:part name="parameters" element="tns:GenerateDownloadLink" />
+  </wsdl:message>
+  <wsdl:message name="IFileManagerService_GenerateDownloadLink_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GenerateDownloadLinkResponse" />
+  </wsdl:message>
+  <wsdl:message name="IFileManagerService_CompressFile_InputMessage">
+    <wsdl:part name="parameters" element="tns:CompressFile" />
+  </wsdl:message>
+  <wsdl:message name="IFileManagerService_CompressFile_OutputMessage">
+    <wsdl:part name="parameters" element="tns:CompressFileResponse" />
+  </wsdl:message>
+  <wsdl:message name="IFileManagerService_CompressDirectory_InputMessage">
+    <wsdl:part name="parameters" element="tns:CompressDirectory" />
+  </wsdl:message>
+  <wsdl:message name="IFileManagerService_CompressDirectory_OutputMessage">
+    <wsdl:part name="parameters" element="tns:CompressDirectoryResponse" />
+  </wsdl:message>
+  <wsdl:message name="IFileManagerService_CalculateMd5Checksum_InputMessage">
+    <wsdl:part name="parameters" element="tns:CalculateMd5Checksum" />
+  </wsdl:message>
+  <wsdl:message name="IFileManagerService_CalculateMd5Checksum_OutputMessage">
+    <wsdl:part name="parameters" element="tns:CalculateMd5ChecksumResponse" />
+  </wsdl:message>
+  <wsdl:message name="IFileManagerService_UploadFileRequest_InputMessage">
+    <wsdl:part name="parameters" element="tns:UploadFileRequest" />
+  </wsdl:message>
+  <wsdl:message name="IFileManagerService_UploadFileRequest_OutputMessage">
+    <wsdl:part name="parameters" element="tns:UploadFileRequestResponse" />
+  </wsdl:message>
+  <wsdl:portType name="IFileManagerService">
+    <wsdl:operation name="EnumerateDirectoryEntries">
+      <wsdl:input wsaw:Action="http://tempuri.org/IFileManagerService/EnumerateDirectoryEntries" message="tns:IFileManagerService_EnumerateDirectoryEntries_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IFileManagerService/EnumerateDirectoryEntriesResponse" message="tns:IFileManagerService_EnumerateDirectoryEntries_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="EnumerateDirectories">
+      <wsdl:input wsaw:Action="http://tempuri.org/IFileManagerService/EnumerateDirectories" message="tns:IFileManagerService_EnumerateDirectories_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IFileManagerService/EnumerateDirectoriesResponse" message="tns:IFileManagerService_EnumerateDirectories_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="EnumerateFiles">
+      <wsdl:input wsaw:Action="http://tempuri.org/IFileManagerService/EnumerateFiles" message="tns:IFileManagerService_EnumerateFiles_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IFileManagerService/EnumerateFilesResponse" message="tns:IFileManagerService_EnumerateFiles_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetFileInfo">
+      <wsdl:input wsaw:Action="http://tempuri.org/IFileManagerService/GetFileInfo" message="tns:IFileManagerService_GetFileInfo_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IFileManagerService/GetFileInfoResponse" message="tns:IFileManagerService_GetFileInfo_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetDirectoryInfo">
+      <wsdl:input wsaw:Action="http://tempuri.org/IFileManagerService/GetDirectoryInfo" message="tns:IFileManagerService_GetDirectoryInfo_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IFileManagerService/GetDirectoryInfoResponse" message="tns:IFileManagerService_GetDirectoryInfo_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="DeleteFile">
+      <wsdl:input wsaw:Action="http://tempuri.org/IFileManagerService/DeleteFile" message="tns:IFileManagerService_DeleteFile_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IFileManagerService/DeleteFileResponse" message="tns:IFileManagerService_DeleteFile_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="DeleteDirectory">
+      <wsdl:input wsaw:Action="http://tempuri.org/IFileManagerService/DeleteDirectory" message="tns:IFileManagerService_DeleteDirectory_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IFileManagerService/DeleteDirectoryResponse" message="tns:IFileManagerService_DeleteDirectory_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="CreateDirectory">
+      <wsdl:input wsaw:Action="http://tempuri.org/IFileManagerService/CreateDirectory" message="tns:IFileManagerService_CreateDirectory_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IFileManagerService/CreateDirectoryResponse" message="tns:IFileManagerService_CreateDirectory_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="CopyFile">
+      <wsdl:input wsaw:Action="http://tempuri.org/IFileManagerService/CopyFile" message="tns:IFileManagerService_CopyFile_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IFileManagerService/CopyFileResponse" message="tns:IFileManagerService_CopyFile_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="MoveFile">
+      <wsdl:input wsaw:Action="http://tempuri.org/IFileManagerService/MoveFile" message="tns:IFileManagerService_MoveFile_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IFileManagerService/MoveFileResponse" message="tns:IFileManagerService_MoveFile_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="CopyDirectory">
+      <wsdl:input wsaw:Action="http://tempuri.org/IFileManagerService/CopyDirectory" message="tns:IFileManagerService_CopyDirectory_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IFileManagerService/CopyDirectoryResponse" message="tns:IFileManagerService_CopyDirectory_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="MoveDirectory">
+      <wsdl:input wsaw:Action="http://tempuri.org/IFileManagerService/MoveDirectory" message="tns:IFileManagerService_MoveDirectory_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IFileManagerService/MoveDirectoryResponse" message="tns:IFileManagerService_MoveDirectory_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GenerateDownloadLink">
+      <wsdl:input wsaw:Action="http://tempuri.org/IFileManagerService/GenerateDownloadLink" message="tns:IFileManagerService_GenerateDownloadLink_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IFileManagerService/GenerateDownloadLinkResponse" message="tns:IFileManagerService_GenerateDownloadLink_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="CompressFile">
+      <wsdl:input wsaw:Action="http://tempuri.org/IFileManagerService/CompressFile" message="tns:IFileManagerService_CompressFile_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IFileManagerService/CompressFileResponse" message="tns:IFileManagerService_CompressFile_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="CompressDirectory">
+      <wsdl:input wsaw:Action="http://tempuri.org/IFileManagerService/CompressDirectory" message="tns:IFileManagerService_CompressDirectory_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IFileManagerService/CompressDirectoryResponse" message="tns:IFileManagerService_CompressDirectory_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="CalculateMd5Checksum">
+      <wsdl:input wsaw:Action="http://tempuri.org/IFileManagerService/CalculateMd5Checksum" message="tns:IFileManagerService_CalculateMd5Checksum_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IFileManagerService/CalculateMd5ChecksumResponse" message="tns:IFileManagerService_CalculateMd5Checksum_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="UploadFileRequest">
+      <wsdl:input wsaw:Action="http://tempuri.org/IFileManagerService/UploadFileRequest" message="tns:IFileManagerService_UploadFileRequest_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IFileManagerService/UploadFileRequestResponse" message="tns:IFileManagerService_UploadFileRequest_OutputMessage" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="WSHttpBinding_IFileManagerService" type="tns:IFileManagerService">
+    <wsp:PolicyReference URI="#WSHttpBinding_IFileManagerService_policy" />
+    <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="EnumerateDirectoryEntries">
+      <soap12:operation soapAction="http://tempuri.org/IFileManagerService/EnumerateDirectoryEntries" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="EnumerateDirectories">
+      <soap12:operation soapAction="http://tempuri.org/IFileManagerService/EnumerateDirectories" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="EnumerateFiles">
+      <soap12:operation soapAction="http://tempuri.org/IFileManagerService/EnumerateFiles" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetFileInfo">
+      <soap12:operation soapAction="http://tempuri.org/IFileManagerService/GetFileInfo" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetDirectoryInfo">
+      <soap12:operation soapAction="http://tempuri.org/IFileManagerService/GetDirectoryInfo" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="DeleteFile">
+      <soap12:operation soapAction="http://tempuri.org/IFileManagerService/DeleteFile" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="DeleteDirectory">
+      <soap12:operation soapAction="http://tempuri.org/IFileManagerService/DeleteDirectory" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CreateDirectory">
+      <soap12:operation soapAction="http://tempuri.org/IFileManagerService/CreateDirectory" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CopyFile">
+      <soap12:operation soapAction="http://tempuri.org/IFileManagerService/CopyFile" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="MoveFile">
+      <soap12:operation soapAction="http://tempuri.org/IFileManagerService/MoveFile" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CopyDirectory">
+      <soap12:operation soapAction="http://tempuri.org/IFileManagerService/CopyDirectory" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="MoveDirectory">
+      <soap12:operation soapAction="http://tempuri.org/IFileManagerService/MoveDirectory" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GenerateDownloadLink">
+      <soap12:operation soapAction="http://tempuri.org/IFileManagerService/GenerateDownloadLink" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CompressFile">
+      <soap12:operation soapAction="http://tempuri.org/IFileManagerService/CompressFile" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CompressDirectory">
+      <soap12:operation soapAction="http://tempuri.org/IFileManagerService/CompressDirectory" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CalculateMd5Checksum">
+      <soap12:operation soapAction="http://tempuri.org/IFileManagerService/CalculateMd5Checksum" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UploadFileRequest">
+      <soap12:operation soapAction="http://tempuri.org/IFileManagerService/UploadFileRequest" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="FileManagerService">
+    <wsdl:port name="WSHttpBinding_IFileManagerService" binding="tns:WSHttpBinding_IFileManagerService">
+      <soap12:address location="https://localhost:44315/FileManagerService.svc" />
+      <wsa10:EndpointReference>
+        <wsa10:Address>https://localhost:44315/FileManagerService.svc</wsa10:Address>
+      </wsa10:EndpointReference>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

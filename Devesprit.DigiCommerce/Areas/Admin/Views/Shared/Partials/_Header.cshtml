@@ -1,0 +1,20 @@
+﻿@using Devesprit.Core.Settings
+@using Devesprit.Services
+@using Devesprit.Services.Localization
+@{
+    var settings = DependencyResolver.Current.GetService<ISettingService>().LoadSetting<SiteSettings>();
+}
+<div class="container-fluid header">
+    <div class="container">
+        <div class="row">
+            <div class="col text-center-xs text-left-sm">
+                <a href="@Url.Action("Index", "Home", new {area = ""})">
+                    @if (!settings.GetLocalized(p => p.SiteLogoHeader).IsNullOrWhiteSpace())
+                    {
+                        <img src="@settings.GetLocalized(p => p.SiteLogoHeader)" alt="@settings.GetLocalized(p=> p.SiteName)" />
+                    }
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

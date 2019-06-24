@@ -1,0 +1,172 @@
+﻿@model Devesprit.DigiCommerce.Models.Invoice.InvoiceModel
+@using System.Globalization
+@using Devesprit.Utilities
+@using Devesprit.Data.Enums
+@using Devesprit.Services.Localization
+@using Devesprit.WebFramework.Helpers
+
+@if (Model.Status == InvoiceStatus.Pending)
+{
+    using (Html.BeginForm("CheckoutInvoice", "Invoice", null, FormMethod.Post, new { @class = "my-2 text-center" }))
+    {
+        @Html.AntiForgeryToken()
+        @Html.Hidden("invoiceId", Model.Id)
+        <button class="btn btn-outline-success">@Html.Raw(T("CheckOut"))</button>
+    }
+}
+
+        <div class="t-mar-30 alert alert-success">
+            <label><b>@T("Id"):</b></label> @Model.Id
+            <br />
+            <label><b>@T("CreationDate"):</b></label> @Model.CreateDate.ToString("F")
+            @using (Ajax.BeginForm("SetInvoiceNote", null, new AjaxOptions()
+            {
+                LoadingElementId = "LoadingPanel",
+                OnFailure = "ErrorAlert('" + T("Error") + "', '" + T("ServerConnectionError") + "');",
+                OnSuccess = "if(data.response === 'OK'){SuccessAlert('" + T("Successful") + "', '" + T("SuccessfullySaved") + "');}else{ErrorAlert('" + T("Error") + "', data.response);}"
+            }, new { @class = "form-inline t-mar-5" }))
+            {
+                @Html.AntiForgeryToken()
+                @Html.Hidden("invoiceId", Model.Id)
+                @Html.Hidden("isForAdmin", "false")
+                <span class="col-3 col-md-2 no-pad">
+                    <b>
+                        @T("NoteForUser"):&nbsp;
+                    </b>
+                </span>
+                <textarea name="note" class="form-control form-control-sm col-6">@Model.InvoiceNote</textarea>
+                <button type="submit" class="btn btn-info btn-sm mx-1"><i class="fa fa-check"></i></button>
+            }
+            @using (Ajax.BeginForm("SetInvoiceNote", null, new AjaxOptions()
+            {
+                LoadingElementId = "LoadingPanel",
+                OnFailure = "ErrorAlert('" + T("Error") + "', '" + T("ServerConnectionError") + "');",
+                OnSuccess = "if(data.response === 'OK'){SuccessAlert('" + T("Successful") + "', '" + T("SuccessfullySaved") + "');}else{ErrorAlert('" + T("Error") + "', data.response);}"
+            }, new { @class = "form-inline t-mar-5" }))
+            {
+                @Html.AntiForgeryToken()
+                @Html.Hidden("invoiceId", Model.Id)
+                @Html.Hidden("isForAdmin", "true")
+                <span class="col-3 col-md-2 no-pad">
+                    <b>
+                        @T("NoteForAdmin"):&nbsp;
+                    </b>
+                </span>
+                <textarea name="note" class="form-control form-control-sm col-6">@Model.InvoiceNoteAdmin</textarea>
+                <button type="submit" class="btn btn-info btn-sm mx-1"><i class="fa fa-check"></i></button>
+            }
+
+            @using (Ajax.BeginForm("SetInvoiceStatus", null, new AjaxOptions()
+            {
+                LoadingElementId = "LoadingPanel",
+                OnFailure = "ErrorAlert('" + T("Error") + "', '" + T("ServerConnectionError") + "');",
+                OnSuccess = "if(data.response === 'OK'){SuccessAlert('" + T("Successful") + "', '" + T("SuccessfullySaved") + "');}else{ErrorAlert('" + T("Error") + "', data.response);}"
+            }, new { @class = "form-inline t-mar-5" }))
+            {
+                @Html.AntiForgeryToken()
+                @Html.Hidden("invoiceId", Model.Id)
+                <span class="col-3 col-md-2 no-pad">
+                    <b>
+                        @T("Status"):&nbsp;
+                    </b>
+                </span>
+                @Html.LocalizedEnumDropDownListFor(p => p.Status, new { @class = "form-control custom-select form-control-sm col-6 col-md-3 ltr-dir" })
+                <button type="submit" class="btn btn-info btn-sm mx-1"><i class="fa fa-check"></i></button>
+            }
+
+            @using (Ajax.BeginForm("SetInvoiceUser", null, new AjaxOptions()
+            {
+                LoadingElementId = "LoadingPanel",
+                OnFailure = "ErrorAlert('" + T("Error") + "', '" + T("ServerConnectionError") + "');",
+                OnSuccess = "if(data.response === 'OK'){SuccessAlert('" + T("Successful") + "', '" + T("SuccessfullySaved") + "');}else{ErrorAlert('" + T("Error") + "', data.response);}"
+            }, new { @class = "form-inline t-mar-5" }))
+            {
+                @Html.AntiForgeryToken()
+                @Html.Hidden("invoiceId", Model.Id)
+                <span class="col-3 col-md-2 no-pad">
+                    <b>
+                        @T("User"):&nbsp;
+                    </b>
+                </span>
+                @Html.TextBoxFor(p => p.UserName, new { @class = "form-control form-control-sm col-6 col-md-3 ltr-dir" })
+                <button type="submit" class="btn btn-info btn-sm mx-1"><i class="fa fa-check"></i></button>
+                if (Model.UserId != null)
+                {
+                    <small class="form-text text-muted">
+                        @Html.Raw(T("ClickForMoreInfo", Url.Action("Editor", "ManageUsers", new { area = "Admin", id = Model.UserId })))
+                    </small>
+                }
+            }
+
+            @using (Ajax.BeginForm("SetInvoicePaymentDate", null, new AjaxOptions()
+            {
+                LoadingElementId = "LoadingPanel",
+                OnFailure = "ErrorAlert('" + T("Error") + "', '" + T("ServerConnectionError") + "');",
+                OnSuccess = "if(data.response === 'OK'){SuccessAlert('" + T("Successful") + "', '" + T("SuccessfullySaved") + "');}else{ErrorAlert('" + T("Error") + "', data.response);}"
+            }, new { @class = "form-inline t-mar-5" }))
+            {
+                @Html.AntiForgeryToken()
+                @Html.Hidden("invoiceId", Model.Id)
+                <span class="col-3 col-md-2 no-pad">
+                    <b>
+                        @T("PaymentDate"):&nbsp;
+                    </b>
+                </span>
+                @Html.TextBoxFor(p => p.PaymentDate, "{0:yyyy/MM/dd HH:mm:ss}", new { @class = "form-control form-control-sm col-6 col-md-3 ltr-dir datetimepicker" })
+                <button type="submit" class="btn btn-info btn-sm mx-1"><i class="fa fa-check"></i></button>
+                <small class="form-text text-muted">
+                    @T("EG"): @DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss", CultureInfo.CurrentUICulture)
+                </small>
+            }
+            <br />
+            <label>
+                <b>
+                    @T("PaymentGateway"):&nbsp;
+                </b>
+            </label>
+            @if (Model.PaymentGatewaySystemName != null)
+            {
+                var gateway = Model.PaymentGateways.FirstOrDefault(p => p?.PaymentGatewaySystemName == Model.PaymentGatewaySystemName);
+                if (gateway?.PaymentGatewayIcon?.Length > 0)
+                {
+                    <img class="inline" style="max-height: 18px" src="@gateway.PaymentGatewayIcon.ByteArrayToBase64Image()" />
+                }
+            }
+            @if (!string.IsNullOrWhiteSpace(Model.PaymentGatewayName))
+            {
+                <span>(@Model.PaymentGatewayName)</span>
+            }
+
+            <br />
+            <label>
+                <b>
+                    @T("TransactionId"):
+                </b>
+            </label> @(Model.PaymentGatewayTransactionId ?? "-")
+            <br />
+            <label><b>@T("Currency"):</b></label> @(Model.Currency?.GetLocalized(p => p.CurrencyName) ?? "-")
+        </div>
+
+
+@if (Model.UserBillingAddress != null)
+{
+    using (Ajax.BeginForm("UpdateInvoiceBillingAddress", new AjaxOptions()
+    {
+        LoadingElementId = "LoadingPanel",
+        OnFailure = "ErrorAlert('" + T("Error") + "', '" + T("ServerConnectionError") + "');",
+        OnSuccess = "if(data.response === 'OK'){SuccessAlert('" + T("Successful") + "', '" + T("SuccessfullySaved") + "');}else{ErrorAlert('" + T("Error") + "', data.response);}"
+    }))
+    {
+        @Html.AntiForgeryToken()
+        @Html.Hidden("invoiceId", Model.Id)
+        Html.RenderPartial("Partials/_InvoiceBillingAddress", Model.UserBillingAddress);
+
+        <div class="row">
+            <div class="col">
+                <div class="text-center">
+                    <button class="btn btn-success btn-sm" type="submit">@T("Save")</button>
+                </div>
+            </div>
+        </div>
+    }
+}

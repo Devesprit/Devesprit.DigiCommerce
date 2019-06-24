@@ -1,0 +1,111 @@
+﻿@using System.Web.Mvc.Html
+@using Devesprit.Core.Settings
+@using Devesprit.DigiCommerce.Models
+@using Devesprit.DigiCommerce.Models.Post
+@using Devesprit.DigiCommerce.Models.Products
+@using Devesprit.Services
+@using Devesprit.Services.Localization
+@using Devesprit.Services.SocialAccounts
+@using Devesprit.Utilities.Extensions
+@using Schema.NET
+@{
+    var settings = DependencyResolver.Current.GetService<ISettingService>().LoadSetting<SiteSettings>();
+    var socialAccounts = DependencyResolver.Current.GetService<ISocialAccountsService>().GetAsEnumerable();
+    var webSiteSchema = new WebSite()
+    {
+        Url = new Uri(settings.SiteUrl),
+        Headline = settings.SiteName.ToString(),
+        PotentialAction = new OneOrMany<IAction>(new SearchAction()
+        {
+            Target = new Uri(Url.Action("Index", "Search", new {Query = "{search_term_string}"}).GetAbsoluteUrl().UrlDecode()),
+            QueryInput = "required name=search_term_string"
+        }),
+        Description = settings.SiteDescription.ToString(),
+        Keywords = settings.MetaKeyWords.ToString(),
+    };
+    var organizationSchema = new Organization()
+    {
+        Url = new Uri(settings.SiteUrl),
+        Description = settings.SiteDescription.ToString(),
+        Name = settings.SiteName.ToString(),
+        Email = settings.SiteEmailAddress,
+        Logo = new Uri(settings.SiteLogoHeader.ToString().GetAbsoluteUrl()),
+        SameAs = new OneOrMany<Uri>(socialAccounts.Select(p=> new Uri(p.YourAccountUrl)).ToList()),
+        
+    };
+    Html.AddHeadCustomParts("<meta name=\"robots\" content=\"index,follow\">");
+}
+
+@Html.Widget("home_page_start")
+<div class="row t-pad-20">
+    <div class="col-12 b-mar-70">
+        <div class="text-center mb-3">
+            <h2 class="mb-0">@ProductsListType.Newest.GetLocalized()</h2>
+            <a class="text-warning fs-12" href="@Url.Action("ProductsExplorer", "Product", new {listType = ProductsListType.Newest})">@T("SeeMore")</a>
+        </div>
+        @{Html.RenderAction("GetProductsList", "Product", new
+          {
+              listType = ProductsListType.Newest,
+              pageSize = 12,
+              showPager = false
+          });}
+        <a class="btn btn-sm btn-secondary btn-block mt-2" href="@Url.Action("ProductsExplorer", "Product", new {listType = ProductsListType.Newest})"><i class="fa fa-list"></i> @T("SeeMore")</a>
+    </div>
+    <div class="col-12 col-md-4 col-lg-4 col-xl-3 b-mar-70">
+        <div class="text-center mb-3">
+            <h2 class="mb-0">@ProductsListType.HotList.GetLocalized()</h2>
+            <a class="text-warning fs-12" href="@Url.Action("ProductsExplorer", "Product", new {listType = ProductsListType.HotList})">@T("SeeMore")</a>
+        </div>
+        @{Html.RenderAction("GetProductsList", "Product", new
+          {
+              listType = ProductsListType.HotList,
+              pageSize = 9,
+              showPager = false,
+              numberOfCol = NumberOfCol.One,
+              style = ViewStyles.Small
+          });}
+        <a class="btn btn-sm btn-secondary btn-block mt-2" href="@Url.Action("ProductsExplorer", "Product", new {listType = ProductsListType.HotList})"><i class="fa fa-list"></i> @T("SeeMore")</a>
+    </div>
+    <div class="col b-mar-70">
+        <div class="text-center mb-3">
+            <h2 class="mb-0">@ProductsListType.BestSelling.GetLocalized()</h2>
+            <a class="text-warning fs-12" href="@Url.Action("ProductsExplorer", "Product", new {listType = ProductsListType.BestSelling})">@T("SeeMore")</a>
+        </div>
+        @{Html.RenderAction("GetProductsList", "Product", new
+          {
+              listType = ProductsListType.BestSelling,
+              pageSize = 5,
+              showPager = false,
+              numberOfCol = NumberOfCol.One,
+              style = ViewStyles.Large
+          });}
+        <a class="btn btn-sm btn-secondary btn-block mt-2" href="@Url.Action("ProductsExplorer", "Product", new {listType = ProductsListType.BestSelling})"><i class="fa fa-list"></i> @T("SeeMore")</a>
+    </div>
+    @if (settings.EnableBlog)
+    {
+        <div class="col-12 b-mar-70">
+            <hr class="b-mar-70" />
+            <div class="text-center mb-3">
+                <h4 class="mb-0">@T("LatestBlogPosts")</h4>
+                <a class="text-warning fs-12" href="@Url.Action("BlogExplorer", "Blog", new {listType = PostsListType.Newest})">@T("SeeMore")</a>
+            </div>
+            @{Html.RenderAction("GetBlogPostsList", "Blog", new
+              {
+                  listType = PostsListType.Newest,
+                  pageSize = 4,
+                  showPager = false,
+                  numberOfCol = NumberOfCol.Four,
+                  style = ViewStyles.Small
+              });}
+        </div>
+    }
+</div>
+<script type="application/ld+json">
+    @Html.Raw(webSiteSchema.ToHtmlEscapedString())
+</script>
+<script type="application/ld+json">
+    @Html.Raw(organizationSchema.ToHtmlEscapedString())
+</script>
+
+@Html.Widget("home_page_end")
+

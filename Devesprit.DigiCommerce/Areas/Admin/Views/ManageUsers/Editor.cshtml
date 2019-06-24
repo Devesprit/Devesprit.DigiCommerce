@@ -1,0 +1,198 @@
+﻿@using Devesprit.WebFramework.Helpers
+@model Devesprit.DigiCommerce.Areas.Admin.Models.UserModel
+@{
+    Layout = Html.GetCurrentThemeAdminAreaLayoutAddress(true);
+}
+
+<div class="container-fluid mar-v-35">
+    <div class="panel no-hide-overflow pad-20 fs-14">
+        @using (Html.BeginForm("Editor", "ManageUsers", FormMethod.Post, new { enctype = "multipart/form-data" }))
+        {
+            @Html.AntiForgeryToken()
+            @Html.HiddenFor(p => p.Id)
+            @Html.HiddenFor(p => p.RegisterDate)
+            @Html.HiddenFor(p => p.CurrentAvatarUrl)
+
+            <div class="row">
+                <div class="col-12 text-center">
+                    <img class="d-inline-block @Html.Raw(!string.IsNullOrWhiteSpace(Model.CurrentAvatarUrl) ? "rounded-circle" : "")"
+                         src="@Html.Raw(!string.IsNullOrWhiteSpace(Model.CurrentAvatarUrl) ? Model.CurrentAvatarUrl : "/Content/img/User_150px.png")"
+                         alt="User Avatar" style="max-width: 150px;" />
+                    <p class="fs-12 t-mar-10">
+                        @T("RegistrationDate") : @(Model.RegisterDate < DateTime.MinValue.AddYears(1) ? "-" : Model.RegisterDate.ToString("F"))
+                        @if (Model.UserLastLoginDate != null)
+                        {
+                            <br />
+                            <span>@T("LastLoginDate") :</span> @Html.Raw(Model.UserLastLoginDate.Value.ToString("F"))
+                        }
+                        @if (!string.IsNullOrWhiteSpace(Model.UserLatestIP))
+                        {
+                            <br />
+                            <span>@T("UserLastIP") :</span> @Html.Raw(Model.UserLatestIP)
+                        }
+                    </p>
+                    <a class="btn btn-success" target="_blank" href="@Url.Action("Index", "Profile", new {userId= Model.Id, area = ""})"><i class="fa fa-user-circle-o"></i> @T("SeeThisUserProfile")</a>
+                    <a href="#" onclick="PopupWindows('@Url.Action("SendMessageToUser", "Notifications", new{area = "Admin"})', 'NotificationEditor', 800, 400, { userEmail: '@Model.Email'}, 'get')" class="btn btn-primary d-inline-block"><i class="fa fa-envelope-o"></i> @T("SendMessage")</a>
+
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12 border border-left-0 border-right-0 border-top-0 b-mar-10 t-mar-20">
+                <h5 class="text-secondary text-capitalize">@T("GeneralInfo")</h5>
+            </div>
+            <div class="col-12 col-md-4 ">
+                <div class="form-group">
+                    @Html.LabelFor(p => p.FirstName)
+                    @Html.TextBoxFor(p => p.FirstName, new { @class = "form-control form-control-sm" })
+                    @Html.ValidationMessageFor(p => p.FirstName, "", new { @class = "form-text text-danger fs-12" })
+                </div>
+            </div>
+            <div class="col-12 col-md-4 ">
+                <div class="form-group">
+                    @Html.LabelFor(p => p.LastName)
+                    @Html.TextBoxFor(p => p.LastName, new { @class = "form-control form-control-sm" })
+                    @Html.ValidationMessageFor(p => p.LastName, "", new { @class = "form-text text-danger fs-12" })
+                </div>
+            </div>
+            <div class="col-12 col-md-4 ">
+                <div class="form-group">
+                    @Html.LabelFor(p => p.UserCountryId)
+                    @Html.DropDownListFor(p => p.UserCountryId, Model.CountriesList, T("SelectAnItem").ToString(), new { @class = "form-control custom-select form-control-sm" })
+                    @Html.ValidationMessageFor(p => p.UserCountryId, "", new { @class = "form-text text-danger fs-12" })
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12 border border-left-0 border-right-0 border-top-0 b-mar-10 t-mar-20">
+                <h5 class="text-secondary text-capitalize">@T("UserGroup")</h5>
+            </div>
+            <div class="col-12 col-md-4 ">
+                <div class="form-group">
+                    @Html.LabelFor(p => p.UserGroupId)
+                    @Html.DropDownListFor(p => p.UserGroupId, Model.UserGroupsList, T("SelectAnItem").ToString(), new { @class = "form-control custom-select form-control-sm" })
+                    @Html.ValidationMessageFor(p => p.UserGroupId, "", new { @class = "form-text text-danger fs-12" })
+                </div>
+            </div>
+            <div class="col-12 col-md-4 ">
+                <div class="form-group">
+                    @Html.LabelFor(p => p.SubscriptionDate)
+                    @Html.TextBoxFor(p => p.SubscriptionDate, "{0:yyyy/MM/dd}", new { @class = "form-control form-control-sm datepicker" })
+                    @Html.ValidationMessageFor(p => p.SubscriptionDate, "", new { @class = "form-text text-danger fs-12" })
+                </div>
+            </div>
+            <div class="col-12 col-md-4 ">
+                <div class="form-group">
+                    @Html.LabelFor(p => p.SubscriptionExpireDate)
+                    @Html.TextBoxFor(p => p.SubscriptionExpireDate, "{0:yyyy/MM/dd}", new { @class = "form-control form-control-sm datepicker" })
+                    @Html.ValidationMessageFor(p => p.SubscriptionExpireDate, "", new { @class = "form-text text-danger fs-12" })
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12 border border-left-0 border-right-0 border-top-0 b-mar-10 t-mar-20">
+                <h5 class="text-secondary text-capitalize">@T("DownloadLimit")</h5>
+            </div>
+            <div class="col-12 col-md-4 ">
+                <div class="form-group">
+                    @Html.LabelFor(p => p.MaxDownloadCount)
+                    @Html.TextBoxFor(p => p.MaxDownloadCount, new { @class = "form-control form-control-sm ltr-dir", type = "number" })
+                    @Html.ValidationMessageFor(p => p.MaxDownloadCount, "", new { @class = "form-text text-danger fs-12" })
+                </div>
+            </div>
+            <div class="col-12 col-md-4 ">
+                <div class="form-group">
+                    @Html.LabelFor(p => p.MaxDownloadPeriodType)
+                    @Html.LocalizedEnumDropDownListFor(p => p.MaxDownloadPeriodType, T("SelectAnItem").ToString(), new { @class = "form-control custom-select form-control-sm" })
+                    @Html.ValidationMessageFor(p => p.MaxDownloadPeriodType, "", new { @class = "form-text text-danger fs-12" })
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12 border border-left-0 border-right-0 border-top-0 b-mar-10 t-mar-20">
+                <h5 class="text-secondary text-capitalize">@T("OtherInfo")</h5>
+            </div>
+            <div class="col-12 col-md-6 ">
+                <div class="form-group">
+                    @Html.LabelFor(p => p.Avatar)
+                    @Html.TextBoxFor(p => p.Avatar, new { type = "file", @class = "form-control form-control-sm" })
+                    @Html.ValidationMessageFor(p => p.Avatar, "", new { @class = "form-text text-danger fs-12" })
+                </div>
+            </div>
+            <div class="col-12 col-md-6 ">
+                <div class="form-group">
+                    @Html.LabelFor(p => p.Email)
+                    @Html.TextBoxFor(p => p.Email, new { @class = "form-control form-control-sm ltr-dir" })
+                    @Html.ValidationMessageFor(p => p.Email, "", new { @class = "form-text text-danger fs-12" })
+                </div>
+            </div>
+            <div class="col-12 col-md-6 ">
+                <div class="form-group">
+                    @Html.LabelFor(p => p.Password)
+                    @Html.PasswordFor(p => p.Password, new { @class = "form-control form-control-sm" })
+                    @Html.ValidationMessageFor(p => p.Password, "", new { @class = "form-text text-danger fs-12" })
+                </div>
+            </div>
+            <div class="col-12 col-md-6 ">
+                <div class="form-group">
+                    @Html.LabelFor(p => p.LockoutEndDateUtc)
+                    @Html.TextBoxFor(p => p.LockoutEndDateUtc, "{0:yyyy/MM/dd HH:mm:ss}", new { @class = "form-control form-control-sm datetimepicker" })
+                    @Html.ValidationMessageFor(p => p.LockoutEndDateUtc, "", new { @class = "form-text text-danger fs-12" })
+                </div>
+            </div>
+        </div>
+            <div class="row">
+                <div class="col-12 col-md-3 ">
+                    <div class="form-group">
+                        <div class="form-check">
+                            @Html.CheckBoxFor(p => p.IsAdmin, new { @class = "form-check-input" })
+                            @Html.LabelFor(p => p.IsAdmin, new { @class = "form-check-label" })
+                        </div>
+                        @Html.ValidationMessageFor(p => p.IsAdmin, "", new { @class = "form-text text-danger fs-12" })
+                    </div>
+                </div>
+                <div class="col-12 col-md-3 ">
+                    <div class="form-group">
+                        <div class="form-check">
+                            @Html.CheckBoxFor(p => p.EmailConfirmed, new {@class = "form-check-input"})
+                            @Html.LabelFor(p => p.EmailConfirmed, new {@class = "form-check-label"})
+                        </div>
+                        @Html.ValidationMessageFor(p => p.EmailConfirmed, "", new {@class = "form-text text-danger fs-12"})
+                    </div>
+                </div>
+                <div class="col-12 col-md-3 ">
+                    <div class="form-group">
+                        <div class="form-check">
+                            @Html.CheckBoxFor(p => p.LockoutEnabled, new {@class = "form-check-input"})
+                            @Html.LabelFor(p => p.LockoutEnabled, new {@class = "form-check-label"})
+                        </div>
+                        @Html.ValidationMessageFor(p => p.LockoutEnabled, "", new {@class = "form-text text-danger fs-12"})
+                    </div>
+                </div>
+                <div class="col-12 col-md-3 ">
+                    <div class="form-group">
+                        <div class="form-check">
+                            @Html.CheckBoxFor(p => p.UserDisabled, new {@class = "form-check-input"})
+                            @Html.LabelFor(p => p.UserDisabled, new {@class = "form-check-label"})
+                        </div>
+                        @Html.ValidationMessageFor(p => p.UserDisabled, "", new {@class = "form-text text-danger fs-12"})
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="form-group">
+                        @Html.LabelFor(p => p.DisableReason)
+                        @Html.TextAreaFor(p => p.DisableReason, new {@class = "form-control form-control-sm"})
+                        @Html.ValidationMessageFor(p => p.DisableReason, "", new {@class = "form-text text-danger fs-12"})
+                    </div>
+                </div>
+            </div>
+
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" }).ToMvcHtmlString()
+
+        <div class="text-center t-mar-20">
+            <button type="submit" class="btn btn-sm btn-warning">@T("Save")</button>
+            <button type="button" onclick="SaveAndContinue($(this).closest('form'));" class="btn btn-sm btn-warning">@T("SaveAndContinue")</button>
+            <button type="button" onclick="window.close();" class="btn btn-sm btn-success">@T("Close")</button>
+        </div>
+    }
+    </div>
+</div>

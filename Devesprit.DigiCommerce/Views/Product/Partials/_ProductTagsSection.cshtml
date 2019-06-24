@@ -1,0 +1,19 @@
+﻿
+@model List<Tuple<int, string>>
+
+@if (Model.Any())
+{
+    <div class="panel fs-14 b-mar-20">
+        <div class="panel-title pad-10">
+            <b>@T("Tags")</b>
+        </div>
+        <div class="pad-10">
+            <ul class="tag-cloud text-center">
+                @foreach (var tag in Model)
+                {
+                    <li><a href="@Url.Action("Tag", "Search", new {tag=tag.Item2})" target="_blank"><i class="fa fa-tag"></i> @tag.Item2</a></li>
+                }
+            </ul>
+        </div>
+    </div>
+}

@@ -1,0 +1,98 @@
+﻿@using Devesprit.WebFramework.Helpers
+@model Devesprit.DigiCommerce.Areas.Admin.Models.ReplyToUserMessageModel
+@{
+    Layout = Html.GetCurrentThemeAdminAreaLayoutAddress(true);
+    @* https://CKEditor.com *@
+    Html.AddScriptParts(ResourceLocation.Footer, "~/Scripts/CKEditor/ckeditor.js", true);
+}
+
+<div class="container">
+    <div class="panel pad-20 mar-v-35  fs-14">
+        <div class="row">
+            <div class="col-12">
+                <div class="form-group">
+                    <b>@T("Name"):</b>
+                    @if (!string.IsNullOrWhiteSpace(Model.UserId))
+                    {
+                        <a class="btn btn-sm btn-link" target="_blank" href="@Url.Action("Index", "Profile", new {userId = Model.UserId, area = ""})">@Model.Name</a>
+                    }
+                    else
+                    {
+                        @Model.Name
+                    }
+                    <small>
+                        (
+                        <b>@T("ReceiveDate"):</b> @Model.ReceiveDate.ToString("F")
+                        @if (Model.ReplyDate != null)
+                        {
+                            <text> , </text><b>@T("ReplyDate"):</b> @Model.ReplyDate.Value.ToString("F")
+                        }
+                        )
+                    </small>
+                </div>
+            </div>
+        </div>
+        @using (Html.BeginForm("ReplyToUserMessage", "ManageUserMessages", FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+            @Html.HiddenFor(p => p.Id)
+
+            <div class="row">
+                <div class="col-12 col-md-6 ">
+                    <div class="form-group">
+                        @Html.LabelFor(p => p.Subject)
+                        @Html.TextBoxFor(p => p.Subject, new { @class = "form-control form-control-sm" })
+                        @Html.ValidationMessageFor(p => p.Subject, "", new { @class = "form-text text-danger fs-12" })
+                    </div>
+                </div>
+                <div class="col-12 col-md-6 ">
+                    <div class="form-group">
+                        @Html.LabelFor(p => p.Email)
+                        @Html.TextBoxFor(p => p.Email, new { @class = "form-control form-control-sm ltr-dir" })
+                        @Html.ValidationMessageFor(p => p.Email, "", new { @class = "form-text text-danger fs-12" })
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="alert alert-secondary">
+                        <h4 class="alert-heading">@T("Message"):</h4>
+                        <p>
+                            @Html.Raw(Model.Message)
+                        </p>
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(p => p.ResponseText)
+                        @Html.TextAreaFor(p => p.ResponseText, new { @class = "ckeditor" })
+                        @Html.ValidationMessageFor(p => p.ResponseText, "", new { @class = "form-text text-danger fs-12" })
+                    </div>
+                </div>
+            </div>
+
+
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" }).ToMvcHtmlString()
+
+            <div class="text-center t-mar-20">
+                <button type="submit" class="btn btn-sm btn-warning">@T("Save")</button>
+                <button type="button" onclick="SaveAndSendReply($(this).closest('form'));" class="btn btn-sm btn-warning">@T("SaveAndSendReply")</button>
+                <button type="button" onclick="window.close();" class="btn btn-sm btn-success">@T("Close")</button>
+            </div>
+        }
+    </div>
+</div>
+
+@{
+    Html.AddInlineScript(ResourceLocation.Footer,
+        @<script>
+            function SaveAndSendReply(form) {
+                 $.validator.unobtrusive.parse($(form));
+                 if ($(form).valid()) {
+                     $('#LoadingPanel').show();
+                     var url = $(form).attr('action');
+                     url += (url.indexOf('?') >= 0 ? '&' : '?') + 'saveAndSendReply=true';
+                     $(form).attr('action', url);
+                     $(form).submit();
+                 } else {
+                     $('.input-validation-error:first').focus();
+                 }
+             }
+         </script>);
+}

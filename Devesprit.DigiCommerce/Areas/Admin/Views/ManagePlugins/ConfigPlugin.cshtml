@@ -1,0 +1,22 @@
+﻿@{
+    ViewBag.Title = Model.FriendlyName;
+}
+@model Devesprit.DigiCommerce.Areas.Admin.Models.ConfigPluginModel
+
+@if (!String.IsNullOrEmpty(Model.ConfigurationActionName))
+{
+    @Html.Action(Model.ConfigurationActionName, Model.ConfigurationControllerName, Model.ConfigurationRouteValues);
+}
+else
+{
+    <div class="container">
+        <div class="panel mar-v-35">
+            <div class="panel-title pad-10">
+                <h5 class="no-mar">@Model.FriendlyName</h5>
+            </div>
+            <div class="fs-14 pad-20">
+                <h4 class="text-center text-muted mar-v-50">@T("ConfigurationNotRequired")</h4>
+            </div>
+        </div>
+    </div>
+}

@@ -1,0 +1,19 @@
+﻿@{
+    ViewBag.Title = T("ManageInvoices");
+}
+
+<div class="panel no-hide-overflow">
+    <div class="panel-title pad-10">
+        <h5 class="no-mar">
+            @T("ManageInvoices")
+        </h5>
+    </div>
+
+    <div class="pad-10">
+        @{
+            Html.RenderAction("Grid");
+        }
+    </div>
+</div>
+
+

@@ -1,0 +1,198 @@
+﻿body {
+    direction: rtl;
+    text-align: right;
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+.user-menu-bar .link-holder {
+    text-align: right;
+}
+
+.user-menu-bar .social-holder {
+    text-align: left;
+}
+
+.admin-btn {
+    right: 5px;
+    left: unset;
+}
+
+.edit-this-page-btn {
+    right: 5px;
+    left: unset;
+}
+
+.navbar .navbar-links {
+    margin-left: auto !important;
+    margin-right: unset !important;
+    padding-right: 0;
+}
+
+.navbar-brand {
+    margin-left: 1rem;
+    margin-right: initial;
+}
+
+.dropdown-menu {
+    right: 0 !important;
+    left: unset !important;
+    text-align: right;
+}
+
+.post-description-tab {
+    top: -2.4rem;
+}
+
+.post-card-ribbon {
+    left: unset;
+    right: -10px;
+}
+    .post-card-ribbon:before {
+        left: unset;
+        border-left: unset;
+        right: 0px;
+        border-right: 10px solid transparent;
+    }
+
+#back-to-top {
+    left: 30px;
+    right: unset;
+}
+
+.footer-list li::before {
+    padding-left: 5px;
+    padding-right: 10px;
+    content: "";
+}
+
+.footer-list a:hover {
+    margin-right: 5px;
+}
+
+.float-end {
+    float: left;
+}
+
+.float-start {
+    float: right;
+}
+
+.dropdown-submenu a::after {
+    transform: rotate(90deg);
+    left: 6px;
+    right: unset;
+}
+
+.dropdown-submenu .dropdown-menu {
+    left: unset !important;
+    right: 100% !important;
+}
+
+/*--- BOOTSTRAP ---*/
+
+.nav {
+    padding-left: inherit;
+    padding-right: 0;
+}
+
+.navbar-nav {
+    padding-left: inherit;
+    padding-right: 0;
+}
+
+.form-control-sm, .input-group-sm > .form-control, .input-group-sm > .input-group-append > .btn, .input-group-sm > .input-group-append > .input-group-text, .input-group-sm > .input-group-prepend > .btn, .input-group-sm > .input-group-prepend > .input-group-text {
+    border-radius: .2rem !important;
+}
+
+.input-group > .input-group-append > .btn, .input-group > .input-group-append > .input-group-text, .input-group > .input-group-prepend:first-child > .btn:not(:first-child), .input-group > .input-group-prepend:first-child > .input-group-text:not(:first-child), .input-group > .input-group-prepend:not(:first-child) > .btn, .input-group > .input-group-prepend:not(:first-child) > .input-group-text {
+    border-top-right-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+}
+
+.input-group > .custom-select:not(:last-child), .input-group > .form-control:not(:last-child) {
+    border-top-left-radius: 0 !important;
+    border-bottom-left-radius: 0 !important;
+}
+
+.input-group > .custom-select:not(:first-child), .input-group > .form-control:not(:first-child) {
+    border-top-right-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+}
+
+.input-group > .input-group-append:last-child > .btn:not(:last-child):not(.dropdown-toggle), .input-group > .input-group-append:last-child > .input-group-text:not(:last-child), .input-group > .input-group-append:not(:last-child) > .btn, .input-group > .input-group-append:not(:last-child) > .input-group-text, .input-group > .input-group-prepend > .btn, .input-group > .input-group-prepend > .input-group-text {
+    border-top-left-radius: 0 !important;
+    border-bottom-left-radius: 0 !important;
+}
+
+.page-item:first-child .page-link {
+    margin-right: 0;
+    margin-left: unset;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    border-top-right-radius: .25rem;
+    border-bottom-right-radius: .25rem;
+}
+
+.page-item:last-child .page-link {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    border-top-left-radius: .25rem;
+    border-bottom-left-radius: .25rem;
+}
+
+.form-check {
+    padding-left: unset;
+    padding-right: 1.25rem;
+}
+
+.form-check-input {
+    padding-left: unset;
+    margin-right: -1.25rem;
+}
+
+.dropdown-toggle::after {
+    margin-left: 0;
+    vertical-align: 0;
+    margin-right: 5px;
+}
+
+.btn-group > .btn:last-child:not(:first-child), .btn-group > .dropdown-toggle:not(:first-child) {
+    border-top-left-radius: .25rem;
+    border-bottom-left-radius: .25rem;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+.btn-group > .btn:first-child:not(:last-child):not(.dropdown-toggle) {
+    border-top-right-radius: .25rem;
+    border-bottom-right-radius: .25rem;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}
+
+.btn-group > .btn:first-child {
+    margin-left: -1px;
+}
+
+.form-control + .input-group-addon:not(:first-child) {
+    border-right: 0;
+    border-left: 1px solid #ced4da;
+}
+
+
+.modal-header .close {
+    padding: 1rem;
+    margin: -1rem auto -1rem -1rem;
+}
+
+.comment-tip-arrow {
+    right: -23px;
+    left: unset;
+    border-left-color: #ccc;
+    border-right-color: transparent;
+}
+
+.body .comment-action-btn-holder {
+    text-align: left;
+}

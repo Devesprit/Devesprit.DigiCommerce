@@ -1,0 +1,99 @@
+﻿@using Devesprit.WebFramework.Helpers
+@model Devesprit.DigiCommerce.Areas.Admin.Models.PostCategoryModel
+@{
+    Layout = Html.GetCurrentThemeAdminAreaLayoutAddress(true);
+}
+
+<div class="container-fluid mar-v-35">
+    <ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a class="nav-link nav-link-sm active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">@T("Definitions")</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link nav-link-sm" id="category-products-tab" data-toggle="tab" href="#category-products" role="tab" aria-controls="category-products" aria-selected="false">@T("CurrentCatProducts")</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link nav-link-sm" id="category-blogs-tab" data-toggle="tab" href="#category-blogs" role="tab" aria-controls="category-blogs" aria-selected="false">@T("CurrentCatPosts")</a>
+        </li>
+    </ul>
+    <div class="panel no-hide-overflow pad-20 fs-14">
+        <div class="tab-content">
+            <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                @using (Html.BeginForm("Editor", "ManagePostCategories", FormMethod.Post))
+                {
+                    @Html.AntiForgeryToken()
+                    @Html.HiddenFor(p => p.Id)
+
+                    <div class="row">
+                        <div class="col-12 col-md-6">
+                            <div class="form-group">
+                                @Html.LabelFor(p => p.CategoryName)
+                                @Html.LocalizedTextBoxFor(p => p.CategoryName, null, new { @class = "form-control form-control-sm" })
+                                @Html.ValidationMessageFor(p => p.CategoryName, "", new { @class = "form-text text-danger fs-12" })
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <div class="form-group">
+                                @Html.LabelFor(p => p.ParentCategoryId)
+                                @Html.DropDownListFor(p => p.ParentCategoryId, Model.CategoriesList.Where(p => p.Value != Model.Id?.ToString()), T("SelectAnItem").ToString(), new { @class = "form-control custom-select form-control-sm" })
+                                @Html.ValidationMessageFor(p => p.ParentCategoryId, "", new { @class = "form-text text-danger fs-12" })
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="form-group">
+                                @Html.LabelFor(p => p.Slug)
+                                @Html.TextBoxFor(p => p.Slug, new { @class = "form-control form-control-sm ltr-dir", placeholder = "test-page" })
+                                @Html.ValidationMessageFor(p => p.Slug, "", new { @class = "form-text text-danger fs-12" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12 col-lg-4">
+                            <div class="form-group no-b-mar">
+                                <div class="form-check">
+                                    @Html.CheckBoxFor(p => p.ShowInFooter, new { @class = "form-check-input" })
+                                    @Html.LabelFor(p => p.ShowInFooter, new { @class = "form-check-label" })
+                                </div>
+                                @Html.ValidationMessageFor(p => p.ShowInFooter, "", new { @class = "form-text text-danger fs-12" })
+                            </div>
+                        </div>
+                    </div>
+
+                    @Html.ValidationSummary(true, "", new { @class = "text-danger" }).ToMvcHtmlString()
+
+                    <div class="text-center t-mar-20">
+                        <button type="submit" class="btn btn-sm btn-warning">@T("Save")</button>
+                        <button type="button" onclick="SaveAndContinue($(this).closest('form'));" class="btn btn-sm btn-warning">@T("SaveAndContinue")</button>
+                        <button type="button" onclick="window.close();" class="btn btn-sm btn-success">@T("Close")</button>
+                    </div>
+                }
+
+
+            </div>
+            <div class="tab-pane fade" id="category-products" role="tabpanel" aria-labelledby="category-products-tab">
+                @if (Model.Id == null)
+                {
+                    <h4 class="text-muted text-center mar-v-50">
+                        @T("SaveRecordToSeeThisSection")
+                    </h4>
+                }
+                else
+                {
+                    Html.RenderAction("Grid", "ManageProducts", new { categoryId = Model.Id.Value });
+                }
+            </div>
+            <div class="tab-pane fade" id="category-blogs" role="tabpanel" aria-labelledby="category-blogs-tab">
+                @if (Model.Id == null)
+                {
+                    <h4 class="text-muted text-center mar-v-50">
+                        @T("SaveRecordToSeeThisSection")
+                    </h4>
+                }
+                else
+                {
+                    Html.RenderAction("Grid", "ManageBlogPosts", new { categoryId = Model.Id.Value });
+                }
+            </div>
+        </div>
+    </div>
+</div>

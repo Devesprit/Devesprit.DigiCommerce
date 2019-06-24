@@ -1,0 +1,97 @@
+﻿@using Devesprit.WebFramework.Helpers
+@model Devesprit.DigiCommerce.Areas.Admin.Models.NavBarItemModel
+@{
+    Layout = null;
+}
+<div class="card">
+    <div class="card-header">
+        @ViewBag.EditorTitle 
+    </div>
+    <div class="card-body fs-14">
+        @using (Ajax.BeginForm("Save", "ManageNavBar", new AjaxOptions()
+        {
+            HttpMethod = "POST",
+            UpdateTargetId = "editor-place-holder",
+            LoadingElementId = "LoadingPanel",
+            OnFailure = "ErrorAlert('" + T("Error") + "', '" + T("ServerConnectionError") + "');"
+        }))
+        {
+            @Html.AntiForgeryToken()
+            @Html.HiddenFor(p => p.Id)
+            @Html.HiddenFor(p => p.ParentItemId)
+            @Html.HiddenFor(p => p.Index)
+
+            <div class="row">
+                <div class="col-12">
+                    <div class="form-group">
+                        @Html.LabelFor(p => p.Name)
+                        @Html.TextBoxFor(p => p.Name, null, new { @class = "form-control form-control-sm" })
+                        @Html.ValidationMessageFor(p => p.Name, "", new { @class = "form-text text-danger fs-12" })
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <div class="form-group">
+                        @Html.LabelFor(p => p.InnerHtml)
+                        @Html.LocalizedTextAreaFor(p => p.InnerHtml, new { @class = "form-control form-control-sm ltr-dir" })
+                        @Html.ValidationMessageFor(p => p.InnerHtml, "", new { @class = "form-text text-danger fs-12" })
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <div class="form-group">
+                        @Html.LabelFor(p => p.Icon)
+                        @Html.LocalizedTextBoxFor(p => p.Icon, null, new { @class = "form-control form-control-sm ltr-dir" })
+                        <small class="form-text text-muted">@Html.Raw(T("ClickForMoreInfo", "https://fontawesome.com/icons"))</small>
+                        @Html.ValidationMessageFor(p => p.Icon, "", new { @class = "form-text text-danger fs-12" })
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <div class="form-group">
+                        @Html.LabelFor(p => p.Tooltip)
+                        @Html.LocalizedTextBoxFor(p => p.Tooltip, null, new { @class = "form-control form-control-sm" })
+                        @Html.ValidationMessageFor(p => p.Tooltip, "", new { @class = "form-text text-danger fs-12" })
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <div class="form-group">
+                        @Html.LabelFor(p => p.Url)
+                        @Html.LocalizedTextBoxFor(p => p.Url, null, new { @class = "form-control form-control-sm  ltr-dir" })
+                        @Html.ValidationMessageFor(p => p.Url, "", new { @class = "form-text text-danger fs-12" })
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <div class="form-group">
+                        @Html.LabelFor(p => p.Target)
+                        @Html.DropDownListFor(p => p.Target, Model.TargetsList, T("SelectAnItem").ToString(), new { @class = "form-control custom-select form-control-sm" })
+                        @Html.ValidationMessageFor(p => p.Target, "", new { @class = "form-text text-danger fs-12" })
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <div class="form-group">
+                        @Html.LabelFor(p => p.OnClickJs)
+                        @Html.LocalizedTextAreaFor(p => p.OnClickJs, new { @class = "form-control form-control-sm ltr-dir" })
+                        @Html.ValidationMessageFor(p => p.OnClickJs, "", new { @class = "form-text text-danger fs-12" })
+                    </div>
+                </div>
+            </div>
+
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" }).ToMvcHtmlString()
+
+            <div class="text-center t-mar-10">
+                <button type="submit" class="btn btn-warning">@T("Save")</button>
+                <button type="button" class="btn btn-success" onclick="DestroyEditor()">@T("Close")</button>
+            </div>
+        }
+    </div>
+</div>

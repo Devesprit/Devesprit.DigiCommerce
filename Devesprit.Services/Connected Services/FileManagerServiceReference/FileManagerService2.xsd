@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:tns="http://schemas.datacontract.org/2004/07/Devesprit.FileServer" elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/Devesprit.FileServer" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:complexType name="ArrayOfFileSystemEntries">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="FileSystemEntries" nillable="true" type="tns:FileSystemEntries" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfFileSystemEntries" nillable="true" type="tns:ArrayOfFileSystemEntries" />
+  <xs:complexType name="FileSystemEntries">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="CreateDateUtc" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="DisplaySize" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="DownloadLink" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="ModifiedDateUtc" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="Name" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Path" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="SizeInByte" type="xs:long" />
+      <xs:element minOccurs="0" name="SubEntries" nillable="true" type="tns:ArrayOfFileSystemEntries" />
+      <xs:element minOccurs="0" name="Type" type="tns:FileSystemEntryType" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="FileSystemEntries" nillable="true" type="tns:FileSystemEntries" />
+  <xs:simpleType name="FileSystemEntryType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="File" />
+      <xs:enumeration value="Dir" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:element name="FileSystemEntryType" nillable="true" type="tns:FileSystemEntryType" />
+</xs:schema>

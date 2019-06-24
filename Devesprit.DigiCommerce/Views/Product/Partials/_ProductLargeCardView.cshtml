@@ -1,0 +1,71 @@
+﻿@using Devesprit.Core.Settings
+@using Devesprit.DigiCommerce.Models
+@using Devesprit.Services
+@using Devesprit.Utilities.Extensions
+@model Devesprit.DigiCommerce.Models.Products.ProductCardViewModel
+@{
+    var counter = 0;
+    var settings = DependencyResolver.Current.GetService<ISettingService>().LoadSetting<SiteSettings>();
+}
+
+<div class="card border-0">
+    @if (Model.IsFeatured)
+    {
+        <p class="post-card-ribbon bg-danger" title="@T("Featured")"><i class="fa fa-star"></i></p>
+    }
+    <div class="card-header">
+        <h3 class="card-title m-2 @Html.Raw(Model.Title.IsRtlLanguage() ? "rtl-dir" : "ltr-dir")">
+            <a href="@Model.PostUrl">
+                @Html.Raw(Model.Title)
+            </a>
+        </h3>
+    </div>
+    @if (!string.IsNullOrWhiteSpace(Model.MainImageUrl))
+    {
+        <a href="@Model.PostUrl">
+            <img class="card-img-top lazy" data-src="@Model.MainImageUrl?dshadow.Angle=0&dshadow.Distance=0&dshadow.Opacity=70&dshadow.Color=Black&dshadow.Softness=10&width=1110&height=350&colorfulbg=true" alt="@Model.Title">
+        </a>
+    }
+    <div class="card-body p-3">
+        <p class="card-text pb-5 @Html.Raw(Model.DescriptionTruncated.IsRtlLanguage() ? "rtl-dir" : "ltr-dir")">@Html.Raw(Model.DescriptionTruncated)</p>
+        <div class="card-attr text-muted fs-14">
+            @{ counter = 0;}
+            @foreach (var cat in Model.Categories)
+            {
+                <a href="@cat.CategoryUrl" target="_blank">@cat.CategoryName</a>
+                if (counter < Model.Categories.Count - 1)
+                {
+                    counter++;
+                    @Html.Raw(", ")
+                }
+                else
+                {
+                    <br />
+                }
+            }
+            <span title="@T("Downloads") : @Model.NumberOfDownloads.ToString("##,###")">
+                <i class="fa fa-download"></i> @Model.NumberOfDownloadsStr
+            </span>
+            <span title="@T("Visits") : @Model.NumberOfViews.ToString("##,###")">
+                <i class="fa fa-eye"></i> @Model.NumberOfViews.FormatNumber()
+            </span>
+            <span title="@T("LastUpdate", Model.LastUpDate.TimeAgo())">
+                <i class="fa fa-clock-o"></i> @Model.LastUpDate.ToString("yyyy/MM/dd")
+            </span>
+            @if (settings.LikePosts)
+            {
+                <span title="@T("Likes") : @Model.NumberOfLikes.ToString("##,###")">
+                    <i class="fa fa-heart"></i> @Model.NumberOfLikes.FormatNumber()
+                </span>
+            }
+
+            <span class="float-end fs-20">
+                @{Html.RenderAction("LikeWishlistButtonsPartialView", "Post", new { model = Model.LikeWishlistButtonsModel });}
+            </span>
+        </div>
+    </div>
+    <div class="card-footer text-muted text-center">
+        @{Html.RenderPartial("Partials/_ProductDownloadPurchaseButton", Model.DownloadPurchaseButtonModel, new ViewDataDictionary() { new KeyValuePair<string, object>("ViewStyle", ViewStyles.Normal) });}
+        <a href="@Model.PostUrl" class="btn btn-secondary"><i class="fa fa-eye"></i> @T("ReadMore")</a>
+    </div>
+</div>

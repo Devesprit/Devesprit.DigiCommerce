@@ -1,0 +1,91 @@
+﻿
+@using Devesprit.Services.Localization
+@using Devesprit.Services.Pages
+@using Devesprit.Core.Settings
+@using Devesprit.DigiCommerce.Models.Post
+@using Devesprit.Services
+@using Devesprit.Services.Posts
+@using Devesprit.Services.Products
+@using Devesprit.Services.SocialAccounts
+@using Devesprit.Utilities.Extensions
+@{
+    var settings = DependencyResolver.Current.GetService<ISettingService>().LoadSetting<SiteSettings>();
+    var pagesService = DependencyResolver.Current.GetService<IPagesService>();
+    var productService = DependencyResolver.Current.GetService<IProductService>();
+    productService.GetStatics(out int numberOfProducts, out int numberOfViews, out DateTime lastUpdate);
+    var productDownloadsLogService = DependencyResolver.Current.GetService<IProductDownloadsLogService>();
+    var socialAccountsService = DependencyResolver.Current.GetService<ISocialAccountsService>();
+    var categoriesService = DependencyResolver.Current.GetService<IPostCategoriesService>();
+    var retUrl = string.IsNullOrWhiteSpace(Request.QueryString["returnUrl"]) ?
+                 Request.Url.PathAndQuery : Request.QueryString["returnUrl"];
+}
+<div class="container-fluid footer">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 col-sm-6 col-lg-3">
+                <span class="title">@T("Links")</span>
+                <ul class="footer-list">
+                    <li><a href="@Url.Action("Index", "Home", new { area = "" })">@T("Home")</a></li>
+                    @if (User != null && User.Identity.IsAuthenticated)
+                    {
+                        <li><a href="@Url.Action("Index", "Profile", new { area = "" })">@T("MyProfile")</a></li>
+                        using (Html.BeginForm("LogOff", "User", new { area = "" }, FormMethod.Post, new { id = "footerLogoutForm" }))
+                        {
+                            <li><a href="javascript:document.getElementById('footerLogoutForm').submit()">@T("Logout")</a></li>
+                        }
+                    }
+                    else
+                    {
+                        <li><a href="@Url.Action("Login", "User", new {returnUrl = retUrl, area = ""})">@T("Login")</a></li>
+                        <li><a href="@Url.Action("SignUp", "User", new { area = "" })">@T("Signup")</a></li>
+                    }
+                    @if (settings.EnableBlog)
+                    {
+                        <li><a href="@Url.Action("Index", "Blog", new { area = "" })">@T("Blog")</a></li>
+                    }
+                    @if (!settings.GetLocalized(p => p.TermsAndConditions).IsNullOrWhiteSpace())
+                    {
+                        <li><a href="@Url.Action("TermsAndConditions", "Home", new {area = ""})">@T("TermsAndConditions")</a></li>
+                    }
+                    <li><a href="@Url.Action("Index", "ContactUs", new {area = ""})">@T("ContactUs")</a></li>
+                    @foreach (var page in pagesService.GetPagesMustShowInFooter().OrderBy(p => p.GetLocalized(x => x.Title)))
+                    {
+                        <li><a href="@Url.Action("Index", "Page", new {slug=page.Slug, area = ""})">@page.GetLocalized(p => p.Title)</a></li>
+                    }
+                </ul>
+            </div>
+            <div class="col-12 col-sm-6 col-lg-3">
+                <span class="title">@T("Categories")</span>
+                <ul class="footer-list">
+                    @foreach (var cat in categoriesService.GetCategoriesMustShowInFooter().OrderBy(p => p.GetLocalized(x => x.CategoryName)))
+                    {
+                        <li><a href="@Url.Action("FilterByCategory", "Product", new {slug=cat.Slug, area = ""})">@cat.GetLocalized(p => p.CategoryName)</a></li>
+                    }
+                </ul>
+            </div>
+            <div class="col-12 col-sm-6 col-lg-3">
+                <span class="title">@T("SiteStatics")</span>
+                <ul class="footer-list">
+                    <li><span>@T("LastUpdate", lastUpdate == DateTime.MinValue ? "-" : lastUpdate.ToString("yyyy/MM/dd HH:mm"))</span></li>
+                    <li><span>@T("TotalProducts", numberOfProducts.ToString("N0"))</span></li>
+                    <li><span>@T("TotalVisit", numberOfViews.ToString("N0"))</span></li>
+                    <li><span>@T("TotalDownloads", productDownloadsLogService.GetNumberOfDownloads().ToString("N0"))</span></li>
+                    <li><span>@T("YourIP", Context.GetClientIpAddress())</span></li>
+                    <li><span>@T("CurrentDate", DateTime.Now.ToString("yyyy/MM/dd"))</span></li>
+                </ul> 
+                <span class="title">@T("Socials")</span>
+                @foreach (var socialAccount in socialAccountsService.GetAsEnumerable())
+                {
+                    <a href="@socialAccount.GetLocalized(x => x.YourAccountUrl)" target="_blank" title="@socialAccount.GetLocalized(x => x.SocialNetworkName)" class="social-btn">
+                        <img src="@socialAccount.GetLocalized(x=> x.SocialNetworkLargeIconUrl)" alt="@socialAccount.GetLocalized(x => x.SocialNetworkName)"/>
+                    </a>
+                }
+                <a href="@Url.Action("Index", "RssFeed", new { listType = PostsListType.Newest, area = "" })" target="_blank" title="@T("RSSFeed")" class="social-btn"><i class="fa fa-rss"></i></a>
+            </div>
+            <div class="col-12 col-sm-6 col-lg-3">
+                @Html.Raw(settings.GetLocalized(x => x.FooterDescription))
+            </div>
+        </div>
+        <span class="copy-right">@Html.Raw(T("Copyright", DateTime.Now.Year + " " + settings.GetLocalized(x => x.SiteName)))</span>
+    </div>
+</div>

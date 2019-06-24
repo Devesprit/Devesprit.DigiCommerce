@@ -1,0 +1,78 @@
+﻿
+@using Devesprit.Core
+@using Syncfusion.JavaScript
+@using Syncfusion.MVC.EJ
+
+@{
+    var currentLang = DependencyResolver.Current.GetService<IWorkContext>().CurrentLanguage;
+}
+
+@(Html.EJ().Grid<object>("PostDescriptionsGrid")
+          .Datasource(ds =>
+          {
+              ds.URL(ViewBag.DataSource).Adaptor(AdaptorType.UrlAdaptor);
+          })
+          .AllowSorting()
+          .AllowResizing()
+          .AllowReordering()
+          .AllowPaging()
+          .AllowFiltering()
+          .AllowTextWrap()
+          .AllowSelection()
+          .ShowColumnChooser()
+          .IsResponsive()
+          .SelectionType(SelectionType.Multiple)
+          .EnablePersistence(false)
+          .EnableResponsiveRow(true)
+          .EnableRTL(currentLang.IsRtl)
+          .MinWidth(990)
+          .Locale("localString")
+          .ClientSideEvents(evt => evt.ActionBegin("onPostDescriptionsGridAction"))
+
+          .EditSettings(edt => edt.AllowEditing().AllowDeleting().AllowAdding().ShowDeleteConfirmDialog())
+          .PageSettings(p => { p.PageSize(25).PageSizeList(new List<int>(){10, 25, 50, 100, 250, 500}).PageCount(5).PrintMode(PrintMode.CurrentPage); })
+          .FilterSettings(f => { f.FilterType(FilterType.Menu); })
+          .TextWrapSettings(s => s.WrapMode(WrapMode.Both))
+          .ScrollSettings(s=> s.EnableTouchScroll(true))
+          .ToolbarSettings(toolBar => toolBar.ShowToolbar()
+              .CustomToolbarItems(new List<object>(){ new Syncfusion.JavaScript.Models.CustomToolbarItem() { TemplateID = "#PostDescriptionsGridRefresh" } })
+              .ToolbarItems(items =>
+          {
+              items.AddTool(ToolBarItems.Add);
+              items.AddTool(ToolBarItems.Edit);
+              items.AddTool(ToolBarItems.Delete);
+              items.AddTool(ToolBarItems.PrintGrid);
+          }))
+          .Columns(col =>
+          {
+              col.Field("Id").Width(50).HeaderText(T("Id").ToString()).IsPrimaryKey(true).Visible(false).Add();
+              col.Field("Title").HeaderText(T("Title").ToString()).Width(450).Add();
+              col.Field("TextDescription").HeaderText(T("Description").ToString()).Visible(false).Add();
+              col.Field("AddToSearchEngineIndexes").HeaderText(T("AddToSearchEngineIndexes").ToString()).Visible(false).Add();
+              col.Field("DisplayOrder").HeaderText(T("DisplayOrder").ToString()).Width(150).Add();
+          }))
+<script id="PostDescriptionsGridRefresh" type="text/x-jsrender">
+    <a onclick="refreshPostDescriptionsGrid();" class="e-toolbaricons e-icon"><i class="fa fa-refresh"></i></a>
+</script>
+@Html.MinifyInlineScript(
+    @<script>
+        function onPostDescriptionsGridAction(args) {
+        if (args.requestType === "delete") {
+            //Delete record
+            args.cancel = true;
+            DeleteEntity(args.data.map(function(item){return item.Id;}), "@Url.Action("Delete")", refreshPostDescriptionsGrid);
+        } else if (args.requestType === "beginedit") {
+            //Edit record
+            args.cancel = true;
+            PopupWindows('@Url.Action("Editor")', 'PostDescriptionEditor', 1100, 700, { id: args.rowData.Id, postId: @ViewBag.PostId }, 'get');
+        } else if (args.requestType === "add") {
+            //Add new record
+            args.cancel = true;
+            PopupWindows('@Url.Action("Editor")', 'PostDescriptionEditor', 1100, 700, {postId: @ViewBag.PostId}, 'get');
+        }
+    }
+
+        function refreshPostDescriptionsGrid() {
+            $("#PostDescriptionsGrid").ejGrid("refreshContent");
+    }
+    </script>)

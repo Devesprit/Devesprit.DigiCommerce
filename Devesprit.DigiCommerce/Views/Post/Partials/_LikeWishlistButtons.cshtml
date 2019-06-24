@@ -1,0 +1,40 @@
+﻿@using Devesprit.Core.Settings
+@using Devesprit.Services
+@using Devesprit.WebFramework.Helpers
+@model Devesprit.DigiCommerce.Models.Post.LikeWishlistButtonsModel
+@{
+    var settings = DependencyResolver.Current.GetService<ISettingService>().LoadSetting<SiteSettings>();
+    Layout = null;
+}
+
+@if (settings.Wishlist)
+{
+    @Ajax.HtmlActionLink(Model.AlreadyAddedToWishlist ? "<i class='fa fa-bookmark'></i>" : "<i class='fa fa-bookmark-o'></i>",
+        "AddPostToWishlist", "Post",
+        new { postId = Model.PostId },
+        new AjaxOptions()
+        {
+            HttpMethod = "POST",
+            OnFailure = "ErrorAlert('" + T("Error") + "', '" + T("ServerConnectionError") + "'); $('.btnAddedToWishlist_" + Model.PostId + "').html('"+(Model.AlreadyAddedToWishlist ? @"<i class=\'fa fa-bookmark\'></i>" : @"<i class=\'fa fa-bookmark-o\'></i>") +"');",
+            InsertionMode = InsertionMode.Replace,
+            UpdateTargetId = "",
+            OnBegin = "$('.btnAddedToWishlist_" + Model.PostId + "').html(\"<i class='fa fa-spinner fa-spin '></i>\");",
+            OnSuccess = "if(data.response === 'add'){$('.btnAddedToWishlist_"+ Model.PostId + "').html(\"<i class='fa fa-bookmark'></i>\");}else if(data.response === 'remove'){$('.btnAddedToWishlist_" + Model.PostId + "').html(\"<i class='fa fa-bookmark-o'></i>\");}else{ErrorAlert('" + T("Error") + "', '"+@T("ToPerformOperationPleaseLogin")+ "'); $('.btnAddedToWishlist_" + Model.PostId + "').html('" + (Model.AlreadyAddedToWishlist ? @"<i class=\'fa fa-bookmark\'></i>" : @"<i class=\'fa fa-bookmark-o\'></i>") + "');}"
+        }, new { @class = "like-btn btnAddedToWishlist_" + Model.PostId, title = (Model.AlreadyAddedToWishlist ? T("RemoveFromWishlist") : T("AddToWishlist")) })
+
+}
+@if (settings.LikePosts)
+{
+    @Ajax.HtmlActionLink(Model.AlreadyLiked ? "<i class='fa fa-heart'></i>" : "<i class='fa fa-heart-o'></i>",
+        "LikePost", "Post",
+        new { postId = Model.PostId },
+        new AjaxOptions()
+        {
+            HttpMethod = "POST",
+            OnFailure = "ErrorAlert('" + T("Error") + "', '" + T("ServerConnectionError") + "'); $('.btnLike_" + Model.PostId + "').html('" + (Model.AlreadyLiked ? @"<i class=\'fa fa-heart\'></i>" : @"<i class=\'fa fa-heart-o\'></i>") + "');",
+            InsertionMode = InsertionMode.Replace,
+            UpdateTargetId = "",
+            OnBegin = "$('.btnLike_" + Model.PostId + "').html(\"<i class='fa fa-spinner fa-spin '></i>\");",
+            OnSuccess = "if(data.response === 'add'){$('.btnLike_" + Model.PostId + "').html(\"<i class='fa fa-heart'></i>\");}else if(data.response === 'remove'){$('.btnLike_" + Model.PostId + "').html(\"<i class='fa fa-heart-o'></i>\");}else{ErrorAlert('" + T("Error") + "', '"+@T("ToPerformOperationPleaseLogin")+ "'); $('.btnLike_" + Model.PostId + "').html('" + (Model.AlreadyLiked ? @"<i class=\'fa fa-heart\'></i>" : @"<i class=\'fa fa-heart-o\'></i>") + "');}"
+        }, new { @class = "like-btn btnLike_" + Model.PostId, title = (Model.AlreadyLiked ? T("Unlike") : T("Like")) })
+}

@@ -1,0 +1,20 @@
+﻿@{
+    Layout = Html.GetCurrentThemeLayoutAddress(true);
+}
+
+@{
+    Html.RenderPartial("Partials/_UsersMenuBar");
+    Html.RenderPartial("Partials/_Header");
+    Html.RenderPartial("Partials/_NavBar");
+}
+
+<div class="container mar-v-35">
+    @Html.Widget("layout_start")
+
+    @RenderBody()
+
+    @Html.Widget("layout_end")
+</div>
+@{
+    Html.RenderPartial("Partials/_Footer");
+}

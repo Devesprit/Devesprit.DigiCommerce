@@ -1,0 +1,61 @@
+﻿
+@using Devesprit.Services.Currency
+@using Devesprit.Services.Localization
+@model Devesprit.DigiCommerce.Models.Profile.UpgradeAccountModel
+@{
+    ViewBag.Title = T("UpgradeAccount");
+    var currentUserGroupPriority = Model.CurrentUser?.SubscriptionExpireDate > DateTime.Now ?
+        Model.CurrentUser?.UserGroup?.GroupPriority ?? int.MinValue : int.MinValue;
+
+    Html.AddHeadCustomParts("<meta name=\"robots\" content=\"index,follow\">");
+}
+
+<div class="row justify-content-center">
+    <div class="col-12 col-xl-8">
+        <div class="panel mar-v-20 text-center bg-success text-light pad-20">
+            <h2 class="no-b-mar"><strong>@Html.Raw(T("SelectDesiredUserGroup"))</strong></h2>
+            <p class="fs-14 no-b-mar">@Html.Raw(T("SelectDesiredUserGroupDesc"))</p>
+        </div>
+
+        @foreach (var group in Model.UserGroupsList)
+        {
+            using (Html.BeginForm("UpgradeAccount", "Purchase", FormMethod.Post))
+            {
+                @Html.AntiForgeryToken()
+                @Html.Hidden("selectedUserGroupId", group.Id)
+                <div class="panel mar-v-20" @Html.Raw(currentUserGroupPriority >= group.GroupPriority ? "style='opacity: 0.5;'" : "")>
+                    @if (group.SubscriptionDiscountPercentage > 0)
+                    {
+                        <div class="off-Box"><span>%@group.SubscriptionDiscountPercentage<br />@T("Off")</span></div>
+                    }
+
+                    <div class="row no-gutters">
+                        <div class="col-12 col-md-3 user-group-banner" style="background-image: url('@group.GetLocalized(x=> x.GroupLargeIcon)');"></div>
+                        <div class="col-12 col-md-5 user-group-content">
+                            <h3>@group.GetLocalized(p => p.GroupName)</h3>
+                            @Html.Raw(group.GetLocalized(p => p.GroupDescription))
+                        </div>
+                        <div class="col-12 col-md-4 align-self-center user-group-price">
+                            <h4 class="badge badge-success">
+                                @if (group.SubscriptionDiscountPercentage > 0)
+                                {
+                                    <del>@group.SubscriptionFee.ExchangeCurrencyStr()</del>
+                                    @((group.SubscriptionFee - ((group.SubscriptionFee * group.SubscriptionDiscountPercentage) / 100)).ExchangeCurrencyStr())
+                                }
+                                else
+                                {
+                                    @group.SubscriptionFee.ExchangeCurrencyStr()
+                                }
+                            </h4><br />
+                            <button type="submit" class="btn btn-warning btn-sm">
+                                @Html.Raw(T("PurchaseNow"))
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+
+    </div>
+</div>
+

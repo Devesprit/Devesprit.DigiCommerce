@@ -1,0 +1,65 @@
+﻿@using Devesprit.WebFramework.Helpers
+@model Devesprit.DigiCommerce.Areas.Admin.Models.PostDescriptionModel
+@{
+    Layout = Html.GetCurrentThemeAdminAreaLayoutAddress(true);
+    @* https://CKEditor.com *@
+    Html.AddScriptParts(ResourceLocation.Footer, "~/Scripts/CKEditor/ckeditor.js", true);
+}
+
+<div class="container">
+    <div class="panel pad-20 mar-v-35  fs-14">
+        @using (Html.BeginForm("Editor", "PostDescriptions", FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+            @Html.HiddenFor(p => p.Id)
+            @Html.HiddenFor(p => p.PostId)
+
+            <div class="row">
+                <div class="col-12">
+                    <div class="form-group">
+                        @Html.LabelFor(p => p.Title)
+                        @Html.LocalizedTextBoxFor(p => p.Title, null, new { @class = "form-control form-control-sm" })
+                        @Html.ValidationMessageFor(p => p.Title, "", new { @class = "form-text text-danger fs-12" })
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <div class="form-group">
+                        @Html.LabelFor(p => p.HtmlDescription)
+                        @Html.LocalizedTextAreaFor(p => p.HtmlDescription, new { @class = "ckeditor" })
+                        @Html.ValidationMessageFor(p => p.HtmlDescription, "", new { @class = "form-text text-danger fs-12" })
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <div class="form-group">
+                        @Html.LabelFor(p => p.DisplayOrder)
+                        @Html.TextBoxFor(p => p.DisplayOrder, new { @class = "form-control form-control-sm ltr-dir", type = "number" })
+                        @Html.ValidationMessageFor(p => p.DisplayOrder, "", new { @class = "form-text text-danger fs-12" })
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12 ">
+                    <div class="form-group">
+                        <div class="form-check">
+                            @Html.CheckBoxFor(p => p.AddToSearchEngineIndexes, new { @class = "form-check-input" })
+                            @Html.LabelFor(p => p.AddToSearchEngineIndexes, new { @class = "form-check-label" })
+                        </div>
+                        @Html.ValidationMessageFor(p => p.AddToSearchEngineIndexes, "", new { @class = "form-text text-danger fs-12" })
+                    </div>
+                </div>
+            </div>
+
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" }).ToMvcHtmlString()
+
+            <div class="text-center t-mar-20">
+                <button type="submit" class="btn btn-sm btn-warning">@T("Save")</button>
+                <button type="button" onclick="SaveAndContinue($(this).closest('form'));" class="btn btn-sm btn-warning">@T("SaveAndContinue")</button>
+                <button type="button" onclick="window.close();" class="btn btn-sm btn-success">@T("Close")</button>
+            </div>
+        }
+    </div>
+</div>

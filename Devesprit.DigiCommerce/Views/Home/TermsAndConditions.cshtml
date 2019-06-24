@@ -1,0 +1,15 @@
+﻿@{
+    ViewBag.Title = T("TermsAndConditions");
+    Html.AddHeadCustomParts("<meta name=\"robots\" content=\"index,follow\">");
+}
+
+<div class="panel">
+    <div class="panel-title">
+        <h4 class="no-mar">
+            @T("TermsAndConditions")
+        </h4>
+    </div>
+    <div class="pad-25">
+        @Html.Raw(ViewBag.TermsHtml)
+    </div>
+</div>

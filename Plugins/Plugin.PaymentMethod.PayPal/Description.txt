@@ -1,0 +1,8 @@
+﻿Group: Payment Methods
+FriendlyName: PayPal Payment Gateway
+SystemName: PaymentMethods.PayPal
+Version: 1.0
+Author: Devesprit.DigiCommerce team
+DisplayOrder: 1
+FileName: Plugin.PaymentMethod.PayPal.dll
+Description: This plugin allows paying with PayPal (https://www.paypal.com).

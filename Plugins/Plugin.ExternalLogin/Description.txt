@@ -1,0 +1,8 @@
+﻿Group: External Login Providers
+FriendlyName: Login with social accounts
+SystemName: ExternalLoginProviders
+Version: 1.0
+Author: Devesprit.DigiCommerce team
+DisplayOrder: 1
+FileName: Plugin.ExternalLogin.dll
+Description: This plugin enables Google/Facebook/Twitter authentication (login using Google/Facebook/Twitter accounts).

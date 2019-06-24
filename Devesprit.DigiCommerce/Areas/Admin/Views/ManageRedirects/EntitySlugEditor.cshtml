@@ -1,0 +1,65 @@
+﻿@model Devesprit.DigiCommerce.Areas.Admin.Models.RedirectModel
+@{
+    Layout = Html.GetCurrentThemeAdminAreaLayoutAddress(true);
+}
+
+<div class="container">
+    <div class="panel pad-20 mar-v-35  fs-14">
+        @using (Html.BeginForm("EntitySlugEditor", "ManageRedirects", FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+            @Html.HiddenFor(p => p.Id)
+            @Html.HiddenFor(p => p.RedirectGroup)
+            @Html.HiddenFor(p => p.EntityId)
+
+            <div class="row">
+                <div class="col-12">
+                    <div class="form-group">
+                        @Html.LabelFor(p => p.RequestedUrl)
+                        @Html.TextBoxFor(p => p.RequestedUrl, null, new { @class = "form-control form-control-sm ltr-dir" })
+                        @Html.ValidationMessageFor(p => p.RequestedUrl, "", new { @class = "form-text text-danger fs-12" })
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <div class="form-group">
+                        @Html.LabelFor(p => p.ResponseUrl)
+                        @Html.TextBoxFor(p => p.ResponseUrl, new { @class = "form-control form-control-sm ltr-dir" })
+                        @Html.ValidationMessageFor(p => p.ResponseUrl, "", new { @class = "form-text text-danger fs-12" })
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12 col-md-4 ">
+                    <div class="form-group">
+                        @Html.LabelFor(p => p.MatchType)
+                        @Html.EnumDropDownListFor(p => p.MatchType, new { @class = "form-control custom-select form-control-sm" })
+                        @Html.ValidationMessageFor(p => p.MatchType, "", new { @class = "form-text text-danger fs-12" })
+                    </div>
+                </div>
+                <div class="col-12 col-md-4 ">
+                    <div class="form-group">
+                        @Html.LabelFor(p => p.ResponseType)
+                        @Html.EnumDropDownListFor(p => p.ResponseType, new { @class = "form-control custom-select form-control-sm" })
+                        @Html.ValidationMessageFor(p => p.ResponseType, "", new { @class = "form-text text-danger fs-12" })
+                    </div>
+                </div>
+                <div class="col-12 col-md-4 ">
+                    <div class="form-group">
+                        @Html.LabelFor(p => p.RedirectStatus)
+                        @Html.EnumDropDownListFor(p => p.RedirectStatus, T("SelectAnItem").ToString(), new { @class = "form-control custom-select form-control-sm" })
+                        @Html.ValidationMessageFor(p => p.RedirectStatus, "", new { @class = "form-text text-danger fs-12" })
+                    </div>
+                </div>
+            </div>
+
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" }).ToMvcHtmlString()
+
+            <div class="text-center t-mar-20">
+                <button type="submit" class="btn btn-sm btn-warning">@T("Save")</button>
+                <button type="button" onclick="window.close();" class="btn btn-sm btn-success">@T("Close")</button>
+            </div>
+        }
+    </div>
+</div>

@@ -1,0 +1,87 @@
+﻿
+@using Devesprit.Core
+@using Syncfusion.JavaScript
+@using Syncfusion.MVC.EJ
+@{
+    ViewBag.Title = T("ManagePostTags");
+    var currentLang = DependencyResolver.Current.GetService<IWorkContext>().CurrentLanguage;
+}
+
+<div class="panel no-hide-overflow">
+    <div class="panel-title pad-10">
+        <h5 class="no-mar">
+            @T("ManagePostTags")
+        </h5>
+    </div>
+
+    <div class="pad-10">
+        @(Html.EJ().Grid<object>("PostTagsGrid")
+              .Datasource(ds =>
+              {
+                  ds.URL(Url.Action("GridDataSource")).Adaptor(AdaptorType.UrlAdaptor);
+              })
+              .AllowSorting()
+              .AllowResizing()
+              .AllowReordering()
+              .AllowPaging()
+              .AllowFiltering()
+              .AllowTextWrap()
+              .AllowSelection()
+              .ShowColumnChooser()
+              .IsResponsive()
+              .SelectionType(SelectionType.Multiple)
+              .EnablePersistence(false)
+              .EnableResponsiveRow(true)
+              .EnableRTL(currentLang.IsRtl)
+              .MinWidth(990)
+              .Locale("localString")
+              .ClientSideEvents(evt => evt.ActionBegin("onPostTagsGridAction"))
+
+              .EditSettings(edt => edt.AllowEditing().AllowDeleting().AllowAdding().ShowDeleteConfirmDialog())
+              .PageSettings(p => { p.PageSize(25).PageSizeList(new List<int>(){10, 25, 50, 100, 250, 500}).PageCount(5).PrintMode(PrintMode.CurrentPage); })
+              .FilterSettings(f => { f.FilterType(FilterType.Menu); })
+              .TextWrapSettings(s => s.WrapMode(WrapMode.Both))
+              .ScrollSettings(s=> s.EnableTouchScroll(true))
+              .ToolbarSettings(toolBar => toolBar.ShowToolbar()
+                  .CustomToolbarItems(new List<object>(){ new Syncfusion.JavaScript.Models.CustomToolbarItem() { TemplateID = "#PostTagsGridRefresh" } })
+                  .ToolbarItems(items =>
+              {
+                  items.AddTool(ToolBarItems.Add);
+                  items.AddTool(ToolBarItems.Edit);
+                  items.AddTool(ToolBarItems.Delete);
+                  items.AddTool(ToolBarItems.PrintGrid);
+              }))
+              .Columns(col =>
+              {
+                  col.Field("Id").HeaderText(T("Id").ToString()).Width(100).IsPrimaryKey(true).Visible(false).Add();
+                  col.Field("Tag").HeaderText(T("Tag").ToString()).Add();
+              }))
+    </div>
+</div>
+<script id="PostTagsGridRefresh" type="text/x-jsrender">
+    <a onclick="refreshPostTagsGrid();" class="e-toolbaricons e-icon"><i class="fa fa-refresh"></i></a>
+</script>
+@{
+    Html.AddInlineScript(ResourceLocation.Footer,
+        @<script>
+            function onPostTagsGridAction(args) {
+            if (args.requestType === "delete") {
+                //Delete record
+                args.cancel = true;
+                DeleteEntity(args.data.map(function(item){return item.Id;}), "@Url.Action("Delete")", refreshPostTagsGrid);
+            } else if (args.requestType === "beginedit") {
+                //Edit record
+                args.cancel = true;
+                PopupWindows('@Url.Action("Editor")', 'PostTagEditor', 500, 250, { id: args.rowData.Id }, 'get');
+            } else if (args.requestType === "add") {
+                //Add new record
+                args.cancel = true;
+                PopupWindows('@Url.Action("Editor")', 'PostTagEditor', 500, 250, {}, 'get');
+            }
+        }
+
+            function refreshPostTagsGrid() {
+                $("#PostTagsGrid").ejGrid("refreshContent");
+        }
+    </script>);
+}

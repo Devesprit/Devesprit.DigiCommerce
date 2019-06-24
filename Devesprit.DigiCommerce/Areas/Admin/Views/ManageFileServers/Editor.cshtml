@@ -1,0 +1,59 @@
+﻿@model Devesprit.DigiCommerce.Areas.Admin.Models.FileServerModel
+@{
+    Layout = Html.GetCurrentThemeAdminAreaLayoutAddress(true);
+}
+
+<div class="container">
+    <div class="panel pad-20 mar-v-35  fs-14">
+        @using (Html.BeginForm("Editor", "ManageFileServers", FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+            @Html.HiddenFor(p => p.Id)
+
+            <div class="row">
+                <div class="col-12">
+                    <div class="form-group">
+                        @Html.LabelFor(p => p.FileServerName)
+                        @Html.TextBoxFor(p => p.FileServerName, null, new { @class = "form-control form-control-sm" })
+                        @Html.ValidationMessageFor(p => p.FileServerName, "", new { @class = "form-text text-danger fs-12" })
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <div class="form-group">
+                        @Html.LabelFor(p => p.FileServerUrl)
+                        @Html.TextBoxFor(p => p.FileServerUrl, null, new { @class = "form-control form-control-sm ltr-dir" })
+                        @Html.ValidationMessageFor(p => p.FileServerUrl, "", new { @class = "form-text text-danger fs-12" })
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <div class="form-group">
+                        @Html.LabelFor(p => p.ServiceUserName)
+                        @Html.TextBoxFor(p => p.ServiceUserName, new { @class = "form-control form-control-sm ltr-dir" })
+                        @Html.ValidationMessageFor(p => p.ServiceUserName, "", new { @class = "form-text text-danger fs-12" })
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <div class="form-group">
+                        @Html.LabelFor(p => p.ServicePassword)
+                        @Html.TextBoxFor(p => p.ServicePassword, new { @class = "form-control form-control-sm ltr-dir" })
+                        @Html.ValidationMessageFor(p => p.ServicePassword, "", new { @class = "form-text text-danger fs-12" })
+                    </div>
+                </div>
+            </div>
+            
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" }).ToMvcHtmlString()
+
+            <div class="text-center t-mar-20">
+                <button type="submit" class="btn btn-sm btn-warning">@T("Save")</button>
+                <button type="button" onclick="SaveAndContinue($(this).closest('form'));" class="btn btn-sm btn-warning">@T("SaveAndContinue")</button>
+                <button type="button" onclick="window.close();" class="btn btn-sm btn-success">@T("Close")</button>
+            </div>
+        }
+    </div>
+</div>

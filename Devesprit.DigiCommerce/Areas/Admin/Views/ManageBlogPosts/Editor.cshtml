@@ -1,0 +1,254 @@
+﻿@using Devesprit.Core
+@using Devesprit.Data.Enums
+@using Devesprit.WebFramework.Helpers
+@using Syncfusion.MVC.EJ
+@model Devesprit.DigiCommerce.Areas.Admin.Models.BlogPostModel
+@{
+    Layout = Html.GetCurrentThemeAdminAreaLayoutAddress(true);
+    var currentLangDir = DependencyResolver.Current.GetService<IWorkContext>().CurrentLanguage.IsRtl ? "rtl" : "ltr";
+}
+
+
+<div class="container-fluid mar-v-35">
+    <div id="panel" class="panel no-hide-overflow pad-20 fs-14">
+        <div id="waitingPopup"></div>
+        @{Html.EJ().Tab("settingTabs")
+                .EnableTabScroll(true)
+                .Items(data =>
+                {
+                    data.Add().ID("Home").Text(T("PostInfo").ToString()).ContentTemplate(content => BlogPostEditor());
+                    if (Model.Id != null)
+                    {
+                        data.Add().ID("Descriptions").Text(T("PostDescriptions").ToString()).Url(Url.Action("Grid", "PostDescriptions", new { postId = Model.Id }));
+                        data.Add().ID("Images").Text(T("PostImages").ToString()).Url(Url.Action("Grid", "PostImages", new { postId = Model.Id }));
+                        data.Add().ID("Attributes").Text(T("PostAttributes").ToString()).Url(Url.Action("Grid", "PostAttributesMapping", new { postId = Model.Id }));
+                        data.Add().ID("Redirects").Text(T("UrlRewrite").ToString()).Url(Url.Action("Grid", "ManageRedirects", new { redirectGroup = RedirectRuleGroup.BlogPost, entityId = Model.Id }));
+                    }
+                })
+                .AjaxSettings(ajax => ajax.ContentType("html").DataType("html").Async(true).Cache(false))
+                .ClientSideEvents(evt => evt.AjaxError("tabAjaxContentError").AjaxSuccess("tabAjaxContentSuccess").AjaxBeforeLoad("tabAjaxBeforeLoad"))
+                .Render();
+        }
+    </div>
+</div>
+
+
+@helper BlogPostEditor()
+{
+    using (Html.BeginForm("Editor", "ManageBlogPosts", FormMethod.Post))
+    {
+        @Html.AntiForgeryToken()
+        @Html.HiddenFor(p => p.Id)
+
+        <div class="row">
+            <div class="col-12 border border-left-0 border-right-0 border-top-0 b-mar-10 t-mar-20">
+                <h5 class="text-secondary text-capitalize">@T("GeneralInfo")</h5>
+            </div>
+            <div class="col-12">
+                <div class="form-group">
+                    @Html.LabelFor(p => p.Title)
+                    @Html.LocalizedTextBoxFor(p => p.Title, null, new { @class = "form-control form-control-sm" })
+                    @Html.ValidationMessageFor(p => p.Title, "", new { @class = "form-text text-danger fs-12" })
+                </div>
+            </div>
+            <div class="col-12 ">
+                <div class="form-group" style="max-width: 100%!important">
+                    @Html.LabelFor(p => p.PostTags)
+                    @Html.DropDownListFor(p => p.PostTags, new SelectList(Model.PostTags), new { @class = "form-control custom-select form-control-sm", @multiple = "multiple" })
+                    @Html.ValidationMessageFor(p => p.PostTags, "", new { @class = "form-text text-danger fs-12" })
+                </div>
+            </div>
+            <div class="col-12 col-md-4 ">
+                <div class="form-group">
+                    @Html.LabelFor(p => p.PostCategories)
+                    @Html.DropDownListFor(p => p.PostCategories, Model.PostCategoriesList, new { @class = "form-control custom-select form-control-sm", @multiple = "multiple" })
+                    @Html.ValidationMessageFor(p => p.PostCategories, "", new { @class = "form-text text-danger fs-12" })
+                </div>
+            </div>
+            <div class="col-12 col-md-4 ">
+                <div class="form-group">
+                    @Html.LabelFor(p => p.PublishDate)
+                    @Html.TextBoxFor(p => p.PublishDate, "{0:yyyy/MM/dd HH:mm:ss}", new { @class = "form-control form-control-sm ltr-dir datetimepicker" })
+                    @Html.ValidationMessageFor(p => p.PublishDate, "", new { @class = "form-text text-danger fs-12" })
+                </div>
+            </div>
+            <div class="col-12 col-md-4 ">
+                <div class="form-group">
+                    @Html.LabelFor(p => p.LastUpDate)
+                    @Html.TextBoxFor(p => p.LastUpDate, "{0:yyyy/MM/dd HH:mm:ss}", new { @class = "form-control form-control-sm ltr-dir datetimepicker" })
+                    @Html.ValidationMessageFor(p => p.LastUpDate, "", new { @class = "form-text text-danger fs-12" })
+                </div>
+            </div>
+            <div class="col-12 col-md-4 ">
+                <div class="form-group">
+                    @Html.LabelFor(p => p.NumberOfViews)
+                    @Html.TextBoxFor(p => p.NumberOfViews, new { @class = "form-control form-control-sm ltr-dir", type = "number" })
+                    @Html.ValidationMessageFor(p => p.NumberOfViews, "", new { @class = "form-text text-danger fs-12" })
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12 border border-left-0 border-right-0 border-top-0 b-mar-10 t-mar-20">
+                <h5 class="text-secondary text-capitalize">@T("SearchEngineOptimization")</h5>
+            </div>
+            <div class="col-12 col-md-6 ">
+                <div class="form-group">
+                    @Html.LabelFor(p => p.PageTitle)
+                    @Html.LocalizedTextBoxFor(p => p.PageTitle, null, new { @class = "form-control form-control-sm" })
+                    <span class="form-text text-muted fs-11">@T("WebBrowserPageTitleDesc")</span>
+                    @Html.ValidationMessageFor(p => p.PageTitle, "", new { @class = "form-text text-danger fs-12" })
+                </div>
+            </div>
+            <div class="col-12 col-md-6 ">
+                <div class="form-group">
+                    @Html.LabelFor(p => p.Slug)
+                    @Html.TextBoxFor(p => p.Slug, new { @class = "form-control form-control-sm ltr-dir" })
+                    @Html.ValidationMessageFor(p => p.Slug, "", new { @class = "form-text text-danger fs-12" })
+                </div>
+            </div>
+            <div class="col-12 col-lg-6 ">
+                <div class="form-group">
+                    @Html.LabelFor(p => p.MetaDescription)
+                    @Html.LocalizedTextAreaFor(p => p.MetaDescription, new { @class = "form-control form-control-sm" })
+                    @Html.ValidationMessageFor(p => p.MetaDescription, "", new { @class = "form-text text-danger fs-12" })
+                </div>
+            </div>
+            <div class="col-12 col-lg-6 ">
+                <div class="form-group">
+                    @Html.LabelFor(p => p.MetaKeyWords)
+                    @Html.LocalizedTextAreaFor(p => p.MetaKeyWords, new { @class = "form-control form-control-sm" })
+                    @Html.ValidationMessageFor(p => p.MetaKeyWords, "", new { @class = "form-text text-danger fs-12" })
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12 border border-left-0 border-right-0 border-top-0 b-mar-10 t-mar-20">
+                <h5 class="text-secondary text-capitalize">@T("OtherInfo")</h5>
+            </div>
+            <div class="col-12 col-md-4 ">
+                <div class="form-group">
+                    <div class="form-check">
+                        @Html.CheckBoxFor(p => p.Published, new { @class = "form-check-input" })
+                        @Html.LabelFor(p => p.Published, new { @class = "form-check-label" })
+                    </div>
+                    @Html.ValidationMessageFor(p => p.Published, "", new { @class = "form-text text-danger fs-12" })
+                </div>
+            </div>
+            <div class="col-12 col-md-4 ">
+                <div class="form-group">
+                    <div class="form-check">
+                        @Html.CheckBoxFor(p => p.IsFeatured, new { @class = "form-check-input" })
+                        @Html.LabelFor(p => p.IsFeatured, new { @class = "form-check-label" })
+                    </div>
+                    @Html.ValidationMessageFor(p => p.IsFeatured, "", new { @class = "form-text text-danger fs-12" })
+                </div>
+            </div>
+            <div class="col-12 col-md-4 ">
+                <div class="form-group">
+                    <div class="form-check">
+                        @Html.CheckBoxFor(p => p.ShowInHotList, new { @class = "form-check-input" })
+                        @Html.LabelFor(p => p.ShowInHotList, new { @class = "form-check-label" })
+                    </div>
+                    @Html.ValidationMessageFor(p => p.ShowInHotList, "", new { @class = "form-text text-danger fs-12" })
+                </div>
+            </div>
+            <div class="col-12 col-md-4 ">
+                <div class="form-group">
+                    <div class="form-check">
+                        @Html.CheckBoxFor(p => p.PinToTop, new { @class = "form-check-input" })
+                        @Html.LabelFor(p => p.PinToTop, new { @class = "form-check-label" })
+                    </div>
+                    @Html.ValidationMessageFor(p => p.PinToTop, "", new { @class = "form-text text-danger fs-12" })
+                </div>
+            </div>
+            <div class="col-12 col-md-4 ">
+                <div class="form-group">
+                    <div class="form-check">
+                        @Html.CheckBoxFor(p => p.AllowCustomerReviews, new { @class = "form-check-input" })
+                        @Html.LabelFor(p => p.AllowCustomerReviews, new { @class = "form-check-label" })
+                    </div>
+                    @Html.ValidationMessageFor(p => p.AllowCustomerReviews, "", new { @class = "form-text text-danger fs-12" })
+                </div>
+            </div>
+            <div class="col-12 col-md-4 ">
+                <div class="form-group">
+                    <div class="form-check">
+                        @Html.CheckBoxFor(p => p.ShowSimilarCases, new { @class = "form-check-input" })
+                        @Html.LabelFor(p => p.ShowSimilarCases, new { @class = "form-check-label" })
+                    </div>
+                    @Html.ValidationMessageFor(p => p.ShowSimilarCases, "", new { @class = "form-text text-danger fs-12" })
+                </div>
+            </div>
+        </div>
+
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" }).ToMvcHtmlString()
+
+        <div class="text-center t-mar-20">
+            <button type="submit" class="btn btn-sm btn-warning">@T("Save")</button>
+            <button type="button" onclick="SaveAndContinue($(this).closest('form'));" class="btn btn-sm btn-warning">@T("SaveAndContinue")</button>
+            <button type="button" onclick="window.close();" class="btn btn-sm btn-success">@T("Close")</button>
+        </div>
+    }
+}
+
+@{
+    Html.AddInlineScript(ResourceLocation.Footer,
+@<script>
+             //init tag editor
+    $.each($('#PostTags').find('option'),
+                 function(idx, option) {
+                     $(option).attr("selected", "selected");
+                 });
+
+    $('#PostTags').select2({
+                 dropdownAutoWidth: true,
+                 width: 'auto',
+                 tags: true,
+                 dir: "@currentLangDir",
+                 tokenSeparators: [','],
+                 theme: "bootstrap",
+                 ajax: {
+                     url: function(params) {
+                         return '@Url.Action("PostTagsSuggestion", "ManagePostTags")?query=' + params.term;
+                     },
+                     delay: 250
+                 }
+             });
+
+
+             //init category editor
+             var selectedCategories = [@string.Join(",", Model.PostCategories)];
+             $.each($('#PostCategories').find("option"),
+                 function(idx, option) {
+                     var optionValue = parseInt($(option).attr("value"));
+                     if ($.inArray(optionValue, selectedCategories) >= 0) {
+                         $(option).attr("selected", "selected");
+                     }
+                 });
+
+             $('#PostCategories').select2({
+                 dropdownAutoWidth: true,
+                 width: 'auto',
+                 tags: false,
+                 dir: "@currentLangDir",
+                 theme: "bootstrap",
+                 tokenSeparators: [',']
+             });
+
+             function tabAjaxContentSuccess(parameters) {
+                 $("#waitingPopup").data("ejWaitingPopup").hide();
+                 ej.widget.init();
+                 setTimeout(function() { $(".e-gridcontent.e-droppable.e-js.e-scroller.e-widget").css("width", ""); },
+                     500);
+             }
+
+             function tabAjaxBeforeLoad(parameters) {
+                 $("#waitingPopup").ejWaitingPopup({ showOnInit: true, target: "#panel", appendTo: "#panel" });
+             }
+
+             function tabAjaxContentError(parameters) {
+                 $("#waitingPopup").data("ejWaitingPopup").hide();
+                 ErrorAlert('@T("Error")', '@T("ServerConnectionError")');
+             }
+</script>);
+}

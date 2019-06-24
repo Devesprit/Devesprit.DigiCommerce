@@ -1,0 +1,59 @@
+﻿@using System.Web.Mvc.Html
+@using Devesprit.DigiCommerce.Models
+@using Devesprit.DigiCommerce.Models.Post
+@using Devesprit.Services.Localization
+
+@{
+    Html.AddHeadCustomParts("<meta name=\"robots\" content=\"index,follow\">");
+}
+
+@Html.Widget("blog_home_page_start")
+<div class="row t-pad-20">
+    <div class="col-12 b-mar-70">
+        <div class="text-center">
+            <h2 class="mb-0">@PostsListType.Newest.GetLocalized()</h2>
+            <a class="text-warning fs-12" href="@Url.Action("BlogExplorer", "Blog", new {listType = PostsListType.Newest})">@T("SeeMore")</a>
+        </div>
+        @{Html.RenderAction("GetBlogPostsList", "Blog", new
+            {
+                listType = PostsListType.Newest,
+                pageSize = 12,
+                showPager = false,
+                numberOfCol = NumberOfCol.Two,
+                style = ViewStyles.Large
+            });
+        }
+        <a class="btn btn-sm btn-secondary btn-block mt-2" href="@Url.Action("BlogExplorer", "Blog", new {listType = PostsListType.Newest})"><i class="fa fa-list"></i> @T("SeeMore")</a>
+    </div>
+    <div class="col-12 col-md-4 col-lg-4 col-xl-3 b-mar-70">
+        <div class="text-center">
+            <h2 class="mb-0">@PostsListType.HotList.GetLocalized()</h2>
+            <a class="text-warning fs-12" href="@Url.Action("BlogExplorer", "Blog", new {listType = PostsListType.HotList})">@T("SeeMore")</a>
+        </div>
+        @{Html.RenderAction("GetBlogPostsList", "Blog", new
+            {
+                listType = PostsListType.HotList,
+                pageSize = 11,
+                showPager = false,
+                numberOfCol = NumberOfCol.One,
+                style = ViewStyles.Small
+            });}
+        <a class="btn btn-sm btn-secondary btn-block mt-2" href="@Url.Action("BlogExplorer", "Blog", new {listType = PostsListType.HotList})"><i class="fa fa-list"></i> @T("SeeMore")</a>
+    </div>
+    <div class="col b-mar-70">
+        <div class="text-center">
+            <h2 class="mb-0">@PostsListType.MostPopular.GetLocalized()</h2>
+            <a class="text-warning fs-12" href="@Url.Action("BlogExplorer", "Blog", new {listType = PostsListType.MostPopular})">@T("SeeMore")</a>
+        </div>
+        @{Html.RenderAction("GetBlogPostsList", "Blog", new
+            {
+                listType = PostsListType.MostPopular,
+                pageSize = 8,
+                showPager = false,
+                numberOfCol = NumberOfCol.One,
+                style = ViewStyles.Normal
+            });}
+        <a class="btn btn-sm btn-secondary btn-block mt-2" href="@Url.Action("BlogExplorer", "Blog", new {listType = PostsListType.MostPopular})"><i class="fa fa-list"></i> @T("SeeMore")</a>
+    </div>
+</div>
+@Html.Widget("blog_home_page_end")

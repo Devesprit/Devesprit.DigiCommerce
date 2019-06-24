@@ -1,0 +1,8 @@
+﻿Group: Widgets
+FriendlyName: Image Slider
+SystemName: Widgets.Slider
+Version: 1.0
+Author: Devesprit.DigiCommerce team
+DisplayOrder: 1
+FileName: Plugin.Widgets.Slider.dll
+Description: A image slideshow component.

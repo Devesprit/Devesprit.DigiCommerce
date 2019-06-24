@@ -1,0 +1,156 @@
+﻿@using Devesprit.Data.Enums
+@using Devesprit.WebFramework.Helpers
+@model Devesprit.DigiCommerce.Areas.Admin.Models.PageModel
+@{
+    Layout = Html.GetCurrentThemeAdminAreaLayoutAddress(true);
+    @* https://CKEditor.com *@
+    Html.AddScriptParts(ResourceLocation.Footer, "~/Scripts/CKEditor/ckeditor.js", true);
+}
+
+<div class="container-fluid mar-v-35">
+    <ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a class="nav-link nav-link-sm active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">@T("PageInfo")</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link nav-link-sm" id="product-slugs-tab" data-toggle="tab" href="#product-slugs" role="tab" aria-controls="product-slugs" aria-selected="false">@T("UrlRewrite")</a>
+        </li>
+    </ul>
+    <div class="panel no-hide-overflow pad-20 fs-14">
+        <div class="tab-content">
+            <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                @using (Html.BeginForm("Editor", "ManagePages", FormMethod.Post))
+                {
+                    @Html.AntiForgeryToken()
+                    @Html.HiddenFor(p => p.Id)
+
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="form-group">
+                                @Html.LabelFor(p => p.Title)
+                                @Html.LocalizedTextBoxFor(p => p.Title, null, new { @class = "form-control form-control-sm" })
+                                @Html.ValidationMessageFor(p => p.Title, "", new { @class = "form-text text-danger fs-12" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="form-group">
+                                @Html.LabelFor(p => p.Html)
+                                @Html.LocalizedTextAreaFor(p => p.Html, new { @class = "ckeditor" })
+                                @Html.ValidationMessageFor(p => p.Html, "", new { @class = "form-text text-danger fs-12" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="form-group">
+                                @Html.LabelFor(p => p.MetaDescription)
+                                @Html.LocalizedTextAreaFor(p => p.MetaDescription, new { @class = "form-control form-control-sm" })
+                                @Html.ValidationMessageFor(p => p.MetaDescription, "", new { @class = "form-text text-danger fs-12" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="form-group">
+                                @Html.LabelFor(p => p.MetaKeyword)
+                                @Html.LocalizedTextAreaFor(p => p.MetaKeyword, new { @class = "form-control form-control-sm" })
+                                @Html.ValidationMessageFor(p => p.MetaKeyword, "", new { @class = "form-text text-danger fs-12" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="form-group">
+                                @Html.LabelFor(p => p.Slug)
+                                @Html.TextBoxFor(p => p.Slug, new { @class = "form-control form-control-sm ltr-dir", placeholder = "test-page" })
+                                @Html.ValidationMessageFor(p => p.Slug, "", new { @class = "form-text text-danger fs-12" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12 col-lg-4">
+                            <div class="form-group b-mar-15">
+                                <div class="form-check">
+                                    @Html.CheckBoxFor(p => p.ShowInPanel, new { @class = "form-check-input" })
+                                    @Html.LabelFor(p => p.ShowInPanel, new { @class = "form-check-label" })
+                                </div>
+                                @Html.ValidationMessageFor(p => p.ShowInPanel, "", new { @class = "form-text text-danger fs-12" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="form-group">
+                                @Html.LabelFor(p => p.PanelTitle)
+                                @Html.LocalizedTextBoxFor(p => p.PanelTitle, null, new { @class = "form-control form-control-sm" })
+                                @Html.ValidationMessageFor(p => p.PanelTitle, "", new { @class = "form-text text-danger fs-12" })
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-12 col-lg-4">
+                            <div class="form-group no-b-mar">
+                                <div class="form-check">
+                                    @Html.CheckBoxFor(p => p.Published, new { @class = "form-check-input" })
+                                    @Html.LabelFor(p => p.Published, new { @class = "form-check-label" })
+                                </div>
+                                @Html.ValidationMessageFor(p => p.Published, "", new { @class = "form-text text-danger fs-12" })
+                            </div>
+                        </div>
+                        <div class="col-12 col-lg-4">
+                            <div class="form-group no-b-mar">
+                                <div class="form-check">
+                                    @Html.CheckBoxFor(p => p.ShowInFooter, new { @class = "form-check-input" })
+                                    @Html.LabelFor(p => p.ShowInFooter, new { @class = "form-check-label" })
+                                </div>
+                                @Html.ValidationMessageFor(p => p.ShowInFooter, "", new { @class = "form-text text-danger fs-12" })
+                            </div>
+                        </div>
+                        <div class="col-12 col-lg-4">
+                            <div class="form-group no-b-mar">
+                                <div class="form-check">
+                                    @Html.CheckBoxFor(p => p.ShowInUserMenuBar, new { @class = "form-check-input" })
+                                    @Html.LabelFor(p => p.ShowInUserMenuBar, new { @class = "form-check-label" })
+                                </div>
+                                @Html.ValidationMessageFor(p => p.ShowInUserMenuBar, "", new { @class = "form-text text-danger fs-12" })
+                            </div>
+                        </div>
+                        <div class="col-12 col-lg-4">
+                            <div class="form-group no-b-mar">
+                                <div class="form-check">
+                                    @Html.CheckBoxFor(p => p.ShowAsWebsiteDefaultPage, new { @class = "form-check-input" })
+                                    @Html.LabelFor(p => p.ShowAsWebsiteDefaultPage, new { @class = "form-check-label" })
+                                </div>
+                                @Html.ValidationMessageFor(p => p.ShowAsWebsiteDefaultPage, "", new { @class = "form-text text-danger fs-12" })
+                            </div>
+                        </div>
+                    </div>
+
+                    @Html.ValidationSummary(true, "", new { @class = "text-danger" }).ToMvcHtmlString()
+
+                    <div class="text-center t-mar-20">
+                        <button type="submit" class="btn btn-sm btn-warning">@T("Save")</button>
+                        <button type="button" onclick="SaveAndContinue($(this).closest('form'));" class="btn btn-sm btn-warning">@T("SaveAndContinue")</button>
+                        <button type="button" onclick="window.close();" class="btn btn-sm btn-success">@T("Close")</button>
+                    </div>
+                }
+            </div>
+
+            <div class="tab-pane fade" id="product-slugs" role="tabpanel" aria-labelledby="product-slugs-tab">
+                @if (Model.Id == null)
+                {
+                    <h4 class="text-muted text-center mar-v-50">
+                        @T("SaveRecordToSeeThisSection")
+                    </h4>
+                }
+                else
+                {
+                    Html.RenderAction("Grid", "ManageRedirects", new { redirectGroup = RedirectRuleGroup.Page, entityId = Model.Id });
+                }
+            </div>
+        </div>
+    </div>
+</div>

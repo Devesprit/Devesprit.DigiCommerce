@@ -1,0 +1,118 @@
+﻿@using System.Web.Mvc.Html
+@using Devesprit.WebFramework
+@model Plugin.PaymentMethod.PayPal.Models.PayPalSettingsModel
+
+<div class="container">
+    <div class="panel mar-v-35">
+        <div class="panel-title pad-10">
+            <h5 class="no-mar">@T("Plugin.PaymentMethod.PayPal.PayPalConfig")</h5>
+        </div>
+        <div class="fs-14 pad-20">
+            @using (Html.BeginForm())
+            {
+                @Html.AntiForgeryToken()
+
+                <div class="row">
+                    <div class="col-12">
+                        <div class="form-group">
+                            @Html.LabelFor(p => p.APIUserName)
+                            @Html.TextBoxFor(p => p.APIUserName, null, new { @class = "form-control form-control-sm ltr-dir" })
+                            @Html.ValidationMessageFor(p => p.APIUserName, "", new { @class = "form-text text-danger fs-12" })
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <div class="form-group">
+                            @Html.LabelFor(p => p.APIPassword)
+                            @Html.TextBoxFor(p => p.APIPassword, new { @class = "form-control form-control-sm ltr-dir" })
+                            @Html.ValidationMessageFor(p => p.APIPassword, "", new { @class = "form-text text-danger fs-12" })
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <div class="form-group">
+                            @Html.LabelFor(p => p.APISignature)
+                            @Html.TextBoxFor(p => p.APISignature, null, new { @class = "form-control form-control-sm ltr-dir" })
+                            @Html.ValidationMessageFor(p => p.APISignature, "", new { @class = "form-text text-danger fs-12" })
+                        </div>
+                    </div>
+                </div>
+                <hr/>
+                <div class="row">
+                    <div class="col-12">
+                        <div class="form-group">
+                            @Html.LabelFor(p => p.PayPalBrandName)
+                            @Html.TextBoxFor(p => p.PayPalBrandName, null, new { @class = "form-control form-control-sm" })
+                            @Html.ValidationMessageFor(p => p.PayPalBrandName, "", new { @class = "form-text text-danger fs-12" })
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <div class="form-group">
+                            @Html.LabelFor(p => p.PayPalHeaderImageUrl)
+                            @Html.TextBoxFor(p => p.PayPalHeaderImageUrl, null, new { @class = "form-control form-control-sm ltr-dir" })
+                            @Html.ValidationMessageFor(p => p.PayPalHeaderImageUrl, "", new { @class = "form-text text-danger fs-12" })
+                        </div>
+                    </div>
+                </div>
+                <hr/>
+                
+                <div class="row">
+                    <div class="col-12">
+                        <div class="form-group">
+                            @Html.LabelFor(p => p.PaymentPageUrl)
+                            @Html.TextBoxFor(p => p.PaymentPageUrl, null, new { @class = "form-control form-control-sm ltr-dir" })
+                            @Html.ValidationMessageFor(p => p.PaymentPageUrl, "", new { @class = "form-text text-danger fs-12" })
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-12">
+                        <div class="form-group">
+                            @Html.LabelFor(p => p.EndpointUrl)
+                            @Html.TextBoxFor(p => p.EndpointUrl, null, new { @class = "form-control form-control-sm ltr-dir" })
+                            @Html.ValidationMessageFor(p => p.EndpointUrl, "", new { @class = "form-text text-danger fs-12" })
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-12">
+                        <div class="form-group">
+                            @Html.LabelFor(p => p.RequestMode)
+                            @Html.TextBoxFor(p => p.RequestMode, null, new { @class = "form-control form-control-sm ltr-dir" })
+                            @Html.ValidationMessageFor(p => p.RequestMode, "", new { @class = "form-text text-danger fs-12" })
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-12 col-md-6">
+                        <div class="form-group">
+                            @Html.LabelFor(p => p.ConnectionTimeout)
+                            @Html.TextBoxFor(p => p.ConnectionTimeout, null, new { @class = "form-control form-control-sm ltr-dir", type="Number" })
+                            @Html.ValidationMessageFor(p => p.ConnectionTimeout, "", new { @class = "form-text text-danger fs-12" })
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <div class="form-group">
+                            @Html.LabelFor(p => p.RequestRetries)
+                            @Html.TextBoxFor(p => p.RequestRetries, null, new { @class = "form-control form-control-sm ltr-dir", type="Number" })
+                            @Html.ValidationMessageFor(p => p.RequestRetries, "", new { @class = "form-text text-danger fs-12" })
+                        </div>
+                    </div>
+                </div>
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" }).ToMvcHtmlString()
+
+                <div class="text-center t-mar-20">
+                    <button type="submit" class="btn btn-sm btn-warning">@T("Save")</button>
+                    <button type="button" onclick="window.close();" class="btn btn-sm btn-success">@T("Close")</button>
+                </div>
+            }
+        </div>
+    </div>
+</div>

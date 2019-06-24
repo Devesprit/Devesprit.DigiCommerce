@@ -1,0 +1,56 @@
+﻿
+
+@{
+    ViewBag.Title = T("PaymentResult");
+}
+
+<div class="container t-mar-35">
+    <div class="row justify-content-center">
+        <div class="col-12 col-lg-6">
+            <div class="panel">
+                <div class="panel-title pad-10">
+                    <h5 class="no-mar">
+                        @T("PaymentResult")
+                    </h5>
+                </div>
+                <div class="row pad-20">
+                    <div class="col-12 t-mar-20 fs-14">
+
+                        @if (ViewBag.Error == null) // On Success
+                        {
+                            @*Animated CheckMark*@
+                            <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+                                <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none" />
+                                <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8" />
+                            </svg>
+
+                            <p class="text-success text-center t-mar-30">
+                                @Html.Raw(T("SuccessPayment"))
+                            </p>
+
+                            <div class="text-center">
+                                <a href="@Url.Action("Index", new {id = ViewBag.InvoiceId})" class="btn btn-success btn-sm block">@T("SeeMyInvoice")</a>
+                            </div>
+                        }
+                        else //On Error
+                        {
+                            <img src="~/Content/img/PaymentError_125.png" class="d-block m-auto" />
+
+                            <div class="text-danger text-center mar-v-30">
+                                <b>@T("FailedPayment")</b><br />
+
+                                @Html.Raw(ViewBag.Error)
+                            </div>
+
+                            <div class="text-center">
+                                <a href="@Url.Action("Index", new {id = ViewBag.InvoiceId})" class="btn btn-outline-secondary btn-sm">@T("SeeMyInvoice")</a>
+                                <a href="@Url.Action("Index", "Profile")" class="btn btn-outline-secondary btn-sm">@T("GotoMyProfile")</a>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

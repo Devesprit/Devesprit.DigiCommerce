@@ -1,0 +1,37 @@
+﻿@model List<Devesprit.DigiCommerce.Models.Post.PostImagesModel>
+@{
+    var counter = 0;
+}
+@if (Model.Count == 1)
+{
+    <img class="d-block m-auto img-fluid lazy" data-src="@Model.FirstOrDefault().ImageUrl?dshadow.Angle=0&dshadow.Distance=0&dshadow.Opacity=70&dshadow.Color=Black&dshadow.Softness=10&width=825&height=500&mode=boxpad&colorfulbg=true" alt="@Model.FirstOrDefault().Alt" title="@Model.FirstOrDefault().Title" />
+}
+else if (Model.Count > 1)
+{
+    <div id="PostsImgCarousel" class="carousel slide no-border-radius" data-ride="carousel">
+        <ol class="carousel-indicators">
+            @for (int i = 0; i < Model.Count; i++)
+            {
+                <li data-target="#PostsImgCarousel" data-slide-to="@i" class="@Html.Raw(i == 0 ? "active": "")"></li>
+            }
+        </ol>
+        <div class="carousel-inner no-border-radius">
+            @foreach (var img in Model.OrderBy(p => p.DisplayOrder))
+            {
+                <div class="carousel-item @Html.Raw(counter == 0 ? "active" : "")">
+                    <img class="d-block m-auto img-fluid lazy" data-src="@img.ImageUrl?dshadow.Angle=0&dshadow.Distance=0&dshadow.Opacity=70&dshadow.Color=Black&dshadow.Softness=10&width=825&height=500&mode=boxpad&colorfulbg=true" alt="@img.Alt" title="@img.Title" />
+                </div>
+                counter++;
+            }
+        </div>
+        <a class="carousel-control-prev" href="#PostsImgCarousel" role="button" data-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="sr-only">@T("Previous")</span>
+        </a>
+        <a class="carousel-control-next" href="#PostsImgCarousel" role="button" data-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="sr-only">@T("Next")</span>
+        </a>
+    </div>
+}
+

@@ -1,0 +1,58 @@
+﻿@using Devesprit.WebFramework.Helpers
+@model Devesprit.DigiCommerce.Areas.Admin.Models.SocialAccountModel
+@{
+    Layout = Html.GetCurrentThemeAdminAreaLayoutAddress(true);
+}
+
+<div class="container">
+    <div class="panel pad-20 mar-v-35  fs-14">
+        @using (Html.BeginForm("Editor", "ManageSocialAccounts", FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+            @Html.HiddenFor(p => p.Id)
+
+            <div class="row">
+                <div class="col-12">
+                    <div class="form-group">
+                        @Html.LabelFor(p => p.SocialNetworkName)
+                        @Html.LocalizedTextBoxFor(p => p.SocialNetworkName, null, new { @class = "form-control form-control-sm" })
+                        @Html.ValidationMessageFor(p => p.SocialNetworkName, "", new { @class = "form-text text-danger fs-12" })
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="form-group">
+                        @Html.LabelFor(p => p.SocialNetworkIconUrl)
+                        @Html.LocalizedTextBoxFor(p => p.SocialNetworkIconUrl, null, new { @class = "form-control form-control-sm ltr-dir" })
+                        <button type="button" onclick="ShowFileExplorerForLocalizedEntity('SocialNetworkIconUrl');" class="btn btn-outline-success btn-xs float-end t-mar-5"><i class="fa fa-folder-open"></i> ...</button>
+                        <span class="form-text text-muted fs-11">@T("DesiredImageUrl")</span>
+                        @Html.ValidationMessageFor(p => p.SocialNetworkIconUrl, "", new { @class = "form-text text-danger fs-12" })
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="form-group">
+                        @Html.LabelFor(p => p.SocialNetworkLargeIconUrl)
+                        @Html.LocalizedTextBoxFor(p => p.SocialNetworkLargeIconUrl, null, new { @class = "form-control form-control-sm ltr-dir" })
+                        <button type="button" onclick="ShowFileExplorerForLocalizedEntity('SocialNetworkLargeIconUrl');" class="btn btn-outline-success btn-xs float-end t-mar-5"><i class="fa fa-folder-open"></i> ...</button>
+                        <span class="form-text text-muted fs-11">@T("DesiredImageUrl")</span>
+                        @Html.ValidationMessageFor(p => p.SocialNetworkLargeIconUrl, "", new { @class = "form-text text-danger fs-12" })
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="form-group">
+                        @Html.LabelFor(p => p.YourAccountUrl)
+                        @Html.LocalizedTextBoxFor(p => p.YourAccountUrl, null, new { @class = "form-control form-control-sm ltr-dir" })
+                        @Html.ValidationMessageFor(p => p.YourAccountUrl, "", new { @class = "form-text text-danger fs-12" })
+                    </div>
+                </div>
+            </div>
+
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" }).ToMvcHtmlString()
+
+            <div class="text-center t-mar-20">
+                <button type="submit" class="btn btn-sm btn-warning">@T("Save")</button>
+                <button type="button" onclick="SaveAndContinue($(this).closest('form'));" class="btn btn-sm btn-warning">@T("SaveAndContinue")</button>
+                <button type="button" onclick="window.close();" class="btn btn-sm btn-success">@T("Close")</button>
+            </div>
+        }
+    </div>
+</div>

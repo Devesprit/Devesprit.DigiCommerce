@@ -1,0 +1,43 @@
+﻿@{
+    ViewBag.Title = T("Administration").ToString();
+}
+
+<h2>@T("Reports")</h2>
+
+<div class="panel">
+    <div class="panel-title pad-10">
+        <h5 class="no-mar">@T("Invoices")</h5>
+    </div>
+
+    <div id="invoiceChartHolder"></div>
+</div>
+
+<div class="panel t-mar-35">
+    <div class="panel-title pad-10">
+        <h5 class="no-mar">@T("Users")</h5>
+    </div>
+
+    <div id="usersChartHolder"></div>
+</div>
+
+<div class="panel t-mar-35">
+    <div class="panel-title pad-10">
+        <h5 class="no-mar">@T("Selling")</h5>
+    </div>
+
+    <div id="sellsChartHolder"></div>
+</div>
+
+@{
+    Html.AddInlineScript(ResourceLocation.Footer,
+        @<script>
+             $(document).ready(function() {
+                 $("#invoiceChartHolder").html('@Html.Raw(T("LoadingPanelHtml"))').load(
+                     '@Url.Action("InvoicesChart", "Administration")');
+                 $("#usersChartHolder").html('@Html.Raw(T("LoadingPanelHtml"))').load(
+                     '@Url.Action("UsersChart", "Administration")');
+                 $("#sellsChartHolder").html('@Html.Raw(T("LoadingPanelHtml"))').load(
+                     '@Url.Action("SellsChart", "Administration")');
+             });
+         </script>, true);
+}

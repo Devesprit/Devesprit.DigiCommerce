@@ -1,0 +1,121 @@
+﻿
+@using Devesprit.Core
+@using Devesprit.Data.Enums
+@using Devesprit.Services.Localization
+@using Syncfusion.JavaScript
+@using Syncfusion.MVC.EJ
+@{
+    ViewBag.Title = T("ManageComments") + " - (" + ((PostType)ViewBag.FilterByPostType).GetLocalized() + ")";
+    var currentLang = DependencyResolver.Current.GetService<IWorkContext>().CurrentLanguage;
+}
+
+<div class="panel no-hide-overflow">
+    <div class="panel-title pad-10">
+        <h5 class="no-mar">
+            @T("ManageComments") - (@(((PostType)ViewBag.FilterByPostType).GetLocalized()))
+        </h5>
+    </div>
+
+    <div class="pad-10">
+        @(Html.EJ().Grid<object>("CommentsGrid")
+              .Datasource(ds =>
+              {
+                  ds.URL(Url.Action("GridDataSource", new { filterByPostType = ViewBag.FilterByPostType })).Adaptor(AdaptorType.UrlAdaptor).UpdateURL(Url.Action("Update"));
+              })
+              .AllowSorting()
+              .AllowResizing()
+              .AllowReordering()
+              .AllowPaging()
+              .AllowFiltering()
+              .AllowTextWrap()
+              .AllowSelection()
+              .ShowColumnChooser()
+              .IsResponsive()
+              .SelectionType(SelectionType.Multiple)
+              .EnablePersistence(false)
+              .EnableResponsiveRow(true)
+              .EnableRTL(currentLang.IsRtl)
+              .MinWidth(990)
+              .Locale("localString")
+              .ClientSideEvents(evt => evt.ActionBegin("onCommentsGridAction"))
+
+              .EditSettings(edt => edt.AllowEditing().AllowDeleting().ShowDeleteConfirmDialog())
+              .PageSettings(p => { p.PageSize(25).PageSizeList(new List<int>() { 10, 25, 50, 100, 250, 500 }).PageCount(5).PrintMode(PrintMode.CurrentPage); })
+              .FilterSettings(f => { f.FilterType(FilterType.Menu); })
+              .TextWrapSettings(s => s.WrapMode(WrapMode.Both))
+              .ScrollSettings(s => s.EnableTouchScroll(true))
+              .SortSettings(sort => sort.SortedColumns(col => { col.Field("CommentDate").Direction(SortOrder.Descending).Add(); }))
+              .ToolbarSettings(toolBar => toolBar.ShowToolbar()
+                  .CustomToolbarItems(new List<object>() { new Syncfusion.JavaScript.Models.CustomToolbarItem() { TemplateID = "#CommentsGridRefresh" } })
+                  .ToolbarItems(items =>
+                  {
+                      items.AddTool(ToolBarItems.Edit);
+                      items.AddTool(ToolBarItems.Delete);
+                      items.AddTool(ToolBarItems.Update);
+                      items.AddTool(ToolBarItems.Cancel);
+                      items.AddTool(ToolBarItems.PrintGrid);
+                  }))
+              .Columns(col =>
+              {
+                  col.Field("Id").HeaderText(T("Id").ToString()).Width(100).AllowEditing(false).IsPrimaryKey(true).Visible(false).Add();
+                  col.Field("PostTitle").HeaderText(T("Title").ToString()).AllowEditing(false).Add();
+                  col.Field("CommentDate").HeaderText(T("Date").ToString()).ValidationRules(v => v.AddRule("required", true)).Format("{0:yyyy/MM/dd HH:mm:ss}").Width(130).Add();
+                  col.Field("Comment").HeaderText(T("Message").ToString()).ValidationRules(v => v.AddRule("required", true)).Add();
+                  col.Field("Published").HeaderText(T("Published").ToString()).AllowEditing(false).Width(120).Add();
+                  col.Field("UserEmail").HeaderText(T("User").ToString()).AllowEditing(false).Add();
+                  col.HeaderText(T("Action").ToString()).TextAlign(TextAlign.Center).Width(150).AllowEditing(false).Template("#ActionTemplate").Add();
+              }))
+    </div>
+</div>
+<script id="ActionTemplate" type="text/template">
+    {{if Published }}
+    <button type="button" class="btn btn-xs btn-warning text-light mt-1" onclick="setCommentStatus({{:Id}}, false)">@T("SetAsUnPublished")</button>
+    {{else}}
+    <button type="button" class="btn btn-xs btn-success text-light mt-1" onclick="setCommentStatus({{:Id}}, true)">@T("SetAsPublished")</button>
+    {{/if}}
+</script>
+<script id="CommentsGridRefresh" type="text/x-jsrender">
+    <a onclick="refreshCommentsGrid();" class="e-toolbaricons e-icon"><i class="fa fa-refresh"></i></a>
+</script>
+
+@{
+    Html.AddInlineScript(ResourceLocation.Footer,
+@<script>
+     function onCommentsGridAction(args) {
+         if (args.requestType === "delete") {
+             //Delete record
+             args.cancel = true;
+             DeleteEntity(args.data.map(function(item){return item.Id;}), "@Url.Action("Delete")", refreshCommentsGrid);
+         }
+     }
+
+     function setCommentStatus(commentId, published) {
+         $('#LoadingPanel').show();
+         $.ajax({
+             type: "POST",
+             url: "@Url.Action("SetCommentStatus")",
+             data: {
+                 commentId: commentId,
+                 published: published
+             },
+             error: function(xhr, status, error) {
+                 ErrorAlert('@T("Error")', '@T("ServerConnectionError")');
+             },
+             success: function(response) {
+                 if (response === 'OK') {
+                     refreshCommentsGrid();
+                 } else {
+                     ErrorAlert('@T("Error")', response);
+                        }
+                    },
+                    complete: function() {
+                        $('#LoadingPanel').hide();
+                    }
+                });
+            }
+
+            function refreshCommentsGrid() {
+                $("#CommentsGrid").ejGrid("refreshContent");
+        }
+</script>);
+}

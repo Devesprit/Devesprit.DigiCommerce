@@ -1,0 +1,9 @@
+﻿@using Devesprit.Core.Settings
+@using Devesprit.Services
+@using Devesprit.Services.Localization
+@{
+    var settings = DependencyResolver.Current.GetService<ISettingService>().LoadSetting<SiteSettings>();
+}
+<div class="container-fluid footer no-t-mar pad-v-10 fixed-bottom">
+    <span class="copy-right no-t-mar">@Html.Raw(T("Copyright", DateTime.Now.Year + " " + settings.GetLocalized(x => x.SiteName)))</span>
+</div>

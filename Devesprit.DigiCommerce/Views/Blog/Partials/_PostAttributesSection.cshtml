@@ -1,0 +1,71 @@
+﻿@using System.Globalization
+
+@using Devesprit.Utilities.Extensions
+@using Devesprit.Data.Enums
+@using Devesprit.Core.Settings
+@using Devesprit.Services
+@model Devesprit.DigiCommerce.Models.Post.PostModel
+@{
+    var counter = 0;
+    var settings = DependencyResolver.Current.GetService<ISettingService>().LoadSetting<SiteSettings>();
+}
+<div class="panel fs-13 b-mar-20">
+    <div class="panel-title pad-10">
+        <b>@T("PostAttributes")</b>
+    </div>
+    <div class="pad-10 line-height-1-6">
+        <div>
+            <i class="fa fa-clock-o"></i>
+            @T("PublishDate"): @Model.PublishDate.ToString("D")
+            <small>(@Model.PublishDate.TimeAgo())</small>
+        </div>
+        <div itemprop="datePublished" datetime="@Model.LastUpdate.ToString("d", CultureInfo.InvariantCulture)">
+            <i class="fa fa-clock-o"></i>
+            @Html.Raw(T("LastUpdate", Model.LastUpdate.ToString("D")))
+            <small>(@Model.LastUpdate.TimeAgo())</small>
+        </div>
+        @if (settings.LikePosts)
+        {
+            <div title="@Model.NumberOfLikes.ToString("N0")">
+                <i class="fa fa-heart"></i> @T("Likes"): @Model.NumberOfLikesStr
+            </div>
+        }
+        <div itemprop="interactionCount" content="@Model.NumberOfViews" title="@Model.NumberOfViews.ToString("N0")">
+            <i class="fa fa-eye"></i> @T("Visits"): @Model.NumberOfViewsStr
+        </div>
+        <div>
+            <i class="fa fa-group"></i> @T("Categories"):
+            @{ counter = 0;}
+            @foreach (var cat in Model.Categories)
+            {
+                <a href="@Url.Action("FilterByCategory", "Blog", new {slug=cat.Slug})" target="_blank">@cat.CategoryName</a>
+                if (counter < Model.Categories.Count - 1)
+                {
+                    counter++;
+                    @Html.Raw(", ")
+                }
+            }
+        </div>
+        @if (Model.Attributes.Any())
+        {
+            <hr />
+            foreach (var attribute in Model.Attributes.OrderBy(p => p.DisplayOrder))
+            {
+                switch (attribute.Type)
+                {
+                    case PostAttributeType.Text:
+                        <div>@Html.Raw(attribute.Name): @attribute.Value</div>
+                        break;
+                    case PostAttributeType.HtmlText:
+                    case PostAttributeType.Option:
+                        <div>@Html.Raw(attribute.Name): @Html.Raw(attribute.Value)</div>
+                        break;
+                    case PostAttributeType.Link:
+                        <div><a href="@attribute.Value" target="_blank">@Html.Raw(attribute.Name)</a></div>
+                        break;
+                }
+            }
+        }
+    </div>
+</div>
+

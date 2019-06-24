@@ -1,0 +1,30 @@
+﻿@using System.Web.Mvc.Html
+@using Devesprit.DigiCommerce.Models
+@using Devesprit.DigiCommerce.Models.Post
+@using Devesprit.Services.Localization
+@using Devesprit.Utilities
+@model Devesprit.DigiCommerce.Models.Post.PostsExplorerModel
+
+@{
+    ViewBag.Title = Model.PostsListType.GetLocalized();
+    Html.AddHeadCustomParts("<meta name=\"robots\" content=\"index,follow\">");
+}
+
+
+<div class="t-pad-20">
+    <h5>
+        <a href="@Url.Action("Blog", "RssFeed", new {listType = Model.PostsListType, catId = Model.FilterByCategoryId, fromDate = Model.FromDate}).RemoveEmptyParametersFromQueryString()" target="_blank" title="@T("RSSFeed")"class="text-warning"><i class="fa fa-rss"></i></a>
+        @Html.Raw(Model.PostsListType.GetLocalized())
+    </h5>
+
+    @{Html.RenderAction("GetBlogPostsList", "Blog", new
+        {
+            listType = Model.PostsListType,
+            page = Model.PageIndex,
+            pageSize = Model.PageSize,
+            catId = Model.FilterByCategoryId,
+            fromDate = Model.FromDate,
+            style = ViewStyles.Normal,
+            numberOfCol = NumberOfCol.One
+        });}
+</div>

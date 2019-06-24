@@ -1,0 +1,23 @@
+﻿@using System.Web.Mvc.Html
+@using Devesprit.DigiCommerce.Models
+@using Devesprit.DigiCommerce.Models.Post
+@model X.PagedList.IPagedList<PostCardViewModel>
+@{
+    Layout = null;
+}
+@if (Model.Any())
+{
+    <div class="row">
+        <div class="col-12">
+            <h5 class="text-muted text-center text-uppercase fw-bold">@T("SimilarCases")</h5>
+        </div>
+        @foreach (var post in Model)
+        {
+            <div class='col-12 py-2'>
+                @{
+                    Html.RenderAction("PostCardViewPartialView", "Post", new {model = post, style = ViewStyles.Small});
+                }
+            </div>
+        }
+    </div>
+}

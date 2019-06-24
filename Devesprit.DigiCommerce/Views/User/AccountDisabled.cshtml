@@ -1,0 +1,30 @@
+﻿@using Devesprit.Core.Settings
+@using Devesprit.Services
+@{
+    Layout = Html.GetCurrentThemeLayoutAddress(true);
+    var setting = DependencyResolver.Current.GetService<ISettingService>().LoadSetting<SiteSettings>();
+
+    Html.AddHeadCustomParts("<meta name=\"robots\" content=\"noindex,nofollow\">");
+}
+
+<div class="container mt-5">
+    <div class="panel p-3">
+        <h3 class="text-center mb-4">
+            <img src="/Content/img/user-forbidden_256px.png" class="mb-3" />
+            <br />
+            @T("YourAccountDisabled")
+        </h3>
+        @if (!string.IsNullOrWhiteSpace(ViewBag.DisableReason))
+        {
+            <div class="jumbotron py-4">
+                <p class="no-mar">
+                    @Html.Raw(ViewBag.DisableReason)
+                </p>
+            </div>
+        }
+        <hr/>
+        <p class="text-center">
+            @T("ForMoreInformationContactWithUs", $"<a href='mailto:{setting.SiteEmailAddress}'>{setting.SiteEmailAddress}</a>")
+        </p>
+    </div>
+</div>

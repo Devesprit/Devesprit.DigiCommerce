@@ -1,0 +1,116 @@
+﻿@using Devesprit.Core.Settings
+@using Devesprit.Data.Enums
+@using Devesprit.Services
+@using Devesprit.Services.Localization
+@using Devesprit.WebFramework.Helpers
+@model Devesprit.DigiCommerce.Models.Products.ProductModel
+@{
+    ViewBag.Title = Model.PageTitle;
+    ViewBag.MetaKeyword = Model.MetaKeyWords;
+    ViewBag.MetaDescription = Model.MetaDescription;
+    var settings = DependencyResolver.Current.GetService<ISettingService>().LoadSetting<SiteSettings>();
+
+    Html.AddCssFileParts(ResourceLocation.Header, "~/Content/jssocials.css");
+    Html.AddCssFileParts(ResourceLocation.Header, "~/Content/jssocials-theme-flat.css");
+
+    Html.AddScriptParts(ResourceLocation.Footer, "~/Scripts/jssocials.min.js");
+
+    Html.AddHeadCustomParts("<meta name=\"robots\" content=\"index,follow\">");
+    Html.AddHeadCustomParts("<meta property=\"og:title\" content=\"" + Model.Title + "\">");
+    Html.AddHeadCustomParts("<meta property=\"og:url\" content=\"" + Model.PostUrl + "\">");
+    Html.AddHeadCustomParts("<meta property=\"og:description\" content=\"" + Model.MetaDescription + "\">");
+    Html.AddHeadCustomParts("<meta property=\"og:site_name\" content=\"" + settings.GetLocalized(x => x.SiteName) + "\">");
+    Html.AddHeadCustomParts("<meta property=\"og:description\" content=\"" + Model.MetaDescription + "\">");
+    if (Model.Images != null && Model.Images.Count > 0)
+    {
+        Html.AddHeadCustomParts("<meta property=\"og:image\" content=\"" + Model.Images[0].ImageUrl + "\">");
+    }
+}
+
+@Html.Widget("product_page_start")
+
+<div class="row t-mar-20">
+    <div class="col-12 col-lg-4 col-xl-3 order-2 order-lg-1">
+        @if (User.IsInRole("Admin"))
+        {
+            if (Model.Published)
+            {
+                <div class="alert alert-success p-1 fs-12 text-center" role="alert">
+                    @T("Published")
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-danger p-1 fs-12 text-center" role="alert">
+                    @T("UnPublished")
+                </div>
+            }
+        }
+        @{Html.RenderPartial("Partials/_ProductDownloadPurchaseButton", Model.DownloadPurchaseButtonModel);}
+        @{Html.RenderPartial("Partials/_ProductAttributesSection", Model);}
+        @{Html.RenderPartial("Partials/_ProductTagsSection", Model.TagsList);}
+        <div id="shareIconsCountInside" class="fs-12 b-mar-20 text-center"></div>
+        @if (Model.ShowSimilarCases)
+        {
+            Html.RenderAction("MoreLikeThis", "Search", new {postId = Model.Id, postType = PostType.Product});
+        }
+    </div>
+
+    <div class="col-12 col-lg-8 col-xl-9 order-1 order-lg-4">
+        <div class="panel b-mar-20">
+            <div class="panel-title">
+                @if (settings.Wishlist || settings.LikePosts)
+                {
+                    <span class="fs-18 btn btn-warning btn-sm float-end line-height-1 mar-h-5">
+                        @{Html.RenderAction("LikeWishlistButtonsPartialView", "Post", Model.LikeWishlistButtonsModel);}
+                    </span>
+                }
+                <h1 class="no-b-mar fs-25 @Html.Raw(Model.TitleIsRtl ? "rtl-dir text-right" : "ltr-dir text-left")">
+                    @Html.Raw(Model.Title.Trim())
+                </h1>
+            </div>
+
+            @{Html.RenderPartial("Partials/_ProductImagesSection", Model.Images);}
+            @{Html.RenderPartial("Partials/_ProductDescriptionsSection", Model.Descriptions);}
+        </div>
+
+        @if (settings.AllowUsersToWriteComment && Model.AllowCustomerReviews)
+        {
+            <div class="panel fs-13">
+                <div class="panel-title pad-10"><b>@T("Comments")</b></div>
+                <div class="pad-15">
+                    <div id="commentsListPlaceholder"></div>
+
+                    <h4>@T("WriteYourComment")</h4>
+                    <div id="CommentEditor">
+                        @{
+                            Html.RenderAction("CommentEditor", "Comment", new { postId = Model.Id });
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+
+    </div>
+</div>
+
+<script type="application/ld+json">
+    @Html.Raw(Model.Schema.ToHtmlEscapedString())
+</script>
+
+@Html.Widget("product_page_end")
+
+@{
+    Html.AddInlineScript(ResourceLocation.Footer,
+@<script>
+     $("#shareIconsCountInside").jsSocials({
+         showLabel: false,
+         shareIn: "popup",
+         showCount: "inside",
+         shares: [
+             "email", "twitter", "facebook", "googleplus", "linkedin", "whatsapp", "messenger",
+             "telegram", "line"
+         ]
+     });
+</script>, true);
+}

@@ -1,0 +1,48 @@
+﻿
+@using Devesprit.Core
+@using Devesprit.Utilities
+@using Devesprit.Services.Languages
+@using Devesprit.Core.Settings
+@using Devesprit.Services
+
+@{
+    var languageService = DependencyResolver.Current.GetService<ILanguagesService>();
+    var settings = DependencyResolver.Current.GetService<ISettingService>().LoadSetting<SiteSettings>();
+    var workContext = DependencyResolver.Current.GetService<IWorkContext>();
+    var allLanguages = languageService.GetAsEnumerable().ToList();
+    var targetPath = Request.Url.PathAndQuery.TrimStart('/');
+
+    foreach (var language in allLanguages)
+    {
+        if (targetPath.StartsWith(language.IsoCode, StringComparison.OrdinalIgnoreCase))
+        {
+            targetPath = targetPath.Remove(0, language.IsoCode.Length).TrimStart('/');
+            break;
+        }
+    }
+
+    var hostRoot = $"{Request.Url.Scheme}://{Request.Url.Authority}";
+    var targetUrlMask = settings.AppendLanguageCodeToUrl ? $"{hostRoot}/{{0}}/{targetPath.TrimStart('/')}" : $"{hostRoot}/{targetPath.TrimStart('/')}";
+
+    var curLang = workContext.CurrentLanguage;
+}
+
+@if (allLanguages.Count > 1)
+{
+    <div class="btn-group btn-group-xs lang-dropdown">
+        <button title="@T("ChangeLanguage")" type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <img src="@curLang.Icon.ByteArrayToBase64Image()" alt="@curLang.LanguageName"/>
+            @curLang.LanguageName
+        </button>
+        <div class="dropdown-menu dropdown-menu-xs">
+            @foreach (var item in allLanguages)
+            {
+                var targetUrl = string.Format(targetUrlMask, item.IsoCode).BuildQueryStringUrl(new[] { "usl=" + item.IsoCode });
+                <a class="dropdown-item dropdown-item-xs" href="@targetUrl">
+                    <img src="@item.Icon.ByteArrayToBase64Image()" alt="@item.LanguageName"/>
+                    @item.LanguageName
+                </a>
+            }
+        </div>
+    </div>
+}

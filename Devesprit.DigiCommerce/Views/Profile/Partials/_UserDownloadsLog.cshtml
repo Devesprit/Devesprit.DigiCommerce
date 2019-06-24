@@ -1,0 +1,66 @@
+﻿@using Devesprit.Services.Localization
+@using X.PagedList.Mvc
+@using X.PagedList.Mvc.Common
+@model X.PagedList.IPagedList<Devesprit.Data.Domain.TblProductDownloadsLog>
+@{
+    int counter = Model.FirstItemOnPage;
+    Layout = null;
+}
+<h4>@T("DownloadLogs"):</h4>
+<div class="row">
+    <div class="col">
+        <div class="table-responsive">
+            <table class="table table-hover table-sm fs-14">
+                <thead class="thead-dark">
+                    <tr>
+                        <th class="text-center">#</th>
+                        <th class="text-center">@T("ProductName")</th>
+                        <th class="text-center">@T("DownloadDate")</th>
+                        <th class="text-center">@T("IPAddress")</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <th scope="row" class="text-center">
+                                @counter
+                            </th>
+                            <td>
+                                <a target="_blank"
+                                   href="@Url.Action("Index", "Product", new {slug = item.Product.Slug})">
+                                    @item.Product.GetLocalized(p => p.Title)
+                                </a>
+                            </td>
+                            <td class="text-center" title="@item.DownloadDate.ToString("F")">
+                                @item.DownloadDate.ToString("d")
+                            </td>
+                            <td class="text-center">
+                                @item.UserIp
+                            </td>
+                        </tr>
+                        {
+                            counter++;
+                        }
+                    }
+                </tbody>
+            </table>
+            @if (!Model.Any())
+            {
+                <h4 class="text-muted text-center my-5">@T("EmptyRecord")</h4>
+            }
+        </div>
+    </div>
+</div>
+@if (Model.Any())
+{
+    <div class="row">
+        <div class="col-12">
+            @Html.PagedListPager(Model,
+                page => Url.Action("UserDownloadLogs", "Profile", new {pageNumber = page, userId = Request.QueryString["userId"] }),
+                PagedListRenderOptions.EnableUnobtrusiveAjaxReplacing(
+                    new TwitterBootstrap4Pager(),
+                    new AjaxOptions() {HttpMethod = "POST", UpdateTargetId = "placeholder"}))
+        </div>
+    </div>
+}

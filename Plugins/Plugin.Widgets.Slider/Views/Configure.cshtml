@@ -1,0 +1,89 @@
+﻿@using Devesprit.WebFramework.Helpers
+@using Devesprit.Core
+@using Syncfusion.JavaScript
+@using Syncfusion.MVC.EJ
+@{
+    var currentLang = DependencyResolver.Current.GetService<IWorkContext>().CurrentLanguage;
+}
+
+<div class="container">
+    <div class="panel mar-v-35">
+        <div class="panel-title pad-10">
+            <h5 class="no-mar">@T("Plugin.Widgets.Slider.ManageImageSlider")</h5>
+        </div>
+        <div class="pad-10">
+            @(Html.EJ().Grid<object>("SlidersGrid")
+                  .Datasource(ds =>
+                  {
+                      ds.URL(Url.Action("GridDataSource")).Adaptor(AdaptorType.UrlAdaptor);
+                  })
+                  .AllowSorting()
+                  .AllowResizing()
+                  .AllowReordering()
+                  .AllowPaging()
+                  .AllowFiltering()
+                  .AllowTextWrap()
+                  .AllowSelection()
+                  .ShowColumnChooser()
+                  .IsResponsive()
+                  .SelectionType(SelectionType.Multiple)
+                  .EnablePersistence(false)
+                  .EnableResponsiveRow(true)
+                  .EnableRTL(currentLang.IsRtl)
+                  .MinWidth(990)
+                  .Locale("localString")
+                  .ClientSideEvents(evt => evt.ActionBegin("onSlidersGridAction"))
+
+                  .EditSettings(edt => edt.AllowEditing().AllowDeleting().AllowAdding().ShowDeleteConfirmDialog())
+                  .PageSettings(p => { p.PageSize(25).PageSizeList(new List<int>(){10, 25, 50, 100, 250, 500}).PageCount(5).PrintMode(PrintMode.CurrentPage); })
+                  .FilterSettings(f => { f.FilterType(FilterType.Menu); })
+                  .TextWrapSettings(s => s.WrapMode(WrapMode.Both))
+                  .ScrollSettings(s=> s.EnableTouchScroll(true))
+                  .ToolbarSettings(toolBar => toolBar.ShowToolbar()
+                      .CustomToolbarItems(new List<object>() { new Syncfusion.JavaScript.Models.CustomToolbarItem() { TemplateID = "#SlidersGridRefresh" } })
+                      .ToolbarItems(items =>
+                      {
+                          items.AddTool(ToolBarItems.Add);
+                          items.AddTool(ToolBarItems.Edit);
+                          items.AddTool(ToolBarItems.Delete);
+                          items.AddTool(ToolBarItems.PrintGrid);
+                      }))
+                  .Columns(col =>
+                  {
+                      col.Field("Id").HeaderText(T("Id").ToString()).Width(100).IsPrimaryKey(true).Visible(false).Add();
+                      col.Field("ImageUrl").HeaderText(T("ImageUrl").ToString()).Width(200).Template("<img style='max-height:100%; max-width: 100%; margin: auto; display:block' src='{{:ImageUrl}}'/>").Add();
+                      col.Field("Title").HeaderText(T("Title").ToString()).Add();
+                      col.Field("Zone").HeaderText(T("Plugin.Widgets.Slider.DisplayZone").ToString()).Add();
+                      col.Field("Visible").HeaderText(T("Published").ToString()).Add();
+                      col.Field("DisplayOrder").HeaderText(T("DisplayOrder").ToString()).Visible(false).Add();
+                  }))
+        </div>
+    </div>
+</div>
+
+<script id="SlidersGridRefresh" type="text/x-jsrender">
+    <a onclick="refreshSlidersGrid();" class="e-toolbaricons e-icon"><i class="fa fa-refresh"></i></a>
+</script>
+
+@{
+    Html.AddInlineScript(ResourceLocation.Footer,
+        @<script>
+            function onSlidersGridAction(args) {
+                 if (args.requestType === "delete") {
+                     //Delete record
+                     args.cancel = true;
+                     DeleteEntity(args.data.map(function(item){return item.Id;}), "@Url.Action("Delete")", refreshSlidersGrid);
+                 } else if (args.requestType === "beginedit") {
+                     args.cancel = true;
+                     PopupWindows('@Url.Action("Editor")', 'SlidersEditor', 1200, 650, { id: args.rowData.Id }, 'get');
+                 } else if (args.requestType === "add") {
+                     args.cancel = true;
+                     PopupWindows('@Url.Action("Editor")', 'SlidersEditor', 1200, 650, {}, 'get');
+                 }
+             }
+
+            function refreshSlidersGrid() {
+                $("#SlidersGrid").ejGrid("refreshContent");
+             }
+         </script>);
+}

@@ -1,0 +1,27 @@
+﻿@using Devesprit.Services.Localization
+@model Devesprit.Data.Domain.TblPages
+@{
+    ViewBag.Title = Model.GetLocalized(p => p.Title);
+    ViewBag.MetaKeyword = Model.GetLocalized(p => p.MetaKeyword);
+    ViewBag.MetaDescription = Model.GetLocalized(p => p.MetaDescription);
+
+    Html.AddHeadCustomParts("<meta name=\"robots\" content=\"index,follow\">");
+}
+
+
+@if (Model.ShowInPanel)
+{
+    <div class="panel no-hide-overflow">
+        <div class="panel-title pad-10">
+            <h5 class="no-mar">@Html.Raw(Model.GetLocalized(p => p.PanelTitle))</h5>
+        </div>
+
+        <div class="pad-30">
+            @Html.Raw(Model.GetLocalized(p => p.Html))
+        </div>
+    </div>
+}
+else
+{
+    @Html.Raw(Model.GetLocalized(p => p.Html))
+}

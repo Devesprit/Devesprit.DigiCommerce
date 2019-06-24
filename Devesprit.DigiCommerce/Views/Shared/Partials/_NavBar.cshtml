@@ -1,0 +1,108 @@
+﻿@using Devesprit.Core
+@using Devesprit.Data.Domain
+@using Devesprit.Services.Localization
+@using Devesprit.Services.NavBar
+@using Devesprit.Core.Settings
+@using Devesprit.Services
+@{
+    var settings = DependencyResolver.Current.GetService<ISettingService>().LoadSetting<SiteSettings>();
+    var navbarItems = DependencyResolver.Current.GetService<INavBarService>().GetAsEnumerable().ToList();
+    var currentLangDir = DependencyResolver.Current.GetService<IWorkContext>().CurrentLanguage.IsRtl ? "rtl" : "ltr";
+}
+
+@functions
+{
+    string GenerateMenu(List<TblNavBarItems> navbarItems, int? currentParentId)
+    {
+        var result = "";
+        foreach (var navbarItem in navbarItems.Where(p => p.ParentItemId == currentParentId).OrderBy(p => p.Index))
+        {
+            var itemIcon = navbarItem.GetLocalized(p => p.Icon);
+            var itemOnClickJs = navbarItem.GetLocalized(p => p.OnClickJs);
+            var iconTag = string.IsNullOrWhiteSpace(itemIcon) ? "" : $"<i class=\'{itemIcon}\'></i> ";
+            var onClickScript = string.IsNullOrWhiteSpace(itemOnClickJs) ? "" : $" onclick=\"{itemOnClickJs}\" ";
+            var isFirstLevel = navbarItem.ParentItemId == null;
+            var dropdownliClass = (isFirstLevel ? "nav-item dropdown" : "dropdown-submenu");
+            var liClass = (isFirstLevel ? "class='nav-item'" : "");
+            var aClass = (isFirstLevel ? "nav-link" : "dropdown-item");
+
+            if (navbarItems.Any(p => p.ParentItemId == navbarItem.Id))
+            {
+                result += $@"<li class='{dropdownliClass}'>
+            <a class='{aClass} dropdown-toggle'
+               data-toggle='dropdown'
+               aria-haspopup='true'
+               aria-expanded='false'
+               href='{navbarItem.GetLocalized(p => p.Url)}'
+               target='{navbarItem.Target}'
+               title='{navbarItem.GetLocalized(p => p.Tooltip)}'
+               {onClickScript}>
+                {iconTag}
+                {navbarItem.GetLocalized(p => p.InnerHtml)}
+            </a>
+            <ul class='dropdown-menu' aria-labelledby='navbarDropdownMenuLink'>
+                {GenerateMenu(navbarItems, navbarItem.Id)}
+            </ul>
+        </li>";
+            }
+            else
+            {
+                result += $@"<li {liClass}>
+        <a class='{aClass}'
+           href='{navbarItem.GetLocalized(p => p.Url)}'
+           target='{navbarItem.Target}'
+           title='{navbarItem.GetLocalized(p => p.Tooltip)}'
+           {onClickScript}>
+            {iconTag}
+            {navbarItem.GetLocalized(p => p.InnerHtml)}
+        </a>
+     </li>";
+            }
+        }
+
+        return result;
+    }
+}
+
+<nav class="navbar navbar-expand-lg navbar-light" id="navbar">
+    <div class="container">
+        <a class="navbar-brand" id="navbar-brand" href="@Url.Action("Index", "Home")">
+            @if (!settings.GetLocalized(p => p.SiteLogoNavigationBar).IsNullOrWhiteSpace())
+            {
+                <img src="@settings.GetLocalized(p => p.SiteLogoNavigationBar)" alt="@settings.GetLocalized(p=> p.SiteName)" />
+            }
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNavDropdown">
+            <ul class="navbar-nav navbar-links">
+                @Html.Raw(GenerateMenu(navbarItems, null))
+            </ul>
+            <div class="form-inline my-1 my-md-0">
+                @using (Html.BeginForm("Index", "Search", FormMethod.Get, new { @class = "my-1 my-lg-0 search-box-placeholder", novalidate = "novalidate" }))
+                {
+                    <input id="txtSearch" type="text" name="query" class="form-control form-control-sm search-txt" placeholder="@T("Search")" data-val="true" data-val-required="" />
+                    <button type="submit" class="btn btn-sm btn-secondary"><i class="fa fa-search"></i></button>
+                }
+                <a class="btn btn-success btn-sm text-light mx-1 shopping-cart-btn" href="@Url.Action("Index", "Invoice", new {id = ""})">
+                    <span id="lblNumberOfItemsInShappingCart" class="badge badge-danger">0</span> <i class="fa fa-shopping-cart"></i> &nbsp;&nbsp;&nbsp; @T("MyShoppingCart")
+                </a>
+            </div>
+        </div>
+    </div>
+</nav>
+
+@{
+    Html.AddInlineScript(ResourceLocation.Footer,
+@<script>
+    $('#txtSearch').autocomplete({
+        serviceUrl: '@Url.Action("SearchSuggestion", "Search")',
+        paramName: 'searchString',
+        maxHeight: 450,
+         onSelect: function (suggestion) {
+             window.location.href =suggestion.data;
+         }
+     });
+</script>, true);
+}

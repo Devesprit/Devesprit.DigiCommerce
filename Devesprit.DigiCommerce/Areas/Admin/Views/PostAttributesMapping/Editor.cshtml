@@ -1,0 +1,129 @@
+﻿@using Devesprit.WebFramework.Helpers
+@model Devesprit.DigiCommerce.Areas.Admin.Models.PostAttributeMappingModel
+@{
+    Layout = Html.GetCurrentThemeAdminAreaLayoutAddress(true);
+}
+
+<div class="container">
+    <div class="panel pad-20 mar-v-35  fs-14">
+        @using (Html.BeginForm("Editor", "PostAttributesMapping", FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+            @Html.HiddenFor(p => p.Id)
+            @Html.HiddenFor(p => p.PostId)
+
+            <div class="row">
+                <div class="col-12">
+                    <div class="form-group">
+                        @Html.LabelFor(p => p.PostAttributeId)
+                        @Html.DropDownListFor(p => p.PostAttributeId, Model.PostAttributesList, T("SelectAnItem").ToString(), new { @class = "form-control form-control-sm custom-select" })
+                        @Html.ValidationMessageFor(p => p.PostAttributeId, "", new { @class = "form-text text-danger fs-12" })
+                    </div>
+                </div>
+            </div>
+            <div id="options-list-placeholder" class="row d-none">
+                <div class="col-12">
+                    <div class="form-group">
+                        @Html.LabelFor(p => p.AttributeOptionId)
+                        @Html.DropDownListFor(p => p.AttributeOptionId, Model.PostAttributeOptionsList, new { @class = "form-control form-control-sm custom-select" })
+                        @Html.ValidationMessageFor(p => p.AttributeOptionId, "", new { @class = "form-text text-danger fs-12" })
+                    </div>
+                </div>
+            </div>
+            <div id="value-input-placeholder" class="row d-none">
+                <div class="col-12">
+                    <div class="form-group">
+                        @Html.LabelFor(p => p.Value)
+                        @Html.LocalizedTextBoxFor(p => p.Value, null, new { @class = "form-control form-control-sm" })
+                        @Html.ValidationMessageFor(p => p.Value, "", new { @class = "form-text text-danger fs-12" })
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <div class="form-group">
+                        @Html.LabelFor(p => p.DisplayOrder)
+                        @Html.TextBoxFor(p => p.DisplayOrder, new { @class = "form-control form-control-sm", type = "number" })
+                        @Html.ValidationMessageFor(p => p.DisplayOrder, "", new { @class = "form-text text-danger fs-12" })
+                    </div>
+                </div>
+            </div>
+
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" }).ToMvcHtmlString()
+
+            <div class="text-center t-mar-20">
+                <button type="submit" class="btn btn-sm btn-warning">@T("Save")</button>
+                <button type="button" onclick="SaveAndContinue($(this).closest('form'));" class="btn btn-sm btn-warning">@T("SaveAndContinue")</button>
+                <button type="button" onclick="window.close();" class="btn btn-sm btn-success">@T("Close")</button>
+            </div>
+        }
+    </div>
+</div>
+
+@{
+    Html.AddInlineScript(ResourceLocation.Footer,
+        @<script>
+        function resetEditors() {
+            $("#options-list-placeholder").addClass("d-none");
+            $("#value-input-placeholder").addClass("d-none");
+            $("#AttributeOptionId").find('option').remove();
+            $("#AttributeOptionId").val('');
+            $("[id^=Value]").val('');
+        }
+
+        function loadAttributeOptions() {
+            var attrId = parseInt($("#PostAttributeId").val());
+
+            if (attrId > 0) {
+                $('#LoadingPanel').show();
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("GetAttributeOptions")',
+                    data: {
+                        attributeId: attrId
+                    },
+                    error: function (xhr, status, error) {
+                        resetEditors();
+                        ErrorAlert('@T("Error")', '@T("ServerConnectionError")');
+                    },
+                    success: function(response) {
+                        if (response.typeIsOption === true) {
+                            $("#options-list-placeholder").removeClass("d-none");
+
+                            $.each(response.options, function( index, value ) {
+                                $("#AttributeOptionId").append($('<option>', {
+                                    value: value.id,
+                                    text: value.text
+                                }));
+                            });
+
+                        } else {
+                            $("#value-input-placeholder").removeClass("d-none");
+                        }
+                    },
+                    complete: function() {
+                        $('#LoadingPanel').hide();
+                    }
+                });
+            } else {
+                resetEditors();
+            }
+        }
+
+        $(document).ready(function() {
+            if (@((Model.PostAttributeId > 0).ToString().ToLower()) === true) {
+                if (@((Model.AttributeOptionId > 0).ToString().ToLower()) === true) {
+                    $("#options-list-placeholder").removeClass("d-none");
+                } else {
+                    $("#value-input-placeholder").removeClass("d-none");
+                }
+            }
+
+            $("#PostAttributeId").on('change',
+                function() {
+                    resetEditors();
+                    loadAttributeOptions();
+                });
+        });
+</script>);
+}

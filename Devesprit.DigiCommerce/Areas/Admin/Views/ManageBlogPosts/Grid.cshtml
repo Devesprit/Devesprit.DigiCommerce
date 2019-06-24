@@ -1,0 +1,86 @@
+﻿
+@using Devesprit.Core
+@using Syncfusion.JavaScript
+@using Syncfusion.MVC.EJ
+@{
+    var currentLang = DependencyResolver.Current.GetService<IWorkContext>().CurrentLanguage;
+}
+
+@(Html.EJ().Grid<object>("BlogPostsGrid")
+          .Datasource(ds =>
+          {
+              ds.URL(ViewBag.DataSource).Adaptor(AdaptorType.UrlAdaptor);
+          })
+          .AllowSorting()
+          .AllowResizing()
+          .AllowReordering()
+          .AllowPaging()
+          .AllowFiltering()
+          .AllowTextWrap()
+          .AllowSelection()
+          .ShowColumnChooser()
+          .IsResponsive()
+          .SelectionType(SelectionType.Multiple)
+          .EnablePersistence(false)
+          .EnableResponsiveRow(true)
+          .EnableRTL(currentLang.IsRtl)
+          .MinWidth(990)
+          .Locale("localString")
+          .ClientSideEvents(evt => evt.ActionBegin("onBlogPostsGridAction"))
+
+          .EditSettings(edt => edt.AllowEditing().AllowDeleting().AllowAdding().ShowDeleteConfirmDialog())
+          .PageSettings(p => { p.PageSize(25).PageSizeList(new List<int>() { 10, 25, 50, 100, 250, 500 }).PageCount(5).PrintMode(PrintMode.CurrentPage); })
+          .FilterSettings(f => { f.FilterType(FilterType.Menu); })
+          .TextWrapSettings(s => s.WrapMode(WrapMode.Both))
+          .ScrollSettings(s => s.EnableTouchScroll(true))
+          .ToolbarSettings(toolBar => toolBar.ShowToolbar()
+              .CustomToolbarItems(new List<object>() { new Syncfusion.JavaScript.Models.CustomToolbarItem() { TemplateID = "#BlogPostsGridRefresh" } })
+              .ToolbarItems(items =>
+          {
+              items.AddTool(ToolBarItems.Add);
+              items.AddTool(ToolBarItems.Edit);
+              items.AddTool(ToolBarItems.Delete);
+              items.AddTool(ToolBarItems.PrintGrid);
+          }))
+          .Columns(col =>
+          {
+              col.Field("Id").Width(50).HeaderText(T("Id").ToString()).IsPrimaryKey(true).Visible(false).Add();
+              col.Field("Title").HeaderText(T("Title").ToString()).Width(450).Template("#TitleFieldTemplate").Add();
+              col.Field("PublishDate").HeaderText(T("PublishDate").ToString()).Format("{0:yyyy/MM/dd}").Visible(false).Add();
+              col.Field("LastUpDate").HeaderText(T("Update").ToString()).Format("{0:yyyy/MM/dd}").Add();
+              col.Field("NumberOfViews").HeaderText(T("Visits").ToString()).Format("{0:n0}").Add();
+              col.Field("PageTitle").HeaderText(T("PageTitle").ToString()).Visible(false).Add();
+              col.Field("Slug").HeaderText(T("Slug").ToString()).Visible(false).Add();
+              col.Field("Published").HeaderText(T("Published").ToString()).Add();
+              col.Field("IsFeatured").HeaderText(T("Featured").ToString()).Add();
+              col.Field("ShowInHotList").HeaderText(T("HotList").ToString()).Visible(false).Add();
+              col.Field("PinToTop").HeaderText(T("Pinned").ToString()).Visible(false).Add();
+              col.Field("AllowCustomerReviews").HeaderText(T("AllowCustomerReviews").ToString()).Visible(false).Add();
+          }))
+<script id="TitleFieldTemplate" type="text/x-jsrender">
+    {{:PostUrl}}
+</script>
+<script id="BlogPostsGridRefresh" type="text/x-jsrender">
+    <a onclick="refreshBlogPostsGrid();" class="e-toolbaricons e-icon"><i class="fa fa-refresh"></i></a>
+</script>
+
+@Html.MinifyInlineScript(
+    @<script>
+        function onBlogPostsGridAction(args) {
+            if (args.requestType === "delete") {
+                //Delete record
+                args.cancel = true;
+                DeleteEntity(args.data.map(function(item){return item.Id;}), "@Url.Action("Delete")", refreshBlogPostsGrid);
+            } else if (args.requestType === "beginedit") {
+                args.cancel = true;
+                PopupWindows('@Url.Action("Editor")', 'BlogPostEditor', 1200, 700, { id: args.rowData.Id }, 'get');
+            } else if (args.requestType === "add") {
+                args.cancel = true;
+                PopupWindows('@Url.Action("Editor")', 'BlogPostEditor', 1200, 700, {}, 'get');
+            }
+        }
+
+        function refreshBlogPostsGrid() {
+            $("#BlogPostsGrid").ejGrid("refreshContent");
+        }
+    </script>)

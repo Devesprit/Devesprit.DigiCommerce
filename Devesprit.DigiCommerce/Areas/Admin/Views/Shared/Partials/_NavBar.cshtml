@@ -1,0 +1,186 @@
+﻿
+@using Devesprit.Core.Localization
+@using Devesprit.Core.Settings
+@using Devesprit.Data.Enums
+@using Devesprit.Services
+@using Devesprit.Services.AdminAreaMenu
+@using Devesprit.Services.Localization
+@{
+    var settings = DependencyResolver.Current.GetService<ISettingService>().LoadSetting<SiteSettings>();
+    var localizationService = DependencyResolver.Current.GetService<ILocalizationService>();
+    var adminPluginMenus = DependencyResolver.Current.GetService<IAdminAreaMenuManager>().LoadAllPluginsMenu(HttpContext.Current, localizationService, Url);
+}
+
+@functions
+{
+    string GenerateMenu(List<AdminMenuItem> navbarItems)
+    {
+        var result = "";
+        foreach (var navbarItem in navbarItems.OrderByDescending(p => p.DisplayOrder))
+        {
+            var itemIcon = navbarItem.Icon;
+            var itemOnClickJs = navbarItem.OnClickJs;
+            var iconTag = string.IsNullOrWhiteSpace(itemIcon) ? "" : $"<i class=\'{itemIcon}\'></i> ";
+            var onClickScript = string.IsNullOrWhiteSpace(itemOnClickJs) ? "" : $" onclick=\"{itemOnClickJs}\" ";
+            var isFirstLevel = navbarItem.SubMenus == null || !navbarItem.SubMenus.Any();
+            var dropdownliClass = (isFirstLevel ? "nav-item dropdown" : "dropdown-submenu");
+            var liClass = (isFirstLevel ? "class='nav-item'" : "");
+            var aClass = (isFirstLevel ? "nav-link" : "dropdown-item");
+
+            if (!isFirstLevel)
+            {
+                result += $@"<li class='{dropdownliClass}'>
+        <a class='{aClass} dropdown-toggle'
+           data-toggle='dropdown'
+           aria-haspopup='true'
+           aria-expanded='false'
+           href='{navbarItem.DestUrl}'
+           target='{navbarItem.Target}'
+           title='{navbarItem.Tooltip}'
+           {onClickScript}>
+            {iconTag}
+            {navbarItem.MenuDisplayName}
+        </a>
+        <ul class='dropdown-menu' aria-labelledby='navbarDropdownMenuLink'>
+            {GenerateMenu(navbarItem.SubMenus)}
+        </ul>
+    </li>";
+            }
+            else
+            {
+                result += $@"<li {liClass}>
+    <a class='{aClass}'
+       href='{navbarItem.DestUrl}'
+       target='{navbarItem.Target}'
+       title='{navbarItem.Tooltip}'
+       {onClickScript}>
+        {iconTag}
+        {navbarItem.MenuDisplayName}
+    </a>
+ </li>";
+            }
+        }
+
+        return result;
+    }
+}
+
+<nav class="navbar navbar-expand-lg navbar-light" id="navbar">
+    <div class="container">
+        <a class="navbar-brand" id="navbar-brand" href="@Url.Action("Index", "Home", new {area = ""})">
+            @if (!settings.GetLocalized(p => p.SiteLogoNavigationBar).IsNullOrWhiteSpace())
+            {
+                <img src="@settings.GetLocalized(p => p.SiteLogoNavigationBar)" alt="@settings.GetLocalized(p=> p.SiteName)" />
+            }
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNavDropdown">
+            <ul class="navbar-nav navbar-links">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        @T("BasicDefinitions")
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                        <li><a href="@Url.Action("Index", "ManageCountries")" class="dropdown-item"><i class="fa fa-globe"></i> &nbsp;&nbsp;&nbsp;@T("Countries")</a></li>
+                        <li><a href="@Url.Action("Index", "ManageLanguages")" class="dropdown-item"><i class="fa fa-language"></i> &nbsp;&nbsp;&nbsp;@T("Languages")</a></li>
+                        <li><a href="@Url.Action("Index", "ManageCurrencies")" class="dropdown-item"><i class="fa fa-money"></i> &nbsp;&nbsp;&nbsp;@T("Currencies")</a></li>
+                        <li><hr /></li>
+                        <li><a href="@Url.Action("Index", "ManageNavBar")" class="dropdown-item"><i class="fa fa-bars"></i> &nbsp;&nbsp;&nbsp;@T("NavMenu")</a></li>
+                        <li><a href="@Url.Action("Index", "ManagePages")" class="dropdown-item"><i class="fa fa-html5"></i> &nbsp;&nbsp;&nbsp;@T("StaticPages")</a></li>
+                    </ul>
+                </li>
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        @T("ManageProductsAndBlog")
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                        <li><a href="@Url.Action("Index", "ManageProducts")" class="dropdown-item"><i class="fa fa-archive"></i>&nbsp;&nbsp;&nbsp;@T("Products")</a></li>
+                        <li><a href="@Url.Action("Index", "ManageComments", new {filterByPostType = PostType.Product})" class="dropdown-item"><i class="fa fa-comments-o"></i>&nbsp;&nbsp;&nbsp;@T("ManageComments") - (@(PostType.Product.GetLocalized()))</a></li>
+                        <li><hr /></li>
+                        <li><a href="@Url.Action("Index", "ManageBlogPosts")" class="dropdown-item"><i class="fa fa-newspaper-o"></i>&nbsp;&nbsp;&nbsp;@T("BlogPosts")</a></li>
+                        <li><a href="@Url.Action("Index", "ManageComments", new {filterByPostType = PostType.BlogPost})" class="dropdown-item"><i class="fa fa-comments-o"></i>&nbsp;&nbsp;&nbsp;@T("ManageComments") - (@(PostType.BlogPost.GetLocalized()))</a></li>
+                        <li><hr /></li>
+                        <li><a href="@Url.Action("Index", "ManagePostCategories")" class="dropdown-item"><i class="fa fa-sitemap"></i>&nbsp;&nbsp;&nbsp;@T("PostCategories")</a></li>
+                        <li><a href="@Url.Action("Index", "ManagePostAttributes")" class="dropdown-item"><i class="fa fa-puzzle-piece"></i>&nbsp;&nbsp;&nbsp;@T("PostAttributes")</a></li>
+                        <li><a href="@Url.Action("Index", "ManagePostTags")" class="dropdown-item"><i class="fa fa-tags"></i>&nbsp;&nbsp;&nbsp;@T("PostTags")</a></li>
+                    </ul>
+                </li>
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        @T("Financial")
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                        <li><a href="@Url.Action("Index", "ManageInvoices")" class="dropdown-item"><i class="fa fa-list-alt"></i>&nbsp;&nbsp;&nbsp;@T("Invoices")</a></li>
+                        <li><hr /></li>
+                        <li><a href="@Url.Action("Index", "ManageTaxes")" class="dropdown-item"><i class="fa fa-money"></i>&nbsp;&nbsp;&nbsp;@T("Taxes")</a></li>
+                    </ul>
+                </li>
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        @T("ManageUsers")
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                        <li><a href="@Url.Action("Index", "ManageUsers")" class="dropdown-item"><i class="fa fa-user"></i> &nbsp;&nbsp;&nbsp;@T("Users")</a></li>
+                        <li><a href="@Url.Action("Index", "ManageUserGroups")" class="dropdown-item"><i class="fa fa-users"></i>&nbsp;&nbsp;&nbsp;@T("UserGroups")</a></li>
+                        <li><hr /></li>
+                        <li><a href="@Url.Action("Index", "ManageUserMessages")" class="dropdown-item"><i class="fa fa-envelope"></i>&nbsp;&nbsp;&nbsp;@T("ManageUserMessages")</a></li>
+                    </ul>
+                </li>
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        @T("Other")
+                        @{ Html.RenderAction("GetAdminUnreadedNotificationsCount", "Notifications", new { area = "Admin" }); }
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                        <li>
+                            <a href="@Url.Action("Index", "Notifications")" class="dropdown-item">
+                                <i class="fa fa-envelope"></i>&nbsp;&nbsp;&nbsp;@T("AdminNotifications")
+                                @{ Html.RenderAction("GetAdminUnreadedNotificationsCount", "Notifications", new { area = "Admin" }); }
+                            </a>
+                        </li>
+                        <li><a href="@Url.Action("Index", "Notifications", new {seeUsersNotifications = true})" class="dropdown-item"><i class="fa fa-users"></i>&nbsp;&nbsp;&nbsp;@T("ManageUsersNotifications")</a></li>
+                        <li><hr /></li>
+                        <li><a href="@Url.Action("Index", "ManageSettings")" class="dropdown-item"><i class="fa fa-sliders"></i>&nbsp;&nbsp;&nbsp;@T("WebsiteSettings")</a></li>
+                        <li><a href="@Url.Action("Index", "ManagePlugins")" class="dropdown-item"><i class="fa fa-plug"></i>&nbsp;&nbsp;&nbsp;@T("ManagePlugins")</a></li>
+                        <li><a href="@Url.Action("Index", "ManageRedirects")" class="dropdown-item"><i class="fa fa-link"></i>&nbsp;&nbsp;&nbsp;@T("UrlRedirects")</a></li>
+                        <li><a href="@Url.Action("Index", "ManageFileServers")" class="dropdown-item"><i class="fa fa-server"></i>&nbsp;&nbsp;&nbsp;@T("FileServers")</a></li>
+                        <li><hr /></li>
+                        <li><a href="#" onclick="ShowFileExplorer();" class="dropdown-item"><i class="fa fa-folder-open"></i>&nbsp;&nbsp;&nbsp;@T("FileManager")</a></li>
+                        <li class="dropdown-submenu">
+                            <a class="dropdown-item dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" href="">
+                                <i class="fa fa-exclamation-triangle"></i>&nbsp;&nbsp;&nbsp;@T("ApplicationErrors")
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                                <li><a href="/elmah.axd" target="_blank" class="dropdown-item"><i class="fa fa-exclamation-triangle"></i>&nbsp;&nbsp;&nbsp;@T("ShowApplicationErrorsLog")</a></li>
+                                <li><hr /></li>
+                                <li><a href="@Url.Action("ClearApplicationErrorLog", "ManageSettings")" class="dropdown-item"><i class="fa fa-trash-o"></i>&nbsp;&nbsp;&nbsp;@T("ClearErrorsLog")</a></li>
+                            </ul>
+                        </li>
+                        <li><a href="@Url.Action("Index", "ManageBackgroundJobs")" class="dropdown-item"><i class="fa fa-thumb-tack"></i>&nbsp;&nbsp;&nbsp;@T("BackgroundJobsManager")</a></li>
+                        <li><hr /></li>
+                        <li><a href="@Url.Action("RefreshSearchEngineIndexes", "ManageSettings")" class="dropdown-item"><i class="fa fa-refresh"></i>&nbsp;&nbsp;&nbsp;@T("RefreshSearchEngineIndexes")</a></li>
+                    </ul>
+                </li>
+
+                @if (adminPluginMenus != null && adminPluginMenus.Any())
+                {
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            @T("Plugins")
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                            @Html.Raw(GenerateMenu(adminPluginMenus))
+                        </ul>
+                    </li>
+                }
+
+            </ul>
+        </div>
+    </div>
+</nav>

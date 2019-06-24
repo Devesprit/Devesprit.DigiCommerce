@@ -1,0 +1,260 @@
+﻿@using Devesprit.Utilities
+@using Devesprit.Services.Localization
+@using Devesprit.Core.Settings
+@using Devesprit.Data.Enums
+@using Devesprit.Services
+@using Devesprit.WebFramework.Helpers
+@model Devesprit.DigiCommerce.Models.Invoice.InvoiceModel
+@{
+    var settings = DependencyResolver.Current.GetService<ISettingService>().LoadSetting<SiteSettings>();
+    ViewBag.Title = T("Invoice");
+    var isAdmin = User.IsInRole("Admin");
+    var retUrl = string.IsNullOrWhiteSpace(Request.QueryString["returnUrl"]) ?
+        Request.Url.PathAndQuery : Request.QueryString["returnUrl"];
+
+    if (isAdmin)
+    {
+        @* Syncfusion Scripts *@
+        Html.AddScriptParts(ResourceLocation.Footer, "~/Scripts/jsrender.min.js");
+        Html.AddScriptParts(ResourceLocation.Footer, "~/Scripts/ej/web/ej.web.all.min.js");
+        Html.AddScriptParts(ResourceLocation.Footer, "~/Scripts/ej/common/ej.unobtrusive.min.js");
+
+        @* Syncfusion Styles *@
+        Html.AppendCssFileParts(ResourceLocation.Header, "~/Content/ej/web/responsive-css/ejgrid.responsive.css");
+        Html.AppendCssFileParts(ResourceLocation.Header, "~/Content/ej/web/responsive-css/ej.responsive.css");
+        Html.AppendCssFileParts(ResourceLocation.Header, "~/Content/ej/web/office-365/ej.theme.css");
+        Html.AppendCssFileParts(ResourceLocation.Header, "~/Content/ej/web/ej.widgets.core.office-365.min.css");
+
+        @* http://www.daterangepicker.com/ *@
+        Html.AddCssFileParts(ResourceLocation.Header, "~/Content/daterangepicker.css");
+
+        //Java scripts footer
+        @* http://www.daterangepicker.com/ *@
+        Html.AppendScriptParts(ResourceLocation.Footer, "~/Scripts/daterangepicker.js");
+        Html.AppendScriptParts(ResourceLocation.Footer, "~/Scripts/moment.js");
+    }
+
+    Html.AddHeadCustomParts("<meta name=\"robots\" content=\"noindex,nofollow\">");
+}
+
+<div class="row">
+    <div class="col-12">
+        <div class="panel">
+            <div class="panel-title pad-10">
+                <h5 class="no-mar">
+                    <a href="@Url.Action("Print", new {id = Model.Id})" target="_blank" class="btn btn-success btn-sm"><i class="fa fa-print"></i></a>
+
+                    @T("Invoice")
+
+                    @if (!isAdmin && Model.InvoiceDetails.Any())
+                    {
+                        switch (Model.Status)
+                        {
+                            case InvoiceStatus.Pending:
+                                <span class="badge badge-warning float-end">
+                                    @T("WaitingForPayment")
+                                </span>
+                                break;
+                            case InvoiceStatus.Paid:
+                                <span class="badge badge-success float-end">
+                                    @T("Paid")
+                                </span>
+                                break;
+                        }
+                    }
+                </h5>
+            </div>
+            <div class="fs-14 pad-20">
+                @if (isAdmin)
+                {
+                    Html.RenderPartial("Partials/_AddNewItemToInvoiceWizard", Model.Id);
+                }
+                <div id="InvoiceTblHolder" class="pos-relative">
+
+                    @{Html.RenderPartial("Partials/_InvoiceTable", Model);}
+
+                </div>
+                @if (isAdmin)
+                {
+                    Html.RenderPartial("Partials/_AdminInvoiceEditor", Model);
+                }
+                else
+                {
+                    if (Model.Status == InvoiceStatus.Paid)
+                    {
+                        <div class="t-mar-30 alert alert-success">
+                            <label><b>@T("Id"):</b></label> @Model.Id
+                            <br />
+                            @if (!string.IsNullOrWhiteSpace(Model.InvoiceNote))
+                            {
+                                <label><b>@T("Note"):</b></label>
+                                <textarea class="form-control form-control-sm mb-2" readonly="readonly">@Model.InvoiceNote</textarea>
+                            }
+                            <label><b>@T("CreationDate"):</b></label> @Model.CreateDate.ToString("F")
+                            <br />
+                            <label><b>@T("PaymentDate"):</b></label> @(Model.PaymentDate?.ToString("F") ?? "-")
+                            <br />
+                            <label><b>@T("PaymentGateway"):&nbsp;</b></label>
+                            @if (Model.PaymentGatewaySystemName != null)
+                            {
+                                var gateway = Model.PaymentGateways.FirstOrDefault(p => p?.PaymentGatewaySystemName == Model.PaymentGatewaySystemName);
+                                if (gateway?.PaymentGatewayIcon?.Length > 0)
+                                {
+                                    <img class="inline" style="max-height: 18px" src="@gateway.PaymentGatewayIcon.ByteArrayToBase64Image()" />
+                                }
+                            }
+                            @(Model.PaymentGatewayName ?? "-")
+                            <br />
+                            <label><b>@T("TransactionId"):</b></label> @(Model.PaymentGatewayTransactionId ?? "-")
+                            <br />
+                            <label><b>@T("Currency"):</b></label> @(Model.Currency?.GetLocalized(p => p.CurrencyName) ?? "-")
+                        </div>
+
+                        if (Model.UserBillingAddress != null)
+                        {
+                            {
+                                Html.RenderPartial("Partials/_InvoiceBillingAddress", Model.UserBillingAddress);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if (Model.InvoiceDetails.Any())
+                        {
+                            <div id="checkoutSection">
+                                <hr />
+
+                                @using (Html.BeginForm("Index", "Invoice", FormMethod.Post))
+                                {
+                                    @Html.AntiForgeryToken()
+                                    @Html.HiddenFor(p => p.Id)
+
+                                    if (settings.GetBillingAddressForInvoice)
+                                    {
+                                        {
+                                            Html.RenderPartial("Partials/_InvoiceBillingAddress", Model.UserBillingAddress);
+                                        }
+                                    }
+
+                                    if (Model.PaymentGateways.Count > 0)
+                                    {
+                                        <div class="text-center b-pad-40">
+                                            <p class="badge bg-success fs-14 pad-h-15 pad-v-5 fw-bold mar-v-20 text-light">
+                                                @Html.Raw(T("SpecifyPaymentMethod"))
+                                            </p>
+
+                                            <br />
+
+                                            <div class="btn-group" data-toggle="buttons">
+                                                @{ var counter = 0;}
+                                                @foreach (var gateway in Model.PaymentGateways)
+                                                {
+                                                    counter++;
+                                                    <label class="btn btn-light @Html.Raw(counter == 1 ? "active" : "")" title="@gateway.PaymentGatewayName">
+                                                        <input type="radio" name="paymentMethod" id="@gateway.PaymentGatewaySystemName" value="@gateway.PaymentGatewaySystemName" autocomplete="off" @Html.Raw(counter == 1 ? "checked" : "")>
+                                                        <img class="inline" style="max-height: 30px" src="@gateway.PaymentGatewayIcon.ByteArrayToBase64Image()" />
+                                                    </label>
+                                                }
+                                            </div>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="pad-v-20 text-center text-muted">
+                                            <strong>@T("NoGatewayForCurrentCurrency")</strong>
+                                        </div>
+                                    }
+
+                                    if (!string.IsNullOrWhiteSpace(ViewBag.Message))
+                                    {
+                                        <div class="text-danger text-center pad-10">
+                                            @Html.Raw(ViewBag.Message)
+                                        </div>
+                                    }
+
+                                    if (Model.PaymentGateways.Count > 0)
+                                    {
+                                        <div class="text-center">
+                                            @if (!User.Identity.IsAuthenticated && settings.UserMustRegisterBeforeCheckoutInvoice)
+                                            {
+                                                <button class="btn btn-outline-success" type="button" data-toggle="modal" data-target="#loginOrSignUpModal">@Html.Raw(T("CheckOut"))</button>
+                                            }
+                                            else
+                                            {
+                                                <button class="btn btn-outline-success" type="submit">@Html.Raw(T("CheckOut"))</button>
+                                            }
+                                        </div>
+                                    }
+                                }
+                            </div>
+                        }
+                    }
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal -->
+<div class="modal fade" id="loginOrSignUpModal" tabindex="-1" role="dialog" aria-labelledby="loginOrSignUpModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="loginOrSignUpModalLabel">@T("LoginOrSignup")</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p class="text-justify fs-14">
+                    @Html.Raw(T("LoginOrSignUpToPayInvoice"))
+                </p>
+            </div>
+            <div class="modal-footer">
+                <a class="btn btn-outline-success btn-sm" href="@Url.Action("SignUp", "User")"><i class="fa fa-user-plus"></i> @T("Signup")</a>
+                <a class="btn btn-success btn-sm" href="@Url.Action("Login", "User", new { returnUrl = retUrl, area = "" })"><i class="fa fa-sign-in"></i> @T("Login")</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@{
+    Html.AddInlineScript(ResourceLocation.Footer,
+        @<script>
+             function initDateTimePicker() {
+                 $('.datetimepicker').daterangepicker({
+                     timePicker: true,
+                     timePicker24Hour: true,
+                     timePickerSeconds: true,
+                     linkedCalendars: false,
+                     showCustomRangeLabel: false,
+                     alwaysShowCalendars: true,
+                     opens: 'center',
+                     autoUpdateInput: false,
+                     autoApply: false,
+                     singleDatePicker: true,
+                     showDropdowns: true,
+                     showWeekNumbers: true,
+                     showISOWeekNumbers: true,
+                     "locale": {
+                         "format": "YYYY/MM/DD HH:mm:ss",
+                         "separator": " - ",
+                         "applyLabel": "@T("Apply")",
+                         "cancelLabel": "@T("Cancel")"
+                     },
+                     function(start, end, label) {
+                         var years = moment().diff(start, 'years');
+                         alert("You are " + years + " years old!");
+                     }
+                 });
+
+                 $('.datetimepicker').on('apply.daterangepicker',
+                     function(ev, picker) {
+                         $(this).val(picker.startDate.format('YYYY/MM/DD HH:mm:ss'));
+                     });
+             }
+
+             initDateTimePicker();
+         </script>);
+}

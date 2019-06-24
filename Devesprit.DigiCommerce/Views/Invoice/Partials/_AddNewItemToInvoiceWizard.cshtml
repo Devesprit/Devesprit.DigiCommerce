@@ -1,0 +1,155 @@
+﻿@model Guid
+@{
+    Layout = null;
+}
+<div class="b-mar-20">
+    <button class="btn btn-success btn-sm" type="button" data-toggle="modal" data-target="#addNewItemModal">
+        <i class="fa fa-plus"></i> @T("Add")
+    </button>
+</div>
+
+
+<div class="modal fade" id="addNewItemModal" tabindex="-1" role="dialog" aria-labelledby="addNewItemModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addNewItemModalLabel">
+                    @T("AddNewItem")
+                </h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-12 col-lg-6">
+                        <div class="form-group">
+                            <label>@T("InvoiceID"):</label>
+                            @Html.TextBox("invoiceId", Model, new { @class = "form-control form-control-sm", @readonly = "" })
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-lg-6">
+                        <div class="form-group">
+                            <label>@T("ItemType"):</label>
+                            <select onchange="ddItemTypeOnChange()" id="ddItemType" class="form-control custom-select form-control-sm">
+                                <option value="">@T("SelectAnItem")</option>
+                                <option value="Product">@T("Product")</option>
+                                <option value="UserGroup">@T("UserGroup")</option>
+                                <option value="Other">@T("Other")</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12" id="newItemContent">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-success btn-sm" onclick="btnAddOnClick()">
+                    <i class="fa fa-plus"></i>
+                    @T("Add")
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@using (Html.BeginForm(null, null, FormMethod.Post, new { id = "__AjaxAntiForgeryForm" }))
+{
+    @Html.AntiForgeryToken()
+}
+
+
+@Html.MinifyInlineScript(
+    @<script>
+         function btnAddOnClick() {
+             if ($("#ddItemType").val() === "Product") {
+                 var productsGrid = $("#ProductsGrid").ejGrid("instance");
+                 if (productsGrid.getSelectedRecords().length === 0) {
+                     WarningAlert("@T("Note")", "@T("YouHaveNotSelectedAnything")");
+                     return;
+                 }
+                 var productId = productsGrid.getSelectedRecords()[0].Id;
+                 $('#LoadingPanel').show();
+                 $.ajax({
+                     type: "GET",
+                     url: '@Url.Action("PurchaseProductWizard", "Purchase")',
+                     data: {
+                         productId: productId,
+                         invoiceId: '@Model.ToString()'
+                     },
+                     error: function(xhr, status, error) {
+                         ErrorAlert('@T("Error")', '@T("ServerConnectionError")');
+                     },
+                     success: function (response) {
+                         $('#addNewItemModal').modal('hide');
+                         setTimeout(
+                             function() 
+                             {
+                                 $('#dlgProductPurchaseWizard').html(response);
+                             }, 500);
+                     },
+                     complete: function() {
+                         $('#LoadingPanel').hide();
+                     }
+                 });
+             } else if ($("#ddItemType").val() === "UserGroup") {
+                 var userGroupsGrid = $("#UserGroupsGrid").ejGrid("instance");
+                 if (userGroupsGrid.getSelectedRecords().length === 0) {
+                     WarningAlert("@T("Note")", "@T("YouHaveNotSelectedAnything")");
+                     return;
+                 }
+                 var groupId = userGroupsGrid.getSelectedRecords()[0].Id;
+                 $('#addNewItemModal').modal('hide');
+
+                 $('#LoadingPanel').show();
+                 var form = $('#__AjaxAntiForgeryForm');
+                 var token = $('input[name="__RequestVerificationToken"]', form).val();
+                 $.ajax({
+                     type: "POST",
+                     url: '@Url.Action("UpgradeAccount", "Purchase")',
+                     data: {
+                         __RequestVerificationToken: token,
+                         selectedUserGroupId: groupId,
+                         invoiceId: '@Model.ToString()'
+                     },
+                     error: function(xhr, status, error) {
+                         ErrorAlert('@T("Error")', '@T("ServerConnectionError")');
+                     },
+                     success: function(response) {
+                         location.reload();
+                     },
+                     complete: function() {
+                         $('#LoadingPanel').hide();
+                     }
+                 });
+
+             } else if ($("#ddItemType").val() === "Other") {
+                 $.validator.unobtrusive.parse($('#frmAddNewItemToInvoiceManually'));
+                 if ($('#frmAddNewItemToInvoiceManually').valid()) {
+                     $('#addNewItemModal').modal('hide');
+                     $('#frmAddNewItemToInvoiceManually').submit();
+                 }
+             } else {
+                 WarningAlert("@T("Note")", "@T("YouHaveNotSelectedAnything")");
+             }
+         }
+
+
+         function ddItemTypeOnChange() {
+             if ($("#ddItemType").val() === "Product") {
+                 $("#newItemContent").html('@Html.Raw(T("LoadingPanelHtml"))').load(
+                     '@Url.Action("Grid", "ManageProducts", new {area = "Admin"})',
+                     function() { ej.widget.init(); });
+             } else if ($("#ddItemType").val() === "UserGroup") {
+                 $("#newItemContent").html('@Html.Raw(T("LoadingPanelHtml"))').load(
+                     '@Url.Action("Grid", "ManageUserGroups", new {area = "Admin"})',
+                     function() { ej.widget.init(); });
+             } else if ($("#ddItemType").val() === "Other") {
+                 $("#newItemContent").html('@Html.Raw(T("LoadingPanelHtml"))')
+                     .load('@Url.Action("AddNewItemToInvoiceManually", new {invoiceId = Model})');
+             }
+         }
+</script>)

@@ -1,0 +1,1 @@
+﻿<%@ ServiceHost Language="C#" Service="Devesprit.FileServer.FileManagerService, Devesprit.FileServer" CodeBehind="FileManagerService.svc.cs" Factory="Devesprit.FileServer.CustomAutofacServiceHostFactory, Devesprit.FileServer"%>

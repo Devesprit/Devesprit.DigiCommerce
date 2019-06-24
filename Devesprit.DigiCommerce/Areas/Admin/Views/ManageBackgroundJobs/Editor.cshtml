@@ -1,0 +1,175 @@
+﻿@using Devesprit.WebFramework.Helpers
+@model Devesprit.DigiCommerce.Areas.Admin.Models.BackgroundJobModel
+@{
+    Layout = Html.GetCurrentThemeAdminAreaLayoutAddress(true);
+    Html.AppendScriptParts(ResourceLocation.Footer, "~/Scripts/jqCron.en.js");
+    Html.AppendScriptParts(ResourceLocation.Footer, "~/Scripts/jqCron.js");
+    Html.AppendCssFileParts(ResourceLocation.Header, "~/Content/jqCron.css");
+}
+
+<div class="container">
+    <div class="panel pad-20 mar-v-35  fs-14">
+        <p>
+            <b>@T("Job"):</b>
+            <p class="ltr-dir no-t-mar">
+                @if (Model.Paused)
+                {
+                    <span class="badge badge-danger">@T("JobIsPaused")</span>
+                }
+                @Model.Job (@Model.CronDesc) -
+                <button type="button" onclick="ExecuteJobNow('@Model.Id')" class="btn btn-xs btn-outline-primary">@T("ExecuteNow")</button>
+                @if (Model.Paused)
+                {
+                    <button type="button" class="btn btn-xs btn-outline-success" onclick="PauseResumeJob('@Model.Id', false)">@T("Resume")</button>
+                }
+                else
+                {
+                    <button type="button" class="btn btn-xs btn-outline-warning" onclick="PauseResumeJob('@Model.Id', true)">@T("Pause")</button>
+                }
+            </p>
+            <br/>
+            <b>@T("LastExecution"):</b>
+            @if (Model.LastJobId.IsNullOrWhiteSpace())
+            {
+                @Model.LastExecution
+                @Html.Raw(Model.LastExecutionState.IsNullOrWhiteSpace() ? "" : $"({Model.LastExecutionState})")
+            }
+            else
+            {
+                <a href="/hangfire/jobs/details/@Model.LastJobId" target="_blank">@Model.LastExecution</a>
+                @Html.Raw(Model.LastExecutionState.IsNullOrWhiteSpace() ? "" : $"({Model.LastExecutionState})")
+            }
+            <br />
+        <b>@T("NextExecution"):</b> @Model.NextExecution
+        </p>
+
+        @using (Html.BeginForm("Editor", "ManageBackgroundJobs", FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+            @Html.HiddenFor(p => p.Id)
+
+            <div class="row">
+                <div class="col-12">
+                    @Html.LabelFor(p => p.Cron)
+                    <div class="input-group ltr-dir text-left">
+                        @Html.TextBoxFor(p => p.Cron, null, new { @class = "form-control form-control-sm" })
+                        <div class="input-group-append">
+                            <button class="btn btn-outline-secondary btn-sm" type="button" data-toggle="collapse" data-target="#collapseCronEditor">
+                                <i class="fa fa-pencil-square-o"></i>
+                            </button>
+                            <button type="button" class="btn btn-outline-success btn-sm" onclick="GotoCronTab()">
+                                <i class="fa fa-external-link"></i>
+                            </button>
+                        </div>
+                    </div>
+                    @Html.ValidationMessageFor(p => p.Cron, "", new { @class = "form-text text-danger fs-12" })
+                    <div class="collapse my-3 ltr-dir text-left" id="collapseCronEditor">
+                        <div class="card card-body">
+                            <div id="cronEditor"></div>
+                            <iv id="cronEditorResult" class="mt-2"></iv>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="form-group">
+                        @Html.LabelFor(p => p.TimeZoneId)
+                        @Html.DropDownListFor(p => p.TimeZoneId, Model.TimeZoneList, T("SelectAnItem").ToString(), new { @class = "form-control custom-select form-control-sm" })
+                        @Html.ValidationMessageFor(p => p.TimeZoneId, "", new { @class = "form-text text-danger fs-12" })
+                    </div>
+                </div>
+            </div>
+
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" }).ToMvcHtmlString()
+
+            <div class="text-center t-mar-20">
+                <button type="submit" class="btn btn-sm btn-warning">@T("Save")</button>
+                <button type="button" onclick="SaveAndContinue($(this).closest('form'));" class="btn btn-sm btn-warning">@T("SaveAndContinue")</button>
+                <button type="button" onclick="window.close();" class="btn btn-sm btn-success">@T("Close")</button>
+            </div>
+        }
+    </div>
+</div>
+
+@{
+    Html.AddInlineScript(ResourceLocation.FooterAfterOther,
+@<script>
+             $('#cronEditor').jqCron({
+                 enabled_minute: true,
+                 multiple_dom: true,
+                 multiple_month: true,
+                 multiple_mins: true,
+                 multiple_dow: true,
+                 multiple_time_hours: true,
+                 multiple_time_minutes: true,
+                 default_period: 'week',
+                 no_reset_button: false,
+                 lang: 'en',
+                 bind_to: $('#cronEditorResult'),
+                 bind_method: {
+                     set: function($element, value) {
+                         $element.text(value);
+                     }
+                 }
+             });
+
+             $('#TimeZoneId').select2({
+                 tags: true,
+                 dropdownAutoWidth: true,
+                 width: 'auto',
+                 dir: "ltr",
+                 theme: "bootstrap"
+             });
+
+             function ExecuteJobNow(jobId) {
+                 $('#LoadingPanel').show();
+                 $.ajax({
+                     type: "POST",
+                     url: "@Url.Action("ExecuteJobNow")",
+                     data: {
+                         jobId: jobId
+                     },
+                     error: function(xhr, status, error) {
+                         ErrorAlert('@T("Error")', '@T("ServerConnectionError")');
+                     },
+                     success: function(response) {
+                         if (response !== 'OK') {
+                             ErrorAlert('@T("Error")', response);
+                         }
+                     },
+                     complete: function() {
+                         $('#LoadingPanel').hide();
+                     }
+                 });
+             }
+
+             function PauseResumeJob(jobId, pause) {
+                 $('#LoadingPanel').show();
+                 $.ajax({
+                     type: "POST",
+                     url: "@Url.Action("PauseResumeJob")",
+                     data: {
+                         jobId: jobId,
+                         pause: pause
+                     },
+                     error: function(xhr, status, error) {
+                         ErrorAlert('@T("Error")', '@T("ServerConnectionError")');
+                     },
+                     success: function(response) {
+                         if (response === 'OK') {
+                             location.reload();
+                         } else {
+                             ErrorAlert('@T("Error")', response);
+                         }
+                     },
+                     complete: function() {
+                         $('#LoadingPanel').hide();
+                     }
+                 });
+             }
+
+             function GotoCronTab() {
+                 var url = 'https://crontab.guru/#' + $('#Cron').val();
+                 window.open(url, '_blank');
+             }
+</script>, true);
+}

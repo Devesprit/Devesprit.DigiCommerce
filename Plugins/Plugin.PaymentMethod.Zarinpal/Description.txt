@@ -1,0 +1,8 @@
+﻿Group: Payment Methods
+FriendlyName: Zarinpal Payment Gateway
+SystemName: PaymentMethods.Zarinpal
+Version: 1.0
+Author: Devesprit.DigiCommerce team
+DisplayOrder: 1
+FileName: Plugin.PaymentMethod.Zarinpal.dll
+Description: This plugin allows paying with ZarinPal (https://www.zarinpal.com/).

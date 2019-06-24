@@ -1,0 +1,53 @@
+﻿@model Devesprit.DigiCommerce.Areas.Admin.Models.ProductDiscountsForUserGroupsModel
+@{
+    Layout = Html.GetCurrentThemeAdminAreaLayoutAddress(true);
+}
+
+<div class="container">
+    <div class="panel pad-20 mar-v-35  fs-14">
+        @using (Html.BeginForm("Editor", "ProductDiscountsForUserGroups", FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+            @Html.HiddenFor(p => p.Id)
+            @Html.HiddenFor(p => p.ProductId)
+
+            <div class="row">
+                <div class="col-12">
+                    <div class="form-group">
+                        @Html.LabelFor(p => p.UserGroupId)
+                        @Html.DropDownListFor(p => p.UserGroupId, Model.UserGroupsList, T("SelectAnItem").ToString(), new { @class = "form-control custom-select form-control-sm" })
+                        @Html.ValidationMessageFor(p => p.UserGroupId, "", new { @class = "form-text text-danger fs-12" })
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <div class="form-group">
+                        @Html.LabelFor(p => p.DiscountPercent)
+                        @Html.TextBoxFor(p => p.DiscountPercent, new { @class = "form-control form-control-sm", type = "number" })
+                        @Html.ValidationMessageFor(p => p.DiscountPercent, "", new { @class = "form-text text-danger fs-12" })
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <div class="form-group">
+                        <div class="form-check">
+                            @Html.CheckBoxFor(p => p.ApplyDiscountToProductAttributes, new { @class = "form-check-input" })
+                            @Html.LabelFor(p => p.ApplyDiscountToProductAttributes, new { @class = "form-check-label" })
+                        </div>
+                        @Html.ValidationMessageFor(p => p.ApplyDiscountToProductAttributes, "", new { @class = "form-text text-danger fs-12" })
+                    </div>
+                </div>
+            </div>
+
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" }).ToMvcHtmlString()
+
+            <div class="text-center t-mar-20">
+                <button type="submit" class="btn btn-sm btn-warning">@T("Save")</button>
+                <button type="button" onclick="SaveAndContinue($(this).closest('form'));" class="btn btn-sm btn-warning">@T("SaveAndContinue")</button>
+                <button type="button" onclick="window.close();" class="btn btn-sm btn-success">@T("Close")</button>
+            </div>
+        }
+    </div>
+</div>

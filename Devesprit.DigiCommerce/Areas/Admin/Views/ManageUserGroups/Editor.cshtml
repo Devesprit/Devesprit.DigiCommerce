@@ -1,0 +1,212 @@
+﻿@using Devesprit.WebFramework.Helpers
+@model Devesprit.DigiCommerce.Areas.Admin.Models.UserGroupModel
+@{
+    Layout = Html.GetCurrentThemeAdminAreaLayoutAddress(true);
+    @* https://CKEditor.com *@
+    Html.AddScriptParts(ResourceLocation.Footer, "~/Scripts/CKEditor/ckeditor.js", true);
+}
+
+<div class="container-fluid mar-v-35">
+    <ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a class="nav-link nav-link-sm active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">@T("AccountInfo")</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link nav-link-sm" id="subscribed-users-tab" data-toggle="tab" href="#subscribed-users" role="tab" aria-controls="subscribed-users" aria-selected="false">@T("SubscribedUsers")</a>
+        </li>
+    </ul>
+    <div class="panel no-hide-overflow pad-20 fs-14">
+        <div class="tab-content">
+            <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+
+                @using (Html.BeginForm("Editor", "ManageUserGroups", FormMethod.Post))
+                {
+                    @Html.AntiForgeryToken()
+                    @Html.HiddenFor(p => p.Id)
+
+                    <div class="row">
+                        <div class="col-12 border border-left-0 border-right-0 border-top-0 b-mar-10 t-mar-20">
+                            <h5 class="text-secondary text-capitalize">@T("GeneralInfo")</h5>
+                        </div>
+                        <div class="col-12">
+                            <div class="form-group">
+                                @Html.LabelFor(p => p.GroupName)
+                                @Html.LocalizedTextBoxFor(p => p.GroupName, null, new { @class = "form-control form-control-sm" })
+                                @Html.ValidationMessageFor(p => p.GroupName, "", new { @class = "form-text text-danger fs-12" })
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="form-group">
+                                @Html.LabelFor(p => p.GroupDescription)
+                                @Html.LocalizedTextAreaFor(p => p.GroupDescription, new { @class = "ckeditor" })
+                                @Html.ValidationMessageFor(p => p.GroupDescription, "", new { @class = "form-text text-danger fs-12" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12 border border-left-0 border-right-0 border-top-0 b-mar-10 t-mar-20">
+                            <h5 class="text-secondary text-capitalize">@T("Prices")</h5>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <div class="form-group">
+                                @Html.LabelFor(p => p.SubscriptionFee)
+                                @Html.TextBoxFor(p => p.SubscriptionFee, new { @class = "form-control form-control-sm", type = "number" })
+                                <span class="form-text text-muted fs-11">@T("ZeroFree")</span>
+                                @Html.ValidationMessageFor(p => p.SubscriptionFee, "", new { @class = "form-text text-danger fs-12" })
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <div class="form-group">
+                                @Html.LabelFor(p => p.SubscriptionDiscountPercentage)
+                                @Html.TextBoxFor(p => p.SubscriptionDiscountPercentage, new { @class = "form-control form-control-sm", type = "number" })
+                                @Html.ValidationMessageFor(p => p.SubscriptionDiscountPercentage, "", new { @class = "form-text text-danger fs-12" })
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <div class="form-group">
+                                @Html.LabelFor(p => p.DiscountForRenewalBeforeExpiration)
+                                @Html.TextBoxFor(p => p.DiscountForRenewalBeforeExpiration, new { @class = "form-control form-control-sm", type = "number" })
+                                @Html.ValidationMessageFor(p => p.DiscountForRenewalBeforeExpiration, "", new { @class = "form-text text-danger fs-12" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12 border border-left-0 border-right-0 border-top-0 b-mar-10 t-mar-20">
+                            <h5 class="text-secondary text-capitalize">@T("Appearance")</h5>
+                        </div>
+                        <div class="col-12 col-md-6 ">
+                            <div class="form-group">
+                                @Html.LabelFor(p => p.GroupLargeIcon)
+                                @Html.LocalizedTextBoxFor(p => p.GroupLargeIcon, null, new { @class = "form-control form-control-sm ltr-dir" })
+                                <button type="button" onclick="ShowFileExplorerForLocalizedEntity('GroupLargeIcon');" class="btn btn-outline-success btn-xs float-end t-mar-5"><i class="fa fa-folder-open"></i> ...</button>
+                                <span class="form-text text-muted fs-11">@T("DesiredImageUrl")</span>
+                                @Html.ValidationMessageFor(p => p.GroupLargeIcon, "", new { @class = "form-text text-danger fs-12" })
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-6 ">
+                            <div class="form-group">
+                                @Html.LabelFor(p => p.GroupSmallIcon)
+                                @Html.LocalizedTextBoxFor(p => p.GroupSmallIcon, null, new { @class = "form-control form-control-sm ltr-dir" })
+                                <button type="button" onclick="ShowFileExplorerForLocalizedEntity('GroupSmallIcon');" class="btn btn-outline-success btn-xs float-end t-mar-5"><i class="fa fa-folder-open"></i> ...</button>
+                                <span class="form-text text-muted fs-11">@T("DesiredImageUrl")</span>
+                                @Html.ValidationMessageFor(p => p.GroupSmallIcon, "", new { @class = "form-text text-danger fs-12" })
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-6 ">
+                            <div class="form-group">
+                                @Html.LabelFor(p => p.GroupTextColor)
+                                @Html.LocalizedTextBoxFor(p => p.GroupTextColor, null, new { @class = "form-control form-control-sm ltr-dir", type = "color" })
+                                @Html.ValidationMessageFor(p => p.GroupTextColor, "", new { @class = "form-text text-danger fs-12" })
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-6 ">
+                            <div class="form-group">
+                                @Html.LabelFor(p => p.GroupBackgroundColor)
+                                @Html.LocalizedTextBoxFor(p => p.GroupBackgroundColor, null, new { @class = "form-control form-control-sm ltr-dir", type = "color" })
+                                @Html.ValidationMessageFor(p => p.GroupBackgroundColor, "", new { @class = "form-text text-danger fs-12" })
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-6 ">
+                            <div class="form-group">
+                                @Html.LabelFor(p => p.WhenExtendCurrentPlanBtnShown)
+                                @Html.TextBoxFor(p => p.WhenExtendCurrentPlanBtnShown, null, new { @class = "form-control form-control-sm ltr-dir", type = "number" })
+                                <span class="form-text text-muted fs-11">@T("WhenExtendCurrentPlanBtnShownDescription")</span>
+                                @Html.ValidationMessageFor(p => p.WhenExtendCurrentPlanBtnShown, "", new { @class = "form-text text-danger fs-12" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12 border border-left-0 border-right-0 border-top-0 b-mar-10 t-mar-20">
+                            <h5 class="text-secondary text-capitalize">@T("SubscriptionExpiration")</h5>
+                        </div>
+                        <div class="col-12 col-md-4 ">
+                            <div class="form-group">
+                                @Html.LabelFor(p => p.SubscriptionExpirationTime)
+                                @Html.TextBoxFor(p => p.SubscriptionExpirationTime, new { @class = "form-control form-control-sm", type = "number" })
+                                @Html.ValidationMessageFor(p => p.SubscriptionExpirationTime, "", new { @class = "form-text text-danger fs-12" })
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-4 t-mar-30">
+                            <div class="form-group">
+                                @Html.LocalizedEnumDropDownListFor(p => p.SubscriptionExpirationPeriodType, T("SelectAnItem").ToString(), new { @class = "form-control custom-select form-control-sm" })
+                                @Html.ValidationMessageFor(p => p.SubscriptionExpirationPeriodType, "", new { @class = "form-text text-danger fs-12" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12 border border-left-0 border-right-0 border-top-0 b-mar-10 t-mar-20">
+                            <h5 class="text-secondary text-capitalize">@T("DownloadLimit")</h5>
+                        </div>
+                        <div class="col-12 col-md-4 ">
+                            <div class="form-group">
+                                @Html.LabelFor(p => p.MaxDownloadCount)
+                                @Html.TextBoxFor(p => p.MaxDownloadCount, new { @class = "form-control form-control-sm", type = "number" })
+                                @Html.ValidationMessageFor(p => p.MaxDownloadCount, "", new { @class = "form-text text-danger fs-12" })
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-4 ">
+                            <div class="form-group">
+                                @Html.LabelFor(p => p.MaxDownloadPeriodType)
+                                @Html.LocalizedEnumDropDownListFor(p => p.MaxDownloadPeriodType, T("SelectAnItem").ToString(), new { @class = "form-control custom-select form-control-sm" })
+                                @Html.ValidationMessageFor(p => p.MaxDownloadPeriodType, "", new { @class = "form-text text-danger fs-12" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12 border border-left-0 border-right-0 border-top-0 b-mar-10 t-mar-20">
+                            <h5 class="text-secondary text-capitalize">@T("OtherInfo")</h5>
+                        </div>
+                        <div class="col-12 col-md-4 ">
+                            <div class="form-group">
+                                @Html.LabelFor(p => p.GroupPriority)
+                                @Html.TextBoxFor(p => p.GroupPriority, new { @class = "form-control form-control-sm", type = "number" })
+                                @Html.ValidationMessageFor(p => p.GroupPriority, "", new { @class = "form-text text-danger fs-12" })
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-4 ">
+                            <div class="form-group">
+                                @Html.LabelFor(p => p.GroupDisplayOrder)
+                                @Html.TextBoxFor(p => p.GroupDisplayOrder, new { @class = "form-control form-control-sm", type = "number" })
+                                @Html.ValidationMessageFor(p => p.GroupDisplayOrder, "", new { @class = "form-text text-danger fs-12" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12 col-lg-4">
+                            <div class="form-group no-b-mar">
+                                <div class="form-check">
+                                    @Html.CheckBoxFor(p => p.Published, new { @class = "form-check-input" })
+                                    @Html.LabelFor(p => p.Published, new { @class = "form-check-label" })
+                                </div>
+                                @Html.ValidationMessageFor(p => p.Published, "", new { @class = "form-text text-danger fs-12" })
+                            </div>
+                        </div>
+                    </div>
+
+                    @Html.ValidationSummary(true, "", new { @class = "text-danger" }).ToMvcHtmlString()
+
+                    <div class="text-center t-mar-20">
+                        <button type="submit" class="btn btn-sm btn-warning">@T("Save")</button>
+                        <button type="button" onclick="SaveAndContinue($(this).closest('form'));" class="btn btn-sm btn-warning">@T("SaveAndContinue")</button>
+                        <button type="button" onclick="window.close();" class="btn btn-sm btn-success">@T("Close")</button>
+                    </div>
+                }
+
+
+            </div>
+            <div class="tab-pane fade" id="subscribed-users" role="tabpanel" aria-labelledby="subscribed-users-tab">
+                @if (Model.Id == null)
+                {
+                    <h4 class="text-muted text-center mar-v-50">
+                        @T("SaveRecordToSeeThisSection")
+                    </h4>
+                }
+                else
+                {
+                    Html.RenderAction("Grid", "ManageUsers", new { groupId = Model.Id.Value });
+                }
+            </div>
+        </div>
+    </div>
+</div>
+

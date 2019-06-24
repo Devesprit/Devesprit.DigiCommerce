@@ -1,0 +1,87 @@
+﻿
+@using Devesprit.Core
+@using Syncfusion.JavaScript
+@using Syncfusion.MVC.EJ
+@{
+    ViewBag.Title = T("ManageCountries");
+    var currentLang = DependencyResolver.Current.GetService<IWorkContext>().CurrentLanguage;
+}
+
+<div class="panel no-hide-overflow">
+    <div class="panel-title pad-10">
+        <h5 class="no-mar">
+            @T("ManageCountries")
+        </h5>
+    </div>
+
+    <div class="pad-10">
+        @(Html.EJ().Grid<object>("CountriesGrid")
+              .Datasource(ds =>
+              {
+                  ds.URL(Url.Action("GridDataSource")).Adaptor(AdaptorType.UrlAdaptor);
+              })
+              .AllowSorting()
+              .AllowResizing()
+              .AllowReordering()
+              .AllowPaging()
+              .AllowFiltering()
+              .AllowTextWrap()
+              .AllowSelection()
+              .ShowColumnChooser()
+              .IsResponsive()
+              .SelectionType(SelectionType.Multiple)
+              .EnablePersistence(false)
+              .EnableResponsiveRow(true)
+              .EnableRTL(currentLang.IsRtl)
+              .MinWidth(990)
+              .Locale("localString")
+              .ClientSideEvents(evt => evt.ActionBegin("onCountriesGridAction"))
+
+              .EditSettings(edt => edt.AllowEditing().AllowDeleting().AllowAdding().ShowDeleteConfirmDialog())
+              .PageSettings(p => { p.PageSize(25).PageSizeList(new List<int>(){10, 25, 50, 100, 250, 500}).PageCount(5).PrintMode(PrintMode.CurrentPage); })
+              .FilterSettings(f => { f.FilterType(FilterType.Menu); })
+              .TextWrapSettings(s => s.WrapMode(WrapMode.Both))
+              .ScrollSettings(s=> s.EnableTouchScroll(true))
+              .ToolbarSettings(toolBar => toolBar.ShowToolbar()
+                  .CustomToolbarItems(new List<object>(){ new Syncfusion.JavaScript.Models.CustomToolbarItem() { TemplateID = "#CountriesGridRefresh" } })
+                  .ToolbarItems(items =>
+              {
+                  items.AddTool(ToolBarItems.Add);
+                  items.AddTool(ToolBarItems.Edit);
+                  items.AddTool(ToolBarItems.Delete);
+                  items.AddTool(ToolBarItems.PrintGrid);
+              }))
+              .Columns(col =>
+              {
+                  col.Field("Id").HeaderText(T("Id").ToString()).Width(100).IsPrimaryKey(true).Visible(false).Add();
+                  col.Field("CountryName").HeaderText(T("CountryName").ToString()).Add();
+              }))
+    </div>
+</div>
+
+<script id="CountriesGridRefresh" type="text/x-jsrender">
+    <a onclick="refreshCountriesGrid();" class="e-toolbaricons e-icon"><i class="fa fa-refresh"></i></a>
+</script>
+
+@{
+    Html.AddInlineScript(ResourceLocation.Footer,
+        @<script>
+        function onCountriesGridAction(args) {
+            if (args.requestType === "delete") {
+                //Delete record
+                args.cancel = true;
+                DeleteEntity(args.data.map(function(item){return item.Id;}), "@Url.Action("Delete")", refreshCountriesGrid);
+            } else if (args.requestType === "beginedit") {
+                args.cancel = true;
+                PopupWindows('@Url.Action("Editor")', 'CountryEditor', 600, 300, { id: args.rowData.Id }, 'get');
+            } else if (args.requestType === "add") {
+                args.cancel = true;
+                PopupWindows('@Url.Action("Editor")', 'CountryEditor', 600, 300, {}, 'get');
+            }
+        }
+
+        function refreshCountriesGrid() {
+            $("#CountriesGrid").ejGrid("refreshContent");
+        }
+</script>);
+}

@@ -1,0 +1,815 @@
+﻿
+@using Devesprit.Core
+@using Devesprit.WebFramework.Helpers
+@using Syncfusion.JavaScript
+@using Syncfusion.MVC.EJ
+@model Devesprit.DigiCommerce.Areas.Admin.Models.SiteSettingModel
+@{
+    ViewBag.Title = T("ManageSettings");
+    var currentLang = DependencyResolver.Current.GetService<IWorkContext>().CurrentLanguage;
+    @* https://CKEditor.com *@
+    Html.AddScriptParts(ResourceLocation.Footer, "~/Scripts/CKEditor/ckeditor.js", true);
+}
+
+<div id="waitingPopup"></div>
+
+<div id="panel" class="panel no-hide-overflow">
+    <div class="panel-title pad-10">
+        <h5 class="no-mar">
+            @T("ManageSettings")
+        </h5>
+    </div>
+
+    @using (Html.BeginForm("Index", "ManageSettings", FormMethod.Post, new { id = "frmSiteSettings" }))
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="pad-10 fs-14">
+            @{Html.EJ().Tab("settingTabs")
+                          .EnableTabScroll(true)
+                          .HeaderPosition(HeaderPosition.Top)
+                          .EnableRTL(currentLang.IsRtl)
+                          .Items(data =>
+                          {
+                              data.Add().ID("General").Text(T("General").ToString()).ContentTemplate(content => GeneralSettings());
+                              data.Add().ID("Security").Text(T("Security").ToString()).ContentTemplate(content => SecuritySettings());
+                              data.Add().ID("SocialNetworks").Text(T("SocialNetworks").ToString()).ContentTemplate(content => SocialNetworksSettings());
+                              data.Add().ID("Email").Text(T("EMail").ToString()).ContentTemplate(content => EmailSettings());
+                              data.Add().ID("Other").Text(T("Others").ToString()).ContentTemplate(content => OtherSettings());
+                              data.Add().ID("CKEditor").Text(T("CKEditorSettings").ToString()).ContentTemplate(content => CKEditorSettings());
+                              data.Add().ID("Theme").Text(T("Themes").ToString()).ContentTemplate(content => ThemeSettings());
+                          })
+                          .Render();
+            }
+        </div>
+
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" }).ToMvcHtmlString()
+
+        <div class="text-center pad-v-20">
+            <button type="button" class="btn btn-sm btn-warning" onclick='SaveSettings()'>@T("Save")</button>
+        </div>
+    }
+</div>
+
+@helper GeneralSettings()
+{
+
+    <div class="row">
+        <div class="col-12">
+            <h2 class="text-center b-mar-20"><img src="~/Content/img/Settings.png" /><br />@T("General")</h2>
+        </div>
+        <div class="col-12">
+            <div class="form-group">
+                @Html.LabelFor(p => p.SiteName)
+                @Html.LocalizedTextBoxFor(p => p.SiteName, null, new { @class = "form-control form-control-sm" })
+                @Html.ValidationMessageFor(p => p.SiteName, "", new { @class = "form-text text-danger fs-12" })
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="form-group">
+                @Html.LabelFor(p => p.SiteUrl)
+                @Html.TextBoxFor(p => p.SiteUrl, null, new { @class = "form-control form-control-sm ltr-dir" })
+                @Html.ValidationMessageFor(p => p.SiteUrl, "", new { @class = "form-text text-danger fs-12" })
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="form-group">
+                @Html.LabelFor(p => p.SiteLogoHeader)
+                @Html.LocalizedTextBoxFor(p => p.SiteLogoHeader, null, new { @class = "form-control form-control-sm ltr-dir" })
+                <button type="button" onclick="ShowFileExplorerForLocalizedEntity('SiteLogoHeader');" class="btn btn-outline-success btn-xs float-end t-mar-5"><i class="fa fa-folder-open"></i> ...</button>
+                <span class="form-text text-muted fs-11">@T("DesiredImageUrl")</span>
+                @Html.ValidationMessageFor(p => p.SiteLogoHeader, "", new { @class = "form-text text-danger fs-12" })
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="form-group">
+                @Html.LabelFor(p => p.SiteLogoNavigationBar)
+                @Html.LocalizedTextBoxFor(p => p.SiteLogoNavigationBar, null, new { @class = "form-control form-control-sm ltr-dir" })
+                <button type="button" onclick="ShowFileExplorerForLocalizedEntity('SiteLogoNavigationBar');" class="btn btn-outline-success btn-xs float-end t-mar-5"><i class="fa fa-folder-open"></i> ...</button>
+                @Html.ValidationMessageFor(p => p.SiteLogoNavigationBar, "", new { @class = "form-text text-danger fs-12" })
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="form-group">
+                @Html.LabelFor(p => p.SiteLogoInvoicePrint)
+                @Html.LocalizedTextBoxFor(p => p.SiteLogoInvoicePrint, null, new { @class = "form-control form-control-sm ltr-dir" })
+                <button type="button" onclick="ShowFileExplorerForLocalizedEntity('SiteLogoInvoicePrint');" class="btn btn-outline-success btn-xs float-end t-mar-5"><i class="fa fa-folder-open"></i> ...</button>
+                @Html.ValidationMessageFor(p => p.SiteLogoInvoicePrint, "", new { @class = "form-text text-danger fs-12" })
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="form-group">
+                @Html.LabelFor(p => p.FavIcon)
+                @Html.LocalizedTextBoxFor(p => p.FavIcon, null, new { @class = "form-control form-control-sm ltr-dir" })
+                <button type="button" onclick="ShowFileExplorerForLocalizedEntity('FavIcon');" class="btn btn-outline-success btn-xs float-end t-mar-5"><i class="fa fa-folder-open"></i> ...</button>
+                @Html.ValidationMessageFor(p => p.FavIcon, "", new { @class = "form-text text-danger fs-12" })
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="form-group">
+                @Html.LabelFor(p => p.SiteDescription)
+                @Html.LocalizedTextAreaFor(p => p.SiteDescription, new { @class = "form-control form-control-sm" })
+                @Html.ValidationMessageFor(p => p.SiteDescription, "", new { @class = "form-text text-danger fs-12" })
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="form-group">
+                @Html.LabelFor(p => p.InvoicePrintPageCompanyInfo)
+                @Html.LocalizedTextAreaFor(p => p.InvoicePrintPageCompanyInfo, new { @class = "ckeditor" })
+                @Html.ValidationMessageFor(p => p.InvoicePrintPageCompanyInfo, "", new { @class = "form-text text-danger fs-12" })
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="form-group">
+                @Html.LabelFor(p => p.MetaKeyWords)
+                @Html.LocalizedTextBoxFor(p => p.MetaKeyWords, null, new { @class = "form-control form-control-sm" })
+                @Html.ValidationMessageFor(p => p.MetaKeyWords, "", new { @class = "form-text text-danger fs-12" })
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="form-group">
+                @Html.LabelFor(p => p.FooterDescription)
+                @Html.LocalizedTextAreaFor(p => p.FooterDescription, new { @class = "ckeditor" })
+                @Html.ValidationMessageFor(p => p.FooterDescription, "", new { @class = "form-text text-danger fs-12" })
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="form-group">
+                @Html.LabelFor(p => p.ContactUsDescription)
+                @Html.LocalizedTextAreaFor(p => p.ContactUsDescription, new { @class = "ckeditor" })
+                @Html.ValidationMessageFor(p => p.ContactUsDescription, "", new { @class = "form-text text-danger fs-12" })
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="form-group">
+                @Html.LabelFor(p => p.TermsAndConditions)
+                @Html.LocalizedTextAreaFor(p => p.TermsAndConditions, new { @class = "ckeditor" })
+                @Html.ValidationMessageFor(p => p.TermsAndConditions, "", new { @class = "form-text text-danger fs-12" })
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="form-group">
+                <div class="form-check">
+                    @Html.CheckBoxFor(p => p.ShowAcceptTermsSignUp, new { @class = "form-check-input" })
+                    @Html.LabelFor(p => p.ShowAcceptTermsSignUp, new { @class = "form-check-label" })
+                </div>
+            </div>
+        </div>
+    </div>
+
+}
+
+@helper SecuritySettings()
+{
+
+    <div class="row">
+        <div class="col-12">
+            <h2 class="text-center b-mar-20"><img src="~/Content/img/RecaptchaLogo.png" /><br />@T("GoogleRecaptcha")</h2>
+        </div>
+        <div class="col-12">
+            <div class="form-group">
+                @Html.LabelFor(p => p.GoogleRecaptchaSecretKey)
+                @Html.TextBoxFor(p => p.GoogleRecaptchaSecretKey, new { @class = "form-control form-control-sm ltr-dir" })
+                @Html.ValidationMessageFor(p => p.GoogleRecaptchaSecretKey, "", new { @class = "form-text text-danger fs-12" })
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="form-group">
+                @Html.LabelFor(p => p.GoogleRecaptchaSiteKey)
+                @Html.TextBoxFor(p => p.GoogleRecaptchaSiteKey, new { @class = "form-control form-control-sm ltr-dir" })
+                @Html.ValidationMessageFor(p => p.GoogleRecaptchaSiteKey, "", new { @class = "form-text text-danger fs-12" })
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="form-group">
+                @Html.LabelFor(p => p.ShowRecaptchaAfterNFailedAttempt)
+                @Html.TextBoxFor(p => p.ShowRecaptchaAfterNFailedAttempt, new { @class = "form-control form-control-sm ltr-dir", type = "number" })
+                @Html.ValidationMessageFor(p => p.ShowRecaptchaAfterNFailedAttempt, "", new { @class = "form-text text-danger fs-12" })
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="form-group">
+                <div class="form-check">
+                    @Html.CheckBoxFor(p => p.UseGoogleRecaptchaForLogin, new { @class = "form-check-input" })
+                    @Html.LabelFor(p => p.UseGoogleRecaptchaForLogin, new { @class = "form-check-label" })
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="form-group">
+                <div class="form-check">
+                    @Html.CheckBoxFor(p => p.UseGoogleRecaptchaForSignup, new { @class = "form-check-input" })
+                    @Html.LabelFor(p => p.UseGoogleRecaptchaForSignup, new { @class = "form-check-label" })
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="form-group">
+                <div class="form-check">
+                    @Html.CheckBoxFor(p => p.UseGoogleRecaptchaForResetPassword, new { @class = "form-check-input" })
+                    @Html.LabelFor(p => p.UseGoogleRecaptchaForResetPassword, new { @class = "form-check-label" })
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="form-group">
+                <div class="form-check">
+                    @Html.CheckBoxFor(p => p.UseGoogleRecaptchaForComment, new { @class = "form-check-input" })
+                    @Html.LabelFor(p => p.UseGoogleRecaptchaForComment, new { @class = "form-check-label" })
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="form-group">
+                <div class="form-check">
+                    @Html.CheckBoxFor(p => p.UseGoogleRecaptchaForContactUs, new { @class = "form-check-input" })
+                    @Html.LabelFor(p => p.UseGoogleRecaptchaForContactUs, new { @class = "form-check-label" })
+                </div>
+            </div>
+        </div>
+    </div>
+    <hr>
+    <div class="row">
+        <div class="col-12">
+            <h2 class="text-center b-mar-20"><img src="~/Content/img/Password.png" /><br />@T("Password")</h2>
+        </div>
+        <div class="col-12">
+            <div class="form-group">
+                @Html.LabelFor(p => p.PasswordRequiredLength)
+                @Html.TextBoxFor(p => p.PasswordRequiredLength, new { @class = "form-control form-control-sm ltr-dir", type = "number" })
+                @Html.ValidationMessageFor(p => p.PasswordRequiredLength, "", new { @class = "form-text text-danger fs-12" })
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="form-group">
+                <div class="form-check">
+                    @Html.CheckBoxFor(p => p.PasswordRequireDigit, new { @class = "form-check-input" })
+                    @Html.LabelFor(p => p.PasswordRequireDigit, new { @class = "form-check-label" })
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="form-group">
+                <div class="form-check">
+                    @Html.CheckBoxFor(p => p.PasswordRequireLowercase, new { @class = "form-check-input" })
+                    @Html.LabelFor(p => p.PasswordRequireLowercase, new { @class = "form-check-label" })
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="form-group">
+                <div class="form-check">
+                    @Html.CheckBoxFor(p => p.PasswordRequireUppercase, new { @class = "form-check-input" })
+                    @Html.LabelFor(p => p.PasswordRequireUppercase, new { @class = "form-check-label" })
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="form-group">
+                <div class="form-check">
+                    @Html.CheckBoxFor(p => p.PasswordRequireNonLetterOrDigit, new { @class = "form-check-input" })
+                    @Html.LabelFor(p => p.PasswordRequireNonLetterOrDigit, new { @class = "form-check-label" })
+                </div>
+            </div>
+        </div>
+    </div>
+    <hr>
+    <div class="row">
+        <div class="col-12">
+            <h2 class="text-center b-mar-20"><img src="~/Content/img/UserSecurity.png" /><br />@T("Others")</h2>
+        </div>
+        <div class="col-12">
+            <div class="form-group">
+                <div class="form-check">
+                    @Html.CheckBoxFor(p => p.ConfirmUserEmailAddress, new { @class = "form-check-input" })
+                    @Html.LabelFor(p => p.ConfirmUserEmailAddress, new { @class = "form-check-label" })
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="form-group">
+                <div class="form-check">
+                    @Html.CheckBoxFor(p => p.UserLockoutEnabled, new { @class = "form-check-input" })
+                    @Html.LabelFor(p => p.UserLockoutEnabled, new { @class = "form-check-label" })
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-md-6">
+            <div class="form-group">
+                @Html.LabelFor(p => p.AccountLockoutTime)
+                @Html.TextBoxFor(p => p.AccountLockoutTime, new { @class = "form-control form-control-sm ltr-dir", type = "number" })
+                @Html.ValidationMessageFor(p => p.AccountLockoutTime, "", new { @class = "form-text text-danger fs-12" })
+            </div>
+        </div>
+        <div class="col-12 col-md-6">
+            <div class="form-group">
+                @Html.LabelFor(p => p.MaxFailedAccessAttemptsBeforeLockout)
+                @Html.TextBoxFor(p => p.MaxFailedAccessAttemptsBeforeLockout, new { @class = "form-control form-control-sm ltr-dir", type = "number" })
+                @Html.ValidationMessageFor(p => p.MaxFailedAccessAttemptsBeforeLockout, "", new { @class = "form-text text-danger fs-12" })
+            </div>
+        </div>
+        <div class="col-12 col-md-6">
+            <div class="form-group">
+                @Html.LabelFor(p => p.EncryptionKey)
+                <div class="input-group">
+                    @Html.TextBoxFor(p => p.EncryptionKey, new { @class = "form-control form-control-sm ltr-dir" })
+                    <div class="input-group-append">
+                        <button class="btn btn-sm btn-outline-secondary" onclick="$('#EncryptionKey').val(randomPassword(20))" type="button">@T("RandomGeneration")</button>
+                    </div>
+                </div>
+                @Html.ValidationMessageFor(p => p.EncryptionKey, "", new { @class = "form-text text-danger fs-12" })
+            </div>
+        </div>
+        <div class="col-12 col-md-6">
+            <div class="form-group">
+                @Html.LabelFor(p => p.EncryptionSalt)
+                <div class="input-group">
+                    @Html.TextBoxFor(p => p.EncryptionSalt, new { @class = "form-control form-control-sm ltr-dir" })
+                    <div class="input-group-append">
+                        <button class="btn btn-sm btn-outline-secondary" onclick="$('#EncryptionSalt').val(randomPassword(20))" type="button">@T("RandomGeneration")</button>
+                    </div>
+                </div>
+                @Html.ValidationMessageFor(p => p.EncryptionSalt, "", new { @class = "form-text text-danger fs-12" })
+            </div>
+        </div>
+    </div>
+
+}
+
+@helper SocialNetworksSettings()
+{
+    {
+        Html.RenderAction("GridView", "ManageSocialAccounts");
+    }
+}
+
+@helper EmailSettings()
+{
+    <div id="emailTab">
+        <div class="row">
+            <div class="col-12">
+                <h2 class="text-center b-mar-20"><img src="~/Content/img/Email.png" /><br />@T("EMail")</h2>
+            </div>
+            <div class="col-12">
+                <div class="form-group">
+                    @Html.LabelFor(p => p.SiteEmailAddress)
+                    @Html.TextBoxFor(p => p.SiteEmailAddress, null, new { @class = "form-control form-control-sm ltr-dir" })
+                    @Html.ValidationMessageFor(p => p.SiteEmailAddress, "", new { @class = "form-text text-danger fs-12" })
+                </div>
+            </div>
+        </div>
+        <hr />
+        <div class="row">
+            <div class="col-12">
+                <h2 class="text-center b-mar-20"><img src="~/Content/img/Server.png" /><br />@T("SMTPServer")</h2>
+            </div>
+            <div class="col-12">
+                <div class="form-group">
+                    @Html.LabelFor(p => p.SMTPServer)
+                    @Html.TextBoxFor(p => p.SMTPServer, null, new { @class = "form-control form-control-sm ltr-dir" })
+                    @Html.ValidationMessageFor(p => p.SMTPServer, "", new { @class = "form-text text-danger fs-12" })
+                </div>
+            </div>
+            <div class="col-12">
+                <div class="form-group">
+                    @Html.LabelFor(p => p.SMTPUserName)
+                    @Html.TextBoxFor(p => p.SMTPUserName, null, new { @class = "form-control form-control-sm ltr-dir" })
+                    @Html.ValidationMessageFor(p => p.SMTPUserName, "", new { @class = "form-text text-danger fs-12" })
+                </div>
+            </div>
+            <div class="col-12">
+                <div class="form-group">
+                    @Html.LabelFor(p => p.SMTPPassword)
+                    @Html.TextBoxFor(p => p.SMTPPassword, null, new { @class = "form-control form-control-sm ltr-dir" })
+                    @Html.ValidationMessageFor(p => p.SMTPPassword, "", new { @class = "form-text text-danger fs-12" })
+                </div>
+            </div>
+            <div class="col-12">
+                <div class="form-group">
+                    @Html.LabelFor(p => p.SMTPPort)
+                    @Html.TextBoxFor(p => p.SMTPPort, null, new { @class = "form-control form-control-sm ltr-dir", type = "number" })
+                    @Html.ValidationMessageFor(p => p.SMTPPort, "", new { @class = "form-text text-danger fs-12" })
+                </div>
+            </div>
+            <div class="col-12">
+                <div class="form-group">
+                    <div class="form-check">
+                        @Html.CheckBoxFor(p => p.SMTPEnableSsl, new { @class = "form-check-input" })
+                        @Html.LabelFor(p => p.SMTPEnableSsl, new { @class = "form-check-label" })
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@helper OtherSettings()
+{
+
+    <div class="row">
+        <div class="col-12">
+            <h2 class="text-center b-mar-20"><img src="~/Content/img/invoice_48px.png" /><br />@T("Invoice")</h2>
+        </div>
+        <div class="col-12">
+            <div class="form-group">
+                <div class="form-check">
+                    @Html.CheckBoxFor(p => p.ShowQtyColInInvoice, new { @class = "form-check-input" })
+                    @Html.LabelFor(p => p.ShowQtyColInInvoice, new { @class = "form-check-label" })
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-md-6">
+            <div class="form-group">
+                <div class="form-check">
+                    @Html.CheckBoxFor(p => p.UserMustRegisterBeforeCheckoutInvoice, new { @class = "form-check-input" })
+                    @Html.LabelFor(p => p.UserMustRegisterBeforeCheckoutInvoice, new { @class = "form-check-label" })
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-md-6">
+            <div class="form-group">
+                <div class="form-check">
+                    @Html.CheckBoxFor(p => p.GetBillingAddressForInvoice, new { @class = "form-check-input" })
+                    @Html.LabelFor(p => p.GetBillingAddressForInvoice, new { @class = "form-check-label" })
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-md-6">
+            <div class="form-group">
+                <div class="form-check">
+                    @Html.CheckBoxFor(p => p.DeleteEmptyInvoices, new { @class = "form-check-input" })
+                    @Html.LabelFor(p => p.DeleteEmptyInvoices, new { @class = "form-check-label" })
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-md-6">
+            <div class="form-group">
+                <div class="form-check">
+                    @Html.CheckBoxFor(p => p.DeletePendingInvoices, new { @class = "form-check-input" })
+                    @Html.LabelFor(p => p.DeletePendingInvoices, new { @class = "form-check-label" })
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-md-6">
+            <div class="form-group">
+                @Html.LabelFor(p => p.DeleteEmptyInvoicesAfterDays)
+                @Html.TextBoxFor(p => p.DeleteEmptyInvoicesAfterDays, null, new { @class = "form-control form-control-sm ltr-dir", type = "number" })
+                @Html.ValidationMessageFor(p => p.DeleteEmptyInvoicesAfterDays, "", new { @class = "form-text text-danger fs-12" })
+            </div>
+        </div>
+        <div class="col-12 col-md-6">
+            <div class="form-group">
+                @Html.LabelFor(p => p.DeletePendingInvoicesAfterDays)
+                @Html.TextBoxFor(p => p.DeletePendingInvoicesAfterDays, null, new { @class = "form-control form-control-sm ltr-dir", type = "number" })
+                @Html.ValidationMessageFor(p => p.DeletePendingInvoicesAfterDays, "", new { @class = "form-text text-danger fs-12" })
+            </div>
+        </div>
+    </div>
+    <hr />
+    <div class="row">
+        <div class="col-12">
+            <h2 class="text-center b-mar-20"><img src="~/Content/img/Downloads.png" /><br />@T("Downloads")</h2>
+        </div>
+        <div class="col-12">
+            <div class="form-group">
+                @Html.LabelFor(p => p.DownloadableFilesExtensions)
+                @Html.TextBoxFor(p => p.DownloadableFilesExtensions, null, new { @class = "form-control form-control-sm ltr-dir" })
+                @Html.ValidationMessageFor(p => p.DownloadableFilesExtensions, "", new { @class = "form-text text-danger fs-12" })
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="form-group">
+                @Html.LabelFor(p => p.DownloadUrlsAgeByHour)
+                @Html.TextBoxFor(p => p.DownloadUrlsAgeByHour, null, new { @class = "form-control form-control-sm ltr-dir", type = "number" })
+                @Html.ValidationMessageFor(p => p.DownloadUrlsAgeByHour, "", new { @class = "form-text text-danger fs-12" })
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="form-group">
+                @Html.LabelFor(p => p.NumberOfDownloadUrlsFireLimit)
+                @Html.TextBoxFor(p => p.NumberOfDownloadUrlsFireLimit, null, new { @class = "form-control form-control-sm ltr-dir", type = "number" })
+                @Html.ValidationMessageFor(p => p.NumberOfDownloadUrlsFireLimit, "", new { @class = "form-text text-danger fs-12" })
+            </div>
+        </div>
+    </div>
+    <hr />
+    <div class="row">
+        <div class="col-12">
+            <h2 class="text-center b-mar-20"><img src="~/Content/img/comment_48px.png" /><br />@T("Comments")</h2>
+        </div>
+        <div class="col-12">
+            <div class="form-group">
+                <div class="form-check">
+                    @Html.CheckBoxFor(p => p.AllowUsersToWriteComment, new { @class = "form-check-input" })
+                    @Html.LabelFor(p => p.AllowUsersToWriteComment, new { @class = "form-check-label" })
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="form-group">
+                <div class="form-check">
+                    @Html.CheckBoxFor(p => p.AllowGuestUsersToWriteComment, new { @class = "form-check-input" })
+                    @Html.LabelFor(p => p.AllowGuestUsersToWriteComment, new { @class = "form-check-label" })
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="form-group">
+                <div class="form-check">
+                    @Html.CheckBoxFor(p => p.AutoPublishComments, new { @class = "form-check-input" })
+                    @Html.LabelFor(p => p.AutoPublishComments, new { @class = "form-check-label" })
+                </div>
+            </div>
+        </div>
+    </div>
+    <hr />
+    <div class="row">
+        <div class="col-12">
+            <h2 class="text-center b-mar-20"><img src="~/Content/img/OtherSettings.png" /><br />@T("Others")</h2>
+        </div>
+        <div class="col-12">
+            <div class="form-group">
+                <div class="form-check">
+                    @Html.CheckBoxFor(p => p.Wishlist, new { @class = "form-check-input" })
+                    @Html.LabelFor(p => p.Wishlist, new { @class = "form-check-label" })
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="form-group">
+                <div class="form-check">
+                    @Html.CheckBoxFor(p => p.LikePosts, new { @class = "form-check-input" })
+                    @Html.LabelFor(p => p.LikePosts, new { @class = "form-check-label" })
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="form-group">
+                <div class="form-check">
+                    @Html.CheckBoxFor(p => p.AppendLanguageCodeToUrl, new { @class = "form-check-input" })
+                    @Html.LabelFor(p => p.AppendLanguageCodeToUrl, new { @class = "form-check-label" })
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="form-group">
+                <div class="form-check">
+                    @Html.CheckBoxFor(p => p.EnableCssBundling, new { @class = "form-check-input" })
+                    @Html.LabelFor(p => p.EnableCssBundling, new { @class = "form-check-label" })
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="form-group">
+                <div class="form-check">
+                    @Html.CheckBoxFor(p => p.EnableResponseCompression, new { @class = "form-check-input" })
+                    @Html.LabelFor(p => p.EnableResponseCompression, new { @class = "form-check-label" })
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="form-group">
+                <div class="form-check">
+                    @Html.CheckBoxFor(p => p.EnableHtmlMinification, new { @class = "form-check-input" })
+                    @Html.LabelFor(p => p.EnableHtmlMinification, new { @class = "form-check-label" })
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="form-group">
+                <div class="form-check">
+                    @Html.CheckBoxFor(p => p.EnableJsBundling, new { @class = "form-check-input" })
+                    @Html.LabelFor(p => p.EnableJsBundling, new { @class = "form-check-label" })
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="form-group">
+                <div class="form-check">
+                    @Html.CheckBoxFor(p => p.EnableInlineCssMinification, new { @class = "form-check-input" })
+                    @Html.LabelFor(p => p.EnableInlineCssMinification, new { @class = "form-check-label" })
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="form-group">
+                <div class="form-check">
+                    @Html.CheckBoxFor(p => p.EnableInlineJsMinification, new { @class = "form-check-input" })
+                    @Html.LabelFor(p => p.EnableInlineJsMinification, new { @class = "form-check-label" })
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="form-group">
+                <div class="form-check">
+                    @Html.CheckBoxFor(p => p.EnableBlog, new { @class = "form-check-input" })
+                    @Html.LabelFor(p => p.EnableBlog, new { @class = "form-check-label" })
+                </div>
+            </div>
+        </div>
+    </div>
+    <hr />
+    <div class="row">
+        <div class="col-12">
+            <h2 class="text-center b-mar-20"><img src="~/Content/img/ReminderSettings.png" /><br />@T("ReminderSettings")</h2>
+        </div>
+        <div class="col-12 col-md-6">
+            <div class="form-group">
+                <div class="form-check">
+                    @Html.CheckBoxFor(p => p.SendExpNotificationsForProducts, new { @class = "form-check-input" })
+                    @Html.LabelFor(p => p.SendExpNotificationsForProducts, new { @class = "form-check-label" })
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-md-6">
+            <div class="form-group">
+                <div class="form-check">
+                    @Html.CheckBoxFor(p => p.SendExpNotificationsForProductsJustOnce, new { @class = "form-check-input" })
+                    @Html.LabelFor(p => p.SendExpNotificationsForProductsJustOnce, new { @class = "form-check-label" })
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-md-6">
+            <div class="form-group">
+                <div class="form-check">
+                    @Html.CheckBoxFor(p => p.SendExpNotificationsForProductAttributes, new { @class = "form-check-input" })
+                    @Html.LabelFor(p => p.SendExpNotificationsForProductAttributes, new { @class = "form-check-label" })
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-md-6">
+            <div class="form-group">
+                <div class="form-check">
+                    @Html.CheckBoxFor(p => p.SendExpNotificationsForProductAttributesJustOnce, new { @class = "form-check-input" })
+                    @Html.LabelFor(p => p.SendExpNotificationsForProductAttributesJustOnce, new { @class = "form-check-label" })
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-md-6">
+            <div class="form-group">
+                @Html.LabelFor(p => p.NotificationHourSpanBeforeExpForProducts)
+                @Html.TextBoxFor(p => p.NotificationHourSpanBeforeExpForProducts, null, new { @class = "form-control form-control-sm ltr-dir", type = "number" })
+                <small class="form-text text-align-initial text-muted">@Html.Raw(T("ToChangeReminderTextGoto", "Notification_ProductBeforeExpiration"))</small>
+                @Html.ValidationMessageFor(p => p.NotificationHourSpanBeforeExpForProducts, "", new { @class = "form-text text-danger fs-12" })
+            </div>
+        </div>
+        <div class="col-12 col-md-6">
+            <div class="form-group">
+                @Html.LabelFor(p => p.NotificationHourSpanAfterExpForProducts)
+                @Html.TextBoxFor(p => p.NotificationHourSpanAfterExpForProducts, null, new { @class = "form-control form-control-sm ltr-dir", type = "number" })
+                <small class="form-text text-align-initial text-muted">@Html.Raw(T("ToChangeReminderTextGoto", "Notification_ProductAfterExpiration"))</small>
+                @Html.ValidationMessageFor(p => p.NotificationHourSpanAfterExpForProducts, "", new { @class = "form-text text-danger fs-12" })
+            </div>
+        </div>
+
+        <div class="col-12 col-md-6">
+            <div class="form-group">
+                <div class="form-check">
+                    @Html.CheckBoxFor(p => p.SendExpNotificationsForUserPlans, new { @class = "form-check-input" })
+                    @Html.LabelFor(p => p.SendExpNotificationsForUserPlans, new { @class = "form-check-label" })
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-md-6">
+            <div class="form-group">
+                <div class="form-check">
+                    @Html.CheckBoxFor(p => p.SendExpNotificationsForUserPlansJustOnce, new { @class = "form-check-input" })
+                    @Html.LabelFor(p => p.SendExpNotificationsForUserPlansJustOnce, new { @class = "form-check-label" })
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-md-6">
+            <div class="form-group">
+                @Html.LabelFor(p => p.NotificationHourSpanBeforeExpForUserPlans)
+                @Html.TextBoxFor(p => p.NotificationHourSpanBeforeExpForUserPlans, null, new { @class = "form-control form-control-sm ltr-dir", type = "number" })
+                <small class="form-text text-align-initial text-muted">@Html.Raw(T("ToChangeReminderTextGoto", "Notification_UserPlanBeforeExpiration"))</small>
+                @Html.ValidationMessageFor(p => p.NotificationHourSpanBeforeExpForUserPlans, "", new { @class = "form-text text-danger fs-12" })
+            </div>
+        </div>
+        <div class="col-12 col-md-6">
+            <div class="form-group">
+                @Html.LabelFor(p => p.NotificationHourSpanAfterExpForUserPlans)
+                @Html.TextBoxFor(p => p.NotificationHourSpanAfterExpForUserPlans, null, new { @class = "form-control form-control-sm ltr-dir", type = "number" })
+                <small class="form-text text-align-initial text-muted">@Html.Raw(T("ToChangeReminderTextGoto", "Notification_UserPlanAfterExpiration"))</small>
+                @Html.ValidationMessageFor(p => p.NotificationHourSpanAfterExpForUserPlans, "", new { @class = "form-text text-danger fs-12" })
+            </div>
+        </div>
+
+        <div class="col-12 col-md-6">
+            <div class="form-group">
+                <div class="form-check">
+                    @Html.CheckBoxFor(p => p.SendExpNotificationsForInvoiceManualItems, new { @class = "form-check-input" })
+                    @Html.LabelFor(p => p.SendExpNotificationsForInvoiceManualItems, new { @class = "form-check-label" })
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-md-6">
+            <div class="form-group">
+                <div class="form-check">
+                    @Html.CheckBoxFor(p => p.SendExpNotificationsForInvoiceManualItemsJustOnce, new { @class = "form-check-input" })
+                    @Html.LabelFor(p => p.SendExpNotificationsForInvoiceManualItemsJustOnce, new { @class = "form-check-label" })
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-md-6">
+            <div class="form-group">
+                @Html.LabelFor(p => p.NotificationHourSpanBeforeExpForInvoiceManualItems)
+                @Html.TextBoxFor(p => p.NotificationHourSpanBeforeExpForInvoiceManualItems, null, new { @class = "form-control form-control-sm ltr-dir", type = "number" })
+                <small class="form-text text-align-initial text-muted">@Html.Raw(T("ToChangeReminderTextGoto", "Notification_InvoiceManuallyBeforeExpiration"))</small>
+                @Html.ValidationMessageFor(p => p.NotificationHourSpanBeforeExpForInvoiceManualItems, "", new { @class = "form-text text-danger fs-12" })
+            </div>
+        </div>
+        <div class="col-12 col-md-6">
+            <div class="form-group">
+                @Html.LabelFor(p => p.NotificationHourSpanAfterExpForInvoiceManualItems)
+                @Html.TextBoxFor(p => p.NotificationHourSpanAfterExpForInvoiceManualItems, null, new { @class = "form-control form-control-sm ltr-dir", type = "number" })
+                <small class="form-text text-align-initial text-muted">@Html.Raw(T("ToChangeReminderTextGoto", "Notification_InvoiceManuallyAfterExpiration"))</small>
+                @Html.ValidationMessageFor(p => p.NotificationHourSpanAfterExpForInvoiceManualItems, "", new { @class = "form-text text-danger fs-12" })
+            </div>
+        </div>
+    </div>
+
+}
+
+@helper CKEditorSettings()
+{
+
+    <div class="row">
+        <div class="col-12 text-center b-mar-20">
+            <h2><a href="https://ckeditor.com/ckeditor-4/" target="_blank"><img src="~/Content/img/ckeditor.png" /><br />@T("CKEditor")</a></h2>
+            <button class="btn btn-success" onclick="ShowFileExplorer('/Scripts/CKEditor');" type="button">@T("ExplorerCKEditorFolder")</button>
+        </div>
+        <div class="col-12">
+            <div class="form-group">
+                @Html.LabelFor(p => p.CkEditorConfig)
+                @Html.TextAreaFor(p => p.CkEditorConfig, new { @class = "form-control form-control-sm ltr-dir", autocomplete = "off", autocorrect = "off", autocapitalize = "off", spellcheck = "false", rows = "15" })
+                @Html.ValidationMessageFor(p => p.CkEditorConfig, "", new { @class = "form-text text-danger fs-12" })
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="form-group">
+                @Html.LabelFor(p => p.CkEditorTemplates)
+                @Html.TextAreaFor(p => p.CkEditorTemplates, new { @class = "form-control form-control-sm ltr-dir", autocomplete = "off", autocorrect = "off", autocapitalize = "off", spellcheck = "false", rows = "15" })
+                @Html.ValidationMessageFor(p => p.CkEditorTemplates, "", new { @class = "form-text text-danger fs-12" })
+            </div>
+        </div>
+    </div>
+
+}
+
+@helper ThemeSettings()
+{
+
+    <div class="row">
+        <div class="col-12">
+            <h2 class="text-center b-mar-20"><img src="~/Content/img/Color_Palette.png" /><br />@T("WebsiteTheme")</h2>
+        </div>
+        @{ int counter = 0;}
+        @foreach (var theme in Model.ListOfInstalledThemes)
+        {
+            { counter++; }
+            <div class="col-12 col-md-6 col-lg-4">
+                <div class="card text-center">
+                    <img class="card-img-top" src="@theme.PreviewImageUrl.TrimStart('~')">
+                    <div class="card-body">
+                        <h5 class="card-title">@theme.ThemeTitle</h5>
+                        <p class="card-text">
+                            @Html.Raw(theme.PreviewText)
+                        </p>
+                    </div>
+                    <div class="card-footer text-muted">
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="WebsiteTheme" id="WebsiteTheme_@counter" value="@theme.ThemeName" @Html.Raw(Model.WebsiteTheme == theme.ThemeName ? "checked='checked'" : "")>
+                            <label class="form-check-label" for="WebsiteTheme_@counter">
+                                @T("SetAsCurrentTheme")
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+}
+
+
+@{
+    Html.AddInlineScript(ResourceLocation.Footer,
+@<script>
+     $("#waitingPopup").data("ejWaitingPopup").hide();
+
+     function SaveSettings() {
+         $.validator.unobtrusive.parse($('#frmSiteSettings'));
+         if ($("#frmSiteSettings").valid()) {
+             $("#waitingPopup").ejWaitingPopup({ showOnInit: true, target: "#panel", appendTo: "#panel" });
+             $("#frmSiteSettings").submit();
+         } else {
+             var formErrorList = $("#frmSiteSettings").data("validator").errorList;
+             if (formErrorList) {
+                 $("#" + formErrorList[0].element.id).focus();
+                 ErrorAlert('@T("Error")', formErrorList[0].message);
+             }
+         }
+     }
+ </script>);
+}

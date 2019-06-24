@@ -1,0 +1,102 @@
+﻿
+@using Devesprit.Core
+@using Syncfusion.JavaScript
+@using Syncfusion.MVC.EJ
+@{
+    ViewBag.Title = T("ManagePlugins");
+    var currentLang = DependencyResolver.Current.GetService<IWorkContext>().CurrentLanguage;
+}
+
+<div id="waitingPopup"></div>
+
+<div id="panel" class="panel no-hide-overflow">
+    <div class="panel-title pad-10">
+        <h5 class="no-mar">
+            @T("ManagePlugins")
+        </h5>
+    </div>
+
+    <div class="pad-10">
+        @(Html.EJ().Grid<object>("PluginsGrid")
+              .Datasource(ds =>
+              {
+                  ds.URL(Url.Action("GridDataSource")).Adaptor(AdaptorType.UrlAdaptor).UpdateURL(Url.Action("Update"));
+              })
+              .AllowSorting()
+              .AllowResizing()
+              .AllowReordering()
+              .AllowPaging()
+              .AllowFiltering()
+              .AllowTextWrap()
+              .AllowSelection()
+              .ShowColumnChooser()
+              .IsResponsive()
+              .SelectionType(SelectionType.Single)
+              .EnablePersistence(false)
+              .EnableResponsiveRow(true)
+              .EnableRTL(currentLang.IsRtl)
+              .MinWidth(990)
+              .Locale("localString")
+              
+              .EditSettings(edt => edt.AllowEditing())
+              .PageSettings(p => { p.PageSize(25).PageSizeList(new List<int>(){10, 25, 50, 100, 250, 500}).PageCount(5).PrintMode(PrintMode.CurrentPage); })
+              .FilterSettings(f => { f.FilterType(FilterType.Menu); })
+              .TextWrapSettings(s => s.WrapMode(WrapMode.Both))
+              .ScrollSettings(s=> s.EnableTouchScroll(true))
+              .ToolbarSettings(toolBar => toolBar.ShowToolbar()
+                  .CustomToolbarItems(new List<object>(){ new Syncfusion.JavaScript.Models.CustomToolbarItem() { TemplateID = "#PluginsGridRefresh" } })
+                  .ToolbarItems(items =>
+              {
+                  items.AddTool(ToolBarItems.Update);
+                  items.AddTool(ToolBarItems.Cancel);
+                  items.AddTool(ToolBarItems.PrintGrid);
+              }))
+              .Columns(col =>
+              {
+                  col.Field("LogoUrl").HeaderText(T("Logo").ToString()).Width(120).AllowEditing(false).Template("<img style='max-height:100%; max-width: 100%; margin: auto; display:block' src='{{:LogoUrl}}'/>").Add();
+                  col.Field("Name").HeaderText(T("Name").ToString()).AllowEditing(false).Add();
+                  col.Field("Group").HeaderText(T("Group").ToString()).AllowEditing(false).Add();
+                  col.Field("DisplayOrder").HeaderText(T("DisplayOrder").ToString()).ValidationRules(v => v.AddRule("required", true)).Add();
+                  col.Field("Info").HeaderText(T("AdditionalInfo").ToString()).AllowEditing(false).Add();
+                  col.Field("SystemName").HeaderText(T("SystemName").ToString()).IsPrimaryKey(true).AllowEditing(false).Visible(false).Add();
+                  col.HeaderText(T("Installation").ToString()).AllowEditing(false)
+                      .TextAlign(TextAlign.Center)
+                      .Width(140).Template("#ButtonTemplate").Add();
+              }))
+    </div>
+</div>
+
+<script id="ButtonTemplate" type="text/template">
+    {{if Installed }}
+    <button class="btn btn-xs btn-primary d-block m-auto mar-v-5" onclick="configPlugin('{{:SystemName}}')">@T("Configure")</button>
+    <button class="btn btn-xs btn-warning d-block m-auto mar-v-5" onclick="uninstallPlugin('{{:SystemName}}')">@T("Uninstall")</button>
+    {{else}}
+    <button class="btn btn-xs btn-success d-block m-auto mar-v-5" onclick="installPlugin('{{:SystemName}}')">@T("Install")</button>
+    {{/if}}
+</script>
+<script id="PluginsGridRefresh" type="text/x-jsrender">
+    <a onclick="refreshPluginsGrid();" class="e-toolbaricons e-icon"><i class="fa fa-refresh"></i></a>
+</script>
+@{
+    Html.AddInlineScript(ResourceLocation.Footer,
+        @<script>
+        function refreshPluginsGrid() {
+            $("#waitingPopup").ejWaitingPopup({ showOnInit: true, target: "#panel", appendTo: "#panel" });
+            window.location = '@Url.Action("ReloadList")';
+        }
+
+        function installPlugin(args) {
+            $("#waitingPopup").ejWaitingPopup({ showOnInit: true, target: "#panel", appendTo: "#panel" });
+            window.location = '@Url.Action("Install")?pluginName=' + args;
+        }
+
+        function uninstallPlugin(args) {
+            $("#waitingPopup").ejWaitingPopup({ showOnInit: true, target: "#panel", appendTo: "#panel" });
+            window.location = '@Url.Action("Uninstall")?pluginName=' + args;
+        }
+
+        function configPlugin(args) {
+            window.open('@Url.Action("ConfigPlugin")?pluginName=' + args, '_blank');
+        }
+    </script>);
+}

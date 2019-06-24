@@ -1,0 +1,8 @@
+﻿
+@using System.Web.Mvc.Html
+@model List<Devesprit.DigiCommerce.Models.Widget.RenderWidgetModel>
+
+@foreach (var widget in Model)
+{
+    @Html.Action(widget.ActionName, widget.ControllerName, widget.RouteValues)
+}

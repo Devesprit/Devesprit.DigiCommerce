@@ -1,0 +1,96 @@
+﻿@using Devesprit.Utilities
+@model Devesprit.DigiCommerce.Areas.Admin.Models.LanguageModel
+@{
+    Layout = Html.GetCurrentThemeAdminAreaLayoutAddress(true);
+}
+
+<div class="container">
+    <div class="panel pad-20 mar-v-35  fs-14">
+        @using (Html.BeginForm("Editor", "ManageLanguages", FormMethod.Post, new { enctype = "multipart/form-data" }))
+        {
+            @Html.AntiForgeryToken()
+            @Html.HiddenFor(p => p.Id)
+            @Html.HiddenFor(p => p.IsDefault)
+
+            <div class="row">
+                <div class="col-12">
+                    <div class="form-group">
+                        @Html.LabelFor(p => p.LanguageName)
+                        @Html.TextBoxFor(p => p.LanguageName, new { @class = "form-control form-control-sm" })
+                        @Html.ValidationMessageFor(p => p.LanguageName, "", new { @class = "form-text text-danger fs-12" })
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <div class="form-group">
+                        @Html.LabelFor(p => p.IsoCode)
+                        @Html.TextBoxFor(p => p.IsoCode, new { @class = "form-control form-control-sm ltr-dir" })
+                        <small class="form-text text-muted">@Html.Raw(T("ClickForMoreInfo", "https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes"))</small>
+                        @Html.ValidationMessageFor(p => p.IsoCode, "", new { @class = "form-text text-danger fs-12" })
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <div class="form-group">
+                        @Html.LabelFor(p => p.DisplayOrder)
+                        @Html.TextBoxFor(p => p.DisplayOrder, new { @class = "form-control form-control-sm ltr-dir", type = "number" })
+                        @Html.ValidationMessageFor(p => p.DisplayOrder, "", new { @class = "form-text text-danger fs-12" })
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <div class="form-group">
+                        @Html.LabelFor(p => p.DefaultCurrencyId)
+                        @Html.DropDownListFor(p => p.DefaultCurrencyId, Model.CurrenciesList, T("SelectAnItem").ToString(), new { @class = "form-control custom-select form-control-sm" })
+                        @Html.ValidationMessageFor(p => p.DefaultCurrencyId, "", new { @class = "form-text text-danger fs-12" })
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <div class="form-group">
+                        @Html.LabelFor(p => p.Icon)
+                        @if (Model.Icon != null)
+                        {
+                            <img style="max-height: 25px;" src="@Model.Icon.InputStream.ToByteArray().ByteArrayToBase64Image()" />
+                        }
+                        @Html.TextBoxFor(p => p.Icon, new { @class = "form-control form-control-sm ltr-dir", type = "file" })
+                        @Html.ValidationMessageFor(p => p.Icon, "", new { @class = "form-text text-danger fs-12" })
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-12 col-lg-4">
+                    <div class="form-group no-b-mar">
+                        <div class="form-check">
+                            @Html.CheckBoxFor(p => p.IsRtl, new { @class = "form-check-input" })
+                            @Html.LabelFor(p => p.IsRtl, new { @class = "form-check-label" })
+                        </div>
+                        @Html.ValidationMessageFor(p => p.IsRtl, "", new { @class = "form-text text-danger fs-12" })
+                    </div>
+                </div>
+                <div class="col-12 col-lg-4">
+                    <div class="form-group no-b-mar">
+                        <div class="form-check">
+                            @Html.CheckBoxFor(p => p.Published, new { @class = "form-check-input" })
+                            @Html.LabelFor(p => p.Published, new { @class = "form-check-label" })
+                        </div>
+                        @Html.ValidationMessageFor(p => p.Published, "", new { @class = "form-text text-danger fs-12" })
+                    </div>
+                </div>
+            </div>
+
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" }).ToMvcHtmlString()
+
+            <div class="text-center t-mar-20">
+                <button type="submit" class="btn btn-sm btn-warning">@T("Save")</button>
+                <button type="button" onclick="SaveAndContinue($(this).closest('form'));" class="btn btn-sm btn-warning">@T("SaveAndContinue")</button>
+                <button type="button" onclick="window.close();" class="btn btn-sm btn-success">@T("Close")</button>
+            </div>
+        }
+    </div>
+</div>

@@ -1,0 +1,92 @@
+﻿@using Devesprit.WebFramework.Helpers
+@model Devesprit.DigiCommerce.Areas.Admin.Models.CurrencyModel
+@{
+    Layout = Html.GetCurrentThemeAdminAreaLayoutAddress(true);
+}
+
+<div class="container">
+    <div class="panel pad-20 mar-v-35  fs-14">
+        @using (Html.BeginForm("Editor", "ManageCurrencies", FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+            @Html.HiddenFor(p => p.Id)
+            @Html.HiddenFor(p => p.IsMainCurrency)
+
+            <div class="row">
+                <div class="col-12">
+                    <div class="form-group">
+                        @Html.LabelFor(p => p.CurrencyName)
+                        @Html.LocalizedTextBoxFor(p => p.CurrencyName, null, new { @class = "form-control form-control-sm" })
+                        @Html.ValidationMessageFor(p => p.CurrencyName, "", new { @class = "form-text text-danger fs-12" })
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <div class="form-group">
+                        @Html.LabelFor(p => p.ShortName)
+                        @Html.LocalizedTextBoxFor(p => p.ShortName, null, new { @class = "form-control form-control-sm" })
+                        @Html.ValidationMessageFor(p => p.ShortName, "", new { @class = "form-text text-danger fs-12" })
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <div class="form-group">
+                        @Html.LabelFor(p => p.DisplayFormat)
+                        @Html.TextBoxFor(p => p.DisplayFormat, new { @class = "form-control form-control-sm ltr-dir" })
+                        @Html.ValidationMessageFor(p => p.DisplayFormat, "", new { @class = "form-text text-danger fs-12" })
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <div class="form-group">
+                        @Html.LabelFor(p => p.IsoCode)
+                        @Html.TextBoxFor(p => p.IsoCode, new { @class = "form-control form-control-sm ltr-dir" })
+                        <small class="form-text text-muted">@Html.Raw(T("ClickForMoreInfo", "https://en.wikipedia.org/wiki/ISO_4217#Active_codes"))</small>
+                        @Html.ValidationMessageFor(p => p.IsoCode, "", new { @class = "form-text text-danger fs-12" })
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <div class="form-group">
+                        @Html.LabelFor(p => p.ExchangeRate)
+                        @Html.TextBoxFor(p => p.ExchangeRate, new { @class = "form-control form-control-sm ltr-dir", type = "number" })
+                        @Html.ValidationMessageFor(p => p.ExchangeRate, "", new { @class = "form-text text-danger fs-12" })
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <div class="form-group">
+                        @Html.LabelFor(p => p.DisplayOrder)
+                        @Html.TextBoxFor(p => p.DisplayOrder, new { @class = "form-control form-control-sm ltr-dir", type = "number" })
+                        @Html.ValidationMessageFor(p => p.DisplayOrder, "", new { @class = "form-text text-danger fs-12" })
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-12 col-lg-4">
+                    <div class="form-group no-b-mar">
+                        <div class="form-check">
+                            @Html.CheckBoxFor(p => p.Published, new { @class = "form-check-input" })
+                            @Html.LabelFor(p => p.Published, new { @class = "form-check-label" })
+                        </div>
+                        @Html.ValidationMessageFor(p => p.Published, "", new { @class = "form-text text-danger fs-12" })
+                    </div>
+                </div>
+            </div>
+
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" }).ToMvcHtmlString()
+
+            <div class="text-center t-mar-20">
+                <button type="submit" class="btn btn-sm btn-warning">@T("Save")</button>
+                <button type="button" onclick="SaveAndContinue($(this).closest('form'));" class="btn btn-sm btn-warning">@T("SaveAndContinue")</button>
+                <button type="button" onclick="window.close();" class="btn btn-sm btn-success">@T("Close")</button>
+            </div>
+        }
+    </div>
+</div>

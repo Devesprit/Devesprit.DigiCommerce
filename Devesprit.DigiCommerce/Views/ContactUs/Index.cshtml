@@ -1,0 +1,77 @@
+﻿@using Devesprit.Core
+@using Devesprit.Core.Settings
+@using Devesprit.Services
+@using Devesprit.Services.Localization
+@using reCaptcha
+@model Devesprit.DigiCommerce.Models.ContactUs.ContactUsModel
+@{
+    ViewBag.Title = T("ContactUs");
+    var currentLang = DependencyResolver.Current.GetService<IWorkContext>().CurrentLanguage;
+    var currentSettings = DependencyResolver.Current.GetService<ISettingService>().LoadSetting<SiteSettings>();
+    Html.AddHeadCustomParts("<meta name=\"robots\" content=\"index,follow\">");
+}
+
+<div class="panel">
+    <div class="panel-title">
+        <h4 class="no-mar">
+            @T("ContactUs")
+        </h4>
+    </div>
+    <div class="pad-25">
+        @Html.Raw(currentSettings.GetLocalized(p=> p.ContactUsDescription))
+
+        @using (Html.BeginForm("Index", "ContactUs", FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+
+            <div class="row">
+                <div class="col-12 col-md-6">
+                    <div class="form-group">
+                        @Html.LabelFor(p => p.Name)
+                        @Html.TextBoxFor(p => p.Name, null, new {@class = "form-control form-control-sm"})
+                        @Html.ValidationMessageFor(p => p.Name, "", new {@class = "form-text text-danger fs-12"})
+                    </div>
+                </div>
+                <div class="col-12 col-md-6">
+                    <div class="form-group">
+                        @Html.LabelFor(p => p.Email)
+                        @Html.TextBoxFor(p => p.Email, null, new {@class = "form-control form-control-sm"})
+                        @Html.ValidationMessageFor(p => p.Email, "", new {@class = "form-text text-danger fs-12"})
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <div class="form-group">
+                        @Html.LabelFor(p => p.Subject)
+                        @Html.TextBoxFor(p => p.Subject, null, new { @class = "form-control form-control-sm" })
+                        @Html.ValidationMessageFor(p => p.Subject, "", new { @class = "form-text text-danger fs-12" })
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="form-group">
+                        @Html.LabelFor(p => p.Message)
+                        @Html.TextAreaFor(p => p.Message, new {@class = "form-control form-control-sm", rows = 5})
+                        @Html.ValidationMessageFor(p => p.Message, "", new {@class = "form-text text-danger fs-12"})
+                    </div>
+                </div>
+            </div>
+
+            if (ViewBag.publicKey != null)
+            {
+                <div class="d-block b-mar-5">
+                    @ReCaptcha.GetHtml(ViewBag.publicKey, lang: currentLang.IsoCode)
+                </div>
+
+                if (ViewBag.RecaptchaLastErrors != null)
+                {
+                    <small class="form-text text-danger fs-12">@T("InvalidCaptcha")</small>
+                }
+            }
+
+            <div class="text-center t-mar-20">
+                <button type="submit" class="btn btn-sm btn-success">@T("Submit")</button>
+            </div>
+        }
+    </div>
+</div>

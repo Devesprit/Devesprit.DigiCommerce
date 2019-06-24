@@ -1,0 +1,71 @@
+﻿
+@using Devesprit.Core
+@using Devesprit.Utilities.Extensions
+@using Syncfusion.JavaScript
+@using Syncfusion.MVC.EJ
+
+@{
+    ViewBag.Title = T("FileManager");
+    Layout = Html.GetCurrentThemeAdminAreaLayoutAddress(true);
+    var hostUrl = HttpContext.Current.Request.Url.GetHostUrl().TrimEnd('/');
+    var currentLang = DependencyResolver.Current.GetService<IWorkContext>().CurrentLanguage;
+}
+
+
+<div class="container-fluid">
+    <div class="panel no-hide-overflow pad-5 mar-v-5 fs-14">
+        @(Html.EJ().FileExplorer("fileExplorer")
+              .RootFolderName("Root")
+              .AjaxAction(@Url.Action("FileAction", "FileExplorer"))
+              .ClientSideEvents(evt => evt.Select("fileExplorerOnSelect").Unselect("fileExplorerOnUnSelect"))
+              .Path(ViewBag.Path.ToString())
+              .EnablePersistence(true)
+              .EnableThumbnailCompress(true)
+              .Width("100%")
+              .Layout(LayoutType.Tile)
+              .IsResponsive(true)
+              .EnableRTL(currentLang.IsRtl)
+              .MinHeight("600px"))
+        <div class="text-center t-mar-5 b-mar-10">
+            <p id="selectedPath" class="text-muted fs-12 b-mar-5">n/a</p>
+            <button onclick="btnSelectClick();" type="button" class="btn btn-sm btn-success">@T("Select")</button>
+            <button onclick="window.close();" type="button" class="btn btn-sm btn-warning">@T("Close")</button>
+        </div>
+    </div>
+</div>
+
+@{
+    Html.AddInlineScript(ResourceLocation.Footer,
+        @<script>
+        var selectedFile = "";
+        var hostUrl = "@hostUrl";
+
+        function fileExplorerOnSelect(args) {
+            if (args.nodeType === "File" && args.type === "select") {
+                for (var i = 0; i < args.selectedItems.length; i++) {
+                    if (args.selectedItems[i].type === "File") {
+                        selectedFile = hostUrl + args.path + args.selectedItems[i].name;
+                        $("#selectedPath").text(selectedFile);
+                        return;
+                    }
+                }
+            }
+            selectedFile = "";
+            $("#selectedPath").text("n/a");
+        }
+
+        function fileExplorerOnUnSelect(args) {
+            selectedFile = "";
+            $("#selectedPath").text("n/a");
+        }
+
+        function btnSelectClick() {
+            if (isBlank(selectedFile)) {
+                WarningAlert("@T("Error")", "@T("YouHaveNotSelectedAnything")");
+                return;
+            }
+            $("#@ViewBag.TextboxId", opener.document).val(selectedFile);
+            window.close();
+        }
+</script>);
+}

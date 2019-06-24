@@ -1,0 +1,305 @@
+﻿@using System.Web.Mvc.Html
+@using Devesprit.Core
+@using Syncfusion.MVC.EJ
+@using Devesprit.Core.Settings
+@using Devesprit.Services
+@using Devesprit.Services.Localization
+@using Devesprit.WebFramework.Helpers
+
+@{
+    Layout = null;
+    var currentLang = DependencyResolver.Current.GetService<IWorkContext>().CurrentLanguage;
+    var settings = DependencyResolver.Current.GetService<ISettingService>().LoadSetting<SiteSettings>();
+
+    //Java scripts header
+    if (currentLang.IsRtl)
+    {
+        Html.AppendScriptParts(ResourceLocation.Header, "~/Scripts/GeneralScript.rtl.js");
+    }
+    Html.AppendScriptParts(ResourceLocation.Header, "~/Scripts/GeneralScript.js");
+    Html.AppendScriptParts(ResourceLocation.Header, "~/Scripts/iziToast.min.js");
+    Html.AppendScriptParts(ResourceLocation.Header, "~/Scripts/jquery.lazy-master/jquery.lazy.min.js");
+
+    @* Syncfusion Scripts *@
+    Html.AppendScriptParts(ResourceLocation.Header, "~/Scripts/ej/common/ej.unobtrusive.min.js");
+    Html.AppendScriptParts(ResourceLocation.Header, "~/Scripts/ej/web/ej.web.all.min.js");
+    Html.AppendScriptParts(ResourceLocation.Header, "~/Scripts/jsrender.min.js");
+
+    Html.AppendScriptParts(ResourceLocation.Header, "~/Scripts/jquery.unobtrusive-ajax.js");
+    Html.AppendScriptParts(ResourceLocation.Header, "~/Scripts/jquery.validate.unobtrusive.js");
+    Html.AppendScriptParts(ResourceLocation.Header, "~/Scripts/jquery.validate.js");
+    Html.AppendScriptParts(ResourceLocation.Header, "~/Scripts/bootstrap.bundle.js");
+    Html.AppendScriptParts(ResourceLocation.Header, "~/Scripts/jquery-3.4.1.js");
+
+    //Java scripts footer
+    @* http://www.daterangepicker.com/ *@
+    Html.AppendScriptParts(ResourceLocation.Footer, "~/Scripts/daterangepicker.js");
+    Html.AppendScriptParts(ResourceLocation.Footer, "~/Scripts/moment.js");
+    @* https://select2.org *@
+    Html.AppendScriptParts(ResourceLocation.Footer, "~/Scripts/select2.js");
+
+
+
+
+    //CSS header
+    Html.AppendCssFileParts(ResourceLocation.HeaderBeforeOther, "~/Content/bootstrap.min.css", true);
+
+    if (currentLang.IsRtl)
+    {
+        Html.AppendCssFileParts(ResourceLocation.Header, "~/Content/Styles.rtl.css");
+    }
+    Html.AppendCssFileParts(ResourceLocation.Header, "~/Content/Styles.css");
+    Html.AppendCssFileParts(ResourceLocation.Header, "~/Content/HelperStyles.css");
+    Html.AppendCssFileParts(ResourceLocation.Header, "~/Content/iziToast.min.css");
+    @* http://www.daterangepicker.com/ *@
+    Html.AddCssFileParts(ResourceLocation.Header, "~/Content/daterangepicker.css");
+    @* https://select2.org *@
+    Html.AddCssFileParts(ResourceLocation.Header, "~/Content/select2.css");
+    Html.AddCssFileParts(ResourceLocation.Header, "~/Content/select2-bootstrap.min.css");
+    @* Syncfusion Styles *@
+    Html.AppendCssFileParts(ResourceLocation.Header, "~/Content/ej/web/responsive-css/ejgrid.responsive.css");
+    Html.AppendCssFileParts(ResourceLocation.Header, "~/Content/ej/web/responsive-css/ej.responsive.css");
+    Html.AppendCssFileParts(ResourceLocation.Header, "~/Content/ej/web/office-365/ej.theme.css");
+    Html.AppendCssFileParts(ResourceLocation.Header, "~/Content/ej/web/ej.widgets.core.office-365.min.css");
+
+    Html.AppendCssFileParts(ResourceLocation.Header, "~/Content/font-awesome.min.css");
+
+
+    Html.AddHeadCustomParts("<meta name=\"robots\" content=\"noindex,nofollow\">");
+}
+
+<!DOCTYPE html>
+
+<html lang="@currentLang.IsoCode">
+<head>
+    <title>@Html.Raw(ViewBag.Title ?? settings.GetLocalized(x => x.SiteName))</title>
+    @if (!settings.GetLocalized(p => p.FavIcon).IsNullOrWhiteSpace())
+    {
+        <link rel="icon" type="@(settings.GetLocalized(p => p.FavIcon).EndsWith(".ico", StringComparison.OrdinalIgnoreCase) ? "image/x-icon" : "image/png")" href="@settings.GetLocalized(p => p.FavIcon)" />
+    }
+
+    <meta charset="utf-8">
+    <meta http-equiv="Content-type" content="text/html;charset=UTF-8" />
+    <meta name="generator" content="Devesprit DigiCommerce" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    @Html.GenerateHeadCustom()
+
+    @Html.EJ().ScriptManager()
+    @Html.GenerateCssFiles(Url, ResourceLocation.HeaderBeforeOther)
+    @Html.GenerateCssFiles(Url, ResourceLocation.Header)
+    @Html.GenerateCssFiles(Url, ResourceLocation.HeaderAfterOther)
+
+    @Html.GenerateScripts(Url, ResourceLocation.HeaderBeforeOther)
+    @Html.GenerateScripts(Url, ResourceLocation.Header)
+    @Html.GenerateScripts(Url, ResourceLocation.HeaderAfterOther)
+
+    @Html.GenerateCanonicalUrls()
+
+    @Html.Widget("admin_head_tag")
+</head>
+<body>
+    @Html.Widget("admin_body_tag_start")
+
+    @RenderBody()
+    <a href="#" id="back-to-top" title="@T("BackToTop")"><i class="fa fa-arrow-up" aria-hidden="true"></i></a>
+    @Html.Partial("Partials/_LoadingPanel");
+
+    @{
+        Html.AddInlineScript(ResourceLocation.Footer,
+@<script>
+                 ej.Grid.Locale["localString"] = {
+                     SaveButton: "@T("Save")",
+                     CancelButton: "@T("Cancel")",
+                     Add: "@T("Add")",
+                     Edit: "@T("Edit")",
+                     Update: "@T("Update")",
+                     Cancel: "@T("Cancel")",
+                     Delete: "@T("Delete")",
+                     Clear: "@T("Clear")",
+                     ConfirmDelete: "@T("ConfirmDelete")",
+                     DeleteOperationAlert: "@T("DeleteOperationAlert")",
+                     EditOperationAlert: "@T("EditOperationAlert")",
+                     EmptyRecord: "@T("EmptyRecord")",
+                     ExcelExport: "@T("ExcelExport")",
+                     Filter: "@T("Filter")",
+                     GroupDropArea: "@T("GroupDropArea")",
+                     OKButton: "@T("Ok")",
+                     PdfExport: "@T("PdfExport")",
+                     PrintGrid: "@T("Print")",
+                     SortInAscendingOrder: "@T("SortInAscendingOrder")",
+                     SortInDescendingOrder: "@T("SortInDescendingOrder")",
+                     UnGroup: "@T("UnGroup")",
+                     WordExport: "@T("WordExport")",
+                     Done: "@T("Done")",
+                     Columns: "@T("Columns")"
+                 };
+
+                 $.extend($.validator.messages,
+                     {
+                         required: "@T("Required")"
+                     });
+
+                 ej.Pager.Locale["localString"] = {
+                     pagerInfo: "@T("PagerInfo")",
+                     firstPageTooltip: "@T("GoToFirstPage")",
+                     lastPageTooltip: "@T("GoToLastPage")",
+                     nextPageTooltip: "@T("GoToNextPage")",
+                     previousPageTooltip: "@T("GoToPreviousPager")",
+                 };
+
+                 function initDateTimePicker() {
+                 $('.datetimepicker').daterangepicker({
+                     timePicker: true,
+                     timePicker24Hour: true,
+                     timePickerSeconds: true,
+                     linkedCalendars: false,
+                     showCustomRangeLabel: false,
+                     alwaysShowCalendars: true,
+                     opens: 'center',
+                     autoUpdateInput: false,
+                     autoApply: false,
+                     singleDatePicker: true,
+                     showDropdowns: true,
+                     showWeekNumbers: true,
+                     showISOWeekNumbers: true,
+                     "locale": {
+                         "format": "YYYY/MM/DD HH:mm:ss",
+                         "separator": " - ",
+                         "applyLabel": "@T("Apply")",
+                         "cancelLabel": "@T("Cancel")"
+                     }, function(start, end, label) {
+                         var years = moment().diff(start, 'years');
+                         alert("You are " + years + " years old!");
+                     }
+                 });
+
+                 $('.datetimepicker').on('apply.daterangepicker',
+                     function(ev, picker) {
+                         $(this).val(picker.startDate.format('YYYY/MM/DD HH:mm:ss'));
+                     });
+
+                 $('.datepicker').daterangepicker({
+                     linkedCalendars: false,
+                     showCustomRangeLabel: false,
+                     alwaysShowCalendars: true,
+                     opens: 'center',
+                     autoUpdateInput: false,
+                     autoApply: false,
+                     singleDatePicker: true,
+                     showDropdowns: true,
+                     showWeekNumbers: true,
+                     showISOWeekNumbers: true,
+                     "locale": {
+                         "format": "YYYY/MM/DD",
+                         "separator": " - ",
+                         "applyLabel": "@T("Apply")",
+                         "cancelLabel": "@T("Cancel")"
+                     }
+                 });
+
+                 $('.datepicker').on('apply.daterangepicker',
+                     function (ev, picker) {
+                         $(this).val(picker.startDate.format('YYYY/MM/DD'));
+                     });
+             }
+
+                 function GetActiveLocalizedEntityEditorId(entityName) {
+                     var result = $('#' + entityName + '-tab-content div.active input').attr('id');
+                     if (isBlank(result)) {
+                         result = $('#' + entityName + '-tab-content div.active textarea').attr('id');
+                     }
+
+                     return result;
+                 }
+
+                 function ShowFileExplorerForLocalizedEntity(entityName, path) {
+                     var element = $("#" + GetActiveLocalizedEntityEditorId(entityName));
+                     path = path || "";
+                     if (element.length > 0) {
+                         var elementId = $(element).attr('id');
+                         PopupWindows('@Url.Action("Index", "FileExplorer", new {area="Admin"})',
+                             'FileExplorer',
+                             1200,
+                             700,
+                             { textboxId: elementId, path: path },
+                             'post');
+                     }
+                 }
+
+                 function ShowFileExplorerFor(elementId, path) {
+                     var element = $("#" + elementId);
+                     path = path || "";
+                     if (element.length > 0) {
+                         PopupWindows('@Url.Action("Index", "FileExplorer", new {area="Admin"})',
+                             'FileExplorer',
+                             1200,
+                             700,
+                             { textboxId: elementId, path: path },
+                             'post');
+                     }
+                 }
+
+                 function ShowFileExplorer(path) {
+                     path = path || "";
+                     PopupWindows('@Url.Action("Index", "FileExplorer", new {area="Admin"})',
+                         'FileExplorer',
+                         1200,
+                         700,
+                         { textboxId: '', path: path },
+                         'post');
+                 }
+
+                 function SaveAndContinue(form) {
+					 $.validator.unobtrusive.parse($(form));
+                     if ($(form).valid()) {
+                         $('#LoadingPanel').show();
+                         var url = $(form).attr('action');
+                         url += (url.indexOf('?') >= 0 ? '&' : '?') + 'saveAndContinue=true';
+                         $(form).attr('action', url);
+                         $(form).submit();
+                     } else {
+                         $('.input-validation-error:first').focus();
+                     }
+                 }
+
+                 function DeleteEntity(entityIds, deleteActionUrl, refreshGridFunction) {
+                     $('#LoadingPanel').show();
+                     $.ajax({
+                         type: "POST",
+                         url: deleteActionUrl,
+                         data: {
+                             keys: entityIds
+                         },
+                         error: function(xhr, status, error) {
+                             ErrorAlert('@T("Error")', '@T("ServerConnectionError")');
+                         },
+                         success: function(response) {
+                             if (response === 'OK') {
+                                 refreshGridFunction();
+                             } else {
+                                 ErrorAlert('@T("Error")', response);
+                             }
+                         },
+                         complete: function() {
+                             $('#LoadingPanel').hide();
+                         }
+                     });
+                 }
+
+                 initDateTimePicker();
+</script>);
+    }
+
+    @Html.Partial("Partials/_Notifications")
+
+    @Html.GenerateCssFiles(Url, ResourceLocation.FooterBeforeOther)
+    @Html.GenerateCssFiles(Url, ResourceLocation.Footer)
+    @Html.GenerateCssFiles(Url, ResourceLocation.FooterAfterOther)
+
+    @Html.GenerateScripts(Url, ResourceLocation.FooterBeforeOther)
+    @Html.GenerateScripts(Url, ResourceLocation.Footer)
+    @Html.GenerateScripts(Url, ResourceLocation.FooterAfterOther)
+
+    @Html.Widget("admin_body_tag_end")
+</body>
+</html>

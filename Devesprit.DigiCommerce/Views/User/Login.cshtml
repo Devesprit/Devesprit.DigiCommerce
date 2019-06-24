@@ -1,0 +1,92 @@
+﻿@using reCaptcha
+
+@model Devesprit.DigiCommerce.Models.Users.LoginModel
+@{
+    ViewBag.Title = T("Login");
+    bool showSocialsPanel = Model.ExternalLoginProviders?.Any() == true;
+
+    Html.AddHeadCustomParts("<meta name=\"robots\" content=\"index,follow\">");
+}
+
+<div class="container t-mar-35">
+    <div class="row justify-content-center">
+        <div class="col-12 @(showSocialsPanel ? "col-lg-10" : "col-lg-6")">
+            <div class="panel">
+                <div class="panel-title pad-10">
+                    <h5 class="no-mar">@T("Login")</h5>
+                </div>
+                <div class="row no-gutters">
+
+                    @*Login/SignUp With Socials*@
+                    @if (showSocialsPanel)
+                    {
+                        <div class="col-12 col-md-6 col-lg-4 bg-light rounded p-3">
+                            <div class="row b-mar-20">
+                                <div class="col-12 text-center">
+                                    <p class="b-mar-20 text-muted">@T("SocialsLogin")</p>
+                                    @using (Html.BeginForm("ExternalLogin", "User"))
+                                    {
+                                        @Html.AntiForgeryToken()
+                                        <div class="row">
+                                            @foreach (var loginProvider in Model.ExternalLoginProviders.OrderByDescending(p => p.Order))
+                                            {
+                                                Html.RenderPartial(loginProvider.ProviderLoginBtnPartialUrl);
+                                            }
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+                    @*Login/SignUp With Form*@
+                    <div class="col-12 @(showSocialsPanel ? "col-md-6 col-lg-8" : "") fs-14 p-3">
+                        @using (Html.BeginForm("Login", "User", FormMethod.Post))
+                        {
+                            @Html.HiddenFor(p => p.ReturnUrl)
+                            @Html.AntiForgeryToken()
+                            <div class="form-group b-mar-5">
+                                @Html.LabelFor(p => p.Email)
+                                @Html.TextBoxFor(p => p.Email, new { @class = "form-control form-control-sm" })
+                                @Html.ValidationMessageFor(p => p.Email, "", new { @class = "form-text text-danger fs-12" })
+                            </div>
+                            <div class="form-group b-mar-5">
+                                @Html.LabelFor(p => p.Password)
+                                @Html.PasswordFor(p => p.Password, new { @class = "form-control form-control-sm" })
+                                @Html.ValidationMessageFor(p => p.Password, "", new { @class = "form-text text-danger fs-12" })
+                                <small class="form-text text-muted">@T("ForgotPassword") <a href="@Url.Action("ForgotPassword")">@T("ClickHere")</a></small>
+                            </div>
+                            if (ViewBag.publicKey != null)
+                            {
+                                <div class="d-block b-mar-5">
+                                    @ReCaptcha.GetHtml(ViewBag.publicKey, lang: Model.CurrentLanguage.IsoCode)
+                                </div>
+
+                                if (ViewBag.RecaptchaLastErrors != null)
+                                {
+                                    <small class="form-text text-danger fs-12">@T("InvalidCaptcha")</small>
+                                }
+                            }
+
+                            <div class="form-group b-mar-5">
+                                <div class="form-check">
+                                    @Html.CheckBoxFor(p => p.RememberMe, new { @class = "form-check-input" })
+                                    @Html.LabelFor(p => p.RememberMe, new { @class = "form-check-label" })
+                                </div>
+                            </div>
+                            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                            <div class="text-center">
+                                <button type="submit" class="btn btn-success d-block m-auto t-mar-20 b-mar-10">@T("Login")</button>
+                            </div>
+                        }
+
+                        <div class="col-12 text-center t-mar-15">
+                            <span class="fs-11 text-muted">@T("NotRegistered") <a href="@Url.Action("SignUp")">@T("ClickHere")</a></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

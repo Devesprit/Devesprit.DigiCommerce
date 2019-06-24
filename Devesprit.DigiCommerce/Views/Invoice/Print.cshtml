@@ -1,0 +1,218 @@
+﻿@using Devesprit.Utilities.Extensions
+@using Devesprit.Services.Currency
+@using Devesprit.Core.Settings
+@using Devesprit.Data.Enums
+@using Devesprit.Services
+@using Devesprit.Services.Localization
+@using Devesprit.Services.Users
+@using Devesprit.WebFramework.Helpers
+@using Microsoft.AspNet.Identity
+@model Devesprit.DigiCommerce.Models.Invoice.InvoiceModel
+
+@{
+    Layout = Html.GetCurrentThemeLayoutAddress(true);
+    var settings = DependencyResolver.Current.GetService<ISettingService>().LoadSetting<SiteSettings>();
+    var user = DependencyResolver.Current.GetService<IUsersService>().UserManager.FindById(Model.UserId);
+    Html.AddHeadCustomParts("<meta name=\"robots\" content=\"noindex,nofollow\">");
+}
+
+<div class="container bg-white t-pad-30 b-pad-15 mar-v-100">
+    <div class="row">
+        <div class="col">
+            @if (!settings.GetLocalized(p => p.SiteLogoInvoicePrint).IsNullOrWhiteSpace())
+            {
+                <img src="@settings.GetLocalized(p => p.SiteLogoInvoicePrint)" class="b-mar-15" alt="@settings.GetLocalized(p=> p.SiteName)"/>
+            }
+            
+            <br/>
+            <h4 class="no-mar"><b>@settings.GetLocalized(p => p.SiteName)</b></h4>
+            <small>@Html.Raw(settings.GetLocalized(p => p.InvoicePrintPageCompanyInfo))</small>
+        </div>
+        <div class="col">
+            <h2 class="text-uppercase">@T("Invoice")</h2>
+            <small>
+                # @Model.Id
+                <br />
+                @T("Date"): @(Model.CreateDate.ToString("F"))
+            </small>
+            @if (Model.UserBillingAddress != null && !Model.UserBillingAddress.IsEmpty)
+            {
+                <hr />
+                <h4>@T("InvoiceTo")</h4>
+                if (!string.IsNullOrWhiteSpace(Model.UserBillingAddress.CompanyName))
+                {
+                    @Model.UserBillingAddress.CompanyName
+                    <br />
+                }
+                if (!string.IsNullOrWhiteSpace(Model.UserBillingAddress.FirstName) ||
+                    !string.IsNullOrWhiteSpace(Model.UserBillingAddress.LastName))
+                {
+                    @Html.Raw($"{Model.UserBillingAddress.FirstName} {Model.UserBillingAddress.LastName}")
+                    <br />
+                }
+                else if (user != null && (!string.IsNullOrWhiteSpace(user.FirstName) ||
+                    !string.IsNullOrWhiteSpace(user.LastName)))
+                {
+                    @Html.Raw($"{user.FirstName} {user.LastName}")
+                    <br />
+                }
+                <small>
+                    @if (!string.IsNullOrWhiteSpace(Model.UserBillingAddress.StreetAddress))
+                    {
+                        <b>@T("StreetAddress"):</b> @Model.UserBillingAddress.StreetAddress
+                        <br />
+                    }
+                    @if (!string.IsNullOrWhiteSpace(Model.UserBillingAddress.ZipCode))
+                    {
+                        <b>@T("ZipCode"):</b> @Model.UserBillingAddress.ZipCode
+                        <br />
+                    }
+                    @if (!string.IsNullOrWhiteSpace(Model.UserBillingAddress.PhoneNumber))
+                    {
+                        <b>@T("PhoneNumber"):</b> @Model.UserBillingAddress.PhoneNumber
+                        <br />
+                    }
+                    @if (!string.IsNullOrWhiteSpace(Model.UserBillingAddress.Email))
+                    {
+                        <b>@T("Email"):</b> @Model.UserBillingAddress.Email
+                    }
+                </small>
+            }
+            else if (user != null)
+            {
+                <hr />
+                <h4>@T("InvoiceTo")</h4>
+                if (!string.IsNullOrWhiteSpace(user.FirstName) ||
+                    !string.IsNullOrWhiteSpace(user.LastName))
+                {
+                    @user.FirstName @user.LastName
+                    <br />
+                }
+                <b>@T("Email"):</b> @user.Email
+            }
+        </div>
+    </div>
+
+
+    <table class="table table-responsive table-sm t-mar-45">
+        <thead class="thead-default">
+            <tr>
+                <th class="text-center text-uppercase invoice-rownumber-col-width">#</th>
+                <th class="text-center text-uppercase invoice-itemname-col-width">@T("Name")</th>
+                @if (Model.Status == InvoiceStatus.Paid)
+                {
+                    <th class="text-center text-uppercase invoice-price-col-width">@T("ExpiryDate")</th>
+                }
+                <th class="text-center text-uppercase invoice-price-col-width">@T("Price")</th>
+
+                @if (settings.ShowQtyColInInvoice)
+                {
+                    <th class="text-center text-uppercase invoice-qty-col-width">@T("Qty")</th>
+                    <th class="text-center text-uppercase invoice-price-col-width">@T("Total")</th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.InvoiceDetails.OrderBy(p => p.Id))
+            {
+                <tr>
+                    <th scope="row" class="text-center">@item.RowNumber</th>
+
+                    <td @(item.ItemName.IsRtlLanguage() ? "class=rtl-dir" : "class=ltr-dir")>
+                        @Html.Raw(item.ItemName.Replace(Environment.NewLine, "<br>"))
+                    </td>
+                    @if (Model.Status == InvoiceStatus.Paid)
+                    {
+                        <td class="text-center fs-12">
+                            @(item.PurchaseExpiration?.ToString("D") ?? "-")
+                        </td>
+                    }
+                    <td class="text-center">
+                        @item.UnitPrice.ExchangeCurrencyStr(true)
+                    </td>
+
+                    @if (settings.ShowQtyColInInvoice)
+                    {
+                        <td class="text-center">
+
+                            @if (item.ItemType == InvoiceDetailsItemType.SubscriptionPlan || item.UnitPrice <= 0)
+                            {
+                                @Html.Raw("-")
+                            }
+                            else
+                            {
+                                @item.Qty.ToString("N0")
+                            }
+
+                        </td>
+                        <td class="text-center">
+                            @item.TotalPrice.ExchangeCurrencyStr(true)
+                        </td>
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+    <hr />
+    <div class="row justify-content-end">
+        <div class="col-12 col-md-6 col-lg-4 fs-14">
+            <div class="bg-light pad-5">
+                @T("SubTotal"): <b>@Model.InvoiceSubTotal.ExchangeCurrencyStr(true)</b>
+            </div>
+
+
+            @if (Model.DiscountAmount > 0)
+            {
+                <div class="bg-light pad-5">
+                    <span>@T("YourDiscount"):</span>
+                    <span class="@Html.Raw(Model.DiscountAmount > 0 ? "text-danger" : "") fw-bold">@Model.DiscountAmount.ExchangeCurrencyStr(true)</span>
+                    <small class="text-muted">@Model.DiscountDescription</small>
+                </div>
+            }
+
+
+            @if (Model.TotalTaxAmount > 0)
+            {
+                <div class="bg-light pad-5">
+                    @T("Tax"): <b>@Model.TotalTaxAmount.ExchangeCurrencyStr(true)</b>
+                    <small>@Model.TaxDescription</small>
+                </div>
+            }
+
+            <div class="invoice-bg fs-16 fw-bold pad-5">
+                @T("Total"): @Model.InvoiceTotal.ExchangeCurrencyStr(true)
+            </div>
+        </div>
+    </div>
+    @if (Model.Status == InvoiceStatus.Paid)
+    {
+        <div class="row justify-content-end">
+            <div class="col-12 col-md-6 col-lg-4 fs-14">
+                <hr />
+                <h3>@T("Paid")</h3>
+                <p>
+                    <b>@T("PaymentDate"): </b> @(Model.PaymentDate?.ToString("F") ?? "-")
+                    <br />
+                    <b>@T("PaymentGateway"):</b> @(Model.PaymentGatewayName ?? "-")
+                    <br />
+                    <b>@T("TransactionId"):</b> @(Model.PaymentGatewayTransactionId ?? "-")
+                    <br />
+                    <b>@T("Currency"):</b> @(Model.Currency?.GetLocalized(p => p.CurrencyName) ?? "-")
+                </p>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="row justify-content-end">
+            <div class="col-12 col-md-6 col-lg-4 fs-14">
+                <hr />
+                <h3>@T("Pending")</h3>
+            </div>
+        </div>
+    }
+</div>
+
+<script>
+    window.print();
+</script>

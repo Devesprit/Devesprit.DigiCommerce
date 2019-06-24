@@ -1,0 +1,72 @@
+﻿@using Devesprit.WebFramework.Helpers
+@model Plugin.DiscountCode.Models.DiscountCodeViewModel
+@{
+    Layout = Html.GetCurrentThemeAdminAreaLayoutAddress(true);
+}
+
+<div class="container-fluid">
+    <div class="panel mar-v-35">
+        <div class="fs-14 pad-20">
+            @using (Html.BeginForm())
+            {
+                @Html.AntiForgeryToken()
+                @Html.HiddenFor(p => p.Id)
+
+                <div class="row">
+                    <div class="col-12">
+                        <div class="form-group">
+                            @Html.LabelFor(p => p.DiscountCodeTitle)
+                            @Html.LocalizedTextBoxFor(p => p.DiscountCodeTitle, null, new { @class = "form-control form-control-sm" })
+                            @Html.ValidationMessageFor(p => p.DiscountCodeTitle, "", new { @class = "form-text text-danger fs-12" })
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="form-group">
+                            @Html.LabelFor(p => p.DiscountCode)
+                            @Html.TextBoxFor(p => p.DiscountCode, null, new { @class = "form-control form-control-sm ltr-dir" })
+                            @Html.ValidationMessageFor(p => p.DiscountCode, "", new { @class = "form-text text-danger fs-12" })
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <div class="form-group">
+                            @Html.LabelFor(p => p.DiscountAmount)
+                            @Html.TextBoxFor(p => p.DiscountAmount, null, new { @class = "form-control form-control-sm ltr-dir", type = "number" })
+                            @Html.ValidationMessageFor(p => p.DiscountAmount, "", new { @class = "form-text text-danger fs-12" })
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <div class="form-group">
+                            <div class="form-check">
+                                @Html.CheckBoxFor(p => p.IsPercentage, new { @class = "form-check-input" })
+                                @Html.LabelFor(p => p.IsPercentage, new { @class = "form-check-label" })
+                            </div>
+                            @Html.ValidationMessageFor(p => p.IsPercentage, "", new { @class = "form-text text-danger fs-12" })
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <div class="form-group">
+                            @Html.LabelFor(p => p.ExpiryDate)
+                            @Html.TextBoxFor(p => p.ExpiryDate, "{0:yyyy/MM/dd HH:mm:ss}", new { @class = "form-control form-control-sm ltr-dir datetimepicker" })
+                            @Html.ValidationMessageFor(p => p.ExpiryDate, "", new { @class = "form-text text-danger fs-12" })
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <div class="form-group">
+                            @Html.LabelFor(p => p.MaxNumberOfUsage)
+                            @Html.TextBoxFor(p => p.MaxNumberOfUsage, null, new { @class = "form-control form-control-sm ltr-dir", type = "number" })
+                            @Html.ValidationMessageFor(p => p.MaxNumberOfUsage, "", new { @class = "form-text text-danger fs-12" })
+                        </div>
+                    </div>
+
+                </div>
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" }).ToMvcHtmlString()
+
+                <div class="text-center t-mar-20">
+                    <button type="submit" class="btn btn-sm btn-warning">@T("Save")</button>
+                    <button type="button" onclick="SaveAndContinue($(this).closest('form'));" class="btn btn-sm btn-warning">@T("SaveAndContinue")</button>
+                    <button type="button" onclick="window.close();" class="btn btn-sm btn-success">@T("Close")</button>
+                </div>
+            }
+        </div>
+    </div>
+</div>

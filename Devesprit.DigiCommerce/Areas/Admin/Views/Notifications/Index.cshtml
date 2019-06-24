@@ -1,0 +1,129 @@
+﻿
+@using Devesprit.Core
+@using Syncfusion.JavaScript
+@using Syncfusion.MVC.EJ
+@{
+    ViewBag.Title = T("Notifications");
+    var currentLang = DependencyResolver.Current.GetService<IWorkContext>().CurrentLanguage;
+}
+
+<div class="panel no-hide-overflow">
+    <div class="panel-title pad-10">
+        <h5 class="no-mar">
+            @T("Notifications")
+        </h5>
+    </div>
+
+    <div class="pad-10">
+        @(Html.EJ().Grid<object>("NotificationsGrid")
+              .Datasource(ds =>
+              {
+                  ds.URL(Url.Action("GridDataSource", new { seeUsersNotifications = ViewBag.SeeUsersNotifications })).Adaptor(AdaptorType.UrlAdaptor);
+              })
+              .AllowSorting()
+              .AllowResizing()
+              .AllowReordering()
+              .AllowPaging()
+              .AllowFiltering()
+              .AllowTextWrap()
+              .AllowSelection()
+              .ShowColumnChooser()
+              .IsResponsive()
+              .SelectionType(SelectionType.Multiple)
+              .EnablePersistence(false)
+              .EnableResponsiveRow(true)
+              .EnableRTL(currentLang.IsRtl)
+              .MinWidth(990)
+              .Locale("localString")
+              .ClientSideEvents(evt => evt.ActionBegin("onNotificationsGridAction"))
+
+              .EditSettings(edt => edt.AllowDeleting().ShowDeleteConfirmDialog())
+              .PageSettings(p => { p.PageSize(25).PageSizeList(new List<int>(){10, 25, 50, 100, 250, 500}).PageCount(5).PrintMode(PrintMode.CurrentPage); })
+              .FilterSettings(f => { f.FilterType(FilterType.Menu); })
+              .TextWrapSettings(s => s.WrapMode(WrapMode.Both))
+              .ScrollSettings(s=> s.EnableTouchScroll(true))
+              .ToolbarSettings(toolBar => toolBar.ShowToolbar()
+                  .CustomToolbarItems(new List<object>(){ new Syncfusion.JavaScript.Models.CustomToolbarItem() { TemplateID = "#NotificationsGridRefresh" } })
+                  .ToolbarItems(items =>
+                  {
+                      items.AddTool(ToolBarItems.Delete);
+                      items.AddTool(ToolBarItems.PrintGrid);
+                  }))
+              .Columns(col =>
+              {
+                  col.Field("Id").HeaderText(T("Id").ToString()).Width(100).IsPrimaryKey(true).Visible(false).Add();
+                  col.Field("Date").HeaderText(T("Date").ToString()).Format("{0:yyyy/MM/dd HH:mm:ss}").Width(130).Add();
+                  col.Field("Message").HeaderText(T("Message").ToString()).Add();
+                  col.Field("IsMessage").HeaderText(T("Type").ToString()).TextAlign(TextAlign.Center).Width(80).Template("#MessageTypeTemplate").Add();
+                  col.Field("Recipient").HeaderText(T("Recipient").ToString()).Width(180).Add();
+                  col.HeaderText(T("Action").ToString()).TextAlign(TextAlign.Center).Width(150).Template("#ActionTemplate").Add();
+              }))
+    </div>
+</div>
+<script id="MessageTypeTemplate" type="text/template">
+    {{if IsMessage }}
+    <span class="badge badge-primary">@T("Message")</span>
+    {{else}}
+    <span class="badge badge-warning">@T("Notification")</span>
+    {{/if}}
+</script>
+<script id="ActionTemplate" type="text/template">
+    {{if Readed }}
+    <button type="button" class="btn btn-xs btn-success text-light mt-1" onclick="setNotificationStatus('{{:Id}}', false)">@T("MarkAsUnRead")</button>
+    {{else}}
+    <button type="button" class="btn btn-xs btn-warning text-light mt-1" onclick="setNotificationStatus('{{:Id}}', true)">@T("MarkAsRead")</button>
+    {{/if}}
+    @if (ViewBag.SeeUsersNotifications == true)
+    {
+    <button type="button" class="btn btn-xs btn-primary text-light my-1" onclick="SendMessageToUser('{{:UserEmail}}', false)"><i class="fa fa-envelope-o"></i> @T("SendMessage")</button>
+    }
+</script>
+<script id="NotificationsGridRefresh" type="text/x-jsrender">
+    <a onclick="refreshNotificationsGrid();" class="e-toolbaricons e-icon"><i class="fa fa-refresh"></i></a>
+</script>
+
+@{
+    Html.AddInlineScript(ResourceLocation.Footer,
+        @<script>
+             function onNotificationsGridAction(args) {
+                 if (args.requestType === "delete") {
+                     //Delete record
+                     args.cancel = true;
+                     DeleteEntity(args.data.map(function(item){return item.Id;}), "@Url.Action("Delete")", refreshNotificationsGrid);
+                 }
+            }
+
+            function refreshNotificationsGrid() {
+                $("#NotificationsGrid").ejGrid("refreshContent");
+            }
+
+            function SendMessageToUser(userEmail) {
+                PopupWindows('@Url.Action("SendMessageToUser")', 'NotificationEditor', 800, 400, { userEmail: userEmail}, 'get');
+            }
+
+            function setNotificationStatus(notificationId, readed) {
+                $('#LoadingPanel').show();
+                $.ajax({
+                    type: "POST",
+                    url: "@Url.Action("SetNotificationStatus")",
+                    data: {
+                        id: notificationId,
+                        readed: readed
+                    },
+                    error: function(xhr, status, error) {
+                        ErrorAlert('@T("Error")', '@T("ServerConnectionError")');
+                    },
+                    success: function(response) {
+                        if (response === 'OK') {
+                            refreshNotificationsGrid();
+                        } else {
+                            ErrorAlert('@T("Error")', response);
+                        }
+                    },
+                    complete: function() {
+                        $('#LoadingPanel').hide();
+                    }
+                });
+            }
+</script>);
+}

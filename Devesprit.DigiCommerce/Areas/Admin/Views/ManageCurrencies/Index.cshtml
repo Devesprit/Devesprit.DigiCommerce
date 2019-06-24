@@ -1,0 +1,128 @@
+﻿
+@using Devesprit.Core
+@using Syncfusion.JavaScript
+@using Syncfusion.JavaScript.Models
+@using Syncfusion.MVC.EJ
+@{
+    ViewBag.Title = T("ManageCurrencies");
+    var currentLang = DependencyResolver.Current.GetService<IWorkContext>().CurrentLanguage;
+}
+
+<div class="panel no-hide-overflow">
+    <div class="panel-title pad-10">
+        <h5 class="no-mar">
+            @T("ManageCurrencies")
+        </h5>
+    </div>
+
+    <div class="pad-10">
+        @(Html.EJ().Grid<object>("CurrenciesGrid")
+              .Datasource(ds =>
+              {
+                  ds.URL(Url.Action("GridDataSource")).Adaptor(AdaptorType.UrlAdaptor);
+              })
+              .AllowSorting()
+              .AllowResizing()
+              .AllowReordering()
+              .AllowPaging()
+              .AllowFiltering()
+              .AllowTextWrap()
+              .AllowSelection()
+              .ShowColumnChooser()
+              .IsResponsive()
+              .SelectionType(SelectionType.Multiple)
+              .EnablePersistence(false)
+              .EnableResponsiveRow(true)
+              .EnableRTL(currentLang.IsRtl)
+              .MinWidth(990)
+              .Locale("localString")
+              .ClientSideEvents(evt => evt.ActionBegin("onCurrenciesGridAction"))
+
+              .EditSettings(edt => edt.AllowEditing().AllowDeleting().AllowAdding().ShowDeleteConfirmDialog())
+              .PageSettings(p => { p.PageSize(25).PageSizeList(new List<int>(){10, 25, 50, 100, 250, 500}).PageCount(5).PrintMode(PrintMode.CurrentPage); })
+              .FilterSettings(f => { f.FilterType(FilterType.Menu); })
+              .TextWrapSettings(s => s.WrapMode(WrapMode.Both))
+              .ScrollSettings(s=> s.EnableTouchScroll(true))
+              .ToolbarSettings(toolBar => toolBar.ShowToolbar()
+                  .CustomToolbarItems(new List<object>(){ new Syncfusion.JavaScript.Models.CustomToolbarItem() { TemplateID = "#CurrenciesGridRefresh" } })
+                  .ToolbarItems(items =>
+              {
+                  items.AddTool(ToolBarItems.Add);
+                  items.AddTool(ToolBarItems.Edit);
+                  items.AddTool(ToolBarItems.Delete);
+                  items.AddTool(ToolBarItems.PrintGrid);
+              }))
+              .Columns(col =>
+              {
+                  col.Field("Id").HeaderText(T("Id").ToString()).Width(60).IsPrimaryKey(true).Visible(false).Add();
+                  col.Field("CurrencyName").HeaderText(T("CurrencyName").ToString()).Add();
+                  col.Field("ShortName").HeaderText(T("CurrencyShortName").ToString()).Visible(false).Add();
+                  col.Field("DisplayFormat").HeaderText(T("CurrencyDisplayFormat").ToString()).Visible(false).Add();
+                  col.Field("IsoCode").HeaderText(T("IsoCode").ToString()).Add();
+                  col.Field("IsMainCurrency").HeaderText(T("IsDefault").ToString()).TextAlign(TextAlign.Center).Template("#IsDefaultTemplate").Width(120).Add();
+                  col.Field("ExchangeRate").HeaderText(T("ExchangeRate").ToString()).Format("{0:N2}").Width(120).Add();
+                  col.Field("Published").HeaderText(T("Published").ToString()).Width(120).Add();
+                  col.Field("DisplayOrder").HeaderText(T("DisplayOrder").ToString()).Width(120).Visible(false).Add();
+              }))
+    </div>
+</div>
+
+<script id="IsDefaultTemplate" type="text/template">
+    {{if IsMainCurrency }}
+    <i class="fa fa-check-circle text-success" aria-hidden="true"></i>
+    {{else}}
+    <button type="button" class="btn btn-xs btn-success text-light" onclick="setCurrencyAsDefault('{{:Id}}')">@T("SetAsDefault")</button>
+    {{/if}}
+</script>
+<script id="CurrenciesGridRefresh" type="text/x-jsrender">
+    <a onclick="refreshCurrenciesGrid();" class="e-toolbaricons e-icon"><i class="fa fa-refresh"></i></a>
+</script>
+
+@{
+    Html.AddInlineScript(ResourceLocation.Footer,
+        @<script>
+        function onCurrenciesGridAction(args) {
+            if (args.requestType === "delete") {
+                //Delete record
+                args.cancel = true;
+                DeleteEntity(args.data.map(function(item){return item.Id;}), "@Url.Action("Delete")", refreshCurrenciesGrid);
+            } else if (args.requestType === "beginedit") {
+                //Edit record
+                args.cancel = true;
+                PopupWindows('@Url.Action("Editor")', 'CurrencyEditor', 600, 670, { id: args.rowData.Id }, 'get');
+            } else if (args.requestType === "add") {
+                //Add new record
+                args.cancel = true;
+                PopupWindows('@Url.Action("Editor")', 'CurrencyEditor', 600, 670, {}, 'get');
+            }
+        }
+
+        function refreshCurrenciesGrid() {
+            $("#CurrenciesGrid").ejGrid("refreshContent");
+        }
+
+        function setCurrencyAsDefault(currencyId) {
+            $('#LoadingPanel').show();
+            $.ajax({
+                type: "POST",
+                url: "@Url.Action("SetCurrencyAsDefault")",
+                data: {
+                    id: currencyId
+                },
+                error: function(xhr, status, error) {
+                    ErrorAlert('@T("Error")"', '@T("ServerConnectionError")');
+                },
+                success: function(response) {
+                    if (response === 'OK') {
+                        refreshCurrenciesGrid();
+                    } else {
+                        ErrorAlert('@T("Error")', response);
+                    }
+                },
+                complete: function() {
+                    $('#LoadingPanel').hide();
+                }
+            });
+        }
+    </script>);
+}

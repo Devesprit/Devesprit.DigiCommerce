@@ -1,0 +1,100 @@
+﻿
+@using Devesprit.Core
+@using Syncfusion.JavaScript
+@using Syncfusion.MVC.EJ
+@{
+    ViewBag.Title = T("ManagePages");
+    var currentLang = DependencyResolver.Current.GetService<IWorkContext>().CurrentLanguage;
+}
+
+<div class="panel no-hide-overflow">
+    <div class="panel-title pad-10">
+        <h5 class="no-mar">
+            @T("ManagePages")
+        </h5>
+    </div>
+
+    <div class="pad-10">
+        @(Html.EJ().Grid<object>("PagesGrid")
+              .Datasource(ds =>
+              {
+                  ds.URL(Url.Action("GridDataSource")).Adaptor(AdaptorType.UrlAdaptor);
+              })
+              .AllowSorting()
+              .AllowResizing()
+              .AllowReordering()
+              .AllowPaging()
+              .AllowFiltering()
+              .AllowTextWrap()
+              .AllowSelection()
+              .ShowColumnChooser()
+              .IsResponsive()
+              .SelectionType(SelectionType.Multiple)
+              .EnablePersistence(false)
+              .EnableResponsiveRow(true)
+              .EnableRTL(currentLang.IsRtl)
+              .MinWidth(990)
+              .Locale("localString")
+              .ClientSideEvents(evt => evt.ActionBegin("onPagesGridAction"))
+
+              .EditSettings(edt => edt.AllowEditing().AllowDeleting().AllowAdding().ShowDeleteConfirmDialog())
+              .PageSettings(p => { p.PageSize(25).PageSizeList(new List<int>(){10, 25, 50, 100, 250, 500}).PageCount(5).PrintMode(PrintMode.CurrentPage); })
+              .FilterSettings(f => { f.FilterType(FilterType.Menu); })
+              .TextWrapSettings(s => s.WrapMode(WrapMode.Both))
+              .ScrollSettings(s=> s.EnableTouchScroll(true))
+              .ToolbarSettings(toolBar => toolBar.ShowToolbar()
+                  .CustomToolbarItems(new List<object>(){ new Syncfusion.JavaScript.Models.CustomToolbarItem() { TemplateID = "#PagesGridRefresh" } })
+                  .ToolbarItems(items =>
+              {
+                  items.AddTool(ToolBarItems.Add);
+                  items.AddTool(ToolBarItems.Edit);
+                  items.AddTool(ToolBarItems.Delete);
+                  items.AddTool(ToolBarItems.PrintGrid);
+              }))
+              .Columns(col =>
+              {
+                  col.Field("Id").HeaderText(T("Id").ToString()).Width(60).IsPrimaryKey(true).Visible(false).Add();
+                  col.Field("Title").HeaderText(T("Title").ToString()).Add();
+                  col.Field("Slug").HeaderText(T("Slug").ToString()).Add();
+                  col.Field("ShowInPanel").HeaderText(T("ShowInPanel").ToString()).Visible(false).Add();
+                  col.Field("PanelTitle").HeaderText(T("PanelTitle").ToString()).Visible(false).Add();
+                  col.Field("Published").HeaderText(T("Published").ToString()).Width(120).Add();
+                  col.HeaderText(T("Action").ToString()).TextAlign(TextAlign.Center).Width(180).Template("#ActionTemplate").Add();
+              }))
+    </div>
+</div>
+
+<script id="ActionTemplate" type="text/template">
+    <button type="button" class="btn btn-xs btn-success text-light" onclick="openPage('{{:Slug}}')">@T("OpenPage")</button>
+</script>
+<script id="PagesGridRefresh" type="text/x-jsrender">
+    <a onclick="refreshPagesGrid();" class="e-toolbaricons e-icon"><i class="fa fa-refresh"></i></a>
+</script>
+@{
+    Html.AddInlineScript(ResourceLocation.Footer,
+        @<script>
+             function onPagesGridAction(args) {
+                 if (args.requestType === "delete") {
+                     //Delete record
+                     args.cancel = true;
+                     DeleteEntity(args.data.map(function(item){return item.Id;}), "@Url.Action("Delete")", refreshPagesGrid);
+                 } else if (args.requestType === "beginedit") {
+                     //Edit record
+                     args.cancel = true;
+                     PopupWindows('@Url.Action("Editor")', 'PageEditor', 1200, 670, { id: args.rowData.Id }, 'get');
+                 } else if (args.requestType === "add") {
+                     //Add new record
+                     args.cancel = true;
+                     PopupWindows('@Url.Action("Editor")', 'PageEditor', 1200, 670, {}, 'get');
+                 }
+             }
+
+             function refreshPagesGrid() {
+                 $("#PagesGrid").ejGrid("refreshContent");
+             }
+
+             function openPage(pageUrl) {
+                 window.open('/Pages/' + pageUrl, '_blank');
+             }
+         </script>);
+}

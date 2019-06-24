@@ -1,0 +1,65 @@
+﻿@using Devesprit.WebFramework.Helpers
+@model Plugin.Widgets.GoogleAnalytics.Models.GoogleAnalyticsSettingsModel
+
+<div class="container">
+    <div class="panel mar-v-35">
+        <div class="panel-title pad-10">
+            <h5 class="no-mar">@T("Plugin.Widgets.GoogleAnalytics.Configuration")</h5>
+        </div>
+        <div class="fs-14 pad-20">
+            @using (Html.BeginForm())
+            {
+                @Html.AntiForgeryToken()
+
+                <div class="row">
+                    <div class="col-12">
+                        <div class="form-group">
+                            @Html.LabelFor(p => p.GoogleId)
+                            @Html.LocalizedTextBoxFor(p => p.GoogleId, null, new { @class = "form-control form-control-sm ltr-dir" })
+                            @Html.ValidationMessageFor(p => p.GoogleId, "", new { @class = "form-text text-danger fs-12" })
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <div class="form-group">
+                            @Html.LabelFor(p => p.TrackingScript)
+                            @Html.LocalizedTextAreaFor(p => p.TrackingScript, new { @class = "form-control form-control-sm ltr-dir", rows = 15 })
+                            @Html.ValidationMessageFor(p => p.TrackingScript, "", new { @class = "form-text text-danger fs-12" })
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <div class="form-group">
+                            @Html.LabelFor(p => p.WidgetZone)
+                            @Html.DropDownListFor(p => p.WidgetZone, Model.ZonesList, new { @class = "form-control custom-select form-control-sm" })
+                            @Html.ValidationMessageFor(p => p.WidgetZone, "", new { @class = "form-text text-danger fs-12" })
+                        </div>
+                    </div>
+                </div>
+
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" }).ToMvcHtmlString()
+
+                <div class="text-center t-mar-20">
+                    <button type="submit" class="btn btn-sm btn-warning">@T("Save")</button>
+                    <button type="button" onclick="window.close();" class="btn btn-sm btn-success">@T("Close")</button>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@{
+    Html.AddInlineScript(ResourceLocation.Footer,
+@<script>
+    //Init Zone List
+    $('#WidgetZone').select2({
+        tags: true,
+        dropdownAutoWidth: true,
+        width: 'auto',
+        dir: "ltr",
+        theme: "bootstrap"
+    });
+</script>);
+}

@@ -1,0 +1,190 @@
+﻿
+@using Devesprit.Core
+@using Syncfusion.JavaScript
+@using Syncfusion.MVC.EJ
+
+@{
+    ViewBag.Title = T("ManageNavBar");
+    var currentLang = DependencyResolver.Current.GetService<IWorkContext>().CurrentLanguage;
+}
+
+<div class="panel no-hide-overflow">
+    <div class="panel-title pad-10">
+        <h5 class="no-mar">@T("ManageNavBar")</h5>
+    </div>
+
+    <div class="pad-10">
+        <div class="row">
+            <div class="col-lg-12 b-mar-10" id="treeview-place-holder">
+                <div class="card border-info">
+                    <div class="card-header">
+                        @T("DisplayOrder")
+
+                        <button type="button" onclick="refreshNavBarTreeView()" class="btn btn-xs btn-outline-secondary float-end mar-h-2"><i class="fa fa-refresh"></i></button>
+                        <button type="button" onclick="DeleteSelectedItem()" class="btn btn-xs btn-warning float-end mar-h-2">@T("Delete")</button>
+                        <button type="button" onclick="EditSelectedItem()" class="btn btn-xs btn-success float-end mar-h-2">@T("Edit")</button>
+                        <button type="button" onclick="AddNewItem()" class="btn btn-xs btn-info float-end mar-h-2">@T("Add")</button>
+                    </div>
+                    <div class="card-body fs-14">
+                        @(Html.EJ().TreeView("NavBarTreeView")
+                                .TreeViewFields(s => s.Datasource(ds => ds.URL(Url.Action("GridDataSource")).Adaptor(AdaptorType.UrlAdaptor))
+                                .Id("Id")
+                                .Text("Name")
+                                .ParentId("ParentItemId"))
+                                .AllowEditing(false)
+                                .AllowDragAndDrop(true)
+                                .AllowDropChild(true)
+                                .AllowDropSibling(true)
+                                .AllowDragAndDropAcrossControl(true)
+                                .AllowKeyboardNavigation(true)
+                                .EnableAnimation(true)
+                                .FullRowSelect(true)
+                                .EnableRTL(currentLang.IsRtl)
+                                .ClientSideEvents(evt => evt.NodeClick("OnNodeClick").NodeDropped("OnNodeDropped"))
+                                .Width("100%"))
+                    </div>
+                    <div class="card-footer">
+                        <button type="button" onclick="refreshNavBarTreeView()" class="btn btn-xs btn-outline-secondary float-end mar-h-2"><i class="fa fa-refresh"></i></button>
+                        <button type="button" onclick="DeleteSelectedItem()" class="btn btn-xs btn-warning float-end mar-h-2">@T("Delete")</button>
+                        <button type="button" onclick="EditSelectedItem()" class="btn btn-xs btn-success float-end mar-h-2">@T("Edit")</button>
+                        <button type="button" onclick="AddNewItem()" class="btn btn-xs btn-info float-end mar-h-2">@T("Add")</button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6" id="editor-place-holder">
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@{
+    Html.AddInlineScript(ResourceLocation.Footer,
+        @<script>
+        function DeleteSelectedItem() {
+            var treeview = $("#NavBarTreeView").data("ejTreeView");
+            var node = treeview.getSelectedNode();
+            if (node.length === 1) {
+                var selectedItemId = node[0].id;
+
+                DeleteEntity(selectedItemId, "@Url.Action("Delete")", refreshNavBarTreeView);
+            } else {
+                ErrorAlert('@T("Error")', '@T("YouHaveNotSelectedAnything")');
+            }
+        }
+
+        function OnNodeDropped(args) {
+            $('#LoadingPanel').show();
+            var treeview = $("#NavBarTreeView").data("ejTreeView");
+            var nodesOrder = [];
+            $.each(treeview._liList, function (index, value) {
+                nodesOrder.push(value.id);
+            });
+
+            $.ajax({
+                type: "POST",
+                url: "@Url.Action("ChangeIndex")",
+                data: {
+                    nodesOrder: nodesOrder,
+                    id: args.droppedElementData.id,
+                    newParentId: args.droppedElementData.parentId
+                },
+                error: function(xhr, status, error) {
+                    ErrorAlert('@T("Error")', '@T("ServerConnectionError")');
+                },
+                success: function(response) {
+                    if (response !== 'OK') {
+                        refreshNavBarTreeView();
+                        ErrorAlert('@T("Error")', response);
+                    }
+                },
+                complete: function() {
+                    $('#LoadingPanel').hide();
+                }
+            });
+        }
+
+        function EditSelectedItem() {
+            var treeview = $("#NavBarTreeView").data("ejTreeView");
+            var node = treeview.getSelectedNode();
+            if (node.length === 1) {
+                var selectedItemId = node[0].id;
+
+                $('#LoadingPanel').show();
+                $("#treeview-place-holder").removeClass('col-lg-12');
+                $("#treeview-place-holder").addClass('col-lg-6');
+
+                $.ajax({
+                    type: "POST",
+                    url: "@Url.Action("Edit")",
+                    data: {
+                        id: selectedItemId
+                    },
+                    error: function(xhr, status, error) {
+                        ErrorAlert('@T("Error")', '@T("ServerConnectionError")');
+                    },
+                    success: function(response) {
+                        $("#editor-place-holder").html(response);
+                    },
+                    complete: function() {
+                        $('#LoadingPanel').hide();
+                    }
+                });
+            } else {
+                ErrorAlert('@T("Error")', '@T("YouHaveNotSelectedAnything")');
+            }
+        }
+
+        function AddNewItem() {
+            var treeview = $("#NavBarTreeView").data("ejTreeView");
+            var node = treeview.getSelectedNode();
+            var selectedItemId;
+            if (node.length === 1) {
+                selectedItemId = node[0].id;
+            }
+
+            $('#LoadingPanel').show();
+            $("#treeview-place-holder").removeClass('col-lg-12');
+            $("#treeview-place-holder").addClass('col-lg-6');
+
+            $.ajax({
+                type: "POST",
+                url: "@Url.Action("AddNew")",
+                data: {
+                    parentId: selectedItemId
+                },
+                error: function(xhr, status, error) {
+                    ErrorAlert('@T("Error")', '@T("ServerConnectionError")');
+                },
+                success: function(response) {
+                    $("#editor-place-holder").html(response);
+                },
+                complete: function() {
+                    $('#LoadingPanel').hide();
+                }
+            });
+        }
+
+        function refreshNavBarTreeView() {
+            $("#NavBarTreeView").ejTreeView("refresh");
+        }
+
+        function OnNodeClick(args) {
+            var treeObj = $("#NavBarTreeView").data("ejTreeView");
+            var node = treeObj.getNode(args.id);
+            if (node.selected === true) {
+                setTimeout(function() {
+                        $("#NavBarTreeView").ejTreeView("unselectNode", node.id);
+                    },
+                    100);
+            }
+        }
+
+        function DestroyEditor() {
+            $("#editor-place-holder").html('');
+            $("#treeview-place-holder").removeClass('col-lg-6');
+            $("#treeview-place-holder").addClass('col-lg-12');
+        }
+    </script>);
+}

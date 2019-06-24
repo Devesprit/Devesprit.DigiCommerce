@@ -1,0 +1,51 @@
+﻿@using System.Web.Mvc.Html
+@using Devesprit.DigiCommerce.Models
+@using Devesprit.DigiCommerce.Models.Post
+@using Devesprit.Utilities
+@model Devesprit.DigiCommerce.Models.Post.PostsExplorerModel
+
+@{
+    ViewBag.Title = Model.CategoryName;
+    Html.AddHeadCustomParts("<meta name=\"robots\" content=\"index,follow\">");
+}
+
+
+<div class="row t-pad-20">
+    <div class="col-12 col-lg-9">
+        <h5>
+            <a href="@Url.Action("Blog", "RssFeed", new {listType = Model.PostsListType, catId = Model.FilterByCategoryId, fromDate = Model.FromDate}).RemoveEmptyParametersFromQueryString()" target="_blank" title="@T("RSSFeed")" class="text-warning"><i class="fa fa-rss"></i></a>
+            @Html.Raw(T("NewestPostsIn", Model.CategoryName))
+        </h5>
+
+        @{Html.RenderAction("GetBlogPostsList", "Blog", new
+            {
+                listType = Model.PostsListType,
+                page = Model.PageIndex,
+                pageSize = Model.PageSize,
+                catId = Model.FilterByCategoryId,
+                fromDate = Model.FromDate,
+                numberOfCol = NumberOfCol.One,
+                style = ViewStyles.Large,
+                showPager = true
+            });}
+    </div>
+    <div class="col-12 col-lg-3">
+        <h5>
+            <a href="@Url.Action("Blog", "RssFeed", new {listType = PostsListType.MostPopular, catId = Model.FilterByCategoryId, fromDate = Model.FromDate}).RemoveEmptyParametersFromQueryString()" target="_blank" title="@T("RSSFeed")" class="text-warning"><i class="fa fa-rss"></i></a>
+            <small class="fs-14">@Html.Raw(T("MostPopularPostsIn", Model.CategoryName))</small>
+        </h5>
+
+        @{Html.RenderAction("GetBlogPostsList", "Blog", new
+            {
+                listType = PostsListType.MostPopular,
+                page = Model.PageIndex,
+                pageSize = Model.PageSize,
+                catId = Model.FilterByCategoryId,
+                fromDate = Model.FromDate,
+                numberOfCol = NumberOfCol.One,
+                style = ViewStyles.Small,
+                showPager = false
+            });}
+    </div>
+</div>
+

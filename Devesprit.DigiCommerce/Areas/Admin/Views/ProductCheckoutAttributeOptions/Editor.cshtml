@@ -1,0 +1,117 @@
+﻿@using Devesprit.WebFramework.Helpers
+@model Devesprit.DigiCommerce.Areas.Admin.Models.ProductCheckoutAttributeOptionModel
+@{
+    Layout = Html.GetCurrentThemeAdminAreaLayoutAddress(true);
+}
+
+<div class="container-fluid">
+    <div class="panel pad-20 mar-v-35  fs-14">
+        @using (Html.BeginForm("Editor", "ProductCheckoutAttributeOptions", FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+            @Html.HiddenFor(p => p.Id)
+            @Html.HiddenFor(p => p.ProductCheckoutAttributeId)
+
+            <div class="row">
+                <div class="col-12 col-sm-6 ">
+                    <div class="form-group">
+                        @Html.LabelFor(p => p.Name)
+                        @Html.LocalizedTextBoxFor(p => p.Name, null, new { @class = "form-control form-control-sm" })
+                        @Html.ValidationMessageFor(p => p.Name, "", new { @class = "form-text text-danger fs-12" })
+                    </div>
+                </div>
+                <div class="col-12 col-sm-6 ">
+                    <div class="form-group">
+                        @Html.LabelFor(p => p.LicenseGeneratorServiceId)
+                        @Html.DropDownListFor(p => p.LicenseGeneratorServiceId, Model.LicenseGeneratorsList, T("SelectAnItem").ToString(), new { @class = "form-control custom-select form-control-sm" })
+                        @Html.ValidationMessageFor(p => p.LicenseGeneratorServiceId, "", new { @class = "form-text text-danger fs-12" })
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12 col-sm-6 ">
+                    <div class="form-group">
+                        @Html.LabelFor(p => p.Price)
+                        @Html.TextBoxFor(p => p.Price, new { @class = "form-control form-control-sm", type = "number" })
+                        <span class="form-text text-muted fs-11">@T("ZeroFreeDownload")</span>
+                        @Html.ValidationMessageFor(p => p.Price, "", new { @class = "form-text text-danger fs-12" })
+                    </div>
+                </div>
+                <div class="col-12 col-sm-6 ">
+                    <div class="form-group">
+                        @Html.LabelFor(p => p.RenewalPrice)
+                        @Html.TextBoxFor(p => p.RenewalPrice, new { @class = "form-control form-control-sm", type = "number" })
+                        @Html.ValidationMessageFor(p => p.RenewalPrice, "", new { @class = "form-text text-danger fs-12" })
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12 col-sm-8 col-md-4 ">
+                    <div class="form-group">
+                        @Html.LabelFor(p => p.PurchaseExpiration)
+                        @Html.TextBoxFor(p => p.PurchaseExpiration, new { @class = "form-control form-control-sm", type = "number" })
+                        @Html.ValidationMessageFor(p => p.PurchaseExpiration, "", new { @class = "form-text text-danger fs-12" })
+                    </div>
+                </div>
+                <div class="col-12 col-sm-4 col-md-2 t-mar-30">
+                    <div class="form-group">
+                        @Html.LocalizedEnumDropDownListFor(p => p.PurchaseExpirationTimeType, T("SelectAnItem").ToString(), new { @class = "form-control custom-select form-control-sm" })
+                        @Html.ValidationMessageFor(p => p.PurchaseExpirationTimeType, "", new { @class = "form-text text-danger fs-12" })
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12 col-md-4 ">
+                    <div class="form-group">
+                        @Html.LabelFor(p => p.FileServerId)
+                        @Html.DropDownListFor(p => p.FileServerId, Model.FileServersList, T("SelectAnItem").ToString(), new { @class = "form-control custom-select form-control-sm" })
+                        @Html.ValidationMessageFor(p => p.FileServerId, "", new { @class = "form-text text-danger fs-12" })
+                    </div>
+                </div>
+                <div class="col-12 col-md-8 ">
+                    <div class="form-group">
+                        @Html.LabelFor(p => p.FilesPath)
+                        @Html.TextBoxFor(p => p.FilesPath, new { @class = "form-control form-control-sm ltr-dir" })
+                        <span class="form-text text-muted fs-11">@T("LeaveEmptyIfNotDownloadable")</span>
+                        @Html.ValidationMessageFor(p => p.FilesPath, "", new { @class = "form-text text-danger fs-12" })
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12 col-md-4 ">
+                    <div class="form-group">
+                        @Html.LabelFor(p => p.DownloadLimitedToUserGroupId)
+                        @Html.DropDownListFor(p => p.DownloadLimitedToUserGroupId, Model.UserGroupsList, T("SelectAnItem").ToString(), new { @class = "form-control custom-select form-control-sm" })
+                        @Html.ValidationMessageFor(p => p.DownloadLimitedToUserGroupId, "", new { @class = "form-text text-danger fs-12" })
+                    </div>
+                </div>
+                <div class="col-12 col-md-8 t-mar-30">
+                    <div class="form-group">
+                        <div class="form-check">
+                            @Html.CheckBoxFor(p => p.HigherUserGroupsCanDownload, new { @class = "form-check-input" })
+                            @Html.LabelFor(p => p.HigherUserGroupsCanDownload, new { @class = "form-check-label" })
+                        </div>
+                        @Html.ValidationMessageFor(p => p.HigherUserGroupsCanDownload, "", new { @class = "form-text text-danger fs-12" })
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <div class="form-group">
+                        @Html.LabelFor(p => p.DisplayOrder)
+                        @Html.TextBoxFor(p => p.DisplayOrder, new { @class = "form-control form-control-sm", type = "number" })
+                        @Html.ValidationMessageFor(p => p.DisplayOrder, "", new { @class = "form-text text-danger fs-12" })
+                    </div>
+                </div>
+            </div>
+
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" }).ToMvcHtmlString()
+
+            <div class="text-center t-mar-20">
+                <button type="submit" class="btn btn-sm btn-warning">@T("Save")</button>
+                <button type="button" onclick="SaveAndContinue($(this).closest('form'));" class="btn btn-sm btn-warning">@T("SaveAndContinue")</button>
+                <button type="button" onclick="window.close();" class="btn btn-sm btn-success">@T("Close")</button>
+            </div>
+        }
+    </div>
+</div>

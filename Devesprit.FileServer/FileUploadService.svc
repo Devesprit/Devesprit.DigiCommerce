@@ -1,0 +1,1 @@
+﻿<%@ ServiceHost Language="C#" Debug="true" Service="Devesprit.FileServer.FileUploadService" CodeBehind="FileUploadService.svc.cs" %>

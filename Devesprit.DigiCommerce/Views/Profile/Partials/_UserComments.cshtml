@@ -1,0 +1,75 @@
+﻿@using Devesprit.Data.Enums
+@using Devesprit.Services.Localization
+@using X.PagedList.Mvc
+@using X.PagedList.Mvc.Common
+@model X.PagedList.IPagedList<Devesprit.Data.Domain.TblPostComments>
+@{
+    int counter = Model.FirstItemOnPage;
+    Layout = null;
+}
+<h4>@T("Comments"):</h4>
+<div class="row">
+    <div class="col">
+        <div class="table-responsive">
+            <table class="table table-hover table-sm fs-14">
+                <thead class="thead-dark">
+                    <tr>
+                        <th class="text-center">#</th>
+                        <th class="text-center">@T("Comment")</th>
+                        <th class="text-center">@T("Published")</th>
+                        <th class="text-center">@T("Date")</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <th scope="row" class="text-center">
+                                @counter
+                            </th>
+                            <td>
+                                @item.Comment
+                                <a target="_blank"
+                                   href="@(item.Post.PostType == PostType.Product ? Url.Action("Index", "Product", new { slug = item.Post.Slug }) : Url.Action("Post", "Blog", new { slug = item.Post.Slug }))">
+                                    <i class="fa fa-external-link"></i>
+                                </a>
+                            </td>
+                            <td class="text-center">
+                                @if (item.Published)
+                                {
+                                    <i class="fa fa-check-circle text-success"></i>
+                                }
+                                else
+                                {
+                                    <i class="fa fa-times-circle text-danger"></i>
+                                }
+                            </td>
+                            <td class="text-center" title="@item.CommentDate.ToString("F")">
+                                @item.CommentDate.ToString("d")
+                            </td>
+                        </tr>
+                        {
+                            counter++;
+                        }
+                    }
+                </tbody>
+            </table>
+            @if (!Model.Any())
+            {
+                <h4 class="text-muted text-center my-5">@T("EmptyRecord")</h4>
+            }
+        </div>
+    </div>
+</div>
+@if (Model.Any())
+{
+    <div class="row">
+        <div class="col-12">
+            @Html.PagedListPager(Model,
+                page => Url.Action("UserComments", "Profile", new {pageNumber = page, userId = Request.QueryString["userId"] }),
+                PagedListRenderOptions.EnableUnobtrusiveAjaxReplacing(
+                    new TwitterBootstrap4Pager(),
+                    new AjaxOptions() {HttpMethod = "POST", UpdateTargetId = "placeholder"}))
+        </div>
+    </div>
+}

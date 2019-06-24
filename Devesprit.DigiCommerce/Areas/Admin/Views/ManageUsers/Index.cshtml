@@ -1,0 +1,21 @@
+﻿
+
+@{
+    ViewBag.Title = T("ManageUsers");
+}
+
+
+<div class="panel no-hide-overflow">
+    <div class="panel-title pad-10">
+        <h5 class="no-mar">
+            @T("ManageUsers")
+        </h5>
+    </div>
+
+    <div class="pad-10">
+        @{
+            Html.RenderAction("Grid");
+        }
+    </div>
+</div>
+
