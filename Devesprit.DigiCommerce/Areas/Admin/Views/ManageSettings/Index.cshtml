@@ -26,20 +26,21 @@
 
         <div class="pad-10 fs-14">
             @{Html.EJ().Tab("settingTabs")
-                          .EnableTabScroll(true)
-                          .HeaderPosition(HeaderPosition.Top)
-                          .EnableRTL(currentLang.IsRtl)
-                          .Items(data =>
-                          {
-                              data.Add().ID("General").Text(T("General").ToString()).ContentTemplate(content => GeneralSettings());
-                              data.Add().ID("Security").Text(T("Security").ToString()).ContentTemplate(content => SecuritySettings());
-                              data.Add().ID("SocialNetworks").Text(T("SocialNetworks").ToString()).ContentTemplate(content => SocialNetworksSettings());
-                              data.Add().ID("Email").Text(T("EMail").ToString()).ContentTemplate(content => EmailSettings());
-                              data.Add().ID("Other").Text(T("Others").ToString()).ContentTemplate(content => OtherSettings());
-                              data.Add().ID("CKEditor").Text(T("CKEditorSettings").ToString()).ContentTemplate(content => CKEditorSettings());
-                              data.Add().ID("Theme").Text(T("Themes").ToString()).ContentTemplate(content => ThemeSettings());
-                          })
-                          .Render();
+                            .EnableTabScroll(true)
+                            .HeaderPosition(HeaderPosition.Top)
+                            .EnableRTL(currentLang.IsRtl)
+                            .Items(data =>
+                            {
+                                data.Add().ID("General").Text(T("General").ToString()).ContentTemplate(content => GeneralSettings());
+                                data.Add().ID("Security").Text(T("Security").ToString()).ContentTemplate(content => SecuritySettings());
+                                data.Add().ID("SocialNetworks").Text(T("SocialNetworks").ToString()).ContentTemplate(content => SocialNetworksSettings());
+                                data.Add().ID("Email").Text(T("EMail").ToString()).ContentTemplate(content => EmailSettings());
+                                data.Add().ID("Other").Text(T("Others").ToString()).ContentTemplate(content => OtherSettings());
+                                data.Add().ID("CKEditor").Text(T("CKEditorSettings").ToString()).ContentTemplate(content => CKEditorSettings());
+                                data.Add().ID("Theme").Text(T("Themes").ToString()).ContentTemplate(content => ThemeSettings());
+                                data.Add().ID("LoadedAssemblies").Text(T("LoadedAssemblies").ToString()).ContentTemplate(content => LoadedAssemblies());
+                            })
+                            .Render();
             }
         </div>
 
@@ -792,6 +793,32 @@
 
 }
 
+@helper LoadedAssemblies()
+{
+    <div class="row">
+        <div class="col-12">
+            <ol>
+            @foreach (var asm in AppDomain.CurrentDomain.GetAssemblies().OrderBy(p=> p.GetName().Name))
+            {
+                <li>
+                    @asm.GetName().Name
+                    <br />
+                    <small class="text-muted">
+                        @asm.FullName
+                        @if (!asm.IsDynamic)
+                        {
+                            <br />
+                            @asm.Location
+                        }
+                    </small>
+                    <hr class="my-1"/>
+                </li>
+            }
+            </ol>
+        </div>
+    </div>
+}
+
 
 @{
     Html.AddInlineScript(ResourceLocation.Footer,
@@ -811,5 +838,5 @@
              }
          }
      }
- </script>);
+</script>);
 }

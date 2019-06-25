@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Threading.Tasks;
 using System.Web.Mvc;
 using Devesprit.Data;
 using Devesprit.Data.Domain;
-using Devesprit.Services.Events;
 using Devesprit.Services.ExternalLoginProvider;
 using Devesprit.Services.Users;
 using Microsoft.AspNet.Identity;

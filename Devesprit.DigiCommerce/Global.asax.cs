@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -33,6 +34,16 @@ namespace Devesprit.DigiCommerce
 #if DEBUG
             //HibernatingRhinos.Profiler.Appender.EntityFramework.EntityFrameworkProfiler.Initialize();
 #endif
+
+            if (!Directory.Exists(Server.MapPath("App_Data")))
+            {
+                Directory.CreateDirectory(Server.MapPath("App_Data"));
+            }
+
+            if (!Directory.Exists(Server.MapPath("Plugins")))
+            {
+                Directory.CreateDirectory(Server.MapPath("Plugins"));
+            }
 
             ConfigAutofac();
             ConfigAutoMapper();
