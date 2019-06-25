@@ -22,6 +22,12 @@ using Hangfire.MySql;
 using Hangfire.SqlServer;
 using Microsoft.Owin;
 using Owin;
+using WebMarkupMin.AspNet.Brotli;
+using WebMarkupMin.AspNet.Common.Compressors;
+using WebMarkupMin.AspNet.Common.UrlMatchers;
+using WebMarkupMin.AspNet4.Common;
+using WebMarkupMin.Core;
+using WebMarkupMin.Yui;
 using Startup = Devesprit.DigiCommerce.Startup;
 
 [assembly: OwinStartup(typeof(Startup))]
@@ -59,6 +65,9 @@ namespace Devesprit.DigiCommerce
                 Authorization = new[] { new HangfireAuthorizationFilter() },
                 AppPath = VirtualPathUtility.ToAbsolute("~")
             });
+
+            //Config Html Optimizer
+            WebMarkupMinConfigure(WebMarkupMinConfiguration.Instance);
 
             RunStartupTasks();
         }
@@ -129,5 +138,79 @@ namespace Devesprit.DigiCommerce
                 startUpTask.Execute();
         }
 
+        public static void WebMarkupMinConfigure(WebMarkupMinConfiguration configuration)
+        {
+            var settings = DependencyResolver.Current.GetService<ISettingService>().LoadSetting<SiteSettings>();
+
+            configuration.AllowMinificationInDebugMode = true;
+            configuration.AllowCompressionInDebugMode = true;
+            configuration.DisablePoweredByHttpHeaders = true;
+            configuration.DisableCompression = !settings.EnableResponseCompression;
+            configuration.DisableMinification = !settings.EnableHtmlMinification;
+
+            var htmlMinificationManager = HtmlMinificationManager.Current;
+            htmlMinificationManager.ExcludedPages = new List<IUrlMatcher>
+            {
+                new WildcardUrlMatcher("/minifiers/x*ml-minifier"),
+                new WildcardUrlMatcher("/Purchase/PurchaseProductWizard*")
+            };
+            var htmlMinificationSettings = htmlMinificationManager.MinificationSettings;
+            htmlMinificationSettings.RemoveRedundantAttributes = true;
+            htmlMinificationSettings.RemoveHttpProtocolFromAttributes = true;
+            htmlMinificationSettings.RemoveHttpsProtocolFromAttributes = true;
+            htmlMinificationSettings.WhitespaceMinificationMode = WhitespaceMinificationMode.Safe;
+            htmlMinificationSettings.RemoveHtmlComments = true;
+            htmlMinificationSettings.MinifyEmbeddedCssCode = true;
+            htmlMinificationSettings.MinifyEmbeddedJsCode = true;
+            htmlMinificationSettings.MinifyInlineCssCode = true;
+            htmlMinificationSettings.MinifyInlineJsCode = true;
+            htmlMinificationSettings.MinifyEmbeddedJsonData = true;
+            htmlMinificationSettings.RemoveEmptyAttributes = false;
+            htmlMinificationSettings.RemoveHtmlCommentsFromScriptsAndStyles = true;
+            htmlMinificationSettings.RemoveOptionalEndTags = true;
+            htmlMinificationManager.CssMinifierFactory = new YuiCssMinifierFactory(new YuiCssMinificationSettings()
+            {
+                RemoveComments = true
+            });
+            htmlMinificationManager.JsMinifierFactory = new YuiJsMinifierFactory();
+
+            var xhtmlMinificationManager = XhtmlMinificationManager.Current;
+            xhtmlMinificationManager.IncludedPages = new List<IUrlMatcher>
+            {
+                new WildcardUrlMatcher("/minifiers/x*ml-minifier"),
+            };
+            var xhtmlMinificationSettings = xhtmlMinificationManager.MinificationSettings;
+            xhtmlMinificationSettings.RemoveRedundantAttributes = true;
+            xhtmlMinificationSettings.RemoveHttpProtocolFromAttributes = true;
+            xhtmlMinificationSettings.RemoveHttpsProtocolFromAttributes = true;
+            xhtmlMinificationSettings.WhitespaceMinificationMode = WhitespaceMinificationMode.Safe;
+            xhtmlMinificationSettings.RemoveHtmlComments = true;
+            xhtmlMinificationSettings.MinifyEmbeddedCssCode = true;
+            xhtmlMinificationSettings.MinifyEmbeddedJsCode = true;
+            xhtmlMinificationSettings.MinifyInlineCssCode = true;
+            xhtmlMinificationSettings.MinifyInlineJsCode = true;
+            xhtmlMinificationSettings.MinifyEmbeddedJsonData = true;
+            xhtmlMinificationSettings.RemoveEmptyAttributes = false;
+            xhtmlMinificationSettings.RemoveHtmlCommentsFromScriptsAndStyles = true;
+            xhtmlMinificationManager.CssMinifierFactory = new YuiCssMinifierFactory(new YuiCssMinificationSettings()
+            {
+                RemoveComments = true
+            });
+            xhtmlMinificationManager.JsMinifierFactory = new YuiJsMinifierFactory();
+
+            var xmlMinificationManager = XmlMinificationManager.Current;
+            var xmlMinificationSettings = xmlMinificationManager.MinificationSettings;
+            xmlMinificationSettings.CollapseTagsWithoutContent = true;
+            xmlMinificationSettings.MinifyWhitespace = true;
+            xmlMinificationSettings.RemoveXmlComments = true;
+
+            var httpCompressionManager = HttpCompressionManager.Current;
+            httpCompressionManager.CompressorFactories = new List<ICompressorFactory>
+            {
+                new BrotliCompressorFactory(),
+                new GZipCompressorFactory(),
+                new DeflateCompressorFactory(),
+            };
+        }
     }
 }
