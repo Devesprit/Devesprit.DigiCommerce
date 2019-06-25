@@ -6,6 +6,7 @@ using Devesprit.Data.Enums;
 
 namespace Devesprit.Data.Domain
 {
+    [Table(("Tbl_Posts"))]
     public abstract partial class TblPosts : BaseEntity
     {
         [Required, MaxLength(500)]
