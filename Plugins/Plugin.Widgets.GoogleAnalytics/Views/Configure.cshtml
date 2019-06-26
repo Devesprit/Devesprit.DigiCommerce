@@ -7,7 +7,7 @@
             <h5 class="no-mar">@T("Plugin.Widgets.GoogleAnalytics.Configuration")</h5>
         </div>
         <div class="fs-14 pad-20">
-            @using (Html.BeginForm())
+            @using (Html.BeginForm("Configure", "WidgetsGoogleAnalytics", FormMethod.Post))
             {
                 @Html.AntiForgeryToken()
 

@@ -7,7 +7,7 @@
 <div class="container-fluid">
     <div class="panel mar-v-35">
         <div class="fs-14 pad-20">
-            @using (Html.BeginForm())
+            @using (Html.BeginForm("Editor", "DiscountCode", FormMethod.Post))
             {
                 @Html.AntiForgeryToken()
                 @Html.HiddenFor(p => p.Id)

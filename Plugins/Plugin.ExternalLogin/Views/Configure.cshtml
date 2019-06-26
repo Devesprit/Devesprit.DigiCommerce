@@ -8,7 +8,7 @@
             <h5 class="no-mar">@T("Plugin.ExternalLogin.Configuration")</h5>
         </div>
         <div class="fs-14 pad-20">
-            @using (Html.BeginForm())
+            @using (Html.BeginForm("Configure", "ExternalLoginProvider", FormMethod.Post))
             {
                 @Html.AntiForgeryToken()
 
