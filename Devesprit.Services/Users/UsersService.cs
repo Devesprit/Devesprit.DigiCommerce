@@ -176,8 +176,15 @@ namespace Devesprit.Services.Users
         {
             if (!string.IsNullOrWhiteSpace(id))
             {
-                _dbContext.Users.Where(p => p.Id == id).Update(p => new TblUsers()
-                    {UserLatestIP = ip, UserLastLoginDate = DateTime.Now});
+                var user = UserManager.FindById(id);
+                if (user != null)
+                {
+                    user.UserLastLoginDate = DateTime.Now;
+                    user.UserLatestIP = ip;
+
+                    _dbContext.Users.AddOrUpdate(user);
+                    _dbContext.SaveChanges();
+                }
             }
         }
 
