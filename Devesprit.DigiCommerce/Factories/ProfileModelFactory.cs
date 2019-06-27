@@ -79,6 +79,7 @@ namespace Devesprit.DigiCommerce.Factories
 
                 var highestGroup = await _userGroupsService.GetHighestUserGroupAsync();
                 result.UserSubscribedToHighestPlan = user.UserGroup.GroupPriority >= highestGroup.GroupPriority;
+                result.WhenExtendCurrentPlanBtnShown = user.UserGroup.WhenExtendCurrentPlanBtnShown;
 
                 if (user.UserGroup.MaxDownloadCount > 0)
                 {

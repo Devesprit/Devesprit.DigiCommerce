@@ -18,5 +18,6 @@ namespace Devesprit.DigiCommerce.Models.Profile
         public DateTime? SubscriptionExpireDate { get; set; }
         public bool UserSubscribedToHighestPlan { get; set; }
         public bool ShowUserSubscriptionInfo { get; set; }
+        public int WhenExtendCurrentPlanBtnShown { get; set; }
     }
 }

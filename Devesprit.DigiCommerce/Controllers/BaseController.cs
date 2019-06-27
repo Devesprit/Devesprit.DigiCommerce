@@ -46,8 +46,20 @@ namespace Devesprit.DigiCommerce.Controllers
 
         protected override IAsyncResult BeginExecuteCore(AsyncCallback callback, object state)
         {
-            Thread.CurrentThread.CurrentCulture = CultureInfo.GetCultureInfo(WorkContext.CurrentLanguage.IsoCode);
-            Thread.CurrentThread.CurrentUICulture = CultureInfo.GetCultureInfo(WorkContext.CurrentLanguage.IsoCode);
+            if (HttpContext.Request.RequestContext?.RouteData?.DataTokens["area"]?.ToString().ToLower() == "admin")
+            {
+                Thread.CurrentThread.CurrentCulture = CultureInfo.GetCultureInfo(WorkContext.CurrentLanguage.IsoCode);
+
+                var newCulture = (CultureInfo)Thread.CurrentThread.CurrentCulture.Clone();
+                newCulture.DateTimeFormat.Calendar = new GregorianCalendar();
+                Thread.CurrentThread.CurrentCulture = newCulture;
+                Thread.CurrentThread.CurrentUICulture = newCulture;
+            }
+            else
+            {
+                Thread.CurrentThread.CurrentCulture = CultureInfo.GetCultureInfo(WorkContext.CurrentLanguage.IsoCode);
+                Thread.CurrentThread.CurrentUICulture = CultureInfo.GetCultureInfo(WorkContext.CurrentLanguage.IsoCode);
+            }
 
             return base.BeginExecuteCore(callback, state);
         }

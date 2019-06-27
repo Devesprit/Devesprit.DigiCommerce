@@ -148,52 +148,49 @@
                  };
 
                  function initDateTimePicker() {
-                 $('.datetimepicker').daterangepicker({
-                     timePicker: true,
-                     timePicker24Hour: true,
-                     timePickerSeconds: true,
-                     linkedCalendars: false,
-                     showCustomRangeLabel: false,
-                     alwaysShowCalendars: true,
-                     opens: 'center',
-                     autoUpdateInput: false,
-                     autoApply: false,
-                     singleDatePicker: true,
-                     showDropdowns: true,
-                     showWeekNumbers: true,
-                     showISOWeekNumbers: true,
-                     "locale": {
-                         "format": "YYYY/MM/DD HH:mm:ss",
-                         "separator": " - ",
-                         "applyLabel": "@T("Apply")",
-                         "cancelLabel": "@T("Cancel")"
-                     }, function(start, end, label) {
-                         var years = moment().diff(start, 'years');
-                         alert("You are " + years + " years old!");
-                     }
-                 });
-
-                 $('.datetimepicker').on('apply.daterangepicker',
-                     function(ev, picker) {
-                         $(this).val(picker.startDate.format('YYYY/MM/DD HH:mm:ss'));
+                     $('.datetimepicker').daterangepicker({
+                         timePicker: true,
+                         timePicker24Hour: true,
+                         timePickerSeconds: true,
+                         linkedCalendars: false,
+                         showCustomRangeLabel: false,
+                         alwaysShowCalendars: true,
+                         opens: 'center',
+                         autoUpdateInput: false,
+                         autoApply: false,
+                         singleDatePicker: true,
+                         showDropdowns: true,
+                         showWeekNumbers: true,
+                         showISOWeekNumbers: true,
+                         "locale": {
+                             "format": "YYYY/MM/DD HH:mm:ss",
+                             "separator": " - ",
+                             "applyLabel": "@T("Apply")",
+                             "cancelLabel": "@T("Cancel")"
+                         }
                      });
 
-                 $('.datepicker').daterangepicker({
-                     linkedCalendars: false,
-                     showCustomRangeLabel: false,
-                     alwaysShowCalendars: true,
-                     opens: 'center',
-                     autoUpdateInput: false,
-                     autoApply: false,
-                     singleDatePicker: true,
-                     showDropdowns: true,
-                     showWeekNumbers: true,
-                     showISOWeekNumbers: true,
-                     "locale": {
-                         "format": "YYYY/MM/DD",
-                         "separator": " - ",
-                         "applyLabel": "@T("Apply")",
-                         "cancelLabel": "@T("Cancel")"
+                     $('.datetimepicker').on('apply.daterangepicker',
+                         function(ev, picker) {
+                             $(this).val(picker.startDate.format('YYYY/MM/DD HH:mm:ss'));
+                         });
+
+                     $('.datepicker').daterangepicker({
+                         linkedCalendars: false,
+                         showCustomRangeLabel: false,
+                         alwaysShowCalendars: true,
+                         opens: 'center',
+                         autoUpdateInput: false,
+                         autoApply: false,
+                         singleDatePicker: true,
+                         showDropdowns: true,
+                         showWeekNumbers: true,
+                         showISOWeekNumbers: true,
+                         "locale": {
+                             "format": "YYYY/MM/DD",
+                             "separator": " - ",
+                             "applyLabel": "@T("Apply")",
+                             "cancelLabel": "@T("Cancel")"
                      }
                  });
 

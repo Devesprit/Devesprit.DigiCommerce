@@ -42,7 +42,7 @@
                             <br />
                             @T("DownloadLimit"): @Model.UserGroupDownloadLimit
                         </p>
-                        @if (!(Model.UserSubscribedToHighestPlan && Model.SubscriptionExpireDate > DateTime.Now))
+                        @if (!Model.UserSubscribedToHighestPlan || (Model.SubscriptionExpireDate != null && Model.SubscriptionExpireDate < DateTime.Now.AddDays(Model.WhenExtendCurrentPlanBtnShown)))
                         {
                             <a href="@Url.Action("UpgradeAccount", "Purchase")" class="btn btn-danger btn-sm d-inline-block my-1">@T("UpgradeAccount")</a>
                         }

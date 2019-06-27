@@ -11,6 +11,7 @@ using Devesprit.Services.Users;
 using Devesprit.WebFramework;
 using Devesprit.WebFramework.Helpers;
 using Elmah;
+using Microsoft.AspNet.Identity;
 using Syncfusion.JavaScript;
 
 namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
@@ -85,7 +86,6 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
             }
 
             var record = _userModelFactory.PrepareTblUsers(model);
-            record.RegisterDate = DateTime.Now;
             var recordId = record.Id;
             try
             {
@@ -117,11 +117,20 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
                         return View(model);
                     }
 
+                    record.RegisterDate = DateTime.Now;
                     recordId = await _usersService.AddAsync(record, model.Password);
                 }
                 else
                 {
                     //Edit record
+                    var oldUser = await UserManager.FindByIdAsync(model.Id);
+                    record.RegisterDate = oldUser.RegisterDate;
+                    record.UserLastLoginDate = oldUser.UserLastLoginDate;
+                    record.UserLatestIP = oldUser.UserLatestIP;
+                    if (model.Avatar == null)
+                    {
+                        record.Avatar = oldUser.Avatar;
+                    }
                     await _usersService.UpdateAsync(record, model.Password);
                 }
 

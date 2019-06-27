@@ -30,5 +30,6 @@ namespace Devesprit.Data.Domain
         public int? SubscriptionExpirationTime { get; set; }
         public TimePeriodType? SubscriptionExpirationPeriodType { get; set; }
         public bool Published { get; set; }
+        public int WhenExtendCurrentPlanBtnShown { get; set; }
     }
 }
