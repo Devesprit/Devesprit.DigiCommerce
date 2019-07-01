@@ -383,7 +383,7 @@ namespace Devesprit.Services.Settings
                 {
                     string key = typeof(T).Name + "." + prop.Name;
                     var value = prop.GetValue(settings, null).To<LocalizedString>();
-                    if (value.ContainsKey(0))
+                    if (value != null && value.ContainsKey(0))
                     {
                         SetSetting(key, value[0]);
                     }
@@ -391,7 +391,8 @@ namespace Devesprit.Services.Settings
                     {
                         SetSetting(key, "");
                     }
-                    _localizedEntityService.SaveLocalizedSetting(settings, typeof(T).Name, prop.Name, value);
+                    if (value != null)
+                        _localizedEntityService.SaveLocalizedSetting(settings, typeof(T).Name, prop.Name, value);
                 }
                 else
                 {

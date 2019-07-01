@@ -15,6 +15,7 @@ using Devesprit.Data.Enums;
 using Devesprit.Services.Events;
 using Devesprit.Services.Notifications;
 using Devesprit.Services.Products;
+using Devesprit.Services.Users.Events;
 using Devesprit.Utilities.Extensions;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
@@ -176,13 +177,12 @@ namespace Devesprit.Services.Users
         {
             if (!string.IsNullOrWhiteSpace(id))
             {
-                var user = UserManager.FindById(id);
+                var user = _dbContext.Users.FirstOrDefault(p => p.Id == id);
                 if (user != null)
                 {
                     user.UserLastLoginDate = DateTime.Now;
                     user.UserLatestIP = ip;
 
-                    _dbContext.Users.AddOrUpdate(user);
                     _dbContext.SaveChanges();
                 }
             }

@@ -1,6 +1,6 @@
 ﻿using Devesprit.Data.Events;
 
-namespace Devesprit.Services.Users
+namespace Devesprit.Services.Users.Events
 {
     public partial class UserRoleChangeEvent : IEvent
     {

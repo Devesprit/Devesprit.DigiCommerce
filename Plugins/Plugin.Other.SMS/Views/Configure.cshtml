@@ -1,0 +1,149 @@
+﻿@using Devesprit.WebFramework.Helpers
+@model Plugin.Other.SMS.Models.SmsNotifierSettingsModel
+
+<div class="container">
+    <div class="panel mar-v-35">
+        <div class="panel-title pad-10">
+            <h5 class="no-mar">@T("Plugin.Other.SMS.Configuration")</h5>
+        </div>
+        <div class="fs-14 pad-20">
+            @using (Html.BeginForm("Configure", "SmsNotifier", FormMethod.Post))
+            {
+                @Html.AntiForgeryToken()
+
+                <div class="row">
+                    <div class="col-12 col-md-6">
+                        <div class="form-group">
+                            @Html.LabelFor(p => p.ActiveSmsProvider)
+                            @Html.LocalizedEnumDropDownListFor(p => p.ActiveSmsProvider, T("SelectAnItem").ToString(), new { @class = "form-control custom-select form-control-sm" })
+                            @Html.ValidationMessageFor(p => p.ActiveSmsProvider, "", new { @class = "form-text text-danger fs-12" })
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <div class="form-group">
+                            @Html.LabelFor(p => p.SendFromNumber)
+                            @Html.TextBoxFor(p => p.SendFromNumber, new { @class = "form-control form-control-sm ltr-dir" })
+                            @Html.ValidationMessageFor(p => p.SendFromNumber, "", new { @class = "form-text text-danger fs-12" })
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <div class="form-group">
+                            <div class="form-check">
+                                @Html.CheckBoxFor(p => p.SendSMSToAdminOnInvoiceCheckOut, new { @class = "form-check-input" })
+                                @Html.LabelFor(p => p.SendSMSToAdminOnInvoiceCheckOut, new { @class = "form-check-label" })
+                            </div>
+                            @Html.ValidationMessageFor(p => p.SendSMSToAdminOnInvoiceCheckOut, "", new { @class = "form-text text-danger fs-12" })
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <div class="form-group">
+                            <div class="form-check">
+                                @Html.CheckBoxFor(p => p.SendSMSToAdminOnNewUserJoined, new { @class = "form-check-input" })
+                                @Html.LabelFor(p => p.SendSMSToAdminOnNewUserJoined, new { @class = "form-check-label" })
+                            </div>
+                            @Html.ValidationMessageFor(p => p.SendSMSToAdminOnNewUserJoined, "", new { @class = "form-text text-danger fs-12" })
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <div class="form-group">
+                            @Html.LabelFor(p => p.AdminMobileNumbers)
+                            @Html.TextBoxFor(p => p.AdminMobileNumbers, new { @class = "form-control form-control-sm ltr-dir" })
+                            @Html.ValidationMessageFor(p => p.AdminMobileNumbers, "", new { @class = "form-text text-danger fs-12" })
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <div class="form-group">
+                            <label for="SMSMessageForInvoiceCheckOut">@T("Plugin.Other.SMS.SMSMessageForInvoiceCheckOut")</label>
+                            @Html.LocalizedTextAreaFor(p => p.SMSMessageForInvoiceCheckOut, new { @class = "form-control form-control-sm ltr-dir", rows = 7 })
+                            @Html.ValidationMessageFor(p => p.SMSMessageForInvoiceCheckOut, "", new { @class = "form-text text-danger fs-12" })
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <div class="form-group">
+                            <label for="SMSMessageForNewUserJoined">@T("Plugin.Other.SMS.SMSMessageForNewUserJoined")</label>
+                            @Html.LocalizedTextAreaFor(p => p.SMSMessageForNewUserJoined, new { @class = "form-control form-control-sm ltr-dir", rows = 7 })
+                            @Html.ValidationMessageFor(p => p.SMSMessageForNewUserJoined, "", new { @class = "form-text text-danger fs-12" })
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <hr />
+                        <a href="https://www.nexmo.com" target="_blank">
+                            <img src="/Plugins/Plugin.Other.SMS/Content/Nexmo-Logo.png" class="mb-3 mx-auto d-block" />
+                        </a>
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <div class="form-group">
+                            @Html.LabelFor(p => p.NexmoAPIKey)
+                            @Html.TextBoxFor(p => p.NexmoAPIKey, new { @class = "form-control form-control-sm ltr-dir" })
+                            @Html.ValidationMessageFor(p => p.NexmoAPIKey, "", new { @class = "form-text text-danger fs-12" })
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <div class="form-group">
+                            @Html.LabelFor(p => p.NexmoAPISecret)
+                            @Html.TextBoxFor(p => p.NexmoAPISecret, new { @class = "form-control form-control-sm ltr-dir" })
+                            @Html.ValidationMessageFor(p => p.NexmoAPISecret, "", new { @class = "form-text text-danger fs-12" })
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-12">
+                        <hr />
+                        <a href="https://www.twilio.com" target="_blank">
+                            <img src="/Plugins/Plugin.Other.SMS/Content/Twilio-Logo.png" class="mb-3 mx-auto d-block" />
+                        </a>
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <div class="form-group">
+                            @Html.LabelFor(p => p.TwilioSID)
+                            @Html.TextBoxFor(p => p.TwilioSID, new { @class = "form-control form-control-sm ltr-dir" })
+                            @Html.ValidationMessageFor(p => p.TwilioSID, "", new { @class = "form-text text-danger fs-12" })
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <div class="form-group">
+                            @Html.LabelFor(p => p.TwilioToken)
+                            @Html.TextBoxFor(p => p.TwilioToken, new { @class = "form-control form-control-sm ltr-dir" })
+                            @Html.ValidationMessageFor(p => p.TwilioToken, "", new { @class = "form-text text-danger fs-12" })
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-12">
+                        <hr />
+                        <a href="https://kavenegar.com" target="_blank">
+                            <img src="/Plugins/Plugin.Other.SMS/Content/Kavenegar-Logo.png" class="mb-3 mx-auto d-block" />
+                        </a>
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <div class="form-group">
+                            @Html.LabelFor(p => p.KaveNegharWebServiceUrl)
+                            @Html.TextBoxFor(p => p.KaveNegharWebServiceUrl, new { @class = "form-control form-control-sm ltr-dir" })
+                            @Html.ValidationMessageFor(p => p.KaveNegharWebServiceUrl, "", new { @class = "form-text text-danger fs-12" })
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <div class="form-group">
+                            @Html.LabelFor(p => p.KaveNegharAPIKey)
+                            @Html.TextBoxFor(p => p.KaveNegharAPIKey, new { @class = "form-control form-control-sm ltr-dir" })
+                            @Html.ValidationMessageFor(p => p.KaveNegharAPIKey, "", new { @class = "form-text text-danger fs-12" })
+                        </div>
+                    </div>
+                </div>
+
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" }).ToMvcHtmlString()
+
+                <div class="text-center t-mar-20">
+                    <button type="submit" class="btn btn-sm btn-warning">@T("Save")</button>
+                    <button type="button" onclick="window.close();" class="btn btn-sm btn-success">@T("Close")</button>
+                </div>
+            }
+        </div>
+    </div>
+</div>

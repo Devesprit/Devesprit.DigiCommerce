@@ -305,15 +305,18 @@
     <Compile Include="SocialAccounts\ISocialAccountsService.cs" />
     <Compile Include="Taxes\TaxProcessorResult.cs" />
     <Compile Include="Taxes\ITaxProcessor.cs" />
-    <Compile Include="Users\CustomerUserGroupChangeEvent.cs" />
+    <Compile Include="Users\Events\CustomerUserGroupChangeEvent.cs" />
+    <Compile Include="Users\Events\UserEmailConfirmedEvent.cs" />
+    <Compile Include="Users\Events\UserResetPasswordEvent.cs" />
+    <Compile Include="Users\Events\UserSignupEvent.cs" />
     <Compile Include="Users\IUserLikesService.cs" />
     <Compile Include="Users\UserMessagingService.cs" />
     <Compile Include="Users\IUserMessagingService.cs" />
     <Compile Include="Users\IUserWishlistService.cs" />
     <Compile Include="Users\UserLikesService.cs" />
-    <Compile Include="Users\UserLoggedinEvent.cs" />
-    <Compile Include="Users\UserLoggedOutEvent.cs" />
-    <Compile Include="Users\UserRoleChangeEvent.cs" />
+    <Compile Include="Users\Events\UserLoggedinEvent.cs" />
+    <Compile Include="Users\Events\UserLoggedOutEvent.cs" />
+    <Compile Include="Users\Events\UserRoleChangeEvent.cs" />
     <Compile Include="Users\UserWishlistService.cs" />
     <Compile Include="Widget\IWidgetPlugin.cs" />
     <Compile Include="SearchEngine\SearchResultSortType.cs" />
@@ -448,7 +451,7 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties BuildVersion_AssemblyInfoFilename="Properties\AssemblyInfo.cs" BuildVersion_UpdateFileVersion="True" BuildVersion_UpdateAssemblyVersion="True" BuildVersion_BuildVersioningStyle="YearStamp.MonthStamp.DayStamp.Increment" BuildVersion_UseGlobalSettings="True" BuildVersion_StartDate="2018/10/14" />
+      <UserProperties BuildVersion_StartDate="2018/10/14" BuildVersion_UseGlobalSettings="True" BuildVersion_BuildVersioningStyle="YearStamp.MonthStamp.DayStamp.Increment" BuildVersion_UpdateAssemblyVersion="True" BuildVersion_UpdateFileVersion="True" BuildVersion_AssemblyInfoFilename="Properties\AssemblyInfo.cs" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>

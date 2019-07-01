@@ -1,7 +1,7 @@
 ﻿using Devesprit.Data.Domain;
 using Devesprit.Data.Events;
 
-namespace Devesprit.Services.Users
+namespace Devesprit.Services.Users.Events
 {
     public partial class UserLoggedOutEvent : IEvent
     {

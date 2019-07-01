@@ -310,7 +310,7 @@ namespace Devesprit.Services.Products
             
             //Admin can download everything
             if (user != null && _usersService.UserIsAdmin(user.Id))
-                return UserCanDownloadProductResult.UserCanDownloadProduct;
+                result |= UserCanDownloadProductResult.UserCanDownloadProduct;
 
             if (demoFiles)
             {

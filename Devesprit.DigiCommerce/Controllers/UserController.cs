@@ -12,6 +12,7 @@ using Devesprit.Services.Countries;
 using Devesprit.Services.EMail;
 using Devesprit.Services.ExternalLoginProvider;
 using Devesprit.Services.Users;
+using Devesprit.Services.Users.Events;
 using Devesprit.Utilities.Extensions;
 using Devesprit.WebFramework;
 using Devesprit.WebFramework.ActionFilters;
@@ -225,6 +226,8 @@ namespace Devesprit.DigiCommerce.Controllers
             var result = await UserManager.CreateAsync(user, model.Password);
             if (result.Succeeded)
             {
+                EventPublisher.Publish(new UserSignupEvent(user));
+
                 var code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
                 if (CurrentSettings.ConfirmUserEmailAddress)
                 {
@@ -254,6 +257,10 @@ namespace Devesprit.DigiCommerce.Controllers
                 return View("Error");
             }
             var result = await UserManager.ConfirmEmailAsync(userId, code);
+            if (result.Succeeded)
+            {
+                EventPublisher.Publish(new UserEmailConfirmedEvent(await UserManager.FindByIdAsync(userId)));
+            }
             return View(result.Succeeded ? "RegistrationCompleted" : "ErrorMessage");
         }
 
@@ -389,6 +396,7 @@ namespace Devesprit.DigiCommerce.Controllers
                 var result = await UserManager.ResetPasswordAsync(user.Id, model.Code, model.Password);
                 if (result.Succeeded)
                 {
+                    EventPublisher.Publish(new UserResetPasswordEvent(user));
                     return View("ResetPasswordConfirmation");
                 }
 
@@ -553,6 +561,8 @@ namespace Devesprit.DigiCommerce.Controllers
             var result = await UserManager.CreateAsync(user, model.Password);
             if (result.Succeeded)
             {
+                EventPublisher.Publish(new UserSignupEvent(user));
+
                 result = await UserManager.AddLoginAsync(user.Id, loginInfo.Login);
                 if (result.Succeeded)
                 {
