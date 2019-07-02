@@ -111,7 +111,7 @@ else if (viewStyle == ViewStyles.Normal)
            data-toggle="tooltip"
            data-html="true"
            title="@UpgradeUserAccountBtnInnerHtml().ToHtmlString()"
-           class="btn text-uppercase"
+           class="btn btn-sm"
            style="color: @Model.DownloadLimitedToUserGroup.GetLocalized(p => p.GroupTextColor); background-color: @Model.DownloadLimitedToUserGroup.GetLocalized(p => p.GroupBackgroundColor);">
             <img src="@Model.DownloadLimitedToUserGroup.GetLocalized(p => p.GroupSmallIcon)" style="max-height: 20px" />
             @Model.DownloadLimitedToUserGroup.GetLocalized(p => p.GroupName)
@@ -128,7 +128,7 @@ else if (viewStyle == ViewStyles.Normal)
             LoadingElementId = "LoadingPanel",
             LoadingElementDuration = 10,
             OnFailure = "ErrorAlert('" + T("Error") + "', '" + T("ServerConnectionError") + "');"
-        }, new {@class = "btn btn-success text-uppercase", data_toggle = "tooltip", data_html = "true", title = PurchaseBtnInnerHtml().ToHtmlString()})
+        }, new {@class = "btn btn-sm btn-outline-success", data_toggle = "tooltip", data_html = "true", title = PurchaseBtnInnerHtml().ToHtmlString()})
     }
 
     //Full version download button
@@ -136,7 +136,7 @@ else if (viewStyle == ViewStyles.Normal)
     {
         <a href="@Url.Action("DownloadProduct", "Download", new {productId = Model.ProductId, demoFiles = false})"
            target="_blank"
-           class="btn btn-warning text-uppercase">
+           class="btn btn-sm btn-outline-warning">
             <i class="fa fa-download"></i>
             @T("DownloadNow")
         </a>
@@ -177,7 +177,7 @@ else if (viewStyle == ViewStyles.Small)
         <a href="@Url.Action("DownloadProduct", "Download", new {productId = Model.ProductId, demoFiles = false})"
            target="_blank"
            title="@T("DownloadNow")"
-           class="btn btn-warning btn-sm">
+           class="btn btn-sm btn-warning">
             <i class="fa fa-download"></i>
         </a>
     }

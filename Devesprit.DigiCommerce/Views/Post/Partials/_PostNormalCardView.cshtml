@@ -25,11 +25,11 @@
         }
         <div class="col">
             <div class="p-3">
-                <h4 class="card-title @Html.Raw(Model.Title.IsRtlLanguage() ? "rtl-dir" : "ltr-dir") mb-0">
+                <h5 class="card-title @Html.Raw(Model.Title.IsRtlLanguage() ? "rtl-dir" : "ltr-dir") mb-0">
                     <a href="@Model.PostUrl">
                         @Html.Raw(Model.Title)
                     </a>
-                </h4>
+                </h5>
                 <div class="card-attr text-muted fs-12">
                     <span title="@T("Visits") : @Model.NumberOfViews.ToString("##,###")">
                         <i class="fa fa-eye"></i> @Model.NumberOfViews.FormatNumber()
@@ -61,7 +61,7 @@
                     }
                 </div>
 
-                <p class="fs-14 pt-4 @Html.Raw(Model.DescriptionTruncated.IsRtlLanguage() ? "rtl-dir" : "ltr-dir")">@Html.Raw(Model.DescriptionTruncated)</p>
+                <p class="fs-12 pt-2 @Html.Raw(Model.DescriptionTruncated.IsRtlLanguage() ? "rtl-dir" : "ltr-dir")">@Html.Raw(Model.DescriptionTruncated)</p>
             </div>
         </div>
     </div>
@@ -70,6 +70,6 @@
         <span class="float-start fs-20">
             @{Html.RenderAction("LikeWishlistButtonsPartialView", "Post", new { model = Model.LikeWishlistButtonsModel });}
         </span>
-        <a href="@Model.PostUrl" class="btn btn-sm btn-outline-secondary float-end"><i class="fa fa-eye"></i> @T("ReadMore")</a>
+        <a href="@Model.PostUrl" class="btn btn-sm btn-outline-secondary float-end"><i class="fa fa-chevron-down"></i> @T("ReadMore")</a>
     </div>
 </div>

@@ -65,7 +65,7 @@
     </div>
     <div class="card-footer text-center text-muted">
         @{Html.RenderPartial("Partials/_ProductDownloadPurchaseButton", Model.DownloadPurchaseButtonModel, new ViewDataDictionary() { new KeyValuePair<string, object>("ViewStyle", ViewStyles.Small) });}
-        <a href="@Model.PostUrl" class="btn btn-sm btn-outline-secondary" title=" @T("ReadMore")"><i class="fa fa-eye"></i></a>
+        <a href="@Model.PostUrl" class="btn btn-sm btn-outline-secondary" title=" @T("ReadMore")"><i class="fa fa-chevron-down"></i></a>
     </div>
 </div>
 

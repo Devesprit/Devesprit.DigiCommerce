@@ -37,14 +37,7 @@
     {
         <div class="row">
             <div class="col-12 t-mar-30">
-                @Html.PagedListPager(Model.PostsList, page => Url.Action("BlogExplorer", "Blog", new
-                {
-                    listType = Model.PostsListType,
-                    page = page,
-                    pageSize = Model.PageSize,
-                    catId = Model.FilterByCategoryId,
-                    fromDate = Model.FromDate
-                }).RemoveEmptyParametersFromQueryString(), new TwitterBootstrap4Pager())
+                @Html.PagedListPager(Model.PostsList, page => Request.Url.ToString().BuildQueryStringUrl(new[] { "Page=" + page }).RemoveEmptyParametersFromQueryString(), new TwitterBootstrap4Pager())
             </div>
         </div>
     }
