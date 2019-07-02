@@ -44,9 +44,16 @@ namespace Plugin.Other.SMS
             this.AddOrUpdatePluginLocaleResource("Plugin.Other.SMS.TwilioToken", "Twilio Token", "en");
             this.AddOrUpdatePluginLocaleResource("Plugin.Other.SMS.SendSMSToAdminOnInvoiceCheckOut", "Send SMS on invoice checkout", "en");
             this.AddOrUpdatePluginLocaleResource("Plugin.Other.SMS.SendSMSToAdminOnNewUserJoined", "Send SMS on new user joined", "en");
-            this.AddOrUpdatePluginLocaleResource("Plugin.Other.SMS.SMSMessageForInvoiceCheckOut", "Message Template for Invoice Checkout<br/><small><a href='https://github.com/lunet-io/scriban' target='_blank'>More Info: https://github.com/lunet-io/scriban</a></small>", "en");
-            this.AddOrUpdatePluginLocaleResource("Plugin.Other.SMS.SMSMessageForNewUserJoined", "Message Template for New User Joined<br/><small><a href='https://github.com/lunet-io/scriban' target='_blank'>More Info: https://github.com/lunet-io/scriban</a></small>", "en");
-            this.AddOrUpdatePluginLocaleResource("Plugin.Other.SMS.AdminMobileNumbers", "Recipient Phone Numbers (Separate recipients with a comma)", "en");
+            this.AddOrUpdatePluginLocaleResource("Plugin.Other.SMS.SendSMSToAdminOnNewComment", "Send SMS on new comment received", "en");
+            this.AddOrUpdatePluginLocaleResource("Plugin.Other.SMS.SendSMSToAdminOnNewMessage", "Send SMS on new 'Contact Us' message received", "en");
+            this.AddOrUpdatePluginLocaleResource("Plugin.Other.SMS.SMSMessageForInvoiceCheckOut", "Message Template for Invoice Checkout<br/><small><a href='https://github.com/lunet-io/scriban' target='_blank'>More Info</a></small>", "en");
+            this.AddOrUpdatePluginLocaleResource("Plugin.Other.SMS.SMSMessageForNewUserJoined", "Message Template for New User Joined<br/><small><a href='https://github.com/lunet-io/scriban' target='_blank'>More Info</a></small>", "en");
+            this.AddOrUpdatePluginLocaleResource("Plugin.Other.SMS.SMSMessageForNewComment", "Message Template for New Comment<br/><small><a href='https://github.com/lunet-io/scriban' target='_blank'>More Info</a></small>", "en");
+            this.AddOrUpdatePluginLocaleResource("Plugin.Other.SMS.SMSMessageForNewMessage", "Message Template for New Message<br/><small><a href='https://github.com/lunet-io/scriban' target='_blank'>More Info</a></small>", "en");
+            this.AddOrUpdatePluginLocaleResource("Plugin.Other.SMS.InvoiceCheckOutRecipients", "'Invoice CheckOut' Message Recipients Phone Number<br/><small class='text-muted'>(Separate recipients with a comma)</small>", "en");
+            this.AddOrUpdatePluginLocaleResource("Plugin.Other.SMS.NewUserJoinedRecipients", "'New User Joined' Message Recipients Phone Number<br/><small class='text-muted'>(Separate recipients with a comma)</small>", "en");
+            this.AddOrUpdatePluginLocaleResource("Plugin.Other.SMS.NewCommentRecipients", "'New Comment' Message Recipients Phone Number<br/><small class='text-muted'>(Separate recipients with a comma)</small>", "en");
+            this.AddOrUpdatePluginLocaleResource("Plugin.Other.SMS.NewMessageRecipients", "'New Contact Us Message' Message Recipients Phone Number<br/><small class='text-muted'>(Separate recipients with a comma)</small>", "en");
 
             this.AddOrUpdatePluginLocaleResource("Plugin.Other.SMS.Configuration", "تنظیمات پیام کوتاه", "fa");
             this.AddOrUpdatePluginLocaleResource("Plugin.Other.SMS.KaveNeghar", "کاوه نگار (https://www.kavenegar.com)", "fa");
@@ -62,9 +69,16 @@ namespace Plugin.Other.SMS
             this.AddOrUpdatePluginLocaleResource("Plugin.Other.SMS.TwilioToken", "Twilio Token", "fa");
             this.AddOrUpdatePluginLocaleResource("Plugin.Other.SMS.SendSMSToAdminOnInvoiceCheckOut", "ارسال پیام هنگام پرداخت وجه فاکتور", "fa");
             this.AddOrUpdatePluginLocaleResource("Plugin.Other.SMS.SendSMSToAdminOnNewUserJoined", "ارسال پیام هنگام ثبت نام کاربر جدید", "fa");
-            this.AddOrUpdatePluginLocaleResource("Plugin.Other.SMS.SMSMessageForInvoiceCheckOut", "متن پیام هنگام پرداخت وجه فاکتور<br/><small><a href='https://github.com/lunet-io/scriban' target='_blank'>اطلاعات بیشتر: https://github.com/lunet-io/scriban</a></small>", "fa");
-            this.AddOrUpdatePluginLocaleResource("Plugin.Other.SMS.SMSMessageForNewUserJoined", "متن پیام هنگامثبت نام کاربر جدید<br/><small><a href='https://github.com/lunet-io/scriban' target='_blank'>اطلاعات بیشتر: https://github.com/lunet-io/scriban</a></small>", "fa");
-            this.AddOrUpdatePluginLocaleResource("Plugin.Other.SMS.AdminMobileNumbers", "شماره همراه گیرندگان (با کاما ',' جدا کنید)", "fa");
+            this.AddOrUpdatePluginLocaleResource("Plugin.Other.SMS.SendSMSToAdminOnNewComment", "ارسال پیام هنگام ثبت کامنت جدید", "fa");
+            this.AddOrUpdatePluginLocaleResource("Plugin.Other.SMS.SendSMSToAdminOnNewMessage", "ارسال پیام هنگام دریافت پیغام جدید", "fa");
+            this.AddOrUpdatePluginLocaleResource("Plugin.Other.SMS.SMSMessageForInvoiceCheckOut", "متن پیام هنگام پرداخت وجه فاکتور<br/><small><a href='https://github.com/lunet-io/scriban' target='_blank'>اطلاعات بیشتر</a></small>", "fa");
+            this.AddOrUpdatePluginLocaleResource("Plugin.Other.SMS.SMSMessageForNewUserJoined", "متن پیام هنگام ثبت نام کاربر جدید<br/><small><a href='https://github.com/lunet-io/scriban' target='_blank'>اطلاعات بیشتر</a></small>", "fa");
+            this.AddOrUpdatePluginLocaleResource("Plugin.Other.SMS.SMSMessageForNewComment", "متن پیام هنگام ثبت کامنت جدید<br/><small><a href='https://github.com/lunet-io/scriban' target='_blank'>اطلاعات بیشتر</a></small>", "fa");
+            this.AddOrUpdatePluginLocaleResource("Plugin.Other.SMS.SMSMessageForNewMessage", "متن پیام هنگام دریافت پیغام جدید<br/><small><a href='https://github.com/lunet-io/scriban' target='_blank'>اطلاعات بیشتر</a></small>", "fa");
+            this.AddOrUpdatePluginLocaleResource("Plugin.Other.SMS.InvoiceCheckOutRecipients", "شماره همراه گیرندگان پیام 'پرداخت فاکتور'<br/><small class='text-muted'>(با کاما ',' جدا کنید)</small>", "fa");
+            this.AddOrUpdatePluginLocaleResource("Plugin.Other.SMS.NewUserJoinedRecipients", "شماره همراه گیرندگان پیام 'ثبت نام کاربر جدید'<br/><small class='text-muted'>(با کاما ',' جدا کنید)</small>", "fa");
+            this.AddOrUpdatePluginLocaleResource("Plugin.Other.SMS.NewCommentRecipients", "شماره همراه گیرندگان پیام 'دریافت کامنت جدید'<br/><small class='text-muted'>(با کاما ',' جدا کنید)</small>", "fa");
+            this.AddOrUpdatePluginLocaleResource("Plugin.Other.SMS.NewMessageRecipients", "شماره همراه گیرندگان پیام 'دریافت پیغام جدید'<br/><small class='text-muted'>(با کاما ',' جدا کنید)</small>", "fa");
 
             base.Install();
         }
@@ -87,9 +101,16 @@ namespace Plugin.Other.SMS
             this.DeletePluginLocaleResource("Plugin.Other.SMS.TwilioToken");
             this.DeletePluginLocaleResource("Plugin.Other.SMS.SendSMSToAdminOnInvoiceCheckOut");
             this.DeletePluginLocaleResource("Plugin.Other.SMS.SendSMSToAdminOnNewUserJoined");
+            this.DeletePluginLocaleResource("Plugin.Other.SMS.SendSMSToAdminOnNewComment");
+            this.DeletePluginLocaleResource("Plugin.Other.SMS.SendSMSToAdminOnNewMessage");
             this.DeletePluginLocaleResource("Plugin.Other.SMS.SMSMessageForInvoiceCheckOut");
             this.DeletePluginLocaleResource("Plugin.Other.SMS.SMSMessageForNewUserJoined");
-            this.DeletePluginLocaleResource("Plugin.Other.SMS.AdminMobileNumbers");
+            this.DeletePluginLocaleResource("Plugin.Other.SMS.SMSMessageForNewComment");
+            this.DeletePluginLocaleResource("Plugin.Other.SMS.SMSMessageForNewMessage");
+            this.DeletePluginLocaleResource("Plugin.Other.SMS.InvoiceCheckOutRecipients");
+            this.DeletePluginLocaleResource("Plugin.Other.SMS.NewUserJoinedRecipients");
+            this.DeletePluginLocaleResource("Plugin.Other.SMS.NewCommentRecipients");
+            this.DeletePluginLocaleResource("Plugin.Other.SMS.NewMessageRecipients");
 
             base.Uninstall();
         }

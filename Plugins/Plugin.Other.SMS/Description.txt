@@ -5,4 +5,4 @@ Version: 1.0
 Author: Devesprit.DigiCommerce team
 DisplayOrder: 1
 FileName: Plugin.Other.SMS.dll
-Description: This plugin allows to send notifications via SMS.
+Description: This plugin send notifications to admin via SMS.

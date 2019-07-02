@@ -43,14 +43,35 @@ namespace Plugin.Other.SMS.Models
         [DisplayNameLocalized("Plugin.Other.SMS.SendSMSToAdminOnNewUserJoined")]
         public bool SendSMSToAdminOnNewUserJoined { get; set; }
 
+        [DisplayNameLocalized("Plugin.Other.SMS.SendSMSToAdminOnNewComment")]
+        public bool SendSMSToAdminOnNewComment { get; set; }
+
+        [DisplayNameLocalized("Plugin.Other.SMS.SendSMSToAdminOnNewMessage")]
+        public bool SendSMSToAdminOnNewMessage { get; set; }
+
         [DisplayNameLocalized("Plugin.Other.SMS.SMSMessageForInvoiceCheckOut")]
         public LocalizedString SMSMessageForInvoiceCheckOut { get; set; } = new LocalizedString("Invoice Checkout - User: {{Invoice.User.Email}} - Amount: {{PaidAmount}}");
 
         [DisplayNameLocalized("Plugin.Other.SMS.SMSMessageForNewUserJoined")]
         public LocalizedString SMSMessageForNewUserJoined { get; set; } = new LocalizedString("New User Registered - {{User.Email}}");
 
-        [DisplayNameLocalized("Plugin.Other.SMS.AdminMobileNumbers")]
-        public string AdminMobileNumbers { get; set; }
+        [DisplayNameLocalized("Plugin.Other.SMS.SMSMessageForNewComment")]
+        public LocalizedString SMSMessageForNewComment { get; set; } = new LocalizedString("New Comment - From: {{Entity.UserEmail}}");
+
+        [DisplayNameLocalized("Plugin.Other.SMS.SMSMessageForNewMessage")]
+        public LocalizedString SMSMessageForNewMessage { get; set; } = new LocalizedString("New Message - Subject: {{Entity.Subject}} - From: {{Entity.Email}}");
+
+        [DisplayNameLocalized("Plugin.Other.SMS.InvoiceCheckOutRecipients")]
+        public string InvoiceCheckOutRecipients { get; set; }
+
+        [DisplayNameLocalized("Plugin.Other.SMS.NewUserJoinedRecipients")]
+        public string NewUserJoinedRecipients { get; set; }
+
+        [DisplayNameLocalized("Plugin.Other.SMS.NewCommentRecipients")]
+        public string NewCommentRecipients { get; set; }
+
+        [DisplayNameLocalized("Plugin.Other.SMS.NewMessageRecipients")]
+        public string NewMessageRecipients { get; set; }
 
         [DisplayNameLocalized("Plugin.Other.SMS.SendFromNumber")]
         public string SendFromNumber { get; set; }

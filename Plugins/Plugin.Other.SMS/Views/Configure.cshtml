@@ -26,6 +26,8 @@
                             @Html.ValidationMessageFor(p => p.SendFromNumber, "", new { @class = "form-text text-danger fs-12" })
                         </div>
                     </div>
+                </div>
+                <div class="row">
                     <div class="col-12 col-md-6">
                         <div class="form-group">
                             <div class="form-check">
@@ -33,6 +35,16 @@
                                 @Html.LabelFor(p => p.SendSMSToAdminOnInvoiceCheckOut, new { @class = "form-check-label" })
                             </div>
                             @Html.ValidationMessageFor(p => p.SendSMSToAdminOnInvoiceCheckOut, "", new { @class = "form-text text-danger fs-12" })
+                        </div>
+                        <div class="form-group">
+                            <label for="InvoiceCheckOutRecipients">@T("Plugin.Other.SMS.InvoiceCheckOutRecipients")</label>
+                            @Html.TextBoxFor(p => p.InvoiceCheckOutRecipients, new { @class = "form-control form-control-sm ltr-dir" })
+                            @Html.ValidationMessageFor(p => p.InvoiceCheckOutRecipients, "", new { @class = "form-text text-danger fs-12" })
+                        </div>
+                        <div class="form-group">
+                            <label for="SMSMessageForInvoiceCheckOut">@T("Plugin.Other.SMS.SMSMessageForInvoiceCheckOut")</label>
+                            @Html.LocalizedTextAreaFor(p => p.SMSMessageForInvoiceCheckOut, new { @class = "form-control form-control-sm ltr-dir", rows = 7 })
+                            @Html.ValidationMessageFor(p => p.SMSMessageForInvoiceCheckOut, "", new { @class = "form-text text-danger fs-12" })
                         </div>
                     </div>
                     <div class="col-12 col-md-6">
@@ -43,28 +55,53 @@
                             </div>
                             @Html.ValidationMessageFor(p => p.SendSMSToAdminOnNewUserJoined, "", new { @class = "form-text text-danger fs-12" })
                         </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-12">
                         <div class="form-group">
-                            @Html.LabelFor(p => p.AdminMobileNumbers)
-                            @Html.TextBoxFor(p => p.AdminMobileNumbers, new { @class = "form-control form-control-sm ltr-dir" })
-                            @Html.ValidationMessageFor(p => p.AdminMobileNumbers, "", new { @class = "form-text text-danger fs-12" })
+                            <label for="NewUserJoinedRecipients">@T("Plugin.Other.SMS.NewUserJoinedRecipients")</label>
+                            @Html.TextBoxFor(p => p.NewUserJoinedRecipients, new { @class = "form-control form-control-sm ltr-dir" })
+                            @Html.ValidationMessageFor(p => p.NewUserJoinedRecipients, "", new { @class = "form-text text-danger fs-12" })
                         </div>
-                    </div>
-                    <div class="col-12 col-md-6">
-                        <div class="form-group">
-                            <label for="SMSMessageForInvoiceCheckOut">@T("Plugin.Other.SMS.SMSMessageForInvoiceCheckOut")</label>
-                            @Html.LocalizedTextAreaFor(p => p.SMSMessageForInvoiceCheckOut, new { @class = "form-control form-control-sm ltr-dir", rows = 7 })
-                            @Html.ValidationMessageFor(p => p.SMSMessageForInvoiceCheckOut, "", new { @class = "form-text text-danger fs-12" })
-                        </div>
-                    </div>
-                    <div class="col-12 col-md-6">
                         <div class="form-group">
                             <label for="SMSMessageForNewUserJoined">@T("Plugin.Other.SMS.SMSMessageForNewUserJoined")</label>
                             @Html.LocalizedTextAreaFor(p => p.SMSMessageForNewUserJoined, new { @class = "form-control form-control-sm ltr-dir", rows = 7 })
                             @Html.ValidationMessageFor(p => p.SMSMessageForNewUserJoined, "", new { @class = "form-text text-danger fs-12" })
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <div class="form-group">
+                            <div class="form-check">
+                                @Html.CheckBoxFor(p => p.SendSMSToAdminOnNewComment, new { @class = "form-check-input" })
+                                @Html.LabelFor(p => p.SendSMSToAdminOnNewComment, new { @class = "form-check-label" })
+                            </div>
+                            @Html.ValidationMessageFor(p => p.SendSMSToAdminOnNewComment, "", new { @class = "form-text text-danger fs-12" })
+                        </div>
+                        <div class="form-group">
+                            <label for="NewCommentRecipients">@T("Plugin.Other.SMS.NewCommentRecipients")</label>
+                            @Html.TextBoxFor(p => p.NewCommentRecipients, new { @class = "form-control form-control-sm ltr-dir" })
+                            @Html.ValidationMessageFor(p => p.NewCommentRecipients, "", new { @class = "form-text text-danger fs-12" })
+                        </div>
+                        <div class="form-group">
+                            <label for="SMSMessageForNewUserJoined">@T("Plugin.Other.SMS.SMSMessageForNewComment")</label>
+                            @Html.LocalizedTextAreaFor(p => p.SMSMessageForNewComment, new { @class = "form-control form-control-sm ltr-dir", rows = 7 })
+                            @Html.ValidationMessageFor(p => p.SMSMessageForNewComment, "", new { @class = "form-text text-danger fs-12" })
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <div class="form-group">
+                            <div class="form-check">
+                                @Html.CheckBoxFor(p => p.SendSMSToAdminOnNewMessage, new { @class = "form-check-input" })
+                                @Html.LabelFor(p => p.SendSMSToAdminOnNewMessage, new { @class = "form-check-label" })
+                            </div>
+                            @Html.ValidationMessageFor(p => p.SendSMSToAdminOnNewMessage, "", new { @class = "form-text text-danger fs-12" })
+                        </div>
+                        <div class="form-group">
+                            <label for="NewMessageRecipients">@T("Plugin.Other.SMS.NewMessageRecipients")</label>
+                            @Html.TextBoxFor(p => p.NewMessageRecipients, new { @class = "form-control form-control-sm ltr-dir" })
+                            @Html.ValidationMessageFor(p => p.NewMessageRecipients, "", new { @class = "form-text text-danger fs-12" })
+                        </div>
+                        <div class="form-group">
+                            <label for="SMSMessageForNewUserJoined">@T("Plugin.Other.SMS.SMSMessageForNewMessage")</label>
+                            @Html.LocalizedTextAreaFor(p => p.SMSMessageForNewMessage, new { @class = "form-control form-control-sm ltr-dir", rows = 7 })
+                            @Html.ValidationMessageFor(p => p.SMSMessageForNewMessage, "", new { @class = "form-text text-danger fs-12" })
                         </div>
                     </div>
                 </div>

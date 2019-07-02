@@ -247,7 +247,10 @@ namespace Devesprit.Services.Users
         public virtual List<UserPurchasedProduct> GetUserPurchasedProducts(string userId, int? filterByProductId)
         {
             var userInvoices = _dbContext.Invoices.Where(p => p.UserId == userId && p.Status == InvoiceStatus.Paid)
-                .Include(p => p.InvoiceDetails).Include(p => p.User).AsNoTracking().FromCache(QueryCacheTag.Invoice);
+                .Include(p => p.InvoiceDetails)
+                .Include(p => p.User)
+                .Include(p => p.Currency)
+                .AsNoTracking().FromCache(QueryCacheTag.Invoice);
 
             var result = new List<UserPurchasedProduct>();
             foreach (var invoice in userInvoices)
@@ -295,7 +298,7 @@ namespace Devesprit.Services.Users
         {
             var userInvoices = await _dbContext.Invoices
                 .Where(p => p.UserId == userId && p.Status == InvoiceStatus.Paid)
-                .Include(p => p.InvoiceDetails).Include(p => p.User).AsNoTracking().FromCacheAsync(QueryCacheTag.Invoice);
+                .Include(p => p.InvoiceDetails).Include(p => p.User).Include(p => p.Currency).AsNoTracking().FromCacheAsync(QueryCacheTag.Invoice);
 
             var result = new List<UserPurchasedProductAttribute>();
             foreach (var invoice in userInvoices)
@@ -425,6 +428,9 @@ namespace Devesprit.Services.Users
             var result = new StaticPagedList<TblInvoices>(
                 await query.OrderByDescending(p => p.CreateDate)
                     .Include(p => p.InvoiceDetails)
+                    .Include(p=> p.User)
+                    .Include(p=> p.BillingAddress)
+                    .Include(p => p.Currency)
                     .AsNoTracking()
                     .Skip(pageSize * (pageIndex - 1))
                     .Take(pageSize)

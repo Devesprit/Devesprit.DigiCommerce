@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Devesprit.Core.Settings;
@@ -8,6 +9,7 @@ using Devesprit.Services.Events;
 using Devesprit.Services.Invoice;
 using Devesprit.Services.Localization;
 using Devesprit.Services.TemplateEngine;
+using Devesprit.Services.Users;
 using Devesprit.Services.Users.Events;
 using Nexmo.Api;
 using Plugin.Other.SMS.Models;
@@ -16,77 +18,34 @@ using Twilio.Rest.Api.V2010.Account;
 
 namespace Plugin.Other.SMS
 {
-    public class InvoiceCheckoutEventHandler : IConsumer<InvoiceCheckoutEvent>, IConsumer<UserSignupEvent>
+    public class InvoiceCheckoutEventHandler : IConsumer<InvoiceCheckoutEvent>, IConsumer<UserSignupEvent>,
+        IConsumer<EntityInserted<TblPostComments>>, IConsumer<EntityInserted<TblUserMessages>>
     {
         private readonly ISettingService _settingService;
         private readonly ITemplateEngine _templateEngine;
+        private readonly IUsersService _usersService;
 
-        public InvoiceCheckoutEventHandler(ISettingService settingService, ITemplateEngine templateEngine)
+        public InvoiceCheckoutEventHandler(ISettingService settingService, ITemplateEngine templateEngine, IUsersService usersService)
         {
             _settingService = settingService;
             _templateEngine = templateEngine;
+            _usersService = usersService;
         }
 
         public void HandleEvent(InvoiceCheckoutEvent eventMessage)
         {
             var settings = _settingService.LoadSetting<SmsNotifierSettingsModel>();
 
-            var recipients = settings.AdminMobileNumbers.Split(new[] {","}, StringSplitOptions.RemoveEmptyEntries)
+            var recipients = settings.InvoiceCheckOutRecipients.Split(new[] {","}, StringSplitOptions.RemoveEmptyEntries)
                 .Select(p => p.Trim())
                 .Where(p => !string.IsNullOrWhiteSpace(p)).ToList();
-            if (settings.SendSMSToAdminOnInvoiceCheckOut && settings.ActiveSmsProvider != null && recipients.Any())
+            if (settings.SendSMSToAdminOnInvoiceCheckOut && recipients.Any())
             {
                 var messageText =
                     _templateEngine.CompileTemplate(settings.GetLocalized(x => x.SMSMessageForInvoiceCheckOut),
                         eventMessage);
 
-                Task.Run(() =>
-                {
-                    switch (settings.ActiveSmsProvider)
-                    {
-                        case SmsProviders.KaveNeghar:
-                            var statusCode = 0;
-                            var statusMessage = "";
-                            using (var smsService = new com.kavenegar.api.v1(){Url = settings.KaveNegharWebServiceUrl})
-                            {
-                                smsService.SendSimpleByApikey(settings.KaveNegharAPIKey,
-                                    settings.SendFromNumber,
-                                    messageText, 
-                                    recipients.ToArray(), 0, 0,
-                                    ref statusCode, ref statusMessage);
-                            }
-                            break;
-                        case SmsProviders.Nexmo:
-                            var client = new Client(creds: new Nexmo.Api.Request.Credentials
-                            {
-                                ApiKey = settings.NexmoAPIKey,
-                                ApiSecret = settings.NexmoAPISecret
-                            });
-
-                            foreach (var recipient in recipients)
-                            {
-                                client.SMS.Send(new Nexmo.Api.SMS.SMSRequest()
-                                {
-                                    from = settings.SendFromNumber,
-                                    to = recipient,
-                                    text = messageText
-                                });
-                            }
-                            break;
-                        case SmsProviders.Twilio:
-                            TwilioClient.Init(settings.TwilioSID, settings.TwilioToken);
-
-                            foreach (var recipient in recipients)
-                            {
-                                MessageResource.Create(
-                                    body: messageText,
-                                    from: new Twilio.Types.PhoneNumber(settings.SendFromNumber),
-                                    to: new Twilio.Types.PhoneNumber(recipient)
-                                );
-                            }
-                            break;
-                    }
-                });
+                SendMessage(messageText, recipients);
             }
         }
 
@@ -94,14 +53,66 @@ namespace Plugin.Other.SMS
         {
             var settings = _settingService.LoadSetting<SmsNotifierSettingsModel>();
 
-            var recipients = settings.AdminMobileNumbers.Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries)
+            var recipients = settings.NewUserJoinedRecipients.Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries)
                 .Where(p => !string.IsNullOrWhiteSpace(p)).ToList();
-            if (settings.SendSMSToAdminOnNewUserJoined && settings.ActiveSmsProvider != null && recipients.Any())
+            if (settings.SendSMSToAdminOnNewUserJoined && recipients.Any())
             {
                 var messageText =
                     _templateEngine.CompileTemplate(settings.GetLocalized(x => x.SMSMessageForNewUserJoined),
                         eventMessage);
 
+                SendMessage(messageText, recipients);
+            }
+        }
+
+        public void HandleEvent(EntityInserted<TblPostComments> eventMessage)
+        {
+            if (!string.IsNullOrWhiteSpace(eventMessage.Entity.UserId) && _usersService.UserIsAdmin(eventMessage.Entity.UserId))
+            {
+                return;
+            }
+
+            var settings = _settingService.LoadSetting<SmsNotifierSettingsModel>();
+
+            var recipients = settings.NewCommentRecipients.Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries)
+                .Where(p => !string.IsNullOrWhiteSpace(p)).ToList();
+            if (settings.SendSMSToAdminOnNewComment && recipients.Any())
+            {
+                var messageText =
+                    _templateEngine.CompileTemplate(settings.GetLocalized(x => x.SMSMessageForNewComment),
+                        eventMessage);
+
+                SendMessage(messageText, recipients);
+            }
+        }
+
+        public void HandleEvent(EntityInserted<TblUserMessages> eventMessage)
+        {
+            if (!string.IsNullOrWhiteSpace(eventMessage.Entity.UserId) && _usersService.UserIsAdmin(eventMessage.Entity.UserId))
+            {
+                return;
+            }
+
+            var settings = _settingService.LoadSetting<SmsNotifierSettingsModel>();
+
+            var recipients = settings.NewMessageRecipients.Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries)
+                .Where(p => !string.IsNullOrWhiteSpace(p)).ToList();
+            if (settings.SendSMSToAdminOnNewMessage && recipients.Any())
+            {
+                var messageText =
+                    _templateEngine.CompileTemplate(settings.GetLocalized(x => x.SMSMessageForNewMessage),
+                        eventMessage);
+
+                SendMessage(messageText, recipients);
+            }
+        }
+
+        private void SendMessage(string messageText, List<string> recipients)
+        {
+            var settings = _settingService.LoadSetting<SmsNotifierSettingsModel>();
+
+            if (settings.ActiveSmsProvider != null && !string.IsNullOrWhiteSpace(settings.SendFromNumber))
+            {
                 Task.Run(() =>
                 {
                     switch (settings.ActiveSmsProvider)
