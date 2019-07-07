@@ -356,13 +356,11 @@ $(document).ready(function () {
 });
 
 //Images Lazy Load
-$('.lazy').Lazy({
-    effect: 'fadeIn',
-    effectTime: 500,
-    visibleOnly: true,
-    defaultImage: '/Content/img/loading.gif',
-    delay:250,
-    onError: function (element) {
-        $(element).attr("src","/Content/img/image-not-available.png");
-    }
+var myLazyLoad = new LazyLoad({
+    elements_selector: ".lazy",
+    load_delay: 500,
+    threshold: 0,
+    callback_error: function (element) {
+        $(element).attr("src", "/Content/img/image-not-available.png");
+    },
 });

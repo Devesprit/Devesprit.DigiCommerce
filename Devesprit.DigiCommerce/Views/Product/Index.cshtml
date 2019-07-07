@@ -11,7 +11,7 @@
     var settings = DependencyResolver.Current.GetService<ISettingService>().LoadSetting<SiteSettings>();
 
     Html.AddCssFileParts(ResourceLocation.Header, "~/Content/jssocials.css");
-    Html.AddCssFileParts(ResourceLocation.Header, "~/Content/jssocials-theme-flat.css");
+    Html.AddCssFileParts(ResourceLocation.Header, "~/Content/jssocials-theme-minima.css");
 
     Html.AddScriptParts(ResourceLocation.Footer, "~/Scripts/jssocials.min.js");
 
@@ -49,7 +49,6 @@
         @{Html.RenderPartial("Partials/_ProductDownloadPurchaseButton", Model.DownloadPurchaseButtonModel);}
         @{Html.RenderPartial("Partials/_ProductAttributesSection", Model);}
         @{Html.RenderPartial("Partials/_ProductTagsSection", Model.TagsList);}
-        <div id="shareIconsCountInside" class="fs-12 b-mar-20 text-center"></div>
         @if (Model.ShowSimilarCases)
         {
             Html.RenderAction("MoreLikeThis", "Search", new {postId = Model.Id, postType = PostType.Product});
@@ -72,6 +71,8 @@
 
             @{Html.RenderPartial("Partials/_ProductImagesSection", Model.Images);}
             @{Html.RenderPartial("Partials/_ProductDescriptionsSection", Model.Descriptions);}
+
+            <div id="shareIconsCountInside" class="fs-16 mar-v-20 text-center"></div>
         </div>
 
         @if (settings.AllowUsersToWriteComment && Model.AllowCustomerReviews)
@@ -106,10 +107,10 @@
      $("#shareIconsCountInside").jsSocials({
          showLabel: false,
          shareIn: "popup",
-         showCount: "inside",
+         showCount: false,
          shares: [
-             "email", "twitter", "facebook", "googleplus", "linkedin", "whatsapp", "messenger",
-             "telegram", "line"
+             "email", "twitter", "facebook", "linkedin", "pinterest", "stumbleupon", "pocket", "whatsapp", "viber",
+             "messenger", "vkontakte", "telegram", "line"
          ]
      });
 </script>, true);

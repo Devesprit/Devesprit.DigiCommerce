@@ -31,6 +31,10 @@ namespace Plugin.Other.SMS.Models
         [DisplayNameLocalized("Plugin.Other.SMS.NexmoAPISecret")]
         public string NexmoAPISecret { get; set; }
 
+        [DisplayNameLocalized("Plugin.Other.SMS.NexmoUrl")]
+        public string NexmoUrl { get; set; } =
+            "https://rest.nexmo.com/sms/json?from={0}&to={1}&api_key={2}&api_secret={3}&text={4}";
+
         [DisplayNameLocalized("Plugin.Other.SMS.TwilioSID")]
         public string TwilioSID { get; set; }
 
@@ -48,6 +52,9 @@ namespace Plugin.Other.SMS.Models
 
         [DisplayNameLocalized("Plugin.Other.SMS.SendSMSToAdminOnNewMessage")]
         public bool SendSMSToAdminOnNewMessage { get; set; }
+        
+        [DisplayNameLocalized("Plugin.Other.SMS.SendSMSToAdminOnSearchIndexesFailed")]
+        public bool SendSMSToAdminOnSearchIndexesFailed { get; set; }
 
         [DisplayNameLocalized("Plugin.Other.SMS.SMSMessageForInvoiceCheckOut")]
         public LocalizedString SMSMessageForInvoiceCheckOut { get; set; } = new LocalizedString("Invoice Checkout - User: {{Invoice.User.Email}} - Amount: {{PaidAmount}}");
@@ -61,6 +68,9 @@ namespace Plugin.Other.SMS.Models
         [DisplayNameLocalized("Plugin.Other.SMS.SMSMessageForNewMessage")]
         public LocalizedString SMSMessageForNewMessage { get; set; } = new LocalizedString("New Message - Subject: {{Entity.Subject}} - From: {{Entity.Email}}");
 
+        [DisplayNameLocalized("Plugin.Other.SMS.SMSMessageForSearchIndexesFailed")]
+        public LocalizedString SMSMessageForSearchIndexesFailed { get; set; } = new LocalizedString("An error occurred on creating search engine indexes");
+
         [DisplayNameLocalized("Plugin.Other.SMS.InvoiceCheckOutRecipients")]
         public string InvoiceCheckOutRecipients { get; set; }
 
@@ -72,6 +82,9 @@ namespace Plugin.Other.SMS.Models
 
         [DisplayNameLocalized("Plugin.Other.SMS.NewMessageRecipients")]
         public string NewMessageRecipients { get; set; }
+
+        [DisplayNameLocalized("Plugin.Other.SMS.SearchIndexesFailedRecipients")]
+        public string SearchIndexesFailedRecipients { get; set; }
 
         [DisplayNameLocalized("Plugin.Other.SMS.SendFromNumber")]
         public string SendFromNumber { get; set; }

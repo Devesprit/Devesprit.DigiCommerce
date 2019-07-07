@@ -458,85 +458,98 @@ namespace Devesprit.Services.SearchEngine
 
         public virtual long CreateIndex()
         {
-            var watch = new System.Diagnostics.Stopwatch();
-            watch.Start();
-
-            if (System.IO.Directory.Exists(_indexFilesPath))
+            try
             {
-                try
+                var watch = new System.Diagnostics.Stopwatch();
+                watch.Start();
+
+                if (System.IO.Directory.Exists(_indexFilesPath))
                 {
-                    using (var directory = FSDirectory.Open(new DirectoryInfo(_indexFilesPath)))
-                        directory.ClearLock(directory.GetLockId());
-                }
-                catch
-                { }
-
-                FileUtils.DeleteDirRecursively(new DirectoryInfo(_indexFilesPath));
-            }
-            System.IO.Directory.CreateDirectory(_indexFilesPath);
-
-            if (System.IO.Directory.Exists(_spellFilesPath))
-            {
-                try
-                {
-                    using (var directory = FSDirectory.Open(new DirectoryInfo(_spellFilesPath)))
-                        directory.ClearLock(directory.GetLockId());
-                }
-                catch
-                {}
-
-                FileUtils.DeleteDirRecursively(new DirectoryInfo(_spellFilesPath));
-            }
-            System.IO.Directory.CreateDirectory(_spellFilesPath);
-
-
-            var allPosts = _postService.GetAsQueryable().Where(p => p.Published)
-                .Include(p => p.Descriptions)
-                .Include(p => p.Tags)
-                .Include(p => p.Categories)
-                .ToList();
-            var languages = _languagesService.GetAsEnumerable();
-
-            var analyzer = new StandardAnalyzer(Version);
-            using (var directory = FSDirectory.Open(new DirectoryInfo(_indexFilesPath)))
-            {
-                using (var writer = new IndexWriter(directory, analyzer, true, IndexWriter.MaxFieldLength.UNLIMITED))
-                {
-                    foreach (var language in languages.OrderByDescending(p => p.IsDefault))
+                    try
                     {
-                        foreach (var post in allPosts)
-                        {
-                            writer.AddDocument(MapPost(post, language, post.PostType));
-                        }
+                        using (var directory = FSDirectory.Open(new DirectoryInfo(_indexFilesPath)))
+                            directory.ClearLock(directory.GetLockId());
+                    }
+                    catch
+                    {
                     }
 
-                    writer.Optimize();
-                    writer.Commit();
+                    FileUtils.DeleteDirRecursively(new DirectoryInfo(_indexFilesPath));
                 }
-            }
 
-            using (var directory = FSDirectory.Open(new DirectoryInfo(_indexFilesPath)))
-            {
-                using (var spellDirectory = FSDirectory.Open(new DirectoryInfo(_spellFilesPath)))
+                System.IO.Directory.CreateDirectory(_indexFilesPath);
+
+                if (System.IO.Directory.Exists(_spellFilesPath))
                 {
-                    using (var indexReader = IndexReader.Open(directory, readOnly: true))
+                    try
                     {
-                        using (var spellChecker = new SpellChecker.Net.Search.Spell.SpellChecker(spellDirectory))
-                        {
-                            // Create SpellChecker Index
-                            spellChecker.ClearIndex();
-                            spellChecker.IndexDictionary(new LuceneDictionary(indexReader, "Title"));
-                            spellChecker.IndexDictionary(new LuceneDictionary(indexReader, "Description"));
+                        using (var directory = FSDirectory.Open(new DirectoryInfo(_spellFilesPath)))
+                            directory.ClearLock(directory.GetLockId());
+                    }
+                    catch
+                    {
+                    }
 
-                            spellChecker.Close();
+                    FileUtils.DeleteDirRecursively(new DirectoryInfo(_spellFilesPath));
+                }
+
+                System.IO.Directory.CreateDirectory(_spellFilesPath);
+
+
+                var allPosts = _postService.GetAsQueryable().Where(p => p.Published)
+                    .Include(p => p.Descriptions)
+                    .Include(p => p.Tags)
+                    .Include(p => p.Categories)
+                    .ToList();
+                var languages = _languagesService.GetAsEnumerable();
+
+                var analyzer = new StandardAnalyzer(Version);
+                using (var directory = FSDirectory.Open(new DirectoryInfo(_indexFilesPath)))
+                {
+                    using (var writer =
+                        new IndexWriter(directory, analyzer, true, IndexWriter.MaxFieldLength.UNLIMITED))
+                    {
+                        foreach (var language in languages.OrderByDescending(p => p.IsDefault))
+                        {
+                            foreach (var post in allPosts)
+                            {
+                                writer.AddDocument(MapPost(post, language, post.PostType));
+                            }
+                        }
+
+                        writer.Optimize();
+                        writer.Commit();
+                    }
+                }
+
+                using (var directory = FSDirectory.Open(new DirectoryInfo(_indexFilesPath)))
+                {
+                    using (var spellDirectory = FSDirectory.Open(new DirectoryInfo(_spellFilesPath)))
+                    {
+                        using (var indexReader = IndexReader.Open(directory, readOnly: true))
+                        {
+                            using (var spellChecker = new SpellChecker.Net.Search.Spell.SpellChecker(spellDirectory))
+                            {
+                                // Create SpellChecker Index
+                                spellChecker.ClearIndex();
+                                spellChecker.IndexDictionary(new LuceneDictionary(indexReader, "Title"));
+                                spellChecker.IndexDictionary(new LuceneDictionary(indexReader, "Description"));
+
+                                spellChecker.Close();
+                            }
                         }
                     }
                 }
+
+                watch.Stop();
+
+                return watch.ElapsedMilliseconds;
             }
-
-            watch.Stop();
-
-            return watch.ElapsedMilliseconds;
+            catch (Exception e)
+            {
+                _eventPublisher.Publish(new CreateSearchIndexesFailEvent(e));
+                throw e;
+            }
         }
 
         protected virtual Document MapPost(TblPosts post, TblLanguages language, PostType? postType)

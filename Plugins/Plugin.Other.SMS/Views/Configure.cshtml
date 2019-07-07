@@ -104,6 +104,26 @@
                             @Html.ValidationMessageFor(p => p.SMSMessageForNewMessage, "", new { @class = "form-text text-danger fs-12" })
                         </div>
                     </div>
+
+                    <div class="col-12 col-md-6">
+                        <div class="form-group">
+                            <div class="form-check">
+                                @Html.CheckBoxFor(p => p.SendSMSToAdminOnSearchIndexesFailed, new { @class = "form-check-input" })
+                                @Html.LabelFor(p => p.SendSMSToAdminOnSearchIndexesFailed, new { @class = "form-check-label" })
+                            </div>
+                            @Html.ValidationMessageFor(p => p.SendSMSToAdminOnSearchIndexesFailed, "", new { @class = "form-text text-danger fs-12" })
+                        </div>
+                        <div class="form-group">
+                            <label for="NewMessageRecipients">@T("Plugin.Other.SMS.SearchIndexesFailedRecipients")</label>
+                            @Html.TextBoxFor(p => p.SearchIndexesFailedRecipients, new { @class = "form-control form-control-sm ltr-dir" })
+                            @Html.ValidationMessageFor(p => p.SearchIndexesFailedRecipients, "", new { @class = "form-text text-danger fs-12" })
+                        </div>
+                        <div class="form-group">
+                            <label for="SMSMessageForNewUserJoined">@T("Plugin.Other.SMS.SMSMessageForSearchIndexesFailed")</label>
+                            @Html.LocalizedTextAreaFor(p => p.SMSMessageForSearchIndexesFailed, new { @class = "form-control form-control-sm ltr-dir", rows = 7 })
+                            @Html.ValidationMessageFor(p => p.SMSMessageForSearchIndexesFailed, "", new { @class = "form-text text-danger fs-12" })
+                        </div>
+                    </div>
                 </div>
                 <div class="row">
                     <div class="col-12">
@@ -111,6 +131,13 @@
                         <a href="https://www.nexmo.com" target="_blank">
                             <img src="/Plugins/Plugin.Other.SMS/Content/Nexmo-Logo.png" class="mb-3 mx-auto d-block" />
                         </a>
+                    </div>
+                    <div class="col-12">
+                        <div class="form-group">
+                            @Html.LabelFor(p => p.NexmoUrl)
+                            @Html.TextBoxFor(p => p.NexmoUrl, new { @class = "form-control form-control-sm ltr-dir" })
+                            @Html.ValidationMessageFor(p => p.NexmoUrl, "", new { @class = "form-text text-danger fs-12" })
+                        </div>
                     </div>
                     <div class="col-12 col-md-6">
                         <div class="form-group">

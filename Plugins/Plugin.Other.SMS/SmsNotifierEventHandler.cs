@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Net;
+using System.Text;
 using System.Threading.Tasks;
 using Devesprit.Core.Settings;
 using Devesprit.Data.Domain;
@@ -8,10 +11,10 @@ using Devesprit.Data.Events;
 using Devesprit.Services.Events;
 using Devesprit.Services.Invoice;
 using Devesprit.Services.Localization;
+using Devesprit.Services.SearchEngine;
 using Devesprit.Services.TemplateEngine;
 using Devesprit.Services.Users;
 using Devesprit.Services.Users.Events;
-using Nexmo.Api;
 using Plugin.Other.SMS.Models;
 using Twilio;
 using Twilio.Rest.Api.V2010.Account;
@@ -19,7 +22,8 @@ using Twilio.Rest.Api.V2010.Account;
 namespace Plugin.Other.SMS
 {
     public class InvoiceCheckoutEventHandler : IConsumer<InvoiceCheckoutEvent>, IConsumer<UserSignupEvent>,
-        IConsumer<EntityInserted<TblPostComments>>, IConsumer<EntityInserted<TblUserMessages>>
+        IConsumer<EntityInserted<TblPostComments>>, IConsumer<EntityInserted<TblUserMessages>>,
+        IConsumer<CreateSearchIndexesFailEvent>
     {
         private readonly ISettingService _settingService;
         private readonly ITemplateEngine _templateEngine;
@@ -107,6 +111,22 @@ namespace Plugin.Other.SMS
             }
         }
 
+        public void HandleEvent(CreateSearchIndexesFailEvent eventMessage)
+        {
+            var settings = _settingService.LoadSetting<SmsNotifierSettingsModel>();
+
+            var recipients = settings.SearchIndexesFailedRecipients.Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries)
+                .Where(p => !string.IsNullOrWhiteSpace(p)).ToList();
+            if (settings.SendSMSToAdminOnSearchIndexesFailed && recipients.Any())
+            {
+                var messageText =
+                    _templateEngine.CompileTemplate(settings.GetLocalized(x => x.SMSMessageForSearchIndexesFailed),
+                        eventMessage);
+
+                SendMessage(messageText, recipients);
+            }
+        }
+
         private void SendMessage(string messageText, List<string> recipients)
         {
             var settings = _settingService.LoadSetting<SmsNotifierSettingsModel>();
@@ -130,33 +150,37 @@ namespace Plugin.Other.SMS
                             }
                             break;
                         case SmsProviders.Nexmo:
-                            var client = new Client(creds: new Nexmo.Api.Request.Credentials
-                            {
-                                ApiKey = settings.NexmoAPIKey,
-                                ApiSecret = settings.NexmoAPISecret
-                            });
-
                             foreach (var recipient in recipients)
                             {
-                                client.SMS.Send(new Nexmo.Api.SMS.SMSRequest()
+                                try
                                 {
-                                    from = settings.SendFromNumber,
-                                    to = recipient,
-                                    text = messageText
-                                });
+                                    using (var webClient = new WebClient())
+                                    {
+                                        webClient.Encoding = Encoding.UTF8;
+                                        string result = webClient.DownloadString(string.Format(settings.NexmoUrl,
+                                            settings.SendFromNumber, recipient, settings.NexmoAPIKey,
+                                            settings.NexmoAPISecret, messageText));
+                                    }
+                                }
+                                catch{}
                             }
                             break;
                         case SmsProviders.Twilio:
                             TwilioClient.Init(settings.TwilioSID, settings.TwilioToken);
 
-                            foreach (var recipient in recipients)
+                            try
                             {
-                                MessageResource.Create(
-                                    body: messageText,
-                                    from: new Twilio.Types.PhoneNumber(settings.SendFromNumber),
-                                    to: new Twilio.Types.PhoneNumber(recipient)
-                                );
+                                foreach (var recipient in recipients)
+                                {
+                                    MessageResource.Create(
+                                        body: messageText,
+                                        from: new Twilio.Types.PhoneNumber(settings.SendFromNumber),
+                                        to: new Twilio.Types.PhoneNumber(recipient)
+                                    );
+                                }
                             }
+                            catch
+                            {}
                             break;
                     }
                 });
