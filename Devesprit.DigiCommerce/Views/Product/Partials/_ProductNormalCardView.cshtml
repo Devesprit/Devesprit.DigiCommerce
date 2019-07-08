@@ -17,7 +17,7 @@
     @if (!string.IsNullOrWhiteSpace(Model.MainImageUrl))
     {
         <a href="@Model.PostUrl">
-            <img class="card-img-top lazy" src="~/Content/img/Loading.gif" data-src="@Model.MainImageUrl?dshadow.Angle=0&dshadow.Distance=0&dshadow.Opacity=70&dshadow.Color=Black&dshadow.Softness=10&width=275&height=185&colorfulbg=true" alt="@Model.Title" title="@Model.DescriptionTruncated.ConvertHtmlToText()">
+            <img class="card-img-top lazy" src="~/Content/img/Loading.gif" data-src="@Model.MainImageUrl" alt="@Model.Title" title="@Model.DescriptionTruncated.ConvertHtmlToText()">
         </a>
     }
     <div class="card-body p-3">

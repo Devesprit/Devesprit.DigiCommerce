@@ -23,7 +23,7 @@
     @if (!string.IsNullOrWhiteSpace(Model.MainImageUrl))
     {
         <a href="@Model.PostUrl">
-            <img class="card-img-top lazy" src="~/Content/img/Loading_Large.gif" data-src="@Model.MainImageUrl?dshadow.Angle=0&dshadow.Distance=0&dshadow.Opacity=70&dshadow.Color=Black&dshadow.Softness=10&width=1110&height=350&mode=boxpad&colorfulbg=true" alt="@Model.Title">
+            <img class="card-img-top lazy" src="~/Content/img/Loading_Large.gif" data-src="@Model.MainImageUrl" alt="@Model.Title">
         </a>
     }
     <div class="card-body p-3">

@@ -13,7 +13,7 @@
         <p class="post-card-ribbon bg-danger" title="@T("Featured")"><i class="fa fa-star"></i></p>
     }
     <a href="@Model.PostUrl">
-        <img class="card-img-top lazy" src="~/Content/img/Loading.gif" data-src="@Model.MainImageUrl?dshadow.Angle=0&dshadow.Distance=0&dshadow.Opacity=70&dshadow.Color=Black&dshadow.Softness=10&width=275&height=185&colorfulbg=true" alt="@Model.Title" title="@Model.DescriptionTruncated.ConvertHtmlToText().TruncateText(140)">
+        <img class="card-img-top lazy" src="~/Content/img/Loading.gif" data-src="@Model.MainImageUrl" alt="@Model.Title" title="@Model.DescriptionTruncated.ConvertHtmlToText().TruncateText(140)">
     </a>
     <div class="card-body">
         <h6 class="card-title text-center @Html.Raw(Model.Title.IsRtlLanguage() ? "rtl-dir" : "ltr-dir") mb-5">

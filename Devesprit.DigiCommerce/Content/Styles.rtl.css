@@ -196,3 +196,10 @@
 .body .comment-action-btn-holder {
     text-align: left;
 }
+
+.modal-footer > :not(:first-child) {
+    margin-right: 0.25rem;
+}
+.modal-footer > :not(:last-child) {
+    margin-left: 0.25rem;
+}

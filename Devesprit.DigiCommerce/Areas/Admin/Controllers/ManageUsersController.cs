@@ -11,7 +11,6 @@ using Devesprit.Services.Users;
 using Devesprit.WebFramework;
 using Devesprit.WebFramework.Helpers;
 using Elmah;
-using Microsoft.AspNet.Identity;
 using Syncfusion.JavaScript;
 
 namespace Devesprit.DigiCommerce.Areas.Admin.Controllers

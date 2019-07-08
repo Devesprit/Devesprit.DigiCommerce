@@ -4,7 +4,7 @@
 }
 @if (Model.Count == 1)
 {
-    <img class="d-block m-auto img-fluid lazy" src="~/Content/img/Loading_Large.gif" data-src="@Model.FirstOrDefault().ImageUrl?dshadow.Angle=0&dshadow.Distance=0&dshadow.Opacity=70&dshadow.Color=Black&dshadow.Softness=10&width=825&height=500&mode=boxpad&colorfulbg=true" alt="@Model.FirstOrDefault().Alt" title="@Model.FirstOrDefault().Title" />
+    <img class="d-block m-auto img-fluid lazy" src="~/Content/img/Loading_Large.gif" data-src="@Model.FirstOrDefault().ImageUrl" alt="@Model.FirstOrDefault().Alt" title="@Model.FirstOrDefault().Title" />
 }
 else if (Model.Count > 1)
 {
@@ -19,7 +19,7 @@ else if (Model.Count > 1)
             @foreach (var img in Model.OrderBy(p => p.DisplayOrder))
             {
                 <div class="carousel-item @Html.Raw(counter == 0 ? "active" : "")">
-                    <img class="d-block m-auto img-fluid lazy" src="~/Content/img/Loading_Large.gif" data-src="@img.ImageUrl?dshadow.Angle=0&dshadow.Distance=0&dshadow.Opacity=70&dshadow.Color=Black&dshadow.Softness=10&width=825&height=500&mode=boxpad&colorfulbg=true" alt="@img.Alt" title="@img.Title" />
+                    <img class="d-block m-auto img-fluid lazy" src="~/Content/img/Loading_Large.gif" data-src="@img.ImageUrl" alt="@img.Alt" title="@img.Title" />
                 </div>
                 counter++;
             }

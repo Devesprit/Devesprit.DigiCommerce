@@ -140,7 +140,7 @@ namespace Devesprit.Services.Users
         }
 
         #endregion
-
+         
         public virtual UserManager<TblUsers> UserManager
         {
             get

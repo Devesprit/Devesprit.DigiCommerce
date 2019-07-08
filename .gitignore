@@ -346,6 +346,7 @@ _gsdata_/
 Plugins/Plugin.ExternalLogin.Pro
 Plugins/Plugin.Other.irDevelopersDataTransfer
 Plugins/Plugin.PaymentMethod.PayPalWithProxy
+Plugins/Plugin.Devesprit.ImageServer
 
 # Ignore Other Files
 Devesprit.DigiCommerce/Plugins

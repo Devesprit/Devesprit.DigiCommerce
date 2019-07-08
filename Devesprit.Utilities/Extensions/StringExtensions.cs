@@ -440,5 +440,29 @@ namespace Devesprit.Utilities.Extensions
                 url.Contains("$") ||
                 url.Contains("*"));
         }
+
+        public static string ReplaceFirstOccurence(this string originalValue, string occurenceValue, string newValue, StringComparison comparison = StringComparison.InvariantCultureIgnoreCase)
+        {
+            if (string.IsNullOrEmpty(originalValue))
+                return string.Empty;
+            if (string.IsNullOrEmpty(occurenceValue))
+                return originalValue;
+            if (string.IsNullOrEmpty(newValue))
+                return originalValue;
+            int startIndex = originalValue.IndexOf(occurenceValue, comparison);
+            return originalValue.Remove(startIndex, occurenceValue.Length).Insert(startIndex, newValue);
+        }
+        
+        public static string ReplaceLastOccurence(this string originalValue, string occurenceValue, string newValue, StringComparison comparison = StringComparison.InvariantCultureIgnoreCase)
+        {
+            if (string.IsNullOrEmpty(originalValue))
+                return string.Empty;
+            if (string.IsNullOrEmpty(occurenceValue))
+                return originalValue;
+            if (string.IsNullOrEmpty(newValue))
+                return originalValue;
+            int startIndex = originalValue.LastIndexOf(occurenceValue, comparison);
+            return originalValue.Remove(startIndex, occurenceValue.Length).Insert(startIndex, newValue);
+        }
     }
 }

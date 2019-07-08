@@ -83,7 +83,7 @@ namespace Devesprit.DigiCommerce.Factories
                     Query = post.Title
                 }, _httpContext.Request.Url.Scheme)).ToString();
             }
-
+            
             return result;
         }
 
