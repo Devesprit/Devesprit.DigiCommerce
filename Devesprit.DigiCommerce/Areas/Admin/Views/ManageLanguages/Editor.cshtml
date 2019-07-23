@@ -66,18 +66,18 @@
             <div class="row">
                 <div class="col-12 col-lg-4">
                     <div class="form-group no-b-mar">
-                        <div class="form-check">
-                            @Html.CheckBoxFor(p => p.IsRtl, new { @class = "form-check-input" })
-                            @Html.LabelFor(p => p.IsRtl, new { @class = "form-check-label" })
+                        <div class="custom-control custom-checkbox">
+                            @Html.CheckBoxFor(p => p.IsRtl, new { @class = "custom-control-input" })
+                            @Html.LabelFor(p => p.IsRtl, new { @class = "custom-control-label" })
                         </div>
                         @Html.ValidationMessageFor(p => p.IsRtl, "", new { @class = "form-text text-danger fs-12" })
                     </div>
                 </div>
                 <div class="col-12 col-lg-4">
                     <div class="form-group no-b-mar">
-                        <div class="form-check">
-                            @Html.CheckBoxFor(p => p.Published, new { @class = "form-check-input" })
-                            @Html.LabelFor(p => p.Published, new { @class = "form-check-label" })
+                        <div class="custom-control custom-checkbox">
+                            @Html.CheckBoxFor(p => p.Published, new { @class = "custom-control-input" })
+                            @Html.LabelFor(p => p.Published, new { @class = "custom-control-label" })
                         </div>
                         @Html.ValidationMessageFor(p => p.Published, "", new { @class = "form-text text-danger fs-12" })
                     </div>

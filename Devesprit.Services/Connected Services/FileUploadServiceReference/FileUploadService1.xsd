@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:tns="http://tempuri.org/" elementFormDefault="qualified" targetNamespace="http://tempuri.org/" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:import schemaLocation="http://localhost:57738/FileUploadService.svc?xsd=xsd0" namespace="http://schemas.microsoft.com/Message" />
+  <xs:element name="UploadFileRequest">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q1="http://schemas.microsoft.com/Message" name="FileByteStream" type="q1:StreamBody" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="UploadRequestKey" nillable="true" type="xs:string" />
+  <xs:element name="UploadFileResult">
+    <xs:complexType>
+      <xs:sequence />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Md5Hash" nillable="true" type="xs:string" />
+  <xs:element name="Success" type="xs:boolean" />
+</xs:schema>

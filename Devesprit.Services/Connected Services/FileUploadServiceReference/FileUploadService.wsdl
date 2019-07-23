@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:wsap="http://schemas.xmlsoap.org/ws/2004/08/addressing/policy" xmlns:wsa10="http://www.w3.org/2005/08/addressing" xmlns:tns="http://tempuri.org/" xmlns:msc="http://schemas.microsoft.com/ws/2005/12/wsdl/contract" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:wsx="http://schemas.xmlsoap.org/ws/2004/09/mex" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="FileUploadService" targetNamespace="http://tempuri.org/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsp:Policy wsu:Id="BasicHttpBinding_IFileUploadService_policy">
+    <wsp:ExactlyOne>
+      <wsp:All>
+        <wsoma:OptimizedMimeSerialization xmlns:wsoma="http://schemas.xmlsoap.org/ws/2004/09/policy/optimizedmimeserialization" />
+      </wsp:All>
+    </wsp:ExactlyOne>
+  </wsp:Policy>
+  <wsdl:types>
+    <xsd:schema targetNamespace="http://tempuri.org/Imports">
+      <xsd:import schemaLocation="http://localhost:57738/FileUploadService.svc?xsd=xsd1" namespace="http://tempuri.org/" />
+      <xsd:import schemaLocation="http://localhost:57738/FileUploadService.svc?xsd=xsd0" namespace="http://schemas.microsoft.com/Message" />
+      <xsd:import schemaLocation="http://localhost:57738/FileUploadService.svc?xsd=xsd2" namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
+    </xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="UploadFileRequest">
+    <wsdl:part name="parameters" element="tns:UploadFileRequest" />
+  </wsdl:message>
+  <wsdl:message name="UploadFileRequest_Headers">
+    <wsdl:part name="UploadRequestKey" element="tns:UploadRequestKey" />
+  </wsdl:message>
+  <wsdl:message name="UploadFileResult">
+    <wsdl:part name="parameters" element="tns:UploadFileResult" />
+  </wsdl:message>
+  <wsdl:message name="UploadFileResult_Headers">
+    <wsdl:part name="Md5Hash" element="tns:Md5Hash" />
+    <wsdl:part name="Success" element="tns:Success" />
+  </wsdl:message>
+  <wsdl:portType name="IFileUploadService">
+    <wsdl:operation name="UploadFile">
+      <wsdl:input wsaw:Action="http://tempuri.org/IFileUploadService/UploadFile" name="UploadFileRequest" message="tns:UploadFileRequest" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IFileUploadService/UploadFileResponse" name="UploadFileResult" message="tns:UploadFileResult" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="BasicHttpBinding_IFileUploadService" type="tns:IFileUploadService">
+    <wsp:PolicyReference URI="#BasicHttpBinding_IFileUploadService_policy" />
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="UploadFile">
+      <soap:operation soapAction="http://tempuri.org/IFileUploadService/UploadFile" style="document" />
+      <wsdl:input name="UploadFileRequest">
+        <soap:header message="tns:UploadFileRequest_Headers" part="UploadRequestKey" use="literal" />
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="UploadFileResult">
+        <soap:header message="tns:UploadFileResult_Headers" part="Md5Hash" use="literal" />
+        <soap:header message="tns:UploadFileResult_Headers" part="Success" use="literal" />
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="FileUploadService">
+    <wsdl:port name="BasicHttpBinding_IFileUploadService" binding="tns:BasicHttpBinding_IFileUploadService">
+      <soap:address location="http://localhost:57738/FileUploadService.svc" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

@@ -60,9 +60,9 @@
                             if (Model.Settings.ShowAcceptTermsSignUp)
                             {
                                 <div class="form-group b-mar-5">
-                                    <div class="form-check">
-                                        @Html.CheckBoxFor(p => p.AcceptTerms, new {@class = "form-check-input"})
-                                        @Html.Raw(Server.HtmlDecode(Html.LabelFor(p => p.AcceptTerms, new { @class = "form-check-label" }).ToString()))
+                                    <div class="custom-control custom-checkbox">
+                                        @Html.CheckBoxFor(p => p.AcceptTerms, new {@class = "custom-control-input"})
+                                        @Html.Raw(Server.HtmlDecode(Html.LabelFor(p => p.AcceptTerms, new { @class = "custom-control-label" }).ToString()))
                                     </div>
                                     @Html.ValidationMessageFor(p => p.AcceptTerms, "", new {@class = "form-text text-danger fs-12"})
                                 </div>

@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using System.Web.Mvc;
 using Devesprit.Data.Domain;
 using Devesprit.Services.FileManagerServiceReference;
+using Devesprit.Services.FileUploadServiceReference;
 
 namespace Devesprit.Services.FileServers
 {
@@ -18,5 +19,6 @@ namespace Devesprit.Services.FileServers
         Task<int> AddAsync(TblFileServers record);
         Task UpdateAsync(TblFileServers record);
         FileManagerServiceClient GetWebService(TblFileServers fileServer);
+        FileUploadServiceClient GetFileUploadWebService(TblFileServers fileServer);
     }
 }

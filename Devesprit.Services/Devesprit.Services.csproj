@@ -253,6 +253,11 @@
     <Compile Include="AdminAreaMenu\AdminMenuItem.cs" />
     <Compile Include="AdminAreaMenu\IAdminAreaMenuManager.cs" />
     <Compile Include="AdminAreaMenu\IAdminAreaPluginMenu.cs" />
+    <Compile Include="Connected Services\FileUploadServiceReference\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
     <Compile Include="Discounts\DiscountProcessorResult.cs" />
     <Compile Include="Discounts\IDiscountProcessor.cs" />
     <Compile Include="Posts\PostService.cs" />
@@ -425,6 +430,19 @@
     <None Include="Connected Services\FileManagerServiceReference\FileManagerService2.xsd">
       <SubType>Designer</SubType>
     </None>
+    <None Include="Connected Services\FileUploadServiceReference\Devesprit.Services.FileUploadServiceReference.UploadFileResult.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\FileUploadServiceReference\FileUploadService.wsdl" />
+    <None Include="Connected Services\FileUploadServiceReference\FileUploadService.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Connected Services\FileUploadServiceReference\FileUploadService1.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Connected Services\FileUploadServiceReference\FileUploadService2.xsd">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
@@ -432,6 +450,7 @@
   </ItemGroup>
   <ItemGroup>
     <WCFMetadataStorage Include="Connected Services\FileManagerServiceReference\" />
+    <WCFMetadataStorage Include="Connected Services\FileUploadServiceReference\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Connected Services\FileManagerServiceReference\FileManagerService.disco" />
@@ -448,11 +467,25 @@
       <LastGenOutput>Reference.cs</LastGenOutput>
     </None>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="Connected Services\FileUploadServiceReference\FileUploadService.disco" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Connected Services\FileUploadServiceReference\configuration91.svcinfo" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Connected Services\FileUploadServiceReference\configuration.svcinfo" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Connected Services\FileUploadServiceReference\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties BuildVersion_AssemblyInfoFilename="Properties\AssemblyInfo.cs" BuildVersion_UpdateFileVersion="True" BuildVersion_UpdateAssemblyVersion="True" BuildVersion_BuildVersioningStyle="YearStamp.MonthStamp.DayStamp.Increment" BuildVersion_UseGlobalSettings="True" BuildVersion_StartDate="2018/10/14" />
+      <UserProperties BuildVersion_StartDate="2018/10/14" BuildVersion_UseGlobalSettings="True" BuildVersion_BuildVersioningStyle="YearStamp.MonthStamp.DayStamp.Increment" BuildVersion_UpdateAssemblyVersion="True" BuildVersion_UpdateFileVersion="True" BuildVersion_AssemblyInfoFilename="Properties\AssemblyInfo.cs" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>

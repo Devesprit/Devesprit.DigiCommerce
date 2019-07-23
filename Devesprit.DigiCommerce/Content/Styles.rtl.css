@@ -203,3 +203,18 @@
 .modal-footer > :not(:last-child) {
     margin-left: 0.25rem;
 }
+
+.custom-control-label::before {
+    right: -1.5rem;
+    left: unset;
+}
+
+.custom-control-label::after {
+    right: -1.5rem;
+    left: unset;
+}
+
+.custom-control {
+    padding-right: 1.5rem;
+    padding-left: unset;
+}

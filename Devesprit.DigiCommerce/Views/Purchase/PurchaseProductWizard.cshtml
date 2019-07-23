@@ -149,10 +149,10 @@
                                                         case ProductCheckoutAttributeType.CheckBoxList:
                                                             foreach (var option in attribute.Options.OrderByDescending(p => p.DisplayOrder))
                                                             {
-                                                                <div class="form-check">
+                                                                <div class="custom-control custom-checkbox">
                                                                     <input name="attr-@attribute.Id" value="@option.Id" type="checkbox" class="form-check-input @Html.Raw(attribute.Required ? "CheckListRequired" : "")" id="opt-@option.Id"
                                                                            @Html.Raw(attribute.Required ? "data-val='true' data-val-required='" + T("FieldRequired", attribute.Name) + "'" : "")>
-                                                                    <label class="form-check-label" for="opt-@option.Id">
+                                                                    <label class="custom-control-label" for="opt-@option.Id">
                                                                         @option.GetLocalized(p => p.Name)
                                                                         -
                                                                         @option.Price.ExchangeCurrencyStr()
@@ -176,10 +176,10 @@
                                                         case ProductCheckoutAttributeType.RadioButtonList:
                                                             foreach (var option in attribute.Options.OrderByDescending(p => p.DisplayOrder))
                                                             {
-                                                                <div class="form-check">
-                                                                    <input name="attr-@attribute.Id" value="@option.Id" type="radio" class="form-check-input" id="opt-@option.Id"
+                                                                <div class="custom-control custom-checkbox">
+                                                                    <input name="attr-@attribute.Id" value="@option.Id" type="radio" class="custom-control-input" id="opt-@option.Id"
                                                                            @Html.Raw(attribute.Required ? "data-val='true' data-val-required='" + T("FieldRequired", attribute.Name) + "'" : "")>
-                                                                    <label class="form-check-label" for="opt-@option.Id">
+                                                                    <label class="custom-control-label" for="opt-@option.Id">
                                                                         @option.GetLocalized(p => p.Name)
                                                                         -
                                                                         @option.Price.ExchangeCurrencyStr()

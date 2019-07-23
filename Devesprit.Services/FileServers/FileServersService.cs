@@ -9,6 +9,7 @@ using Devesprit.Data;
 using Devesprit.Data.Domain;
 using Devesprit.Services.Events;
 using Devesprit.Services.FileManagerServiceReference;
+using Devesprit.Services.FileUploadServiceReference;
 using Z.EntityFramework.Plus;
 
 namespace Devesprit.Services.FileServers
@@ -123,6 +124,40 @@ namespace Devesprit.Services.FileServers
             }
 
             return fileManager;
+        }
+
+        public virtual FileUploadServiceClient GetFileUploadWebService(TblFileServers fileServer)
+        {
+            var binding = new WSHttpBinding
+            {
+                Security =
+                {
+                    Mode = SecurityMode.TransportWithMessageCredential,
+                    Message =
+                    {
+                        ClientCredentialType = MessageCredentialType.UserName,
+                        EstablishSecurityContext = false
+                    }
+                },
+                AllowCookies = true,
+                MaxReceivedMessageSize = 100000000,
+                MaxBufferPoolSize = 100000000,
+                ReaderQuotas = { MaxArrayLength = 100000000, MaxStringContentLength = 100000000, MaxDepth = 32 }
+            };
+
+            binding.OpenTimeout = binding.ReceiveTimeout =
+                binding.CloseTimeout = binding.SendTimeout = TimeSpan.FromSeconds(25);
+
+            var endPoint =
+                new EndpointAddress(fileServer.FileServerUrl.Replace("/FileManagerService", "/FileUploadService"));
+            var uploadWebService = new FileUploadServiceClient(binding, endPoint);
+            if (uploadWebService.ClientCredentials != null)
+            {
+                uploadWebService.ClientCredentials.UserName.UserName = fileServer.ServiceUserName;
+                uploadWebService.ClientCredentials.UserName.Password = fileServer.ServicePassword;
+            }
+
+            return uploadWebService;
         }
     }
 }

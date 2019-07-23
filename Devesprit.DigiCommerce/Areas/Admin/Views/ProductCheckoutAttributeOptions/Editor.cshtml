@@ -87,9 +87,9 @@
                 </div>
                 <div class="col-12 col-md-8 t-mar-30">
                     <div class="form-group">
-                        <div class="form-check">
-                            @Html.CheckBoxFor(p => p.HigherUserGroupsCanDownload, new { @class = "form-check-input" })
-                            @Html.LabelFor(p => p.HigherUserGroupsCanDownload, new { @class = "form-check-label" })
+                        <div class="custom-control custom-checkbox">
+                            @Html.CheckBoxFor(p => p.HigherUserGroupsCanDownload, new { @class = "custom-control-input" })
+                            @Html.LabelFor(p => p.HigherUserGroupsCanDownload, new { @class = "custom-control-label" })
                         </div>
                         @Html.ValidationMessageFor(p => p.HigherUserGroupsCanDownload, "", new { @class = "form-text text-danger fs-12" })
                     </div>

@@ -69,9 +69,9 @@
                             }
 
                             <div class="form-group b-mar-5">
-                                <div class="form-check">
-                                    @Html.CheckBoxFor(p => p.RememberMe, new { @class = "form-check-input" })
-                                    @Html.LabelFor(p => p.RememberMe, new { @class = "form-check-label" })
+                                <div class="custom-control custom-checkbox">
+                                    @Html.CheckBoxFor(p => p.RememberMe, new { @class = "custom-control-input" })
+                                    @Html.LabelFor(p => p.RememberMe, new { @class = "custom-control-label" })
                                 </div>
                             </div>
                             @Html.ValidationSummary(true, "", new { @class = "text-danger" })

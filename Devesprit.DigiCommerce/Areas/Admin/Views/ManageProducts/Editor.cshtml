@@ -154,9 +154,9 @@
                 </div>
                 <div class="col-12 col-md-4 t-mar-30">
                     <div class="form-group">
-                        <div class="form-check">
-                            @Html.CheckBoxFor(p => p.HigherUserGroupsCanDownload, new { @class = "form-check-input" })
-                            @Html.LabelFor(p => p.HigherUserGroupsCanDownload, new { @class = "form-check-label" })
+                        <div class="custom-control custom-checkbox">
+                            @Html.CheckBoxFor(p => p.HigherUserGroupsCanDownload, new { @class = "custom-control-input" })
+                            @Html.LabelFor(p => p.HigherUserGroupsCanDownload, new { @class = "custom-control-label" })
                         </div>
                         @Html.ValidationMessageFor(p => p.HigherUserGroupsCanDownload, "", new { @class = "form-text text-danger fs-12" })
                     </div>
@@ -173,9 +173,9 @@
                 </div>
                 <div class="col-12">
                     <div class="form-group">
-                        <div class="form-check">
-                            @Html.CheckBoxFor(p => p.UserMustLoggedInToDownloadFiles, new { @class = "form-check-input" })
-                            @Html.LabelFor(p => p.UserMustLoggedInToDownloadFiles, new { @class = "form-check-label" })
+                        <div class="custom-control custom-checkbox">
+                            @Html.CheckBoxFor(p => p.UserMustLoggedInToDownloadFiles, new { @class = "custom-control-input" })
+                            @Html.LabelFor(p => p.UserMustLoggedInToDownloadFiles, new { @class = "custom-control-label" })
                         </div>
                         @Html.ValidationMessageFor(p => p.UserMustLoggedInToDownloadFiles, "", new { @class = "form-text text-danger fs-12" })
                     </div>
@@ -191,9 +191,9 @@
                 </div>
                 <div class="col-12">
                     <div class="form-group">
-                        <div class="form-check">
-                            @Html.CheckBoxFor(p => p.UserMustLoggedInToDownloadDemoFiles, new { @class = "form-check-input" })
-                            @Html.LabelFor(p => p.UserMustLoggedInToDownloadDemoFiles, new { @class = "form-check-label" })
+                        <div class="custom-control custom-checkbox">
+                            @Html.CheckBoxFor(p => p.UserMustLoggedInToDownloadDemoFiles, new { @class = "custom-control-input" })
+                            @Html.LabelFor(p => p.UserMustLoggedInToDownloadDemoFiles, new { @class = "custom-control-label" })
                         </div>
                         @Html.ValidationMessageFor(p => p.UserMustLoggedInToDownloadDemoFiles, "", new { @class = "form-text text-danger fs-12" })
                     </div>
@@ -239,63 +239,63 @@
                 </div>
                 <div class="col-12 col-md-4 ">
                     <div class="form-group">
-                        <div class="form-check">
-                            @Html.CheckBoxFor(p => p.Published, new { @class = "form-check-input" })
-                            @Html.LabelFor(p => p.Published, new { @class = "form-check-label" })
+                        <div class="custom-control custom-checkbox">
+                            @Html.CheckBoxFor(p => p.Published, new { @class = "custom-control-input" })
+                            @Html.LabelFor(p => p.Published, new { @class = "custom-control-label" })
                         </div>
                         @Html.ValidationMessageFor(p => p.Published, "", new { @class = "form-text text-danger fs-12" })
                     </div>
                 </div>
                 <div class="col-12 col-md-4 ">
                     <div class="form-group">
-                        <div class="form-check">
-                            @Html.CheckBoxFor(p => p.IsFeatured, new { @class = "form-check-input" })
-                            @Html.LabelFor(p => p.IsFeatured, new { @class = "form-check-label" })
+                        <div class="custom-control custom-checkbox">
+                            @Html.CheckBoxFor(p => p.IsFeatured, new { @class = "custom-control-input" })
+                            @Html.LabelFor(p => p.IsFeatured, new { @class = "custom-control-label" })
                         </div>
                         @Html.ValidationMessageFor(p => p.IsFeatured, "", new { @class = "form-text text-danger fs-12" })
                     </div>
                 </div>
                 <div class="col-12 col-md-4 ">
                     <div class="form-group">
-                        <div class="form-check">
-                            @Html.CheckBoxFor(p => p.ShowInHotList, new { @class = "form-check-input" })
-                            @Html.LabelFor(p => p.ShowInHotList, new { @class = "form-check-label" })
+                        <div class="custom-control custom-checkbox">
+                            @Html.CheckBoxFor(p => p.ShowInHotList, new { @class = "custom-control-input" })
+                            @Html.LabelFor(p => p.ShowInHotList, new { @class = "custom-control-label" })
                         </div>
                         @Html.ValidationMessageFor(p => p.ShowInHotList, "", new { @class = "form-text text-danger fs-12" })
                     </div>
                 </div>
                 <div class="col-12 col-md-4 ">
                     <div class="form-group">
-                        <div class="form-check">
-                            @Html.CheckBoxFor(p => p.PinToTop, new { @class = "form-check-input" })
-                            @Html.LabelFor(p => p.PinToTop, new { @class = "form-check-label" })
+                        <div class="custom-control custom-checkbox">
+                            @Html.CheckBoxFor(p => p.PinToTop, new { @class = "custom-control-input" })
+                            @Html.LabelFor(p => p.PinToTop, new { @class = "custom-control-label" })
                         </div>
                         @Html.ValidationMessageFor(p => p.PinToTop, "", new { @class = "form-text text-danger fs-12" })
                     </div>
                 </div>
                 <div class="col-12 col-md-4 ">
                     <div class="form-group">
-                        <div class="form-check">
-                            @Html.CheckBoxFor(p => p.AllowCustomerReviews, new { @class = "form-check-input" })
-                            @Html.LabelFor(p => p.AllowCustomerReviews, new { @class = "form-check-label" })
+                        <div class="custom-control custom-checkbox">
+                            @Html.CheckBoxFor(p => p.AllowCustomerReviews, new { @class = "custom-control-input" })
+                            @Html.LabelFor(p => p.AllowCustomerReviews, new { @class = "custom-control-label" })
                         </div>
                         @Html.ValidationMessageFor(p => p.AllowCustomerReviews, "", new { @class = "form-text text-danger fs-12" })
                     </div>
                 </div>
                 <div class="col-12 col-md-4 ">
                     <div class="form-group">
-                        <div class="form-check">
-                            @Html.CheckBoxFor(p => p.AlwaysShowDownloadButton, new { @class = "form-check-input" })
-                            @Html.LabelFor(p => p.AlwaysShowDownloadButton, new { @class = "form-check-label" })
+                        <div class="custom-control custom-checkbox">
+                            @Html.CheckBoxFor(p => p.AlwaysShowDownloadButton, new { @class = "custom-control-input" })
+                            @Html.LabelFor(p => p.AlwaysShowDownloadButton, new { @class = "custom-control-label" })
                         </div>
                         @Html.ValidationMessageFor(p => p.AlwaysShowDownloadButton, "", new { @class = "form-text text-danger fs-12" })
                     </div>
                 </div>
                 <div class="col-12 col-md-4 ">
                     <div class="form-group">
-                        <div class="form-check">
-                            @Html.CheckBoxFor(p => p.ShowSimilarCases, new { @class = "form-check-input" })
-                            @Html.LabelFor(p => p.ShowSimilarCases, new { @class = "form-check-label" })
+                        <div class="custom-control custom-checkbox">
+                            @Html.CheckBoxFor(p => p.ShowSimilarCases, new { @class = "custom-control-input" })
+                            @Html.LabelFor(p => p.ShowSimilarCases, new { @class = "custom-control-label" })
                         </div>
                         @Html.ValidationMessageFor(p => p.ShowSimilarCases, "", new { @class = "form-text text-danger fs-12" })
                     </div>

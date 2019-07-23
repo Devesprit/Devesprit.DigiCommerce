@@ -73,18 +73,18 @@ else
             {
                 <div class="col-12 col-md-6 ">
                     <div class="form-group">
-                        <div class="form-check">
-                            @Html.CheckBoxFor(p => p.NotifyWhenReply, new { @class = "form-check-input" })
-                            @Html.LabelFor(p => p.NotifyWhenReply, new { @class = "form-check-label" })
+                        <div class="custom-control custom-checkbox">
+                            @Html.CheckBoxFor(p => p.NotifyWhenReply, new { @class = "custom-control-input" })
+                            @Html.LabelFor(p => p.NotifyWhenReply, new { @class = "custom-control-label" })
                         </div>
                         @Html.ValidationMessageFor(p => p.NotifyWhenReply, "", new { @class = "form-text text-danger fs-12" })
                     </div>
                 </div>
                 <div class="col-12 col-md-6 ">
                     <div class="form-group">
-                        <div class="form-check">
-                            @Html.CheckBoxFor(p => p.NotifyWhenNewComment, new { @class = "form-check-input" })
-                            @Html.LabelFor(p => p.NotifyWhenNewComment, new { @class = "form-check-label" })
+                        <div class="custom-control custom-checkbox">
+                            @Html.CheckBoxFor(p => p.NotifyWhenNewComment, new { @class = "custom-control-input" })
+                            @Html.LabelFor(p => p.NotifyWhenNewComment, new { @class = "custom-control-label" })
                         </div>
                         @Html.ValidationMessageFor(p => p.NotifyWhenNewComment, "", new { @class = "form-text text-danger fs-12" })
                     </div>
@@ -94,9 +94,9 @@ else
             {
                 <div class="col-12 col-md-6 ">
                     <div class="form-group">
-                        <div class="form-check">
-                            @Html.CheckBoxFor(p => p.Published, new { @class = "form-check-input" })
-                            @Html.LabelFor(p => p.Published, new { @class = "form-check-label" })
+                        <div class="custom-control custom-checkbox">
+                            @Html.CheckBoxFor(p => p.Published, new { @class = "custom-control-input" })
+                            @Html.LabelFor(p => p.Published, new { @class = "custom-control-label" })
                         </div>
                         @Html.ValidationMessageFor(p => p.Published, "", new { @class = "form-text text-danger fs-12" })
                     </div>
