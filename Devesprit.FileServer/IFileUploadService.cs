@@ -16,7 +16,7 @@ namespace Devesprit.FileServer
     {
         [MessageHeader(MustUnderstand = true)]
         public string UploadRequestKey { get; set; }
-        
+
         [MessageBodyMember(Order = 1)]
         public System.IO.Stream FileByteStream { get; set; }
 

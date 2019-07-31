@@ -81,17 +81,46 @@ namespace Devesprit.Utilities
 
         public static string ConvertHtmlToText(this string html)
         {
-            HtmlDocument doc = new HtmlDocument();
-            doc.LoadHtml(html);
-            using (StringWriter sw = new StringWriter())
+            try
             {
-                ConvertTo(doc.DocumentNode, sw, new PreceedingDomTextInfo(false));
-                sw.Flush();
-                var formatted = Regex.Replace(sw.ToString(), @"(\r?\n){2,}", "\r\n");
-                return System.Net.WebUtility.HtmlDecode(formatted);
+                HtmlDocument doc = new HtmlDocument();
+                doc.LoadHtml(html);
+                using (StringWriter sw = new StringWriter())
+                {
+                    ConvertTo(doc.DocumentNode, sw, new PreceedingDomTextInfo(false));
+                    sw.Flush();
+                    var formatted = Regex.Replace(sw.ToString(), @"(\r?\n){2,}", "\r\n");
+                    return System.Net.WebUtility.HtmlDecode(formatted);
+                }
+            }
+            catch
+            {
+                return HtmlToPlainText(html);
             }
         }
-        
+
+        internal static string HtmlToPlainText(string html)
+        {
+            const string tagWhiteSpace = @"(>|$)(\W|\n|\r)+<";//matches one or more (white space or line breaks) between '>' and '<'
+            const string stripFormatting = @"<[^>]*(>|$)";//match any character between '<' and '>', even when end tag is missing
+            const string lineBreak = @"<(br|BR)\s{0,1}\/{0,1}>";//matches: <br>,<br/>,<br />,<BR>,<BR/>,<BR />
+            var lineBreakRegex = new Regex(lineBreak, RegexOptions.Multiline);
+            var stripFormattingRegex = new Regex(stripFormatting, RegexOptions.Multiline);
+            var tagWhiteSpaceRegex = new Regex(tagWhiteSpace, RegexOptions.Multiline);
+
+            var text = html;
+            //Decode html specific characters
+            text = System.Net.WebUtility.HtmlDecode(text);
+            //Remove tag whitespace/line breaks
+            text = tagWhiteSpaceRegex.Replace(text, "><");
+            //Replace <br /> with line breaks
+            text = lineBreakRegex.Replace(text, Environment.NewLine);
+            //Strip formatting
+            text = stripFormattingRegex.Replace(text, string.Empty);
+
+            return text;
+        }
+
         internal static void ConvertContentTo(HtmlNode node, TextWriter outText, PreceedingDomTextInfo textInfo)
         {
             foreach (HtmlNode subnode in node.ChildNodes)

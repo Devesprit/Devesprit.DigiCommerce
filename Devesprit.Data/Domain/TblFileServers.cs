@@ -11,6 +11,8 @@ namespace Devesprit.Data.Domain
         [Required, MaxLength(500)]
         public string FileServerUrl { get; set; }
         [Required, MaxLength(500)]
+        public string FileUploadServerUrl { get; set; }
+        [Required, MaxLength(500)]
         public string ServiceUserName { get; set; }
         [Required, MaxLength(500)]
         public string ServicePassword { get; set; }

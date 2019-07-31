@@ -4,6 +4,7 @@ using System.IO;
 using System.ServiceModel;
 using System.ServiceModel.Activation;
 using System.Threading.Tasks;
+using System.Web;
 using Devesprit.FileServer.ElmahConfig;
 using Devesprit.Utilities;
 using Devesprit.Utilities.Extensions;
@@ -78,7 +79,7 @@ namespace Devesprit.FileServer
             DateTime expireDate;
             try
             {
-                var requestObject = request.UploadRequestKey.DecryptString().JsonToObject<dynamic>();
+                var requestObject = request.UploadRequestKey.DecryptString().JsonToObject<UploadFileRequestObject>();
                 filePath = requestObject.Path;
                 expireDate = requestObject.Expire;
             }
@@ -137,5 +138,11 @@ namespace Devesprit.FileServer
                 };
             }
         }
+    }
+
+    internal partial class UploadFileRequestObject
+    {
+        public string Path { get; set; }
+        public DateTime Expire { get; set; }
     }
 }

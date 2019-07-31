@@ -128,20 +128,20 @@ namespace Devesprit.Services.FileServers
 
         public virtual FileUploadServiceClient GetFileUploadWebService(TblFileServers fileServer)
         {
-            var binding = new WSHttpBinding
+            var binding = new BasicHttpBinding()
             {
                 Security =
                 {
-                    Mode = SecurityMode.TransportWithMessageCredential,
+                    Mode = BasicHttpSecurityMode.TransportCredentialOnly,
                     Message =
                     {
-                        ClientCredentialType = MessageCredentialType.UserName,
-                        EstablishSecurityContext = false
+                        ClientCredentialType = BasicHttpMessageCredentialType.UserName,
                     }
                 },
                 AllowCookies = true,
                 MaxReceivedMessageSize = 100000000,
                 MaxBufferPoolSize = 100000000,
+                MessageEncoding = WSMessageEncoding.Mtom,
                 ReaderQuotas = { MaxArrayLength = 100000000, MaxStringContentLength = 100000000, MaxDepth = 32 }
             };
 
@@ -149,7 +149,7 @@ namespace Devesprit.Services.FileServers
                 binding.CloseTimeout = binding.SendTimeout = TimeSpan.FromSeconds(25);
 
             var endPoint =
-                new EndpointAddress(fileServer.FileServerUrl.Replace("/FileManagerService", "/FileUploadService"));
+                new EndpointAddress(fileServer.FileUploadServerUrl);
             var uploadWebService = new FileUploadServiceClient(binding, endPoint);
             if (uploadWebService.ClientCredentials != null)
             {

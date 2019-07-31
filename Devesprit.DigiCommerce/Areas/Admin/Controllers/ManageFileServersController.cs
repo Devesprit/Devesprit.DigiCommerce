@@ -128,6 +128,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
                 p.Id,
                 p.FileServerName,
                 p.FileServerUrl,
+                p.FileUploadServerUrl
             });
 
             var result = dataSource.ApplyDataManager(dm, out var count).ToList();

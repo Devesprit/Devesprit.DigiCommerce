@@ -499,8 +499,7 @@ namespace Devesprit.Services.SearchEngine
                 var allPosts = _postService.GetAsQueryable().Where(p => p.Published)
                     .Include(p => p.Descriptions)
                     .Include(p => p.Tags)
-                    .Include(p => p.Categories)
-                    .ToList();
+                    .Include(p => p.Categories);
                 var languages = _languagesService.GetAsEnumerable();
 
                 var analyzer = new StandardAnalyzer(Version);

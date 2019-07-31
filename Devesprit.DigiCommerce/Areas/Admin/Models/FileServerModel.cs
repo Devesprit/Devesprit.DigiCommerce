@@ -19,6 +19,11 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Models
 
         [RequiredLocalized(AllowEmptyStrings = false)]
         [MaxLengthLocalized(500)]
+        [DisplayNameLocalized("FileUploadServerUrl")]
+        public string FileUploadServerUrl { get; set; }
+
+        [RequiredLocalized(AllowEmptyStrings = false)]
+        [MaxLengthLocalized(500)]
         [DisplayNameLocalized("LoginUsername")]
         public string ServiceUserName { get; set; }
 

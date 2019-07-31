@@ -254,6 +254,32 @@ namespace Devesprit.Utilities
         }
 
         /// <summary>
+        /// Calculate MD5 checksum for a stream
+        /// </summary>
+        /// <param name="stream"></param>
+        /// <returns></returns>
+        public static string CalculateMd5Checksum(Stream stream)
+        {
+            using (var md5 = MD5.Create())
+            {
+                return Encoding.Default.GetString(md5.ComputeHash(stream));
+            }
+        }
+
+        /// <summary>
+        /// Calculate MD5 checksum for a byte array
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        public static string CalculateMd5Checksum(byte[] data)
+        {
+            using (var md5 = MD5.Create())
+            {
+                return Encoding.Default.GetString(md5.ComputeHash(data));
+            }
+        }
+
+        /// <summary>
         /// Checking for directory and file read/write permissions
         /// </summary>
         /// <param name="path"></param>
