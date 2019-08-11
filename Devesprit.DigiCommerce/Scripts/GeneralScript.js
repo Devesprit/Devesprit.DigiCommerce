@@ -104,7 +104,9 @@ function WarningAlert(title, message) {
 }
 
 function PopupWindows(url, title, w, h, params, method) {
-    var loadingPageUrl = "/Home/LoadingPage";
+    var loadingHtml =
+        '<html lang="en"><head><title>Loading - Please wait ...</title></head><body><img src = "/content/img/Loading_Large.gif" style = "margin: auto;display: block;"></body></html>';
+
     // Fixes dual-screen position Most browsers Firefox
     var dualScreenLeft = window.screenLeft != undefined ? window.screenLeft : screen.left;
     var dualScreenTop = window.screenTop != undefined ? window.screenTop : screen.top;
@@ -118,9 +120,9 @@ function PopupWindows(url, title, w, h, params, method) {
 
     //Post Data
     if (params) {
-        var newWindow1 = window.open(loadingPageUrl, title, 'scrollbars=yes, width=' + w + ', height=' + h + ', top=' + top + ', left=' + left);
-        $(newWindow1.document).ready(function () {
-            setTimeout(function () {
+        var newWindow1 = window.open(title, title, 'scrollbars=yes, width=' + w + ', height=' + h + ', top=' + top + ', left=' + left);
+        newWindow1.document.open().write(loadingHtml);
+        setTimeout(function() {
                 var form = newWindow1.document.createElement("form");
                 form.setAttribute("method", method);
                 form.setAttribute("action", url);
@@ -136,8 +138,8 @@ function PopupWindows(url, title, w, h, params, method) {
 
                 $(newWindow1.document.body).append(form);
                 form.submit();
-            }, 800);
-        });
+            },
+            800);
 
         // Puts focus on the newWindow
         if (window.focus) {
@@ -147,12 +149,12 @@ function PopupWindows(url, title, w, h, params, method) {
         return newWindow1;
 
     } else {
-        var newWindow2 = window.open(loadingPageUrl, title, 'scrollbars=yes, width=' + w + ', height=' + h + ', top=' + top + ', left=' + left);
-        $(newWindow2.document).ready(function () {
-            setTimeout(function () {
+        var newWindow2 = window.open(title, title, 'scrollbars=yes, width=' + w + ', height=' + h + ', top=' + top + ', left=' + left);
+        newWindow2.document.open().write(loadingHtml);
+        setTimeout(function() {
                 newWindow2.location.href = url;
-            }, 800);
-        });
+            },
+            800);
 
         // Puts focus on the newWindow
         if (window.focus) {
@@ -198,6 +200,15 @@ function UpdateNumberOfItemsInShoppingCard() {
     }
 }
 
+String.prototype.format = String.prototype.f = function () {
+    var s = this,
+        i = arguments.length;
+
+    while (i--) {
+        s = s.replace(new RegExp('\\{' + i + '\\}', 'gm'), arguments[i]);
+    }
+    return s;
+};
 
 
 /* Custom Client Side Validations------------ */

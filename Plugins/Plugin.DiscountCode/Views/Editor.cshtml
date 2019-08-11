@@ -46,7 +46,12 @@
                     <div class="col-12 col-md-6">
                         <div class="form-group">
                             @Html.LabelFor(p => p.ExpiryDate)
-                            @Html.TextBoxFor(p => p.ExpiryDate, "{0:yyyy/MM/dd HH:mm:ss}", new { @class = "form-control form-control-sm ltr-dir datetimepicker" })
+                            <div class="input-group">
+                                @Html.TextBoxFor(p => p.ExpiryDate, "{0:yyyy/MM/dd HH:mm:ss}", new { @class = "form-control form-control-sm ltr-dir datetimepicker" })
+                                <div class="input-group-append">
+                                    <button type='button' onclick="$(this).parent().prev('.datetimepicker').val(moment().format('YYYY/MM/DD HH:mm:ss'))" class='btn btn-outline-secondary btn-sm'><i class='fa fa-clock-o'></i></button>
+                                </div>
+                            </div>
                             @Html.ValidationMessageFor(p => p.ExpiryDate, "", new { @class = "form-text text-danger fs-12" })
                         </div>
                     </div>

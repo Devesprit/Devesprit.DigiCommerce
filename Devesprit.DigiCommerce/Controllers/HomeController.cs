@@ -29,11 +29,6 @@ namespace Devesprit.DigiCommerce.Controllers
             return View();
         }
 
-        public virtual ActionResult LoadingPage()
-        {
-            return View();
-        }
-
         public virtual ActionResult TermsAndConditions()
         {
             var terms = CurrentSettings.GetLocalized(p => p.TermsAndConditions);

@@ -18,12 +18,6 @@ using Devesprit.Services;
 using Devesprit.WebFramework;
 using Devesprit.WebFramework.ModelBinder;
 using Elmah;
-using WebMarkupMin.AspNet.Brotli;
-using WebMarkupMin.AspNet.Common.Compressors;
-using WebMarkupMin.AspNet.Common.UrlMatchers;
-using WebMarkupMin.AspNet4.Common;
-using WebMarkupMin.Core;
-using WebMarkupMin.Yui;
 
 namespace Devesprit.DigiCommerce
 {

@@ -237,6 +237,12 @@ namespace Devesprit.Services.FileManagerServiceReference {
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IFileManagerService/DeleteFile", ReplyAction="http://tempuri.org/IFileManagerService/DeleteFileResponse")]
         System.Threading.Tasks.Task<bool> DeleteFileAsync(string path);
         
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IFileManagerService/SearchAndDeleteFile", ReplyAction="http://tempuri.org/IFileManagerService/SearchAndDeleteFileResponse")]
+        bool SearchAndDeleteFile(string path, string fileName);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IFileManagerService/SearchAndDeleteFile", ReplyAction="http://tempuri.org/IFileManagerService/SearchAndDeleteFileResponse")]
+        System.Threading.Tasks.Task<bool> SearchAndDeleteFileAsync(string path, string fileName);
+        
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IFileManagerService/DeleteDirectory", ReplyAction="http://tempuri.org/IFileManagerService/DeleteDirectoryResponse")]
         bool DeleteDirectory(string path);
         
@@ -377,6 +383,14 @@ namespace Devesprit.Services.FileManagerServiceReference {
         
         public System.Threading.Tasks.Task<bool> DeleteFileAsync(string path) {
             return base.Channel.DeleteFileAsync(path);
+        }
+        
+        public bool SearchAndDeleteFile(string path, string fileName) {
+            return base.Channel.SearchAndDeleteFile(path, fileName);
+        }
+        
+        public System.Threading.Tasks.Task<bool> SearchAndDeleteFileAsync(string path, string fileName) {
+            return base.Channel.SearchAndDeleteFileAsync(path, fileName);
         }
         
         public bool DeleteDirectory(string path) {

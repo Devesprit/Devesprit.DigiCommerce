@@ -33,6 +33,7 @@ namespace Devesprit.DigiCommerce.Models.Post
         public DateTime LastUpdate { get; set; }
         public bool IsFeatured { get; set; }
         public bool ShowSimilarCases { get; set; }
+        public bool ShowKeywords { get; set; }
         public bool AllowCustomerReviews { get; set; }
         public string PageTitle { get; set; }
         public string Slug { get; set; }

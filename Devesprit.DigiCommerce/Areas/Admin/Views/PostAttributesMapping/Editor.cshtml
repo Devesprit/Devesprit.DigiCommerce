@@ -90,6 +90,7 @@
                         if (response.typeIsOption === true) {
                             $("#options-list-placeholder").removeClass("d-none");
 
+                            var oldVal = $("#AttributeOptionId").val();
                             $.each(response.options, function( index, value ) {
                                 $("#AttributeOptionId").append($('<option>', {
                                     value: value.id,
@@ -97,8 +98,14 @@
                                 }));
                             });
 
+                            if (!isBlank(oldVal)) {
+                                $("#AttributeOptionId").val(oldVal);
+                            }
+
                         } else {
                             $("#value-input-placeholder").removeClass("d-none");
+                            if(response.options.length > 0 && isBlank($("#Value").val()))
+                                $("#Value").val(response.options[0].text);
                         }
                     },
                     complete: function() {
@@ -117,6 +124,11 @@
                 } else {
                     $("#value-input-placeholder").removeClass("d-none");
                 }
+            }
+
+            @if (!ViewData.ModelState.IsValid)
+            {
+                @Html.Raw("resetEditors(); loadAttributeOptions();")
             }
 
             $("#PostAttributeId").on('change',

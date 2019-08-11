@@ -49,7 +49,11 @@
         @{Html.RenderPartial("Partials/_PostTagsSection", Model.TagsList);}
         @if (Model.ShowSimilarCases)
         {
-            Html.RenderAction("MoreLikeThis", "Search", new {postId = Model.Id, postType = PostType.BlogPost});
+            Html.RenderAction("MoreLikeThis", "Search", new { postId = Model.Id, postType = PostType.BlogPost });
+        }
+        @if (Model.ShowKeywords)
+        {
+            @{Html.RenderPartial("Partials/_PostKeywordsSection", Model.MetaKeyWords);}
         }
     </div>
 

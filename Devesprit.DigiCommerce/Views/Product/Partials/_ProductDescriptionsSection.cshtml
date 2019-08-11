@@ -6,7 +6,7 @@
 {
     if (Model.Count > 1)
     {
-        <nav class="nav nav-tabs post-description-tab" role="tablist">
+        <nav class="nav nav-tabs post-description-tab" style="z-index: 1000;"  role="tablist">
             @foreach (var desc in Model)
             {
                 <a class="nav-item nav-link @Html.Raw(counter == 0 ? "active" : "")"

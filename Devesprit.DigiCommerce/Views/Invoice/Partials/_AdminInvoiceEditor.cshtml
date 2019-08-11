@@ -112,7 +112,12 @@
                         @T("PaymentDate"):&nbsp;
                     </b>
                 </span>
-                @Html.TextBoxFor(p => p.PaymentDate, "{0:yyyy/MM/dd HH:mm:ss}", new { @class = "form-control form-control-sm col-6 col-md-3 ltr-dir datetimepicker" })
+                <div class="input-group col-6 col-md-3 no-pad">
+                    @Html.TextBoxFor(p => p.PaymentDate, "{0:yyyy/MM/dd HH:mm:ss}", new { @class = "form-control form-control-sm ltr-dir datetimepicker" })
+                    <div class="input-group-append">
+                        <button type='button' onclick="$(this).parent().prev('.datetimepicker').val(moment().format('YYYY/MM/DD HH:mm:ss'))" class='btn btn-outline-secondary btn-sm'><i class='fa fa-clock-o'></i></button>
+                    </div>
+                </div>
                 <button type="submit" class="btn btn-info btn-sm mx-1"><i class="fa fa-check"></i></button>
                 <small class="form-text text-muted">
                     @T("EG"): @DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss", CultureInfo.CurrentUICulture)

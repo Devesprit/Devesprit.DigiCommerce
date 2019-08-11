@@ -136,6 +136,12 @@ namespace Devesprit.DigiCommerce
             startUpTasks = startUpTasks.AsQueryable().OrderBy(st => st.Order).ToList();
             foreach (var startUpTask in startUpTasks)
                 startUpTask.Execute();
+
+            foreach (var task in startUpTasks)
+            {
+                var disposableModule = task as IDisposable;
+                disposableModule?.Dispose();
+            }
         }
 
         public static void WebMarkupMinConfigure(WebMarkupMinConfiguration configuration)
@@ -155,9 +161,9 @@ namespace Devesprit.DigiCommerce
                 new WildcardUrlMatcher("/Purchase/PurchaseProductWizard*")
             };
             var htmlMinificationSettings = htmlMinificationManager.MinificationSettings;
-            htmlMinificationSettings.RemoveRedundantAttributes = true;
-            htmlMinificationSettings.RemoveHttpProtocolFromAttributes = true;
-            htmlMinificationSettings.RemoveHttpsProtocolFromAttributes = true;
+            htmlMinificationSettings.RemoveRedundantAttributes = false;
+            htmlMinificationSettings.RemoveHttpProtocolFromAttributes = false;
+            htmlMinificationSettings.RemoveHttpsProtocolFromAttributes = false;
             htmlMinificationSettings.WhitespaceMinificationMode = WhitespaceMinificationMode.Safe;
             htmlMinificationSettings.RemoveHtmlComments = true;
             htmlMinificationSettings.MinifyEmbeddedCssCode = true;
@@ -180,9 +186,9 @@ namespace Devesprit.DigiCommerce
                 new WildcardUrlMatcher("/minifiers/x*ml-minifier"),
             };
             var xhtmlMinificationSettings = xhtmlMinificationManager.MinificationSettings;
-            xhtmlMinificationSettings.RemoveRedundantAttributes = true;
-            xhtmlMinificationSettings.RemoveHttpProtocolFromAttributes = true;
-            xhtmlMinificationSettings.RemoveHttpsProtocolFromAttributes = true;
+            xhtmlMinificationSettings.RemoveRedundantAttributes = false;
+            xhtmlMinificationSettings.RemoveHttpProtocolFromAttributes = false;
+            xhtmlMinificationSettings.RemoveHttpsProtocolFromAttributes = false;
             xhtmlMinificationSettings.WhitespaceMinificationMode = WhitespaceMinificationMode.Safe;
             xhtmlMinificationSettings.RemoveHtmlComments = true;
             xhtmlMinificationSettings.MinifyEmbeddedCssCode = true;

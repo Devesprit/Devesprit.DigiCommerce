@@ -16,6 +16,7 @@ namespace Devesprit.Utilities.Extensions
     {
         public static string TruncateText(this string text, int maxLength)
         {
+            maxLength = maxLength <= 0 ? int.MaxValue : maxLength;
             text = text.Trim();
             if (string.IsNullOrWhiteSpace(text) || text.Length < maxLength || text.IndexOf(" ", maxLength, StringComparison.Ordinal) == -1)
                 return text;
@@ -251,7 +252,7 @@ namespace Devesprit.Utilities.Extensions
                 .Replace("@", "")
                 .Replace("=", "")
                 .Replace("&", "")
-                .Replace(" ", "")
+                .Replace(" ", "_")
                 .Replace("<", "")
                 .Replace(">", "")
                 .Replace("\"", "")
@@ -269,6 +270,8 @@ namespace Devesprit.Utilities.Extensions
                 .Replace("!", "")
                 .Replace("$", "")
                 .Replace("*", "");
+
+            text = Regex.Replace(text, "_+", "_");
 
             var normalizedString = text
                 // Make lowercase

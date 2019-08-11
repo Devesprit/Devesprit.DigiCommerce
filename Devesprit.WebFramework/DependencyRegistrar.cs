@@ -6,6 +6,7 @@ using Devesprit.Core.Localization;
 using Devesprit.Core.Plugin;
 using Devesprit.Core.Settings;
 using Devesprit.Data;
+using Devesprit.Data.Domain;
 using Devesprit.Data.Migrations;
 using Devesprit.Services.AdminAreaMenu;
 using Devesprit.Services.Blog;
@@ -96,6 +97,7 @@ namespace Devesprit.WebFramework
             builder.RegisterType<ExternalLoginProviderManager>().As<IExternalLoginProviderManager>().InstancePerLifetimeScope();
             builder.RegisterType<Services.StartupTask>().As<IStartupTask>().InstancePerLifetimeScope();
             builder.RegisterType<BlogPostService>().As<IBlogPostService>().InstancePerLifetimeScope();
+            builder.RegisterType<PostService<TblPosts>>().As<PostService<TblPosts>>().InstancePerLifetimeScope();
             builder.RegisterGeneric(typeof(PostService<>)).As(typeof(IPostService<>)).InstancePerLifetimeScope();
 
 

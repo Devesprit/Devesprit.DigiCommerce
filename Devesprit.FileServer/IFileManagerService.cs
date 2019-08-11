@@ -29,6 +29,9 @@ namespace Devesprit.FileServer
         Task<bool> DeleteFile(string path);
 
         [OperationContract]
+        Task<bool> SearchAndDeleteFile(string path, string fileName);
+
+        [OperationContract]
         Task<bool> DeleteDirectory(string path);
 
         [OperationContract]

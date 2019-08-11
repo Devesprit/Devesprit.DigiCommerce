@@ -169,7 +169,7 @@
                              "cancelLabel": "@T("Cancel")"
                          }
                      });
-
+                     
                      $('.datetimepicker').on('apply.daterangepicker',
                          function(ev, picker) {
                              $(this).val(picker.startDate.format('YYYY/MM/DD HH:mm:ss'));
@@ -192,13 +192,13 @@
                              "applyLabel": "@T("Apply")",
                              "cancelLabel": "@T("Cancel")"
                      }
-                 });
-
-                 $('.datepicker').on('apply.daterangepicker',
-                     function (ev, picker) {
-                         $(this).val(picker.startDate.format('YYYY/MM/DD'));
                      });
-             }
+                     
+                     $('.datepicker').on('apply.daterangepicker',
+                         function (ev, picker) {
+                             $(this).val(picker.startDate.format('YYYY/MM/DD'));
+                         });
+                 }
 
                  function GetActiveLocalizedEntityEditorId(entityName) {
                      var result = $('#' + entityName + '-tab-content div.active input').attr('id');

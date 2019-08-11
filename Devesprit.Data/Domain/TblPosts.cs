@@ -19,6 +19,7 @@ namespace Devesprit.Data.Domain
         public int NumberOfViews { get; set; }
         public bool IsFeatured { get; set; }
         public bool ShowSimilarCases { get; set; }
+        public bool ShowKeywords { get; set; }
         public bool AllowCustomerReviews { get; set; }
         public bool PinToTop { get; set; }
         [MaxLength(500)]

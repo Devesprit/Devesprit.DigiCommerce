@@ -47,11 +47,21 @@
 }, new { @class = "form-inline fs-12 card-footer" }))
 {
     @Html.LabelFor(p => p.FromDate)
-    @Html.TextBoxFor(p => p.FromDate, "{0:yyyy/MM/dd HH:mm:ss}", new { @class = "form-control form-control-sm mx-1 datetimepicker" })
+    <div class="input-group mx-1">
+        @Html.TextBoxFor(p => p.FromDate, "{0:yyyy/MM/dd HH:mm:ss}", new { @class = "form-control form-control-sm ltr-dir datetimepicker" })
+        <div class="input-group-append">
+            <button type='button' onclick="$(this).parent().prev('.datetimepicker').val(moment().format('YYYY/MM/DD HH:mm:ss'))" class='btn btn-outline-secondary btn-sm'><i class='fa fa-clock-o'></i></button>
+        </div>
+    </div>
     @Html.ValidationMessageFor(p => p.FromDate, "", new { @class = "form-text text-danger fs-12" })
 
     @Html.LabelFor(p => p.ToDate)
-    @Html.TextBoxFor(p => p.ToDate, "{0:yyyy/MM/dd HH:mm:ss}", new { @class = "form-control form-control-sm mx-1 datetimepicker" })
+    <div class="input-group mx-1">
+        @Html.TextBoxFor(p => p.ToDate, "{0:yyyy/MM/dd HH:mm:ss}", new { @class = "form-control form-control-sm ltr-dir datetimepicker" })
+        <div class="input-group-append">
+            <button type='button' onclick="$(this).parent().prev('.datetimepicker').val(moment().format('YYYY/MM/DD HH:mm:ss'))" class='btn btn-outline-secondary btn-sm'><i class='fa fa-clock-o'></i></button>
+        </div>
+    </div>
     @Html.ValidationMessageFor(p => p.ToDate, "", new { @class = "form-text text-danger fs-12" })
 
     @Html.LabelFor(p => p.PeriodType)

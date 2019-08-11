@@ -70,14 +70,24 @@
                 <div class="col-12 col-md-4 ">
                     <div class="form-group">
                         @Html.LabelFor(p => p.PublishDate)
-                        @Html.TextBoxFor(p => p.PublishDate, "{0:yyyy/MM/dd HH:mm:ss}", new { @class = "form-control form-control-sm ltr-dir datetimepicker" })
+                        <div class="input-group">
+                            @Html.TextBoxFor(p => p.PublishDate, "{0:yyyy/MM/dd HH:mm:ss}", new { @class = "form-control form-control-sm ltr-dir datetimepicker" })
+                            <div class="input-group-append">
+                                <button type='button' onclick="$(this).parent().prev('.datetimepicker').val(moment().format('YYYY/MM/DD HH:mm:ss'))" class='btn btn-outline-secondary btn-sm'><i class='fa fa-clock-o'></i></button>
+                            </div>
+                        </div>
                         @Html.ValidationMessageFor(p => p.PublishDate, "", new { @class = "form-text text-danger fs-12" })
                     </div>
                 </div>
                 <div class="col-12 col-md-4 ">
                     <div class="form-group">
                         @Html.LabelFor(p => p.LastUpDate)
-                        @Html.TextBoxFor(p => p.LastUpDate, "{0:yyyy/MM/dd HH:mm:ss}", new { @class = "form-control form-control-sm ltr-dir datetimepicker" })
+                        <div class="input-group">
+                            @Html.TextBoxFor(p => p.LastUpDate, "{0:yyyy/MM/dd HH:mm:ss}", new { @class = "form-control form-control-sm ltr-dir datetimepicker" })
+                            <div class="input-group-append">
+                                <button type='button' onclick="$(this).parent().prev('.datetimepicker').val(moment().format('YYYY/MM/DD HH:mm:ss'))" class='btn btn-outline-secondary btn-sm'><i class='fa fa-clock-o'></i></button>
+                            </div>
+                        </div>
                         @Html.ValidationMessageFor(p => p.LastUpDate, "", new { @class = "form-text text-danger fs-12" })
                     </div>
                 </div>
@@ -298,6 +308,15 @@
                             @Html.LabelFor(p => p.ShowSimilarCases, new { @class = "custom-control-label" })
                         </div>
                         @Html.ValidationMessageFor(p => p.ShowSimilarCases, "", new { @class = "form-text text-danger fs-12" })
+                    </div>
+                </div>
+                <div class="col-12 col-md-4 ">
+                    <div class="form-group">
+                        <div class="custom-control custom-checkbox">
+                            @Html.CheckBoxFor(p => p.ShowKeywords, new { @class = "custom-control-input" })
+                            @Html.LabelFor(p => p.ShowKeywords, new { @class = "custom-control-label" })
+                        </div>
+                        @Html.ValidationMessageFor(p => p.ShowKeywords, "", new { @class = "form-text text-danger fs-12" })
                     </div>
                 </div>
             </div>

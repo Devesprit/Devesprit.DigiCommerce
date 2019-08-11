@@ -48,6 +48,10 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Models
         public bool ShowSimilarCases { get; set; } = true;
 
 
+        [DisplayNameLocalized("ShowKeywords")]
+        public bool ShowKeywords { get; set; } = true;
+
+
         [DisplayNameLocalized("HotList")]
         public bool ShowInHotList { get; set; }
 

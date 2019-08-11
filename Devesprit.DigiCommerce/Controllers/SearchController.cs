@@ -90,7 +90,7 @@ namespace Devesprit.DigiCommerce.Controllers
                 return View("Index");
             }
 
-            var result = await _searchEngine.SearchAsync(tag, null, LanguagesService.GetDefaultLanguage().Id, null, SearchPlace.Tags);
+            var result = await _searchEngine.SearchAsync($"\"{tag}\"", null, LanguagesService.GetDefaultLanguage().Id, null, SearchPlace.Tags);
             if (result.HasError)
             {
                 var errorCode = ErrorLog.GetDefault(System.Web.HttpContext.Current).Log(new Error(result.Error, System.Web.HttpContext.Current));
@@ -116,6 +116,44 @@ namespace Devesprit.DigiCommerce.Controllers
 
             };
 
+            return View("Index", viewModel);
+        }
+
+        [Route("{lang}/Keywords/{keyword}", Order = 0)]
+        [Route("Keywords/{keyword}", Order = 1)]
+        public virtual async Task<ActionResult> Keyword(string keyword, int? page)
+        {
+            if (keyword.IsNullOrWhiteSpace())
+            {
+                return View("Index");
+            }
+
+            var result = await _searchEngine.SearchAsync($"\"{keyword}\"", null, LanguagesService.GetDefaultLanguage().Id, null, SearchPlace.Keywords);
+            if (result.HasError)
+            {
+                var errorCode = ErrorLog.GetDefault(System.Web.HttpContext.Current).Log(new Error(result.Error, System.Web.HttpContext.Current));
+                ViewBag.ErrorCode = errorCode;
+                return View("Error");
+            }
+
+            var searchTerm = new SearchTermModel { Query = keyword.Trim(), Page = page ?? 1, PageSize = 20 };
+
+            var currentUser = UserManager.FindById(User.Identity.GetUserId());
+            var posts = _postService.GetItemsById(
+                result.Documents.OrderByDescending(p => p.Score).Select(p => p.DocumentId).ToList(), searchTerm.Page.Value,
+                searchTerm.PageSize.Value);
+
+            var viewModel = new SearchResultModel
+            {
+                TimeElapsed = result.ElapsedMilliseconds,
+                SearchTerm = searchTerm,
+                NumberOfItemsFound = posts.Count,
+                SearchResult = _postModelFactory.PreparePostCardViewModel(posts, currentUser, Url),
+                ShowAdvancedSearchPanel = false,
+                CardViewStyles = ViewStyles.Small,
+
+            };
+            
             return View("Index", viewModel);
         }
 

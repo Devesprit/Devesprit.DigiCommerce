@@ -336,6 +336,31 @@ namespace Devesprit.FileServer
             }
         }
 
+        public virtual async Task<bool> SearchAndDeleteFile(string path, string fileName)
+        {
+            path = await ProcessPath(path, true, FileIOPermissionAccess.AllAccess);
+
+            try
+            {
+                if (await Task.Run(() => Directory.Exists(path)))
+                {
+                    var filesList = await Task.Run(() => Directory.EnumerateFiles(path, fileName, SearchOption.AllDirectories));
+                    foreach (var file in filesList)
+                    {
+                        if (file != null && Path.GetFileName(file).Equals(fileName, StringComparison.InvariantCultureIgnoreCase))
+                        {
+                            await Task.Run(() => File.Delete(file));
+                        }
+                    }
+                }
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
         public virtual async Task<bool> DeleteDirectory(string path)
         {
             path = await ProcessPath(path, true, FileIOPermissionAccess.AllAccess);

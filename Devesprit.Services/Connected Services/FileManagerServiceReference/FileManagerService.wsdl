@@ -89,6 +89,12 @@
   <wsdl:message name="IFileManagerService_DeleteFile_OutputMessage">
     <wsdl:part name="parameters" element="tns:DeleteFileResponse" />
   </wsdl:message>
+  <wsdl:message name="IFileManagerService_SearchAndDeleteFile_InputMessage">
+    <wsdl:part name="parameters" element="tns:SearchAndDeleteFile" />
+  </wsdl:message>
+  <wsdl:message name="IFileManagerService_SearchAndDeleteFile_OutputMessage">
+    <wsdl:part name="parameters" element="tns:SearchAndDeleteFileResponse" />
+  </wsdl:message>
   <wsdl:message name="IFileManagerService_DeleteDirectory_InputMessage">
     <wsdl:part name="parameters" element="tns:DeleteDirectory" />
   </wsdl:message>
@@ -179,6 +185,10 @@
     <wsdl:operation name="DeleteFile">
       <wsdl:input wsaw:Action="http://tempuri.org/IFileManagerService/DeleteFile" message="tns:IFileManagerService_DeleteFile_InputMessage" />
       <wsdl:output wsaw:Action="http://tempuri.org/IFileManagerService/DeleteFileResponse" message="tns:IFileManagerService_DeleteFile_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="SearchAndDeleteFile">
+      <wsdl:input wsaw:Action="http://tempuri.org/IFileManagerService/SearchAndDeleteFile" message="tns:IFileManagerService_SearchAndDeleteFile_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IFileManagerService/SearchAndDeleteFileResponse" message="tns:IFileManagerService_SearchAndDeleteFile_OutputMessage" />
     </wsdl:operation>
     <wsdl:operation name="DeleteDirectory">
       <wsdl:input wsaw:Action="http://tempuri.org/IFileManagerService/DeleteDirectory" message="tns:IFileManagerService_DeleteDirectory_InputMessage" />
@@ -275,6 +285,15 @@
     </wsdl:operation>
     <wsdl:operation name="DeleteFile">
       <soap12:operation soapAction="http://tempuri.org/IFileManagerService/DeleteFile" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SearchAndDeleteFile">
+      <soap12:operation soapAction="http://tempuri.org/IFileManagerService/SearchAndDeleteFile" style="document" />
       <wsdl:input>
         <soap12:body use="literal" />
       </wsdl:input>
