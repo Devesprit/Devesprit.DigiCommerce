@@ -53,7 +53,7 @@
         }
         @if (Model.ShowKeywords)
         {
-            @{Html.RenderPartial("Partials/_PostKeywordsSection", Model.MetaKeyWords);}
+            Html.RenderPartial("Partials/_PostKeywordsSection", Model.MetaKeyWords);
         }
     </div>
 
