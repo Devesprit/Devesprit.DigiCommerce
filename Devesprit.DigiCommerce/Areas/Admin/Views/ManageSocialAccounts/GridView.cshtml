@@ -62,10 +62,10 @@
                 DeleteEntity(args.data.map(function(item){return item.Id;}), "@Url.Action("Delete")", refreshSocialAccountsGrid);
             } else if (args.requestType === "beginedit") {
                 args.cancel = true;
-                PopupWindows('@Url.Action("Editor")', 'SocialAccountsEditor', 600, 400, { id: args.rowData.Id }, 'get');
+                PopupWindows('@Url.Action("Editor")', 'SocialAccountsEditor', 600, 500, { id: args.rowData.Id }, 'get');
             } else if (args.requestType === "add") {
                 args.cancel = true;
-                PopupWindows('@Url.Action("Editor")', 'SocialAccountsEditor', 600, 400, {}, 'get');
+                PopupWindows('@Url.Action("Editor")', 'SocialAccountsEditor', 600, 500, {}, 'get');
             }
         }
 

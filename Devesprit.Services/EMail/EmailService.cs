@@ -1,12 +1,19 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Mail;
 using System.Threading.Tasks;
 using System.Web;
+using System.Web.Mvc;
 using Devesprit.Core;
+using Devesprit.Core.Localization;
 using Devesprit.Core.Settings;
 using Devesprit.Services.Events;
+using Devesprit.Services.Localization;
+using Devesprit.Services.SocialAccounts;
 using Devesprit.Services.TemplateEngine;
+using Devesprit.Utilities.Extensions;
 using Hangfire;
 using Microsoft.AspNet.Identity;
 
@@ -15,16 +22,19 @@ namespace Devesprit.Services.EMail
     public partial class EmailService: IEmailService
     {
         private readonly ISettingService _settingService;
+        private readonly ISocialAccountsService _socialAccountsService;
         private readonly ITemplateEngine _templateEngine;
         private readonly IWorkContext _workContext;
         private readonly IEventPublisher _eventPublisher;
 
-        public EmailService(ISettingService settingService, 
+        public EmailService(ISettingService settingService,
+            ISocialAccountsService socialAccountsService,
             ITemplateEngine templateEngine, 
             IWorkContext workContext,
             IEventPublisher eventPublisher)
         {
             _settingService = settingService;
+            _socialAccountsService = socialAccountsService;
             _templateEngine = templateEngine;
             _workContext = workContext;
             _eventPublisher = eventPublisher;
@@ -50,6 +60,7 @@ namespace Devesprit.Services.EMail
         
         public virtual async Task SendEmailFromTemplateAsync(string templateFileName, string subject, string destination, object model, string from = null)
         {
+            var settings = await _settingService.LoadSettingAsync<SiteSettings>();
             var serverRoot = HttpContext.Current.Server.MapPath("~").TrimEnd('\\') + "\\EmailTemplates\\";
             var currentLangIso = _workContext.CurrentLanguage;
             string templateFile;
@@ -69,7 +80,28 @@ namespace Devesprit.Services.EMail
                                                 ".html");
             }
 
-            await SendEmailAsync(_templateEngine.CompileTemplateFromFile(templateFile, model), subject, destination, from);
+            var socialMediaAccounts = _socialAccountsService.GetAsEnumerable();
+            var rootModel = new
+            {
+                Model = model,
+                SiteName = settings.GetLocalized(p => p.SiteName),
+                SiteUrl = settings.SiteUrl,
+                SiteLogo = settings.GetLocalized(p => p.SiteLogoEmailHeader).GetAbsoluteUrl(),
+                SiteEmailAddress = settings.SiteEmailAddress,
+                FavIcon = settings.GetLocalized(p => p.FavIcon).GetAbsoluteUrl(),
+                Title = subject,
+                DateNowYear = DateTime.Now.Year,
+                DateNowMonth = DateTime.Now.Month,
+                DateNowDay = DateTime.Now.Day,
+                DateNowHour = DateTime.Now.Hour,
+                DateNowMinute = DateTime.Now.Minute,
+                DateNowSecond = DateTime.Now.Second,
+                SocialAccounts = socialMediaAccounts
+                    .ToList().Select(p => new { SocialNetworkIconUrl = p.GetLocalized(x=> x.SocialNetworkIconUrl),
+                        SocialNetworkName = p.GetLocalized(x => x.SocialNetworkName),
+                        YourAccountUrl = p.GetLocalized(x => x.YourAccountUrl) }),
+            };
+            await SendEmailAsync(_templateEngine.CompileTemplateFromFile(templateFile, rootModel), subject, destination, from);
         }
     }
 
@@ -81,7 +113,7 @@ namespace Devesprit.Services.EMail
             using (var smtpClient = new SmtpClient(smtpServer, smtpPort)
             {
                 EnableSsl = smtpEnableSsl,
-                UseDefaultCredentials = false,
+                UseDefaultCredentials = true,
                 Credentials = new NetworkCredential(smtpUserName, smtpPassword)
             })
             {

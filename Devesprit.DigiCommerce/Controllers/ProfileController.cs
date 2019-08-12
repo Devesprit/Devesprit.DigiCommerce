@@ -146,7 +146,11 @@ namespace Devesprit.DigiCommerce.Controllers
                     AuthenticationManager.SignOut();
                     var code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
                     var callbackUrl = Url.Action("ConfirmEmail", "User", new { userId = user.Id, code = code }, Request.Url.Scheme);
-                    await _emailService.SendEmailFromTemplateAsync("ConfirmEmail", _localizationService.GetResource("ConfirmAccount"), model.Email, new { Url = callbackUrl });
+                    await _emailService.SendEmailFromTemplateAsync("ConfirmEmail", _localizationService.GetResource("ConfirmAccount"), model.Email, new
+                    {
+                        Url = callbackUrl,
+                        UserFullName = user.FirstName + " " + user.LastName
+                    });
                     return RedirectToAction("Login", "User");
                 }
 

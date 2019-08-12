@@ -55,108 +55,117 @@
 @helper GeneralSettings()
 {
 
-    <div class="row">
-        <div class="col-12">
-            <h2 class="text-center b-mar-20"><img src="~/Content/img/Settings.png" /><br />@T("General")</h2>
+<div class="row">
+    <div class="col-12">
+        <h2 class="text-center b-mar-20"><img src="~/Content/img/Settings.png" /><br />@T("General")</h2>
+    </div>
+    <div class="col-12">
+        <div class="form-group">
+            @Html.LabelFor(p => p.SiteName)
+            @Html.LocalizedTextBoxFor(p => p.SiteName, null, new { @class = "form-control form-control-sm" })
+            @Html.ValidationMessageFor(p => p.SiteName, "", new { @class = "form-text text-danger fs-12" })
         </div>
-        <div class="col-12">
-            <div class="form-group">
-                @Html.LabelFor(p => p.SiteName)
-                @Html.LocalizedTextBoxFor(p => p.SiteName, null, new { @class = "form-control form-control-sm" })
-                @Html.ValidationMessageFor(p => p.SiteName, "", new { @class = "form-text text-danger fs-12" })
-            </div>
+    </div>
+    <div class="col-12">
+        <div class="form-group">
+            @Html.LabelFor(p => p.SiteUrl)
+            @Html.TextBoxFor(p => p.SiteUrl, null, new { @class = "form-control form-control-sm ltr-dir" })
+            @Html.ValidationMessageFor(p => p.SiteUrl, "", new { @class = "form-text text-danger fs-12" })
         </div>
-        <div class="col-12">
-            <div class="form-group">
-                @Html.LabelFor(p => p.SiteUrl)
-                @Html.TextBoxFor(p => p.SiteUrl, null, new { @class = "form-control form-control-sm ltr-dir" })
-                @Html.ValidationMessageFor(p => p.SiteUrl, "", new { @class = "form-text text-danger fs-12" })
-            </div>
+    </div>
+    <div class="col-12">
+        <div class="form-group">
+            @Html.LabelFor(p => p.SiteLogoHeader)
+            @Html.LocalizedTextBoxFor(p => p.SiteLogoHeader, null, new { @class = "form-control form-control-sm ltr-dir" })
+            <button type="button" onclick="ShowFileExplorerForLocalizedEntity('SiteLogoHeader');" class="btn btn-outline-success btn-xs float-end t-mar-5"><i class="fa fa-folder-open"></i> ...</button>
+            <span class="form-text text-muted fs-11">@T("DesiredImageUrl")</span>
+            @Html.ValidationMessageFor(p => p.SiteLogoHeader, "", new { @class = "form-text text-danger fs-12" })
         </div>
-        <div class="col-12">
-            <div class="form-group">
-                @Html.LabelFor(p => p.SiteLogoHeader)
-                @Html.LocalizedTextBoxFor(p => p.SiteLogoHeader, null, new { @class = "form-control form-control-sm ltr-dir" })
-                <button type="button" onclick="ShowFileExplorerForLocalizedEntity('SiteLogoHeader');" class="btn btn-outline-success btn-xs float-end t-mar-5"><i class="fa fa-folder-open"></i> ...</button>
-                <span class="form-text text-muted fs-11">@T("DesiredImageUrl")</span>
-                @Html.ValidationMessageFor(p => p.SiteLogoHeader, "", new { @class = "form-text text-danger fs-12" })
-            </div>
+    </div>
+    <div class="col-12">
+        <div class="form-group">
+            @Html.LabelFor(p => p.SiteLogoNavigationBar)
+            @Html.LocalizedTextBoxFor(p => p.SiteLogoNavigationBar, null, new { @class = "form-control form-control-sm ltr-dir" })
+            <button type="button" onclick="ShowFileExplorerForLocalizedEntity('SiteLogoNavigationBar');" class="btn btn-outline-success btn-xs float-end t-mar-5"><i class="fa fa-folder-open"></i> ...</button>
+            @Html.ValidationMessageFor(p => p.SiteLogoNavigationBar, "", new { @class = "form-text text-danger fs-12" })
         </div>
-        <div class="col-12">
-            <div class="form-group">
-                @Html.LabelFor(p => p.SiteLogoNavigationBar)
-                @Html.LocalizedTextBoxFor(p => p.SiteLogoNavigationBar, null, new { @class = "form-control form-control-sm ltr-dir" })
-                <button type="button" onclick="ShowFileExplorerForLocalizedEntity('SiteLogoNavigationBar');" class="btn btn-outline-success btn-xs float-end t-mar-5"><i class="fa fa-folder-open"></i> ...</button>
-                @Html.ValidationMessageFor(p => p.SiteLogoNavigationBar, "", new { @class = "form-text text-danger fs-12" })
-            </div>
+    </div>
+    <div class="col-12">
+        <div class="form-group">
+            @Html.LabelFor(p => p.SiteLogoEmailHeader)
+            @Html.LocalizedTextBoxFor(p => p.SiteLogoEmailHeader, null, new { @class = "form-control form-control-sm ltr-dir" })
+            <button type="button" onclick="ShowFileExplorerForLocalizedEntity('SiteLogoHeader');" class="btn btn-outline-success btn-xs float-end t-mar-5"><i class="fa fa-folder-open"></i> ...</button>
+            <span class="form-text text-muted fs-11">@T("DesiredImageUrl")</span>
+            @Html.ValidationMessageFor(p => p.SiteLogoEmailHeader, "", new { @class = "form-text text-danger fs-12" })
         </div>
-        <div class="col-12">
-            <div class="form-group">
-                @Html.LabelFor(p => p.SiteLogoInvoicePrint)
-                @Html.LocalizedTextBoxFor(p => p.SiteLogoInvoicePrint, null, new { @class = "form-control form-control-sm ltr-dir" })
-                <button type="button" onclick="ShowFileExplorerForLocalizedEntity('SiteLogoInvoicePrint');" class="btn btn-outline-success btn-xs float-end t-mar-5"><i class="fa fa-folder-open"></i> ...</button>
-                @Html.ValidationMessageFor(p => p.SiteLogoInvoicePrint, "", new { @class = "form-text text-danger fs-12" })
-            </div>
+    </div>
+    <div class="col-12">
+        <div class="form-group">
+            @Html.LabelFor(p => p.SiteLogoInvoicePrint)
+            @Html.LocalizedTextBoxFor(p => p.SiteLogoInvoicePrint, null, new { @class = "form-control form-control-sm ltr-dir" })
+            <button type="button" onclick="ShowFileExplorerForLocalizedEntity('SiteLogoInvoicePrint');" class="btn btn-outline-success btn-xs float-end t-mar-5"><i class="fa fa-folder-open"></i> ...</button>
+            @Html.ValidationMessageFor(p => p.SiteLogoInvoicePrint, "", new { @class = "form-text text-danger fs-12" })
         </div>
-        <div class="col-12">
-            <div class="form-group">
-                @Html.LabelFor(p => p.FavIcon)
-                @Html.LocalizedTextBoxFor(p => p.FavIcon, null, new { @class = "form-control form-control-sm ltr-dir" })
-                <button type="button" onclick="ShowFileExplorerForLocalizedEntity('FavIcon');" class="btn btn-outline-success btn-xs float-end t-mar-5"><i class="fa fa-folder-open"></i> ...</button>
-                @Html.ValidationMessageFor(p => p.FavIcon, "", new { @class = "form-text text-danger fs-12" })
-            </div>
+    </div>
+    <div class="col-12">
+        <div class="form-group">
+            @Html.LabelFor(p => p.FavIcon)
+            @Html.LocalizedTextBoxFor(p => p.FavIcon, null, new { @class = "form-control form-control-sm ltr-dir" })
+            <button type="button" onclick="ShowFileExplorerForLocalizedEntity('FavIcon');" class="btn btn-outline-success btn-xs float-end t-mar-5"><i class="fa fa-folder-open"></i> ...</button>
+            @Html.ValidationMessageFor(p => p.FavIcon, "", new { @class = "form-text text-danger fs-12" })
         </div>
-        <div class="col-12">
-            <div class="form-group">
-                @Html.LabelFor(p => p.SiteDescription)
-                @Html.LocalizedTextAreaFor(p => p.SiteDescription, new { @class = "form-control form-control-sm" })
-                @Html.ValidationMessageFor(p => p.SiteDescription, "", new { @class = "form-text text-danger fs-12" })
-            </div>
+    </div>
+    <div class="col-12">
+        <div class="form-group">
+            @Html.LabelFor(p => p.SiteDescription)
+            @Html.LocalizedTextAreaFor(p => p.SiteDescription, new { @class = "form-control form-control-sm" })
+            @Html.ValidationMessageFor(p => p.SiteDescription, "", new { @class = "form-text text-danger fs-12" })
         </div>
-        <div class="col-12">
-            <div class="form-group">
-                @Html.LabelFor(p => p.InvoicePrintPageCompanyInfo)
-                @Html.LocalizedTextAreaFor(p => p.InvoicePrintPageCompanyInfo, new { @class = "ckeditor" })
-                @Html.ValidationMessageFor(p => p.InvoicePrintPageCompanyInfo, "", new { @class = "form-text text-danger fs-12" })
-            </div>
+    </div>
+    <div class="col-12">
+        <div class="form-group">
+            @Html.LabelFor(p => p.InvoicePrintPageCompanyInfo)
+            @Html.LocalizedTextAreaFor(p => p.InvoicePrintPageCompanyInfo, new { @class = "ckeditor" })
+            @Html.ValidationMessageFor(p => p.InvoicePrintPageCompanyInfo, "", new { @class = "form-text text-danger fs-12" })
         </div>
-        <div class="col-12">
-            <div class="form-group">
-                @Html.LabelFor(p => p.MetaKeyWords)
-                @Html.LocalizedTextBoxFor(p => p.MetaKeyWords, null, new { @class = "form-control form-control-sm" })
-                @Html.ValidationMessageFor(p => p.MetaKeyWords, "", new { @class = "form-text text-danger fs-12" })
-            </div>
+    </div>
+    <div class="col-12">
+        <div class="form-group">
+            @Html.LabelFor(p => p.MetaKeyWords)
+            @Html.LocalizedTextBoxFor(p => p.MetaKeyWords, null, new { @class = "form-control form-control-sm" })
+            @Html.ValidationMessageFor(p => p.MetaKeyWords, "", new { @class = "form-text text-danger fs-12" })
         </div>
-        <div class="col-12">
-            <div class="form-group">
-                @Html.LabelFor(p => p.FooterDescription)
-                @Html.LocalizedTextAreaFor(p => p.FooterDescription, new { @class = "ckeditor" })
-                @Html.ValidationMessageFor(p => p.FooterDescription, "", new { @class = "form-text text-danger fs-12" })
-            </div>
+    </div>
+    <div class="col-12">
+        <div class="form-group">
+            @Html.LabelFor(p => p.FooterDescription)
+            @Html.LocalizedTextAreaFor(p => p.FooterDescription, new { @class = "ckeditor" })
+            @Html.ValidationMessageFor(p => p.FooterDescription, "", new { @class = "form-text text-danger fs-12" })
         </div>
-        <div class="col-12">
-            <div class="form-group">
-                @Html.LabelFor(p => p.ContactUsDescription)
-                @Html.LocalizedTextAreaFor(p => p.ContactUsDescription, new { @class = "ckeditor" })
-                @Html.ValidationMessageFor(p => p.ContactUsDescription, "", new { @class = "form-text text-danger fs-12" })
-            </div>
+    </div>
+    <div class="col-12">
+        <div class="form-group">
+            @Html.LabelFor(p => p.ContactUsDescription)
+            @Html.LocalizedTextAreaFor(p => p.ContactUsDescription, new { @class = "ckeditor" })
+            @Html.ValidationMessageFor(p => p.ContactUsDescription, "", new { @class = "form-text text-danger fs-12" })
         </div>
-        <div class="col-12">
-            <div class="form-group">
-                @Html.LabelFor(p => p.TermsAndConditions)
-                @Html.LocalizedTextAreaFor(p => p.TermsAndConditions, new { @class = "ckeditor" })
-                @Html.ValidationMessageFor(p => p.TermsAndConditions, "", new { @class = "form-text text-danger fs-12" })
-            </div>
+    </div>
+    <div class="col-12">
+        <div class="form-group">
+            @Html.LabelFor(p => p.TermsAndConditions)
+            @Html.LocalizedTextAreaFor(p => p.TermsAndConditions, new { @class = "ckeditor" })
+            @Html.ValidationMessageFor(p => p.TermsAndConditions, "", new { @class = "form-text text-danger fs-12" })
         </div>
-        <div class="col-12">
-            <div class="form-group">
-                <div class="custom-control custom-checkbox">
-                    @Html.CheckBoxFor(p => p.ShowAcceptTermsSignUp, new { @class = "custom-control-input" })
-                    @Html.LabelFor(p => p.ShowAcceptTermsSignUp, new { @class = "custom-control-label" })
-                </div>
+    </div>
+    <div class="col-12">
+        <div class="form-group">
+            <div class="custom-control custom-checkbox">
+                @Html.CheckBoxFor(p => p.ShowAcceptTermsSignUp, new { @class = "custom-control-input" })
+                @Html.LabelFor(p => p.ShowAcceptTermsSignUp, new { @class = "custom-control-label" })
             </div>
         </div>
     </div>
+</div>
 
 }
 

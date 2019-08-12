@@ -105,7 +105,7 @@ function WarningAlert(title, message) {
 
 function PopupWindows(url, title, w, h, params, method) {
     var loadingHtml =
-        '<html lang="en"><head><title>Loading - Please wait ...</title></head><body><img src = "/content/img/Loading_Large.gif" style = "margin: auto;display: block;"></body></html>';
+        '<html lang="en"><head><title>Loading - Please wait ...</title></head><body><img src = "/content/img/Loading_Large.gif" style = "margin: auto;display: block; max-width:100%"></body></html>';
 
     // Fixes dual-screen position Most browsers Firefox
     var dualScreenLeft = window.screenLeft != undefined ? window.screenLeft : screen.left;

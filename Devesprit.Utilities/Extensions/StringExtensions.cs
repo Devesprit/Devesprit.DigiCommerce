@@ -171,8 +171,15 @@ namespace Devesprit.Utilities.Extensions
                 return GetAbsoluteUrl(url, new Uri(HttpContext.Current.Request.Url.GetLeftPart(UriPartial.Authority)));
             }
 
-            var siteUrl = DependencyResolver.Current.GetService<ISettingService>().FindByKey("SiteUrl", "");
-            return GetAbsoluteUrl(url, new Uri(siteUrl));
+            try
+            {
+                var siteUrl = DependencyResolver.Current.GetService<ISettingService>().FindByKey("SiteUrl", "");
+                return GetAbsoluteUrl(url, new Uri(siteUrl));
+            }
+            catch (Exception e)
+            {
+                return url;
+            }
         }
 
         public static string TrimStart(this string target, string trimString, StringComparison comparison = StringComparison.InvariantCultureIgnoreCase)

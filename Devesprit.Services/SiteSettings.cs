@@ -16,6 +16,7 @@ namespace Devesprit.Services
         public virtual LocalizedString MetaKeyWords { get; set; } = new LocalizedString();
         public virtual LocalizedString FooterDescription { get; set; } = new LocalizedString();
         public virtual LocalizedString SiteLogoHeader { get; set; } = new LocalizedString("/Content/img/site-logo-header-white.png");
+        public virtual LocalizedString SiteLogoEmailHeader { get; set; } = new LocalizedString("/Content/img/site-logo-email-header.png");
         public virtual LocalizedString SiteLogoNavigationBar { get; set; } = new LocalizedString("/Content/img/site-logo-navbar-black.png");
         public virtual LocalizedString SiteLogoInvoicePrint { get; set; } = new LocalizedString("/Content/img/site-logo-invoice-print.png");
         public virtual LocalizedString FavIcon { get; set; } = new LocalizedString("/Content/img/favicon.png");

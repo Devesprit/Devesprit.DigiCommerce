@@ -64,6 +64,10 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Models
         public virtual LocalizedString SiteLogoNavigationBar { get; set; } = new LocalizedString();
 
         [MaxLengthLocalized(500)]
+        [DisplayNameLocalized("SiteLogoEmailHeaderUrl")]
+        public virtual LocalizedString SiteLogoEmailHeader { get; set; } = new LocalizedString();
+
+        [MaxLengthLocalized(500)]
         [DisplayNameLocalized("FavIconUrl")]
         public virtual LocalizedString FavIcon { get; set; } = new LocalizedString();
         

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using System.Web;
@@ -11,6 +12,8 @@ using Devesprit.DigiCommerce.Models.Users;
 using Devesprit.Services.Countries;
 using Devesprit.Services.EMail;
 using Devesprit.Services.ExternalLoginProvider;
+using Devesprit.Services.Localization;
+using Devesprit.Services.SocialAccounts;
 using Devesprit.Services.Users;
 using Devesprit.Services.Users.Events;
 using Devesprit.Utilities.Extensions;
@@ -119,7 +122,11 @@ namespace Devesprit.DigiCommerce.Controllers
                     var callbackUrl = Url.Action("ConfirmEmail", "User", new { userId = user.Id, code = code },
                         Request.Url.Scheme);
                     await _emailService.SendEmailFromTemplateAsync("ConfirmEmail", _localizationService.GetResource("ConfirmAccount"),
-                        model.Email, new { Url = callbackUrl });
+                        model.Email, new
+                        {
+                            Url = callbackUrl,
+                            UserFullName = user.FirstName + " " + user.LastName
+                        });
                     return View("DisplayEmailConfirm");
                 }
             }
@@ -232,7 +239,11 @@ namespace Devesprit.DigiCommerce.Controllers
                 if (CurrentSettings.ConfirmUserEmailAddress)
                 {
                     var callbackUrl = Url.Action("ConfirmEmail", "User", new { userId = user.Id, code = code }, Request.Url.Scheme);
-                    await _emailService.SendEmailFromTemplateAsync("ConfirmEmail", _localizationService.GetResource("ConfirmAccount"), model.Email, new { Url = callbackUrl });
+                    await _emailService.SendEmailFromTemplateAsync("ConfirmEmail", _localizationService.GetResource("ConfirmAccount"), model.Email, new
+                    {
+                        Url = callbackUrl,
+                        UserFullName = user.FirstName + " " + user.LastName
+                    });
                     return View("DisplayEmailConfirm");
                 }
 
@@ -322,7 +333,11 @@ namespace Devesprit.DigiCommerce.Controllers
 
                 var code = await UserManager.GeneratePasswordResetTokenAsync(user.Id);
                 var callbackUrl = Url.Action("ResetPassword", "User", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
-                await _emailService.SendEmailFromTemplateAsync("ResetPassword", _localizationService.GetResource("ResetPassword"), model.Email, new { Url = callbackUrl });
+                await _emailService.SendEmailFromTemplateAsync("ResetPassword", _localizationService.GetResource("ResetPassword"), model.Email, new
+                {
+                    Url = callbackUrl,
+                    UserFullName = user.FirstName+" "+user.LastName
+                });
                 return View("ForgotPasswordConfirmation");
             }
 
