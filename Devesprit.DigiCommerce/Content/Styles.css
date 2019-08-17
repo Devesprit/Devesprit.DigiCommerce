@@ -1,67 +1,45 @@
 ﻿@font-face {
-    font-family: IRANSans;
-    font-style: normal;
-    font-weight: 900;
-    src: url('fonts/eot/IRANSansWeb_Black.eot');
-    src: url('fonts/eot/IRANSansWeb_Black.eot?#iefix') format('embedded-opentype'), /* IE6-8 */
-    url('fonts/woff2/IRANSansWeb_Black.woff2') format('woff2'), /* FF39+,Chrome36+, Opera24+*/
-    url('fonts/woff/IRANSansWeb_Black.woff') format('woff'), /* FF3.6+, IE9, Chrome6+, Saf5.1+*/
-    url('fonts/ttf/IRANSansWeb_Black.ttf') format('truetype');
-}
-
-@font-face {
-    font-family: IRANSans;
+    font-family: dana;
     font-style: normal;
     font-weight: bold;
-    src: url('fonts/eot/IRANSansWeb_Bold.eot');
-    src: url('fonts/eot/IRANSansWeb_Bold.eot?#iefix') format('embedded-opentype'), /* IE6-8 */
-    url('fonts/woff2/IRANSansWeb_Bold.woff2') format('woff2'), /* FF39+,Chrome36+, Opera24+*/
-    url('fonts/woff/IRANSansWeb_Bold.woff') format('woff'), /* FF3.6+, IE9, Chrome6+, Saf5.1+*/
-    url('fonts/ttf/IRANSansWeb_Bold.ttf') format('truetype');
+    src: url('fonts/dana/eot/dana-bold.eot');
+    src: url('fonts/dana/eot/dana-bold.eot?#iefix') format('embedded-opentype'), /* IE6-8 */
+    url('fonts/dana/woff2/dana-bold.woff2') format('woff2'), /* FF39+,Chrome36+, Opera24+*/
+    url('fonts/dana/woff/dana-bold.woff') format('woff'); /* FF3.6+, IE9, Chrome6+, Saf5.1+*/
 }
 
 @font-face {
-    font-family: IRANSans;
-    font-style: normal;
-    font-weight: 500;
-    src: url('fonts/eot/IRANSansWeb_Medium.eot');
-    src: url('fonts/eot/IRANSansWeb_Medium.eot?#iefix') format('embedded-opentype'), /* IE6-8 */
-    url('fonts/woff2/IRANSansWeb_Medium.woff2') format('woff2'), /* FF39+,Chrome36+, Opera24+*/
-    url('fonts/woff/IRANSansWeb_Medium.woff') format('woff'), /* FF3.6+, IE9, Chrome6+, Saf5.1+*/
-    url('fonts/ttf/IRANSansWeb_Medium.ttf') format('truetype');
-}
-
-@font-face {
-    font-family: IRANSans;
-    font-style: normal;
-    font-weight: 300;
-    src: url('fonts/eot/IRANSansWeb_Light.eot');
-    src: url('fonts/eot/IRANSansWeb_Light.eot?#iefix') format('embedded-opentype'), /* IE6-8 */
-    url('fonts/woff2/IRANSansWeb_Light.woff2') format('woff2'), /* FF39+,Chrome36+, Opera24+*/
-    url('fonts/woff/IRANSansWeb_Light.woff') format('woff'), /* FF3.6+, IE9, Chrome6+, Saf5.1+*/
-    url('fonts/ttf/IRANSansWeb_Light.ttf') format('truetype');
-}
-
-@font-face {
-    font-family: IRANSans;
-    font-style: normal;
-    font-weight: 200;
-    src: url('fonts/eot/IRANSansWeb_UltraLight.eot');
-    src: url('fonts/eot/IRANSansWeb_UltraLight.eot?#iefix') format('embedded-opentype'), /* IE6-8 */
-    url('fonts/woff2/IRANSansWeb_UltraLight.woff2') format('woff2'), /* FF39+,Chrome36+, Opera24+*/
-    url('fonts/woff/IRANSansWeb_UltraLight.woff') format('woff'), /* FF3.6+, IE9, Chrome6+, Saf5.1+*/
-    url('fonts/ttf/IRANSansWeb_UltraLight.ttf') format('truetype');
-}
-
-@font-face {
-    font-family: IRANSans;
+    font-family: dana;
     font-style: normal;
     font-weight: normal;
-    src: url('fonts/eot/IRANSansWeb.eot');
-    src: url('fonts/eot/IRANSansWeb.eot?#iefix') format('embedded-opentype'), /* IE6-8 */
-    url('fonts/woff2/IRANSansWeb.woff2') format('woff2'), /* FF39+,Chrome36+, Opera24+*/
-    url('fonts/woff/IRANSansWeb.woff') format('woff'), /* FF3.6+, IE9, Chrome6+, Saf5.1+*/
-    url('fonts/ttf/IRANSansWeb.ttf') format('truetype');
+    src: url('fonts/dana/eot/dana-regular.eot');
+    src: url('fonts/dana/eot/dana-regular.eot?#iefix') format('embedded-opentype'), /* IE6-8 */
+    url('fonts/dana/woff2/dana-regular.woff2') format('woff2'), /* FF39+,Chrome36+, Opera24+*/
+    url('fonts/dana/woff/dana-regular.woff') format('woff'); /* FF3.6+, IE9, Chrome6+, Saf5.1+*/
+}
+
+@font-face {
+    font-family: Lato;
+    src: url('fonts/LatoLatin/LatoLatin-Bold.eot'); /* IE9 Compat Modes */
+    src: url('fonts/LatoLatin/LatoLatin-Bold.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+    url('fonts/LatoLatin/LatoLatin-Bold.woff2') format('woff2'), /* Modern Browsers */
+    url('fonts/LatoLatin/LatoLatin-Bold.woff') format('woff'), /* Modern Browsers */
+    url('fonts/LatoLatin/LatoLatin-Bold.ttf') format('truetype');
+    font-style: normal;
+    font-weight: bold;
+    text-rendering: optimizeLegibility;
+}
+
+@font-face {
+    font-family: Lato;
+    src: url('fonts/LatoLatin/LatoLatin-Regular.eot'); /* IE9 Compat Modes */
+    src: url('fonts/LatoLatin/LatoLatin-Regular.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+    url('fonts/LatoLatin/LatoLatin-Regular.woff2') format('woff2'), /* Modern Browsers */
+    url('fonts/LatoLatin/LatoLatin-Regular.woff') format('woff'), /* Modern Browsers */
+    url('fonts/LatoLatin/LatoLatin-Regular.ttf') format('truetype');
+    font-style: normal;
+    font-weight: normal;
+    text-rendering: optimizeLegibility;
 }
 
 ::selection {
@@ -88,7 +66,7 @@
 
 body {
     background-color: #f2f2f2;
-    font-family: IRANSans, Tahoma !important;
+    font-family: Lato, dana, Tahoma !important;
 }
 
 button {
@@ -582,7 +560,7 @@ button {
 
 @media (min-width: 992px) {
     .shopping-cart-btn {
-        width: 60px;
+        width: 50px;
         overflow: hidden;
         -webkit-transition: all 1s; /* Safari */
         transition: all 1s;
@@ -809,15 +787,15 @@ button {
 
 /* Syncfusion controlls font------------ */
 .e-input, .e-tooltipbox, .e-btn, .e-time-popup, .e-datepicker.e-calendar, .e-menu, .e-uploadbox .e-file-name-txt, .e-uploadbox .e-selectpart, .e-uploadbox .e-uploadbtn, .e-uploadbox .e-uploadclosebtn, .e-waitpopup-pane .e-text, .e-tagcloud, .e-toolbar, .e-progressbar, .e-scale .e-tick .tick-value, .e-datetime-popup .e-dt-button, .e-grid, .e-ejinputtext, .e-pager, .e-fileexplorer, .e-textbox, .e-textarea {
-    font-family: IRANSans, Tahoma !important;
+    font-family: Lato, dana, Tahoma !important;
 }
 
 .e-tab.e-js.e-widget {
-    font-family: IRANSans, Tahoma !important;
+    font-family: Lato, dana, Tahoma !important;
 }
 
 .e-tab.e-js > .e-header > .e-item > .e-link, .e-tab.e-js > .e-left > .e-item > .e-link, .e-tab.e-js > .e-right > .e-item > .e-link {
-    font-family: IRANSans, Tahoma !important;
+    font-family: Lato, dana, Tahoma !important;
 }
 /* ------------Syncfusion controlls font */
 /* Bootstrap overrides------------ */

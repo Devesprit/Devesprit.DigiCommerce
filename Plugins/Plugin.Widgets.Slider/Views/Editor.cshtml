@@ -62,7 +62,7 @@
                     <div class="col-12 col-md-6">
                         <div class="form-group">
                             @Html.LabelFor(p => p.Zone)
-                            @Html.DropDownListFor(p => p.Zone, Model.ZonesList, new { @class = "form-control custom-select form-control-sm" })
+                            @Html.DropDownListFor(p => p.Zone, Model.ZonesList, new { @class = "form-control custom-select form-control-sm ltr-dir" })
                             @Html.ValidationMessageFor(p => p.Zone, "", new { @class = "form-text text-danger fs-12" })
                         </div>
                     </div>

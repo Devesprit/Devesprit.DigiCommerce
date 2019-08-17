@@ -9,7 +9,6 @@ using Devesprit.Services.Discounts;
 using Devesprit.Services.Events;
 using Devesprit.Services.LicenseManager;
 using Devesprit.Services.Localization;
-using Devesprit.Services.Notifications;
 using Devesprit.Services.Products;
 using Devesprit.Services.Taxes;
 using Devesprit.Services.Users;

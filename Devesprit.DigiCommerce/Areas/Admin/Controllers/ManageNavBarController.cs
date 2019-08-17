@@ -100,11 +100,11 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public virtual async Task<ActionResult> Delete(int key)
+        public virtual async Task<ActionResult> Delete(int keys)
         {
             try
             {
-                await _navBarService.DeleteAsync(key);
+                await _navBarService.DeleteAsync(keys);
                 return Content("OK");
             }
             catch (Exception e)

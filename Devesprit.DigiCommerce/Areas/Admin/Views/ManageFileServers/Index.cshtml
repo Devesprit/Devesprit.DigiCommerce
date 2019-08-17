@@ -74,11 +74,11 @@
                  } else if (args.requestType === "beginedit") {
                      //Edit record
                      args.cancel = true;
-                     PopupWindows('@Url.Action("Editor")', 'FileServerEditor', 600, 470, { id: args.rowData.Id }, 'get');
+                     PopupWindows('@Url.Action("Editor")', 'FileServerEditor', 600, 550, { id: args.rowData.Id }, 'get');
                  } else if (args.requestType === "add") {
                      //Add new record
                      args.cancel = true;
-                     PopupWindows('@Url.Action("Editor")', 'FileServerEditor', 600, 470, {}, 'get');
+                     PopupWindows('@Url.Action("Editor")', 'FileServerEditor', 600, 550, {}, 'get');
                  }
              }
 

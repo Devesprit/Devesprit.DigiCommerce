@@ -158,7 +158,8 @@ namespace Devesprit.DigiCommerce
             htmlMinificationManager.ExcludedPages = new List<IUrlMatcher>
             {
                 new WildcardUrlMatcher("/minifiers/x*ml-minifier"),
-                new WildcardUrlMatcher("/Purchase/PurchaseProductWizard*")
+                new WildcardUrlMatcher("/Purchase/PurchaseProductWizard*"),
+                new WildcardUrlMatcher("/Admin/*"),
             };
             var htmlMinificationSettings = htmlMinificationManager.MinificationSettings;
             htmlMinificationSettings.RemoveRedundantAttributes = false;

@@ -9,59 +9,109 @@
     var name = Guid.NewGuid().ToString("N");
 }
 
-<div id="carouselIndicators_@name" class="carousel slide" data-ride="carousel">
-    <ol class="carousel-indicators">
-        @foreach (var img in Model.OrderByDescending(p => p.DisplayOrder))
-        {
-            <li data-target="#carouselIndicators_@name" data-slide-to="@counter" @(counter == 0 ? "class='active'" : "")></li>
-            { counter++; }
-        }
-    </ol>
-    <div class="carousel-inner">
-        @{counter = 0;}
-        @foreach (var img in Model.OrderByDescending(p => p.DisplayOrder))
-        {
-            <div class="carousel-item @(counter == 0 ? "active" : "")">
-                @if (!string.IsNullOrWhiteSpace(img.GetLocalized(p => p.Link)) || !string.IsNullOrWhiteSpace(img.GetLocalized(p => p.OnClickJs)))
-                {
-                    @Html.Raw("<a target='"+ img.Target + "' "
-                              + (!string.IsNullOrWhiteSpace(img.GetLocalized(p => p.Link)) ? "href='"+ img.GetLocalized(p => p.Link) + "' " : "")
-                              + (!string.IsNullOrWhiteSpace(img.GetLocalized(p => p.OnClickJs)) ? "onclick='" + img.GetLocalized(p => p.OnClickJs) + "' " : "")
-                              + ">")
-                }
-                
-                @if (!string.IsNullOrWhiteSpace(img.GetLocalized(p => p.ImageUrl)))
-                {
-                    <img class="d-block w-100" src="@img.GetLocalized(p => p.ImageUrl)" alt="@img.GetLocalized(p => p.Title).ConvertHtmlToText()">
-                }
-                
-                @if (!string.IsNullOrWhiteSpace(img.GetLocalized(p => p.Title)) || !string.IsNullOrWhiteSpace(img.GetLocalized(p => p.Description)))
-                {
-                    <div class="carousel-caption d-none d-md-block">
-                        @if (!string.IsNullOrWhiteSpace(img.GetLocalized(p => p.Title)))
-                        {
-                            <h2>@Html.Raw(img.GetLocalized(p => p.Title))</h2>
-                        }
-                        @if (!string.IsNullOrWhiteSpace(img.GetLocalized(p => p.Description)))
-                        {
-                            @Html.Raw(img.GetLocalized(p => p.Description))
-                        }
-                    </div>
-                }
-                @if (!string.IsNullOrWhiteSpace(img.GetLocalized(p => p.Link)) || !string.IsNullOrWhiteSpace(img.GetLocalized(p => p.OnClickJs)))
-                {
-                    @Html.Raw("</a>")
-                }
-            </div>
+
+@if (Model.Count() == 1)
+{
+    <div id="carouselIndicators_@name" class="carousel slide mb-4" data-ride="carousel">
+        <div class="carousel-inner">
+            @{counter = 0;}
+            @foreach (var img in Model.OrderByDescending(p => p.DisplayOrder))
             {
-                counter++;
+                <div class="carousel-item @(counter == 0 ? "active" : "")">
+                    @if (!string.IsNullOrWhiteSpace(img.GetLocalized(p => p.Link)) || !string.IsNullOrWhiteSpace(img.GetLocalized(p => p.OnClickJs)))
+                    {
+                        @Html.Raw("<a target='" + img.Target + "' "
+                                  + (!string.IsNullOrWhiteSpace(img.GetLocalized(p => p.Link)) ? "href='" + img.GetLocalized(p => p.Link) + "' " : "")
+                                  + (!string.IsNullOrWhiteSpace(img.GetLocalized(p => p.OnClickJs)) ? "onclick='" + img.GetLocalized(p => p.OnClickJs) + "' " : "")
+                                  + ">")
+                    }
+
+                    @if (!string.IsNullOrWhiteSpace(img.GetLocalized(p => p.ImageUrl)))
+                    {
+                        <img class="d-block w-100" src="@img.GetLocalized(p => p.ImageUrl)" alt="@img.GetLocalized(p => p.Title).ConvertHtmlToText()">
+                    }
+
+                    @if (!string.IsNullOrWhiteSpace(img.GetLocalized(p => p.Title)) || !string.IsNullOrWhiteSpace(img.GetLocalized(p => p.Description)))
+                    {
+                        <div class="carousel-caption d-none d-md-block">
+                            @if (!string.IsNullOrWhiteSpace(img.GetLocalized(p => p.Title)))
+                            {
+                                <h2>@Html.Raw(img.GetLocalized(p => p.Title))</h2>
+                            }
+                            @if (!string.IsNullOrWhiteSpace(img.GetLocalized(p => p.Description)))
+                            {
+                                @Html.Raw(img.GetLocalized(p => p.Description))
+                            }
+                        </div>
+                    }
+                    @if (!string.IsNullOrWhiteSpace(img.GetLocalized(p => p.Link)) || !string.IsNullOrWhiteSpace(img.GetLocalized(p => p.OnClickJs)))
+                    {
+                        @Html.Raw("</a>")
+                    }
+                </div>
+                {
+                    counter++;
+                }
             }
-        }
+        </div>
     </div>
-    <a class="carousel-control-prev" href="#carouselIndicators_@name" role="button" data-slide="prev">
-        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-    </a>
-    <a class="carousel-control-next" href="#carouselIndicators_@name" role="button" data-slide="next">
-        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-    </a>
-</div>
+}
+else if (Model.Count() > 1)
+{
+    <div id="carouselIndicators_@name" class="carousel slide mb-4" data-ride="carousel">
+        <ol class="carousel-indicators">
+            @foreach (var img in Model.OrderByDescending(p => p.DisplayOrder))
+            {
+                <li data-target="#carouselIndicators_@name" data-slide-to="@counter" @(counter == 0 ? "class='active'" : "")></li>
+                { counter++; }
+            }
+        </ol>
+        <div class="carousel-inner">
+            @{counter = 0;}
+            @foreach (var img in Model.OrderByDescending(p => p.DisplayOrder))
+            {
+                <div class="carousel-item @(counter == 0 ? "active" : "")">
+                    @if (!string.IsNullOrWhiteSpace(img.GetLocalized(p => p.Link)) || !string.IsNullOrWhiteSpace(img.GetLocalized(p => p.OnClickJs)))
+                    {
+                        @Html.Raw("<a target='" + img.Target + "' "
+                                  + (!string.IsNullOrWhiteSpace(img.GetLocalized(p => p.Link)) ? "href='" + img.GetLocalized(p => p.Link) + "' " : "")
+                                  + (!string.IsNullOrWhiteSpace(img.GetLocalized(p => p.OnClickJs)) ? "onclick='" + img.GetLocalized(p => p.OnClickJs) + "' " : "")
+                                  + ">")
+                    }
+
+                    @if (!string.IsNullOrWhiteSpace(img.GetLocalized(p => p.ImageUrl)))
+                    {
+                        <img class="d-block w-100" src="@img.GetLocalized(p => p.ImageUrl)" alt="@img.GetLocalized(p => p.Title).ConvertHtmlToText()">
+                    }
+
+                    @if (!string.IsNullOrWhiteSpace(img.GetLocalized(p => p.Title)) || !string.IsNullOrWhiteSpace(img.GetLocalized(p => p.Description)))
+                    {
+                        <div class="carousel-caption d-none d-md-block">
+                            @if (!string.IsNullOrWhiteSpace(img.GetLocalized(p => p.Title)))
+                            {
+                                <h2>@Html.Raw(img.GetLocalized(p => p.Title))</h2>
+                            }
+                            @if (!string.IsNullOrWhiteSpace(img.GetLocalized(p => p.Description)))
+                            {
+                                @Html.Raw(img.GetLocalized(p => p.Description))
+                            }
+                        </div>
+                    }
+                    @if (!string.IsNullOrWhiteSpace(img.GetLocalized(p => p.Link)) || !string.IsNullOrWhiteSpace(img.GetLocalized(p => p.OnClickJs)))
+                    {
+                        @Html.Raw("</a>")
+                    }
+                </div>
+                {
+                    counter++;
+                }
+            }
+        </div>
+        <a class="carousel-control-prev" href="#carouselIndicators_@name" role="button" data-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        </a>
+        <a class="carousel-control-next" href="#carouselIndicators_@name" role="button" data-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        </a>
+    </div>
+}

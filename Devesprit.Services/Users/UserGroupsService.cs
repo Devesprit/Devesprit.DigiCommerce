@@ -139,7 +139,13 @@ namespace Devesprit.Services.Users
                 result = result - ((result * userGroup.SubscriptionDiscountPercentage) / 100);
             }
 
-            if (user.UserGroupId != null && user.SubscriptionExpireDate > DateTime.Now && userGroup.DiscountForRenewalBeforeExpiration > 0)
+            if (user == null)
+            {
+                return result;
+            }
+
+            if (user.UserGroupId != null && user.SubscriptionExpireDate > DateTime.Now && 
+                userGroup.DiscountForRenewalBeforeExpiration > 0 && user.UserGroupId == userGroupId)
             {
                 result = result - ((result * userGroup.DiscountForRenewalBeforeExpiration) / 100);
             }
