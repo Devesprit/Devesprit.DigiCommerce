@@ -348,6 +348,8 @@ Plugins/Plugin.Other.irDevelopersDataTransfer
 Plugins/Plugin.PaymentMethod.PayPalWithProxy
 Plugins/Plugin.Devesprit.ImageServer
 Plugins/Plugin.Other.Seo
+Plugins/Plugin.Other.irDevelopersRedirect
+Plugins/Plugin.PaymentMethod.CoinPayments
 
 # Ignore Other Files
 Devesprit.DigiCommerce/Plugins

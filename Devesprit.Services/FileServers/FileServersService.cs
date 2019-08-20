@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data.Entity.Migrations;
 using System.Linq;
 using System.ServiceModel;
+using System.ServiceModel.Security;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 using Devesprit.Data;
@@ -132,10 +133,11 @@ namespace Devesprit.Services.FileServers
             {
                 Security =
                 {
-                    Mode = BasicHttpSecurityMode.TransportCredentialOnly,
+                    Mode = BasicHttpSecurityMode.TransportWithMessageCredential,
                     Message =
                     {
                         ClientCredentialType = BasicHttpMessageCredentialType.UserName,
+                        AlgorithmSuite = SecurityAlgorithmSuite.Default
                     }
                 },
                 AllowCookies = true,

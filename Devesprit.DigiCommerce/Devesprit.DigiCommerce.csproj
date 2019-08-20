@@ -750,6 +750,8 @@
     <Content Include="Content\img\invoice_48px.png" />
     <Content Include="Content\img\loading.gif" />
     <Content Include="Content\img\Loading_Large.gif" />
+    <Content Include="Content\img\rss_20px.png" />
+    <Content Include="Content\img\rss_25px.png" />
     <Content Include="Content\img\site-logo-email-header.png" />
     <Content Include="Content\img\ReminderSettings.png" />
     <Content Include="Content\img\site-logo-invoice-print.png" />

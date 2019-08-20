@@ -96,6 +96,9 @@ namespace Devesprit.DigiCommerce.Controllers
                 case ProductsListType.BestSelling:
                     products = _productService.GetBestSelling(page ?? 1, pageSize ?? 24, catId, fromDate);
                     break;
+                case ProductsListType.MostDownloaded:
+                    products = _productService.GetMostDownloadedItems(page ?? 1, pageSize ?? 24, catId, fromDate);
+                    break;
             }
             var model = new ProductsListModel()
             {

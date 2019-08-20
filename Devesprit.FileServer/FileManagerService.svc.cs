@@ -18,6 +18,9 @@ namespace Devesprit.FileServer
 {
     /*
         NOTE:
+
+        THIS SERVICE REQUIRES HTTPS
+
         Before publish this service please follow bellow instructions:
         Change Admin username & password from Web.config -> appSettings -> ServiceAdminUserName & ServiceAdminPassword
         Change encryption key in Web.config -> appSettings -> EncryptionKey & EncryptionSalt
@@ -33,21 +36,6 @@ namespace Devesprit.FileServer
         -Expand ".Net 3.5" or ".Net 4.5", depending on what you have installed. (you can go back up to "roles" screen to add if you don't have.
         -Under "WCF Services", check the box for "HTTP-Activation". You can also add non-http types if you know you need them (tcp, named pipes, etc).
         -Click "Install" Button.
-
-        Usage example:
-
-        var binding = new WSHttpBinding();
-        binding.Security.Mode = SecurityMode.TransportWithMessageCredential;
-        binding.Security.Message.ClientCredentialType = MessageCredentialType.UserName;
-        binding.Security.Message.EstablishSecurityContext = false;
-
-        var endPoint = new EndpointAddress("https://my-host/FileManagerService.svc");
-        var fileManager = new FileManagerService.FileManagerServiceClient(binding, endPoint);
-        fileManager.ClientCredentials.UserName.UserName = "Admin";
-        fileManager.ClientCredentials.UserName.Password = "Admin@123456";
-
-        var result = fileManager.EnumerateDirectoryEntries("bin", "*.*", true, true, TimeSpan.FromDays(2), 20);
-        fileManager.Close(); 
     */
 
     [ServiceErrorBehavior(typeof(ElmahErrorHandler))]
@@ -89,8 +77,16 @@ namespace Devesprit.FileServer
             foreach (var entry in await Task.Run(() => Directory.EnumerateFiles(path, searchPattern)))
             {
                 //Check AllowedFileExtensionsToUpload
-                var fileExt = Path.GetExtension(entry);
-                if (notAllowedFileExtensions.Contains(fileExt?.ToLower()))
+                var allowed = true;
+                foreach (var ext in notAllowedFileExtensions)
+                {
+                    if (entry.IsMatchWildcard(ext, true))
+                    {
+                        allowed = false;
+                    }
+                }
+
+                if (!allowed)
                 {
                     continue;
                 }
@@ -213,8 +209,16 @@ namespace Devesprit.FileServer
             foreach (var entry in await Task.Run(() => Directory.EnumerateFiles(path, searchPattern)))
             {
                 //Check AllowedFileExtensionsToUpload
-                var fileExt = Path.GetExtension(entry);
-                if (notAllowedFileExtensions.Contains(fileExt?.ToLower()))
+                var allowed = true;
+                foreach (var ext in notAllowedFileExtensions)
+                {
+                    if (entry.IsMatchWildcard(ext, true))
+                    {
+                        allowed = false;
+                    }
+                }
+
+                if (!allowed)
                 {
                     continue;
                 }
@@ -491,8 +495,17 @@ namespace Devesprit.FileServer
             var notAllowedFileExtensions =
                     ConfigurationManager.AppSettings["NotAllowedFileExtensionsToDownload"].ToLower()
                         .Split(new[] { ";" }, StringSplitOptions.RemoveEmptyEntries);
-            var fileExt = Path.GetExtension(path);
-            if (notAllowedFileExtensions.Contains(fileExt?.ToLower()))
+
+            var allowed = true;
+            foreach (var ext in notAllowedFileExtensions)
+            {
+                if (path.IsMatchWildcard(ext, true))
+                {
+                    allowed = false;
+                }
+            }
+
+            if (!allowed)
             {
                 throw new FaultException("The requested file was not found.");
             }

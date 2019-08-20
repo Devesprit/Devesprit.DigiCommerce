@@ -8,6 +8,7 @@
         Model.CurrentUser?.UserGroup?.GroupPriority ?? int.MinValue : int.MinValue;
 
     Html.AddHeadCustomParts("<meta name=\"robots\" content=\"index,follow\">");
+    var upgradePlanNotes = T("UpgradePlanNotes");
 }
 
 <div class="row justify-content-center">
@@ -16,6 +17,12 @@
             <h2 class="no-b-mar"><strong>@Html.Raw(T("SelectDesiredUserGroup"))</strong></h2>
             <p class="fs-14 no-b-mar">@Html.Raw(T("SelectDesiredUserGroupDesc"))</p>
         </div>
+        @if (!string.IsNullOrWhiteSpace(upgradePlanNotes.Text))
+        {
+            <div class="mar-v-20 alert alert-warning fs-12 pad-20">
+                @Html.Raw(upgradePlanNotes)
+            </div>
+        }
 
         @foreach (var group in Model.UserGroupsList)
         {

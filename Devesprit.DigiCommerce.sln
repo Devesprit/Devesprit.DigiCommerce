@@ -45,6 +45,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plugin.Devesprit.ImageServe
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plugin.Other.Seo", "Plugins\Plugin.Other.Seo\Plugin.Other.Seo.csproj", "{664C32D2-C74F-4667-983A-E1D3CB3A1D5C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plugin.PaymentMethod.CoinPayments", "Plugins\Plugin.PaymentMethod.CoinPayments\Plugin.PaymentMethod.CoinPayments.csproj", "{5F3C3185-6165-43E8-8DDD-1A9021B7A17D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plugin.Other.irDevelopersRedirect", "Plugins\Plugin.Other.irDevelopersRedirect\Plugin.Other.irDevelopersRedirect.csproj", "{D74288A8-744A-42CA-8F7E-1A6853752816}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -131,6 +135,14 @@ Global
 		{664C32D2-C74F-4667-983A-E1D3CB3A1D5C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{664C32D2-C74F-4667-983A-E1D3CB3A1D5C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{664C32D2-C74F-4667-983A-E1D3CB3A1D5C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5F3C3185-6165-43E8-8DDD-1A9021B7A17D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5F3C3185-6165-43E8-8DDD-1A9021B7A17D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5F3C3185-6165-43E8-8DDD-1A9021B7A17D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5F3C3185-6165-43E8-8DDD-1A9021B7A17D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D74288A8-744A-42CA-8F7E-1A6853752816}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D74288A8-744A-42CA-8F7E-1A6853752816}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D74288A8-744A-42CA-8F7E-1A6853752816}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D74288A8-744A-42CA-8F7E-1A6853752816}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -149,6 +161,8 @@ Global
 		{B1D08B4F-B8D2-4C82-9458-9D1AD9D30BCD} = {3F0C9590-A9BC-4E93-9064-B34F3A02A103}
 		{67D6D896-BE33-44F9-8EBE-BD2CF4743863} = {3F0C9590-A9BC-4E93-9064-B34F3A02A103}
 		{664C32D2-C74F-4667-983A-E1D3CB3A1D5C} = {3F0C9590-A9BC-4E93-9064-B34F3A02A103}
+		{5F3C3185-6165-43E8-8DDD-1A9021B7A17D} = {3F0C9590-A9BC-4E93-9064-B34F3A02A103}
+		{D74288A8-744A-42CA-8F7E-1A6853752816} = {3F0C9590-A9BC-4E93-9064-B34F3A02A103}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		VisualSVNWorkingCopyRoot = .

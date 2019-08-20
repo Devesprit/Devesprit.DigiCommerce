@@ -6,6 +6,8 @@ namespace Devesprit.DigiCommerce.Models.Products
     {
         [Description("NewestProducts")]
         Newest,
+        [Description("MostDownloadedProducts")]
+        MostDownloaded,
         [Description("MostPopularProducts")]
         MostPopular,
         [Description("HotProducts")]

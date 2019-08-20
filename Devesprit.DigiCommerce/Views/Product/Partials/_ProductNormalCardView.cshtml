@@ -26,7 +26,7 @@
                 @Html.Raw(Model.Title)
             </a>
         </h6>
-        <p class="card-text fs-10 pb-4 @Html.Raw(Model.DescriptionTruncated.TruncateText(150).IsRtlLanguage() ? "rtl-dir" : "ltr-dir")">@Html.Raw(Model.DescriptionTruncated.TruncateText(150))</p>
+        <p class="card-text fs-12 pb-4 @Html.Raw(Model.DescriptionTruncated.TruncateText(150).IsRtlLanguage() ? "rtl-dir text-right" : "ltr-dir text-left")">@Html.Raw(Model.DescriptionTruncated.TruncateText(150))</p>
         <div class="card-attr text-muted fs-10">
             @{ counter = 0;}
             @foreach (var cat in Model.Categories)

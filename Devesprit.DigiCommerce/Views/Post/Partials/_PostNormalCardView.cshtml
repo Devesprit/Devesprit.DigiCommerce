@@ -25,7 +25,7 @@
         }
         <div class="col">
             <div class="p-3">
-                <h5 class="card-title @Html.Raw(Model.Title.IsRtlLanguage() ? "rtl-dir" : "ltr-dir") mb-0">
+                <h5 class="card-title @Html.Raw(Model.Title.IsRtlLanguage() ? "rtl-dir text-right" : "ltr-dir text-left") mb-0">
                     <a href="@Model.PostUrl">
                         @Html.Raw(Model.Title)
                     </a>
@@ -61,7 +61,7 @@
                     }
                 </div>
 
-                <p class="fs-12 pt-2 @Html.Raw(Model.DescriptionTruncated.IsRtlLanguage() ? "rtl-dir" : "ltr-dir")">@Html.Raw(Model.DescriptionTruncated)</p>
+                <p class="fs-12 pt-2 @Html.Raw(Model.DescriptionTruncated.IsRtlLanguage() ? "rtl-dir text-right" : "ltr-dir text-left")">@Html.Raw(Model.DescriptionTruncated)</p>
             </div>
         </div>
     </div>

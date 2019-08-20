@@ -28,7 +28,7 @@ namespace Devesprit.Services.Redirects
 
         public virtual IQueryable<TblRedirects> GetAsQueryable()
         {
-            return _dbContext.Redirects.OrderBy(p => p.Order);
+            return _dbContext.Redirects.OrderByDescending(p => p.Order);
         }
 
         public virtual async Task DeleteAsync(int id)

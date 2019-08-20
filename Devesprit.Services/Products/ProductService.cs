@@ -61,41 +61,6 @@ namespace Devesprit.Services.Products
             _cacheKey = nameof(TblProducts);
         }
 
-        public override IPagedList<TblProducts> GetPopularItems(int pageIndex = 1, int pageSize = int.MaxValue, int? filterByCategory = null, DateTime? fromDate = null)
-        {
-            var query = _dbContext.Products.Where(p => p.Published);
-            if (fromDate != null)
-            {
-                query = _dbContext.Products.Where(p => p.PublishDate >= fromDate);
-            }
-
-            if (filterByCategory != null)
-            {
-                var subCategories = _categoriesService.GetSubCategories(filterByCategory.Value);
-                query = query.Where(p => p.Categories.Any(x => subCategories.Contains(x.Id)));
-            }
-
-            var result = new StaticPagedList<TblProducts>(
-                query
-                    .OrderByDescending(p => p.DownloadsLog.Count)
-                    .Include(p => p.Descriptions)
-                    .Include(p => p.Images)
-                    .Include(p => p.Categories)
-                    .Skip(pageSize * (pageIndex - 1))
-                    .Take(pageSize)
-                    .FromCache(_cacheKey,
-                        QueryCacheTag.PostCategory,
-                        QueryCacheTag.PostDescription,
-                        QueryCacheTag.PostImage),
-                pageIndex,
-                pageSize,
-                query
-                    .DeferredCount(p => p.Published)
-                    .FromCache(_cacheKey));
-
-            return result;
-        }
-
         public virtual IPagedList<TblProducts> GetBestSelling(int pageIndex = 1, int pageSize = int.MaxValue, int? filterByCategory = null, DateTime? fromDate = null)
         {
             IQueryable<TblInvoiceDetails> invoiceQuery;
@@ -141,6 +106,42 @@ namespace Devesprit.Services.Products
                     .GroupBy(p => p.ItemId)
                     .Select(p => new {p.FirstOrDefault().ItemId, Sum = p.Sum(c => c.Qty)}).DeferredCount()
                     .FromCache(QueryCacheTag.Invoice));
+
+            return result;
+        }
+
+        public IPagedList<TblProducts> GetMostDownloadedItems(int pageIndex = 1, int pageSize = Int32.MaxValue, int? filterByCategory = null,
+            DateTime? fromDate = null)
+        {
+            var query = _dbContext.Products.Where(p => p.Published);
+            if (fromDate != null)
+            {
+                query = _dbContext.Products.Where(p => p.PublishDate >= fromDate);
+            }
+
+            if (filterByCategory != null)
+            {
+                var subCategories = _categoriesService.GetSubCategories(filterByCategory.Value);
+                query = query.Where(p => p.Categories.Any(x => subCategories.Contains(x.Id)));
+            }
+
+            var result = new StaticPagedList<TblProducts>(
+                query
+                    .OrderByDescending(p => p.DownloadsLog.Count)
+                    .Include(p => p.Descriptions)
+                    .Include(p => p.Images)
+                    .Include(p => p.Categories)
+                    .Skip(pageSize * (pageIndex - 1))
+                    .Take(pageSize)
+                    .FromCache(_cacheKey,
+                        QueryCacheTag.PostCategory,
+                        QueryCacheTag.PostDescription,
+                        QueryCacheTag.PostImage),
+                pageIndex,
+                pageSize,
+                query
+                    .DeferredCount(p => p.Published)
+                    .FromCache(_cacheKey));
 
             return result;
         }

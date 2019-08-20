@@ -9,6 +9,7 @@ using Devesprit.DigiCommerce.Factories.Interfaces;
 using Devesprit.DigiCommerce.Models.Invoice;
 using Devesprit.Services.Invoice;
 using Devesprit.Services.PaymentGateway;
+using Devesprit.WebFramework.ActionResults;
 using Microsoft.AspNet.Identity;
 
 namespace Devesprit.DigiCommerce.Controllers
@@ -105,6 +106,11 @@ namespace Devesprit.DigiCommerce.Controllers
             {
                 await _invoiceService.SetGatewayNameAndTokenAsync(Id, paymentGateway.PaymentGatewayName,
                     paymentGateway.PaymentGatewaySystemName, result.Token, WorkContext.CurrentCurrency.Id);
+                if (result.PostDate != null)
+                {
+                    return new RedirectAndPostActionResult(result.RedirectUrl, result.PostDate);
+                }
+
                 return Redirect(result.RedirectUrl);
             }
 

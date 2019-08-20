@@ -18,7 +18,8 @@ namespace Devesprit.Services.PaymentGateway
         {
             var paymentMethods = _pluginFinder.GetPlugins<IPaymentMethod>();
             return paymentMethods.Where(p =>
-                p.AcceptedCurrenciesIso.Contains(currencyIso, StringComparer.OrdinalIgnoreCase)).ToList();
+                    p.AcceptedCurrenciesIso.Contains(currencyIso, StringComparer.OrdinalIgnoreCase))
+                .OrderBy(p => p.PluginDescriptor.DisplayOrder).ToList();
         }
 
         public virtual IPaymentMethod FindPaymentMethodBySystemName(string name)

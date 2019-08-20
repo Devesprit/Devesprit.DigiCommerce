@@ -14,55 +14,12 @@ namespace Devesprit.FileServer
     /*
          
             Note: 
+            
+            THIS SERVICE REQUIRES HTTPS
+
             -To enable Upload File Service please set Web.config -> appSettings -> AllowToUploadFile to "true"
             -Set which file types allowed to upload from Web.config -> appSettings -> AllowedFileExtensionsToUpload (e.g., .zip;.rar;.txt) 
             -The maximum size of upload stream in 10Mb, to increase it you can edit Web.config file.
-             Example:
-       
-              <system.webServer>
-                <security>
-                  <requestFiltering>
-                    <!--Increase 'maxAllowedContentLength' to needed value: 11mb (value is in bytes)-->
-                    <requestLimits maxAllowedContentLength="14534336"/>
-                  </requestFiltering>
-                </security>
-              </system.webServer>
-
-            -Also you can upload large files by chunking it. 
-             Example:
-
-              int chunkSize = 10 * 1024 * 1024; //Split files into 10MB slices
-              using (FileStream fs = new FileStream("Your local file path", FileMode.Open, FileAccess.Read, FileShare.Read))
-                  {
-                      // Calculate total chunks to be sent to service
-                      var totalChunks = (int)Math.Ceiling((double)fs.Length / chunkSize);
-                      for (int i = 0; i < totalChunks; i++)
-                      {
-                          var startIndex = i * chunkSize;
-                          var endIndex = (int)(startIndex + chunkSize > fs.Length ? fs.Length : startIndex + chunkSize);
-                          var length = endIndex - startIndex;
-                          var bytes = new byte[length];
-                          
-                          // Read bytes from file, and send upload request
-                          fs.Read(bytes, 0, bytes.Length);
-                          using (var stream = new MemoryStream(bytes))
-                          {
-                              bool success = false;
-                              while (!success)
-                              {
-                                  var md5 = upload.UploadFile("Test.txt", "D:\\", i == 0 ? UploadMode.None : UploadMode.Append, stream, out success);
-                                  if (success && i == totalChunks - 1)
-                                  {
-                                      if (md5 == CalculateMd5Checksum("Your local file path"))
-                                      {
-                                          Console.WriteLine("Uploaded successfully.");
-                                      }
-                                  }
-                              }
-                          }
-                      }
-                  }
-             
         */
     [ServiceErrorBehavior(typeof(ElmahErrorHandler))]
     [AspNetCompatibilityRequirements(RequirementsMode = AspNetCompatibilityRequirementsMode.Allowed)]

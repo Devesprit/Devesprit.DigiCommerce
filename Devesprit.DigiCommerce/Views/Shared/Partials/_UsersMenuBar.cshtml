@@ -70,11 +70,11 @@
             <div class="col-lg-4 d-none d-lg-inline social-holder">
                 @foreach (var socialAccount in socialAccountsService.GetAsEnumerable())
                 {
-                    <a href="@socialAccount.GetLocalized(x => x.YourAccountUrl)" target="_blank" title="@socialAccount.GetLocalized(x => x.SocialNetworkName)" class="link-item">
-                        <img src="@socialAccount.GetLocalized(x=> x.SocialNetworkIconUrl)" alt="@socialAccount.GetLocalized(x => x.SocialNetworkName)"/>
-                    </a>
+                    <a href="@socialAccount.GetLocalized(x => x.YourAccountUrl)" target="_blank" title="@socialAccount.GetLocalized(x => x.SocialNetworkName)" class="link-item mx-0"><img src="@socialAccount.GetLocalized(x=> x.SocialNetworkIconUrl)" alt="@socialAccount.GetLocalized(x => x.SocialNetworkName)"/></a>
                 }
-                <a href="@Url.Action("Index", "RssFeed", new {listType = PostsListType.Newest, area = ""})" target="_blank" class="link-item" title="@T("RSSFeed")"><i class="fa fa-rss"></i></a>
+                <a href="@Url.Action("Index", "RssFeed", new {listType = PostsListType.Newest, area = ""})" target="_blank" class="link-item mx-0" title="@T("RSSFeed")">
+                    <img src="/Content/img/rss_20px.png" alt="@T("RSSFeed")" />
+                </a>
             </div>
         </div>
     </div>

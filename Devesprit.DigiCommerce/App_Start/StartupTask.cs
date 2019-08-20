@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Linq;
 using System.Net;
-using System.Security.Policy;
-using System.Web;
-using System.Web.Mvc;
 using Devesprit.Core;
 using Devesprit.Core.Settings;
 using Devesprit.Services;
@@ -26,12 +23,6 @@ namespace Devesprit.DigiCommerce
 
         public virtual void Execute()
         {
-
-            //Search Engine Indexes Task
-#if !DEBUG
-            BackgroundJob.Enqueue<ISearchEngine>(searchEngine => searchEngine.CreateIndex());      
-#endif
-
             using (var connection = JobStorage.Current.GetConnection())
             {
                 var jobs = connection.GetRecurringJobs().ToList();

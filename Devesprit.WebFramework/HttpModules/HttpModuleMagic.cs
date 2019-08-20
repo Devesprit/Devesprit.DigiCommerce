@@ -15,7 +15,7 @@ namespace Devesprit.WebFramework.HttpModules
             DynamicModuleUtility.RegisterModule(typeof(ContainerHttpModule));
         }
 
-        Lazy<IEnumerable<IHttpModule>> _modules
+        readonly Lazy<IEnumerable<IHttpModule>> _modules
             = new Lazy<IEnumerable<IHttpModule>>(RetrieveModules);
 
         private static IEnumerable<IHttpModule> RetrieveModules()
@@ -29,10 +29,7 @@ namespace Devesprit.WebFramework.HttpModules
             foreach (var module in modules)
             {
                 var disposableModule = module as IDisposable;
-                if (disposableModule != null)
-                {
-                    disposableModule.Dispose();
-                }
+                disposableModule?.Dispose();
             }
         }
 
