@@ -73,13 +73,14 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
                 await _settingService.SaveSettingAsync(record);
 
 
-                //Update System EncryptionKey & EncryptionSalt
+                //Update Web.Config
                 var objConfig = System.Web.Configuration.WebConfigurationManager.OpenWebConfiguration("~");
                 var objAppSettings = (AppSettingsSection)objConfig.GetSection("appSettings");
                 if (objAppSettings != null)
                 {
                     objAppSettings.Settings["EncryptionKey"].Value = model.EncryptionKey;
                     objAppSettings.Settings["EncryptionSalt"].Value = model.EncryptionSalt;
+                    objAppSettings.Settings["CacheLocalizedEntities"].Value = model.CacheLocalizedEntities.ToString("true", "false");
                     objConfig.Save();
                 }
 

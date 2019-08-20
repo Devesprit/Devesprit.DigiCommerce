@@ -96,7 +96,7 @@ namespace Devesprit.DigiCommerce.Controllers
                 if (!isLocaleDefined)
                 {
                     var port = "";
-                    if (Request.Url.Port != 80 && Request.Url.Port != 0)
+                    if (Request.Url.Port != 443 && Request.Url.Port != 80 && Request.Url.Port != 0)
                     {
                         port = ":" + Request.Url.Port;
                     }

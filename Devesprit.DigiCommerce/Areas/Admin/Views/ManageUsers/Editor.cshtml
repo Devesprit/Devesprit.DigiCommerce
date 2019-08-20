@@ -32,117 +32,127 @@
                     <a class="btn btn-success" target="_blank" href="@Url.Action("Index", "Profile", new {userId= Model.Id, area = ""})"><i class="fa fa-user-circle-o"></i> @T("SeeThisUserProfile")</a>
                     <a href="#" onclick="PopupWindows('@Url.Action("SendMessageToUser", "Notifications", new{area = "Admin"})', 'NotificationEditor', 800, 400, { userEmail: '@Model.Email'}, 'get')" class="btn btn-primary d-inline-block"><i class="fa fa-envelope-o"></i> @T("SendMessage")</a>
 
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-12 border border-left-0 border-right-0 border-top-0 b-mar-10 t-mar-20">
-                <h5 class="text-secondary text-capitalize">@T("GeneralInfo")</h5>
-            </div>
-            <div class="col-12 col-md-4 ">
-                <div class="form-group">
-                    @Html.LabelFor(p => p.FirstName)
-                    @Html.TextBoxFor(p => p.FirstName, new { @class = "form-control form-control-sm" })
-                    @Html.ValidationMessageFor(p => p.FirstName, "", new { @class = "form-text text-danger fs-12" })
                 </div>
             </div>
-            <div class="col-12 col-md-4 ">
-                <div class="form-group">
-                    @Html.LabelFor(p => p.LastName)
-                    @Html.TextBoxFor(p => p.LastName, new { @class = "form-control form-control-sm" })
-                    @Html.ValidationMessageFor(p => p.LastName, "", new { @class = "form-text text-danger fs-12" })
+            <div class="row">
+                <div class="col-12 border border-left-0 border-right-0 border-top-0 b-mar-10 t-mar-20">
+                    <h5 class="text-secondary text-capitalize">@T("GeneralInfo")</h5>
                 </div>
-            </div>
-            <div class="col-12 col-md-4 ">
-                <div class="form-group">
-                    @Html.LabelFor(p => p.UserCountryId)
-                    @Html.DropDownListFor(p => p.UserCountryId, Model.CountriesList, T("SelectAnItem").ToString(), new { @class = "form-control custom-select form-control-sm" })
-                    @Html.ValidationMessageFor(p => p.UserCountryId, "", new { @class = "form-text text-danger fs-12" })
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-12 border border-left-0 border-right-0 border-top-0 b-mar-10 t-mar-20">
-                <h5 class="text-secondary text-capitalize">@T("UserGroup")</h5>
-            </div>
-            <div class="col-12 col-md-4 ">
-                <div class="form-group">
-                    @Html.LabelFor(p => p.UserGroupId)
-                    @Html.DropDownListFor(p => p.UserGroupId, Model.UserGroupsList, T("SelectAnItem").ToString(), new { @class = "form-control custom-select form-control-sm" })
-                    @Html.ValidationMessageFor(p => p.UserGroupId, "", new { @class = "form-text text-danger fs-12" })
-                </div>
-            </div>
-            <div class="col-12 col-md-4 ">
-                <div class="form-group">
-                    @Html.LabelFor(p => p.SubscriptionDate)
-                    @Html.TextBoxFor(p => p.SubscriptionDate, "{0:yyyy/MM/dd}", new { @class = "form-control form-control-sm datepicker" })
-                    @Html.ValidationMessageFor(p => p.SubscriptionDate, "", new { @class = "form-text text-danger fs-12" })
-                </div>
-            </div>
-            <div class="col-12 col-md-4 ">
-                <div class="form-group">
-                    @Html.LabelFor(p => p.SubscriptionExpireDate)
-                    @Html.TextBoxFor(p => p.SubscriptionExpireDate, "{0:yyyy/MM/dd}", new { @class = "form-control form-control-sm datepicker" })
-                    @Html.ValidationMessageFor(p => p.SubscriptionExpireDate, "", new { @class = "form-text text-danger fs-12" })
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-12 border border-left-0 border-right-0 border-top-0 b-mar-10 t-mar-20">
-                <h5 class="text-secondary text-capitalize">@T("DownloadLimit")</h5>
-            </div>
-            <div class="col-12 col-md-4 ">
-                <div class="form-group">
-                    @Html.LabelFor(p => p.MaxDownloadCount)
-                    @Html.TextBoxFor(p => p.MaxDownloadCount, new { @class = "form-control form-control-sm ltr-dir", type = "number" })
-                    @Html.ValidationMessageFor(p => p.MaxDownloadCount, "", new { @class = "form-text text-danger fs-12" })
-                </div>
-            </div>
-            <div class="col-12 col-md-4 ">
-                <div class="form-group">
-                    @Html.LabelFor(p => p.MaxDownloadPeriodType)
-                    @Html.LocalizedEnumDropDownListFor(p => p.MaxDownloadPeriodType, T("SelectAnItem").ToString(), new { @class = "form-control custom-select form-control-sm" })
-                    @Html.ValidationMessageFor(p => p.MaxDownloadPeriodType, "", new { @class = "form-text text-danger fs-12" })
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-12 border border-left-0 border-right-0 border-top-0 b-mar-10 t-mar-20">
-                <h5 class="text-secondary text-capitalize">@T("OtherInfo")</h5>
-            </div>
-            <div class="col-12 col-md-6 ">
-                <div class="form-group">
-                    @Html.LabelFor(p => p.Avatar)
-                    @Html.TextBoxFor(p => p.Avatar, new { type = "file", @class = "form-control form-control-sm" })
-                    @Html.ValidationMessageFor(p => p.Avatar, "", new { @class = "form-text text-danger fs-12" })
-                </div>
-            </div>
-            <div class="col-12 col-md-6 ">
-                <div class="form-group">
-                    @Html.LabelFor(p => p.Email)
-                    @Html.TextBoxFor(p => p.Email, new { @class = "form-control form-control-sm ltr-dir" })
-                    @Html.ValidationMessageFor(p => p.Email, "", new { @class = "form-text text-danger fs-12" })
-                </div>
-            </div>
-            <div class="col-12 col-md-6 ">
-                <div class="form-group">
-                    @Html.LabelFor(p => p.Password)
-                    @Html.PasswordFor(p => p.Password, new { @class = "form-control form-control-sm" })
-                    @Html.ValidationMessageFor(p => p.Password, "", new { @class = "form-text text-danger fs-12" })
-                </div>
-            </div>
-            <div class="col-12 col-md-6 ">
-                <div class="form-group">
-                    @Html.LabelFor(p => p.LockoutEndDateUtc)
-                    <div class="input-group">
-                        @Html.TextBoxFor(p => p.LockoutEndDateUtc, "{0:yyyy/MM/dd HH:mm:ss}", new { @class = "form-control form-control-sm ltr-dir datetimepicker" })
-                        <div class="input-group-append">
-                            <button type='button' onclick="$(this).parent().prev('.datetimepicker').val(moment().format('YYYY/MM/DD HH:mm:ss'))" class='btn btn-outline-secondary btn-sm'><i class='fa fa-clock-o'></i></button>
-                        </div>
+                <div class="col-12 col-md-4 ">
+                    <div class="form-group">
+                        @Html.LabelFor(p => p.FirstName)
+                        @Html.TextBoxFor(p => p.FirstName, new { @class = "form-control form-control-sm" })
+                        @Html.ValidationMessageFor(p => p.FirstName, "", new { @class = "form-text text-danger fs-12" })
                     </div>
-                    @Html.ValidationMessageFor(p => p.LockoutEndDateUtc, "", new { @class = "form-text text-danger fs-12" })
+                </div>
+                <div class="col-12 col-md-4 ">
+                    <div class="form-group">
+                        @Html.LabelFor(p => p.LastName)
+                        @Html.TextBoxFor(p => p.LastName, new { @class = "form-control form-control-sm" })
+                        @Html.ValidationMessageFor(p => p.LastName, "", new { @class = "form-text text-danger fs-12" })
+                    </div>
+                </div>
+                <div class="col-12 col-md-4 ">
+                    <div class="form-group">
+                        @Html.LabelFor(p => p.UserCountryId)
+                        @Html.DropDownListFor(p => p.UserCountryId, Model.CountriesList, T("SelectAnItem").ToString(), new { @class = "form-control custom-select form-control-sm" })
+                        @Html.ValidationMessageFor(p => p.UserCountryId, "", new { @class = "form-text text-danger fs-12" })
+                    </div>
                 </div>
             </div>
-        </div>
+            <div class="row">
+                <div class="col-12 border border-left-0 border-right-0 border-top-0 b-mar-10 t-mar-20">
+                    <h5 class="text-secondary text-capitalize">@T("UserGroup")</h5>
+                </div>
+                <div class="col-12 col-md-4 ">
+                    <div class="form-group">
+                        @Html.LabelFor(p => p.UserGroupId)
+                        @Html.DropDownListFor(p => p.UserGroupId, Model.UserGroupsList, T("SelectAnItem").ToString(), new { @class = "form-control custom-select form-control-sm" })
+                        @Html.ValidationMessageFor(p => p.UserGroupId, "", new { @class = "form-text text-danger fs-12" })
+                    </div>
+                </div>
+                <div class="col-12 col-md-4 ">
+                    <div class="form-group">
+                        @Html.LabelFor(p => p.SubscriptionDate)
+                        <div class="input-group">
+                            @Html.TextBoxFor(p => p.SubscriptionDate, "{0:yyyy/MM/dd}", new { @class = "form-control form-control-sm datepicker" })
+                            <div class="input-group-append">
+                                <button type='button' onclick="$(this).parent().prev('.datepicker').val(moment().format('YYYY/MM/DD'))" class='btn btn-outline-secondary btn-sm'><i class='fa fa-clock-o'></i></button>
+                            </div>
+                        </div>
+                        @Html.ValidationMessageFor(p => p.SubscriptionDate, "", new { @class = "form-text text-danger fs-12" })
+                    </div>
+                </div>
+                <div class="col-12 col-md-4 ">
+                    <div class="form-group">
+                        @Html.LabelFor(p => p.SubscriptionExpireDate)
+                        <div class="input-group">
+                            @Html.TextBoxFor(p => p.SubscriptionExpireDate, "{0:yyyy/MM/dd}", new { @class = "form-control form-control-sm datepicker" })
+                            <div class="input-group-append">
+                                <button type='button' onclick="$(this).parent().prev('.datepicker').val(moment().format('YYYY/MM/DD'))" class='btn btn-outline-secondary btn-sm'><i class='fa fa-clock-o'></i></button>
+                            </div>
+                        </div>
+                        @Html.ValidationMessageFor(p => p.SubscriptionExpireDate, "", new { @class = "form-text text-danger fs-12" })
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12 border border-left-0 border-right-0 border-top-0 b-mar-10 t-mar-20">
+                    <h5 class="text-secondary text-capitalize">@T("DownloadLimit")</h5>
+                </div>
+                <div class="col-12 col-md-4 ">
+                    <div class="form-group">
+                        @Html.LabelFor(p => p.MaxDownloadCount)
+                        @Html.TextBoxFor(p => p.MaxDownloadCount, new { @class = "form-control form-control-sm ltr-dir", type = "number" })
+                        @Html.ValidationMessageFor(p => p.MaxDownloadCount, "", new { @class = "form-text text-danger fs-12" })
+                    </div>
+                </div>
+                <div class="col-12 col-md-4 ">
+                    <div class="form-group">
+                        @Html.LabelFor(p => p.MaxDownloadPeriodType)
+                        @Html.LocalizedEnumDropDownListFor(p => p.MaxDownloadPeriodType, T("SelectAnItem").ToString(), new { @class = "form-control custom-select form-control-sm" })
+                        @Html.ValidationMessageFor(p => p.MaxDownloadPeriodType, "", new { @class = "form-text text-danger fs-12" })
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12 border border-left-0 border-right-0 border-top-0 b-mar-10 t-mar-20">
+                    <h5 class="text-secondary text-capitalize">@T("OtherInfo")</h5>
+                </div>
+                <div class="col-12 col-md-6 ">
+                    <div class="form-group">
+                        @Html.LabelFor(p => p.Avatar)
+                        @Html.TextBoxFor(p => p.Avatar, new { type = "file", @class = "form-control form-control-sm" })
+                        @Html.ValidationMessageFor(p => p.Avatar, "", new { @class = "form-text text-danger fs-12" })
+                    </div>
+                </div>
+                <div class="col-12 col-md-6 ">
+                    <div class="form-group">
+                        @Html.LabelFor(p => p.Email)
+                        @Html.TextBoxFor(p => p.Email, new { @class = "form-control form-control-sm ltr-dir" })
+                        @Html.ValidationMessageFor(p => p.Email, "", new { @class = "form-text text-danger fs-12" })
+                    </div>
+                </div>
+                <div class="col-12 col-md-6 ">
+                    <div class="form-group">
+                        @Html.LabelFor(p => p.Password)
+                        @Html.PasswordFor(p => p.Password, new { @class = "form-control form-control-sm" })
+                        @Html.ValidationMessageFor(p => p.Password, "", new { @class = "form-text text-danger fs-12" })
+                    </div>
+                </div>
+                <div class="col-12 col-md-6 ">
+                    <div class="form-group">
+                        @Html.LabelFor(p => p.LockoutEndDateUtc)
+                        <div class="input-group">
+                            @Html.TextBoxFor(p => p.LockoutEndDateUtc, "{0:yyyy/MM/dd HH:mm:ss}", new { @class = "form-control form-control-sm ltr-dir datetimepicker" })
+                            <div class="input-group-append">
+                                <button type='button' onclick="$(this).parent().prev('.datetimepicker').val(moment().format('YYYY/MM/DD HH:mm:ss'))" class='btn btn-outline-secondary btn-sm'><i class='fa fa-clock-o'></i></button>
+                            </div>
+                        </div>
+                        @Html.ValidationMessageFor(p => p.LockoutEndDateUtc, "", new { @class = "form-text text-danger fs-12" })
+                    </div>
+                </div>
+            </div>
             <div class="row">
                 <div class="col-12 col-md-3 ">
                     <div class="form-group">
@@ -156,46 +166,46 @@
                 <div class="col-12 col-md-3 ">
                     <div class="form-group">
                         <div class="custom-control custom-checkbox">
-                            @Html.CheckBoxFor(p => p.EmailConfirmed, new {@class = "custom-control-input"})
-                            @Html.LabelFor(p => p.EmailConfirmed, new {@class = "custom-control-label"})
+                            @Html.CheckBoxFor(p => p.EmailConfirmed, new { @class = "custom-control-input" })
+                            @Html.LabelFor(p => p.EmailConfirmed, new { @class = "custom-control-label" })
                         </div>
-                        @Html.ValidationMessageFor(p => p.EmailConfirmed, "", new {@class = "form-text text-danger fs-12"})
+                        @Html.ValidationMessageFor(p => p.EmailConfirmed, "", new { @class = "form-text text-danger fs-12" })
                     </div>
                 </div>
                 <div class="col-12 col-md-3 ">
                     <div class="form-group">
                         <div class="custom-control custom-checkbox">
-                            @Html.CheckBoxFor(p => p.LockoutEnabled, new {@class = "custom-control-input"})
-                            @Html.LabelFor(p => p.LockoutEnabled, new {@class = "custom-control-label"})
+                            @Html.CheckBoxFor(p => p.LockoutEnabled, new { @class = "custom-control-input" })
+                            @Html.LabelFor(p => p.LockoutEnabled, new { @class = "custom-control-label" })
                         </div>
-                        @Html.ValidationMessageFor(p => p.LockoutEnabled, "", new {@class = "form-text text-danger fs-12"})
+                        @Html.ValidationMessageFor(p => p.LockoutEnabled, "", new { @class = "form-text text-danger fs-12" })
                     </div>
                 </div>
                 <div class="col-12 col-md-3 ">
                     <div class="form-group">
                         <div class="custom-control custom-checkbox">
-                            @Html.CheckBoxFor(p => p.UserDisabled, new {@class = "custom-control-input"})
-                            @Html.LabelFor(p => p.UserDisabled, new {@class = "custom-control-label"})
+                            @Html.CheckBoxFor(p => p.UserDisabled, new { @class = "custom-control-input" })
+                            @Html.LabelFor(p => p.UserDisabled, new { @class = "custom-control-label" })
                         </div>
-                        @Html.ValidationMessageFor(p => p.UserDisabled, "", new {@class = "form-text text-danger fs-12"})
+                        @Html.ValidationMessageFor(p => p.UserDisabled, "", new { @class = "form-text text-danger fs-12" })
                     </div>
                 </div>
                 <div class="col-12">
                     <div class="form-group">
                         @Html.LabelFor(p => p.DisableReason)
-                        @Html.TextAreaFor(p => p.DisableReason, new {@class = "form-control form-control-sm"})
-                        @Html.ValidationMessageFor(p => p.DisableReason, "", new {@class = "form-text text-danger fs-12"})
+                        @Html.TextAreaFor(p => p.DisableReason, new { @class = "form-control form-control-sm" })
+                        @Html.ValidationMessageFor(p => p.DisableReason, "", new { @class = "form-text text-danger fs-12" })
                     </div>
                 </div>
             </div>
 
-        @Html.ValidationSummary(true, "", new { @class = "text-danger" }).ToMvcHtmlString()
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" }).ToMvcHtmlString()
 
-        <div class="text-center t-mar-20">
-            <button type="submit" class="btn btn-sm btn-warning">@T("Save")</button>
-            <button type="button" onclick="SaveAndContinue($(this).closest('form'));" class="btn btn-sm btn-warning">@T("SaveAndContinue")</button>
-            <button type="button" onclick="window.close();" class="btn btn-sm btn-success">@T("Close")</button>
-        </div>
-    }
+            <div class="text-center t-mar-20">
+                <button type="submit" class="btn btn-sm btn-warning">@T("Save")</button>
+                <button type="button" onclick="SaveAndContinue($(this).closest('form'));" class="btn btn-sm btn-warning">@T("SaveAndContinue")</button>
+                <button type="button" onclick="window.close();" class="btn btn-sm btn-success">@T("Close")</button>
+            </div>
+        }
     </div>
 </div>

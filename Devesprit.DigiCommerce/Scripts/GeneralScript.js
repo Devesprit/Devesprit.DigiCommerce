@@ -301,7 +301,11 @@ $(function () {
         return false;
     }, '');
 
+    jQuery.validator.addMethod('shouldbetrue', function (value, element, params) {
+        return $(element).is(':checked');
+    }, '');
 
+    
     jQuery.validator.unobtrusive.adapters.add('requiredlocalized', function (options) {
         options.rules['requiredlocalized'] = {};
         options.messages['requiredlocalized'] = options.message;
@@ -330,6 +334,11 @@ $(function () {
     jQuery.validator.unobtrusive.adapters.add('compare', ['comparewith'], function (options) {
         options.rules['compare'] = options.params.comparewith;
         options.messages['compare'] = options.message;
+    });
+
+    jQuery.validator.unobtrusive.adapters.add('shouldbetrue', function (options) {
+        options.rules['shouldbetrue'] = {};
+        options.messages['shouldbetrue'] = options.message;
     });
 
 }(jQuery));

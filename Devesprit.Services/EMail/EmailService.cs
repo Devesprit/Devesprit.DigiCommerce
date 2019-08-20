@@ -97,7 +97,7 @@ namespace Devesprit.Services.EMail
                 DateNowMinute = DateTime.Now.Minute,
                 DateNowSecond = DateTime.Now.Second,
                 SocialAccounts = socialMediaAccounts
-                    .ToList().Select(p => new { SocialNetworkIconUrl = p.GetLocalized(x=> x.SocialNetworkIconUrl),
+                    .ToList().Select(p => new { SocialNetworkIconUrl = p.GetLocalized(x=> x.SocialNetworkIconUrl).GetAbsoluteUrl(),
                         SocialNetworkName = p.GetLocalized(x => x.SocialNetworkName),
                         YourAccountUrl = p.GetLocalized(x => x.YourAccountUrl) }),
             };

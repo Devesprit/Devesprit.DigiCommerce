@@ -83,11 +83,11 @@ namespace Devesprit.DigiCommerce.Controllers
                         SitemapChangeFrequency.Daily, 0.8)));
 
 
-                foreach (var post in _postService.GetNewItems())
+                foreach (var post in _postService.GetNewItemsForSiteMap())
                 {
-                    Uri url = new Uri(Url.Action("Index", "Search", new SearchTermModel()
+                    Uri url = new Uri(Url.Action("Index", "Search", new
                     {
-                        PostType = null,
+                        lang = language.IsoCode,
                         OrderBy = SearchResultSortType.Score,
                         SearchPlace = SearchPlace.Title,
                         Query = post.Title
@@ -95,11 +95,11 @@ namespace Devesprit.DigiCommerce.Controllers
 
                     if (post.PostType == PostType.BlogPost)
                     {
-                        url = new Uri(Url.Action("Post", "Blog", new { slug = post.Slug }, Request.Url.Scheme));
+                        url = new Uri(Url.Action("Post", "Blog", new { slug = post.Slug, lang = language.IsoCode }, Request.Url.Scheme));
                     }
                     if (post.PostType == PostType.Product)
                     {
-                        url = new Uri(Url.Action("Index", "Product", new { slug = post.Slug }, Request.Url.Scheme));
+                        url = new Uri(Url.Action("Index", "Product", new { slug = post.Slug, lang = language.IsoCode }, Request.Url.Scheme));
                     }
 
                     items.Add(new SitemapItem(url.ToString(), post.LastUpDate ?? post.PublishDate,

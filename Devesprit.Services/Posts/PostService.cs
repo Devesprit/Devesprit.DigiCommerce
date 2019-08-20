@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.Entity.Migrations;
@@ -11,6 +12,7 @@ using Devesprit.Data.Domain;
 using Devesprit.Data.Enums;
 using Devesprit.Services.Events;
 using Devesprit.Services.SearchEngine;
+using Devesprit.Services.SEO;
 using Devesprit.Services.Users;
 using X.PagedList;
 using Z.EntityFramework.Plus;
@@ -121,6 +123,31 @@ namespace Devesprit.Services.Posts
                     .FromCache(_cacheKey));
 
             return result;
+        }
+
+        public List<SiteMapEntity> GetNewItemsForSiteMap()
+        {
+            var query = _dbContext.Set<T>().Where(p => p.Published);
+
+            var result = query
+                .OrderByDescending(p => p.PinToTop)
+                .ThenByDescending(p => p.LastUpDate)
+                .ThenByDescending(p => p.PublishDate)
+                .Select(p => new SiteMapEntity()
+                {
+                    Id = p.Id,
+                    Title = p.Title,
+                    Slug = p.Slug,
+                    LastUpDate = p.LastUpDate,
+                    PublishDate = p.PublishDate,
+                    PostType = p.PostType
+                })
+                .FromCache(_cacheKey,
+                    QueryCacheTag.PostCategory,
+                    QueryCacheTag.PostDescription,
+                    QueryCacheTag.PostImage);
+
+            return result.ToList();
         }
 
         public virtual IPagedList<T> GetPopularItems(int pageIndex = 1, int pageSize = int.MaxValue, int? filterByCategory = null, DateTime? fromDate = null)

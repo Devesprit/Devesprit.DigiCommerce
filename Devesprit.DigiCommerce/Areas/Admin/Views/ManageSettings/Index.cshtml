@@ -564,6 +564,14 @@
         <div class="col-12">
             <div class="form-group">
                 <div class="custom-control custom-checkbox">
+                    @Html.CheckBoxFor(p => p.CacheLocalizedEntities, new { @class = "custom-control-input" })
+                    @Html.LabelFor(p => p.CacheLocalizedEntities, new { @class = "custom-control-label" })
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="form-group">
+                <div class="custom-control custom-checkbox">
                     @Html.CheckBoxFor(p => p.EnableCssBundling, new { @class = "custom-control-input" })
                     @Html.LabelFor(p => p.EnableCssBundling, new { @class = "custom-control-label" })
                 </div>

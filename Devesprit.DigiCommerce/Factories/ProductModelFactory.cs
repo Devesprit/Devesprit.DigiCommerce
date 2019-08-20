@@ -24,6 +24,7 @@ namespace Devesprit.DigiCommerce.Factories
         private readonly IUserLikesService _userLikesService;
         private readonly IUserWishlistService _userWishlistService;
         private readonly IUsersService _usersService;
+        private readonly IUserGroupsService _userGroupsService;
         private readonly IProductCheckoutAttributesService _checkoutAttributesService;
         private readonly HttpContextBase _httpContext;
 
@@ -31,6 +32,7 @@ namespace Devesprit.DigiCommerce.Factories
             IUserLikesService userLikesService,
             IUserWishlistService userWishlistService,
             IUsersService usersService,
+            IUserGroupsService userGroupsService,
             IProductCheckoutAttributesService checkoutAttributesService,
             HttpContextBase httpContext)
         {
@@ -38,6 +40,7 @@ namespace Devesprit.DigiCommerce.Factories
             _userLikesService = userLikesService;
             _userWishlistService = userWishlistService;
             _usersService = usersService;
+            _userGroupsService = userGroupsService;
             _checkoutAttributesService = checkoutAttributesService;
             _httpContext = httpContext;
         }
@@ -196,11 +199,19 @@ namespace Devesprit.DigiCommerce.Factories
         {
             var productCheckoutAttributes = AsyncHelper
                 .RunSync(() => _checkoutAttributesService.FindProductAttributesAsync(product.Id)).ToList();
+            TblUserGroups downloadLimitedToUserGroupRecord = null;
+
+            if (product.DownloadLimitedToUserGroupId != null)
+            {
+                downloadLimitedToUserGroupRecord = AsyncHelper
+                    .RunSync(() => _userGroupsService.FindByIdAsync(product.DownloadLimitedToUserGroupId.Value));
+            }
+
             var result = new ProductDownloadPurchaseButtonModel
             {
                 ProductId = product.Id,
                 AlwaysShowDownloadButton = product.AlwaysShowDownloadButton,
-                DownloadLimitedToUserGroup = product.DownloadLimitedToUserGroup,
+                DownloadLimitedToUserGroup = downloadLimitedToUserGroupRecord,
                 HigherUserGroupsCanDownload = product.HigherUserGroupsCanDownload,
                 HasDownloadableFile = !string.IsNullOrWhiteSpace(product.FilesPath) ||
                                       productCheckoutAttributes.Any(p =>

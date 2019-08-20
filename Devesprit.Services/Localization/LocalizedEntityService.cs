@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
+using System.Data.Entity;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -8,6 +10,7 @@ using Devesprit.Core.Localization;
 using Devesprit.Core.Settings;
 using Devesprit.Data;
 using Devesprit.Data.Domain;
+using Devesprit.Services.MemoryCache;
 using Z.EntityFramework.Plus;
 
 namespace Devesprit.Services.Localization 
@@ -15,10 +18,28 @@ namespace Devesprit.Services.Localization
     public partial class LocalizedEntityService : ILocalizedEntityService
     {
         private readonly AppDbContext _dbContext;
+        private readonly IMemoryCache _memoryCache;
+        private readonly bool _useCache;
 
-        public LocalizedEntityService(AppDbContext dbContext)
+        public LocalizedEntityService(AppDbContext dbContext, IMemoryCache memoryCache)
         {
             _dbContext = dbContext;
+            _memoryCache = memoryCache;
+            _useCache = ConfigurationManager.AppSettings["CacheLocalizedEntities"].ToBooleanOrDefault(true);
+        }
+
+        protected virtual List<TblLocalizedProperty> GetAllResourcesFromCache()
+        {
+            // Try get result from cache
+            if (_memoryCache.Contains(QueryCacheTag.LocalizedProperty))
+            {
+                return _memoryCache.GetObject<List<TblLocalizedProperty>>(QueryCacheTag.LocalizedProperty);
+            }
+
+            var result = _dbContext.LocalizedProperty.FromCache(QueryCacheTag.LocalizedProperty).ToList();
+
+            _memoryCache.AddObject(QueryCacheTag.LocalizedProperty, result, TimeSpan.FromDays(30));
+            return result;
         }
 
         protected virtual async Task DeleteLocalizedPropertyAsync(TblLocalizedProperty localizedProperty)
@@ -27,7 +48,7 @@ namespace Devesprit.Services.Localization
                 throw new ArgumentNullException(nameof(localizedProperty));
 
             await _dbContext.LocalizedProperty.Where(p=> p.Id == localizedProperty.Id).DeleteAsync();
-            QueryCacheManager.ExpireTag(QueryCacheTag.LocalizedProperty);
+            ClearCache();
         }
 
         protected virtual void DeleteLocalizedProperty(TblLocalizedProperty localizedProperty)
@@ -36,7 +57,7 @@ namespace Devesprit.Services.Localization
                 throw new ArgumentNullException(nameof(localizedProperty));
 
             _dbContext.LocalizedProperty.Where(p => p.Id == localizedProperty.Id).Delete();
-            QueryCacheManager.ExpireTag(QueryCacheTag.LocalizedProperty);
+            ClearCache();
         }
 
         public virtual TblLocalizedProperty FindById(int localizedPropertyId)
@@ -44,16 +65,32 @@ namespace Devesprit.Services.Localization
             if (localizedPropertyId == 0)
                 return null;
 
+            if (_useCache)
+            {
+                return GetAllResourcesFromCache().FirstOrDefault(p => p.Id == localizedPropertyId);
+            }
+
             return _dbContext.LocalizedProperty.DeferredFirstOrDefault(p => p.Id == localizedPropertyId)
                 .FromCache(QueryCacheTag.LocalizedProperty);
         }
 
         public virtual string GetLocalizedString(int languageId, int entityId, string localeKeyGroup, string localeKey)
         {
-            var tblLocalizedProperty = _dbContext.LocalizedProperty
-                .DeferredFirstOrDefault(p => p.LanguageId == languageId && p.EntityId == entityId &&
-                            p.LocaleKeyGroup == localeKeyGroup && p.LocaleKey == localeKey)
-                .FromCache(QueryCacheTag.LocalizedProperty);
+            TblLocalizedProperty tblLocalizedProperty;
+            if (_useCache)
+            {
+                tblLocalizedProperty = GetAllResourcesFromCache().FirstOrDefault(p =>
+                    p.LanguageId == languageId && p.EntityId == entityId &&
+                    p.LocaleKeyGroup == localeKeyGroup && p.LocaleKey == localeKey);
+            }
+            else
+            {
+                tblLocalizedProperty = _dbContext.LocalizedProperty
+                    .DeferredFirstOrDefault(p => p.LanguageId == languageId && p.EntityId == entityId &&
+                                                 p.LocaleKeyGroup == localeKeyGroup && p.LocaleKey == localeKey)
+                    .FromCache(QueryCacheTag.LocalizedProperty);
+            }
+
             if (tblLocalizedProperty != null)
                 return tblLocalizedProperty.LocaleValue;
             return string.Empty;
@@ -66,7 +103,7 @@ namespace Devesprit.Services.Localization
             _dbContext.LocalizedProperty.Add(localizedProperty);
 
             await _dbContext.SaveChangesAsync();
-            QueryCacheManager.ExpireTag(QueryCacheTag.LocalizedProperty);
+            ClearCache();
         }
 
         protected virtual async Task UpdateLocalizedPropertyAsync(TblLocalizedProperty localizedProperty)
@@ -82,7 +119,7 @@ namespace Devesprit.Services.Localization
                 LocaleValue = localizedProperty.LocaleValue
             });
 
-            QueryCacheManager.ExpireTag(QueryCacheTag.LocalizedProperty);
+            ClearCache();
         }
 
         public virtual async Task DeleteEntityAllLocalizedStringsAsync<T>(T entity, int? languageId = null) where T : BaseEntity
@@ -100,7 +137,7 @@ namespace Devesprit.Services.Localization
             _dbContext.LocalizedProperty.Add(localizedProperty);
 
             _dbContext.SaveChanges();
-            QueryCacheManager.ExpireTag(QueryCacheTag.LocalizedProperty);
+            ClearCache();
         }
 
         protected virtual void UpdateLocalizedProperty(TblLocalizedProperty localizedProperty)
@@ -116,7 +153,7 @@ namespace Devesprit.Services.Localization
                 LocaleValue = localizedProperty.LocaleValue
             });
 
-            QueryCacheManager.ExpireTag(QueryCacheTag.LocalizedProperty);
+            ClearCache();
         }
 
         public virtual void DeleteEntityAllLocalizedStrings<T>(T entity, int? languageId = null) where T : BaseEntity
@@ -138,7 +175,7 @@ namespace Devesprit.Services.Localization
 
             await query.DeleteAsync();
 
-            QueryCacheManager.ExpireTag(QueryCacheTag.LocalizedProperty);
+            ClearCache();
         }
 
         public virtual void DeleteEntityAllLocalizedStrings(string localeKeyGroup, int entityId, int? languageId = null)
@@ -152,7 +189,7 @@ namespace Devesprit.Services.Localization
 
             query.Delete();
 
-            QueryCacheManager.ExpireTag(QueryCacheTag.LocalizedProperty);
+            ClearCache();
         }
 
         public virtual void DeleteEntityAllLocalizedStrings(int entityId, string localeKeyGroup, string localKey, int? languageId = null)
@@ -166,7 +203,7 @@ namespace Devesprit.Services.Localization
 
             query.Delete();
 
-            QueryCacheManager.ExpireTag(QueryCacheTag.LocalizedProperty);
+            ClearCache();
         }
 
         public virtual async Task SaveLocalizedStringAsync<T>(T entity, Expression<Func<T, string>> keySelector, string localeValue,
@@ -361,6 +398,12 @@ namespace Devesprit.Services.Localization
             if (string.IsNullOrEmpty(localeKeyGroup))
                 return new List<TblLocalizedProperty>();
 
+            if (_useCache)
+            {
+                return GetAllResourcesFromCache().OrderBy(p => p.Id)
+                    .Where(p => p.EntityId == entityId && p.LocaleKeyGroup == localeKeyGroup).ToList();
+            }
+
             return _dbContext.LocalizedProperty.OrderBy(p => p.Id)
                 .Where(p => p.EntityId == entityId &&
                             p.LocaleKeyGroup == localeKeyGroup)
@@ -372,6 +415,12 @@ namespace Devesprit.Services.Localization
             if (string.IsNullOrEmpty(localeKeyGroup))
                 return new List<TblLocalizedProperty>();
 
+            if (_useCache)
+            {
+                return GetAllResourcesFromCache().OrderBy(p => p.Id)
+                    .Where(p => p.EntityId == entityId && p.LocaleKeyGroup == localeKeyGroup).ToList();
+            }
+
             return (await _dbContext.LocalizedProperty.OrderBy(p => p.Id)
                 .Where(p => p.EntityId == entityId &&
                             p.LocaleKeyGroup == localeKeyGroup)
@@ -382,6 +431,14 @@ namespace Devesprit.Services.Localization
         {
             if (string.IsNullOrEmpty(localeKeyGroup))
                 return new List<TblLocalizedProperty>();
+
+            if (_useCache)
+            {
+                return GetAllResourcesFromCache().OrderBy(p => p.Id)
+                    .Where(p => p.EntityId == entityId &&
+                                p.LocaleKeyGroup == localeKeyGroup &&
+                                p.LocaleKey == localKey).ToList();
+            }
 
             return _dbContext.LocalizedProperty.OrderBy(p => p.Id)
                 .Where(p => p.EntityId == entityId &&
@@ -395,11 +452,29 @@ namespace Devesprit.Services.Localization
             if (string.IsNullOrEmpty(localeKeyGroup))
                 return new List<TblLocalizedProperty>();
 
+            if (_useCache)
+            {
+                return GetAllResourcesFromCache().OrderBy(p => p.Id)
+                    .Where(p => p.EntityId == entityId &&
+                                p.LocaleKeyGroup == localeKeyGroup &&
+                                p.LocaleKey == localKey).ToList();
+            }
+
             return (await _dbContext.LocalizedProperty.OrderBy(p => p.Id)
                 .Where(p => p.EntityId == entityId &&
                             p.LocaleKeyGroup == localeKeyGroup &&
                             p.LocaleKey == localKey)
                 .FromCacheAsync(QueryCacheTag.LocalizedProperty)).ToList();
+        }
+
+        public virtual void ClearCache()
+        {
+            QueryCacheManager.ExpireTag(QueryCacheTag.LocalizedProperty);
+
+            if (_useCache)
+            {
+                _memoryCache.RemoveObject(QueryCacheTag.LocalizedProperty);
+            }
         }
     }
 }

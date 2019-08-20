@@ -37,6 +37,9 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Factories
             result.EncryptionKey = objAppSettings.Settings["EncryptionKey"].Value;
             result.EncryptionSalt = objAppSettings.Settings["EncryptionSalt"].Value;
 
+            result.CacheLocalizedEntities =
+                objAppSettings.Settings["CacheLocalizedEntities"].Value.ToBooleanOrDefault(true);
+
             if (File.Exists(_httpContext.Server.MapPath("~/Scripts/CKEditor/config.js")))
             {
                 result.CkEditorConfig = File.ReadAllText(_httpContext.Server.MapPath("~/Scripts/CKEditor/config.js"));

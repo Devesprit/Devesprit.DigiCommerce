@@ -58,8 +58,7 @@ namespace Devesprit.Services.Localization
         
         public virtual TblLocalizedStrings FindByName(string resourceName, int languageId, bool logIfNotFound = false)
         {
-            var list = GetAsEnumerable();
-            var result = list.FirstOrDefault(p =>
+            var result = GetAsEnumerable().FirstOrDefault(p =>
                 p.ResourceName.Trim().Equals(resourceName.Trim(), StringComparison.InvariantCultureIgnoreCase) &&
                 p.LanguageId == languageId);
 

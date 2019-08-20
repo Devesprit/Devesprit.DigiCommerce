@@ -493,7 +493,7 @@ namespace Devesprit.DigiCommerce.Controllers
                                 CurrentLanguage = currentLanguage,
                                 LoginProvider = loginInfo.Login.LoginProvider,
                                 ReturnUrl = returnUrl,
-                                Settings = CurrentSettings,
+                                UserMustAcceptTerms = CurrentSettings.ShowAcceptTermsSignUp,
                                 CountriesList = countries
                             });
                         }
@@ -516,7 +516,7 @@ namespace Devesprit.DigiCommerce.Controllers
             var currentLanguage = WorkContext.CurrentLanguage;
             var countries = await _countriesService.GetAsSelectListAsync();
 
-            model.Settings = CurrentSettings;
+            model.UserMustAcceptTerms = CurrentSettings.ShowAcceptTermsSignUp;
             model.CurrentLanguage = currentLanguage;
             model.CountriesList = countries;
 

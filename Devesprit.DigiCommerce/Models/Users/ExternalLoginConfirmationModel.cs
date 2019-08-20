@@ -49,15 +49,14 @@ namespace Devesprit.DigiCommerce.Models.Users
         public int Country { get; set; }
 
 
-        public bool IsTrue => true;
         [DisplayNameLocalized("AcceptTerms")]
-        [CompareLocalized("IsTrue", "MustAcceptTerms")]
+        [MustBeTrueLocalized("MustAcceptTerms")]
         public bool AcceptTerms { get; set; }
 
         public string ReturnUrl { get; set; }
         public string LoginProvider { get; set; }
         public string Avatar { get; set; }
-        public SiteSettings Settings { get; set; }
+        public bool UserMustAcceptTerms { get; set; }
         public TblLanguages CurrentLanguage { get; set; }
         public List<SelectListItem> CountriesList { get; set; }
     }

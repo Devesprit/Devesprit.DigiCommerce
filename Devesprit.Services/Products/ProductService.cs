@@ -15,6 +15,7 @@ using Devesprit.Services.Localization;
 using Devesprit.Services.Posts;
 using Devesprit.Services.SearchEngine;
 using Devesprit.Services.Users;
+using Devesprit.Utilities;
 using Devesprit.Utilities.Extensions;
 using Microsoft.AspNet.Identity;
 using X.PagedList;
@@ -26,6 +27,7 @@ namespace Devesprit.Services.Products
     {
         private readonly AppDbContext _dbContext;
         private readonly IProductDownloadsLogService _productDownloadsLogService;
+        private readonly IUserGroupsService _userGroupsService;
         private readonly IPostCategoriesService _categoriesService;
         private readonly IProductDiscountsForUserGroupsService _productDiscountsForUserGroupsService;
         private readonly IProductCheckoutAttributesService _productCheckoutAttributesService;
@@ -38,6 +40,7 @@ namespace Devesprit.Services.Products
             IProductDownloadsLogService productDownloadsLogService,
             IUserLikesService userLikesService,
             IUserWishlistService userWishlistService,
+            IUserGroupsService userGroupsService,
             IPostCategoriesService categoriesService,
             IProductDiscountsForUserGroupsService productDiscountsForUserGroupsService,
             IProductCheckoutAttributesService productCheckoutAttributesService,
@@ -52,6 +55,7 @@ namespace Devesprit.Services.Products
         {
             _dbContext = dbContext;
             _productDownloadsLogService = productDownloadsLogService;
+            _userGroupsService = userGroupsService;
             _categoriesService = categoriesService;
             _productDiscountsForUserGroupsService = productDiscountsForUserGroupsService;
             _productCheckoutAttributesService = productCheckoutAttributesService;
@@ -110,7 +114,7 @@ namespace Devesprit.Services.Products
             return result;
         }
 
-        public IPagedList<TblProducts> GetMostDownloadedItems(int pageIndex = 1, int pageSize = Int32.MaxValue, int? filterByCategory = null,
+        public virtual IPagedList<TblProducts> GetMostDownloadedItems(int pageIndex = 1, int pageSize = Int32.MaxValue, int? filterByCategory = null,
             DateTime? fromDate = null)
         {
             var query = _dbContext.Products.Where(p => p.Published);
@@ -333,11 +337,13 @@ namespace Devesprit.Services.Products
             // Download is limited to user groups
             if (product.DownloadLimitedToUserGroupId != null)
             {
+                var userGroup = AsyncHelper
+                    .RunSync(() => _userGroupsService.FindByIdAsync(product.DownloadLimitedToUserGroupId.Value));
                 if (product.HigherUserGroupsCanDownload)
                 {
                     if (user == null ||
                         (user.SubscriptionExpireDate ?? DateTime.MinValue) < DateTime.Now ||
-                        (user.UserGroup?.GroupPriority ?? int.MinValue) < product.DownloadLimitedToUserGroup.GroupPriority)
+                        (user.UserGroup?.GroupPriority ?? int.MinValue) < userGroup.GroupPriority)
                     {
                         result |= UserCanDownloadProductResult.UserMustSubscribeToAPlanOrHigher;
                     }
@@ -424,7 +430,7 @@ namespace Devesprit.Services.Products
 
             return result;
         }
-
+        
         public virtual async Task<List<TblProductCheckoutAttributeOptions>> GetUserDownloadableAttributesAsync(TblProducts product, TblUsers user)
         {
             if (product == null)
@@ -483,6 +489,8 @@ namespace Devesprit.Services.Products
                     // Download is limited to user groups
                     if (option.DownloadLimitedToUserGroupId != null)
                     {
+                        var userGroup = AsyncHelper
+                            .RunSync(() => _userGroupsService.FindByIdAsync(option.DownloadLimitedToUserGroupId.Value));
                         if (user == null ||
                             (user.SubscriptionExpireDate ?? DateTime.MinValue) < DateTime.Now)
                         {
@@ -491,7 +499,7 @@ namespace Devesprit.Services.Products
 
                         if (option.HigherUserGroupsCanDownload)
                         {
-                            if ((user.UserGroup?.GroupPriority ?? int.MinValue) < option.DownloadLimitedToUserGroup.GroupPriority)
+                            if ((user.UserGroup?.GroupPriority ?? int.MinValue) < userGroup.GroupPriority)
                             {
                                 continue;
                             }

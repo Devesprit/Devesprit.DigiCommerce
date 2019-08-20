@@ -310,6 +310,9 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Models
         public virtual int NotificationHourSpanAfterExpForInvoiceManualItems { get; set; }
         //-------------------------Reminders Settings
 
+        [DisplayNameLocalized("CacheLocalizedEntities")]
+        public bool CacheLocalizedEntities { get; set; }
+
         public List<ThemeConfiguration> ListOfInstalledThemes
         {
             get

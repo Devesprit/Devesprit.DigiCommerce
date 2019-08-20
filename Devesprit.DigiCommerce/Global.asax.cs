@@ -13,7 +13,10 @@ using Devesprit.Core;
 using Devesprit.Core.Localization;
 using Devesprit.Core.Plugin;
 using Devesprit.Core.Settings;
+using Devesprit.Data.Domain;
 using Devesprit.DigiCommerce.Controllers;
+using Devesprit.DigiCommerce.Models.Post;
+using Devesprit.DigiCommerce.Models.Products;
 using Devesprit.Services;
 using Devesprit.WebFramework;
 using Devesprit.WebFramework.ModelBinder;
@@ -164,6 +167,10 @@ namespace Devesprit.DigiCommerce
                 cfg.AllowNullCollections = true;
                 cfg.AllowNullDestinationValues = true;
 
+                cfg.CreateMap<TblProducts, ProductCardViewModel>();
+                cfg.CreateMap<TblPosts, ProductCardViewModel>();
+                cfg.CreateMap<TblPosts, PostCardViewModel>();
+                cfg.CreateMap<TblBlogPosts, PostCardViewModel>();
                 cfg.CreateMap<byte[], HttpPostedFileBase>().ConstructUsing(p => Utils.ConstructHttpPostedFile(p, ""));
                 cfg.CreateMap<HttpPostedFileBase, byte[]>().ConstructUsing(p => p.InputStream.ToByteArray());
                 cfg.CreateMap<string, HttpPostedFileBase>().ConstructUsing(p => Utils.ConstructHttpPostedFile(null, p));

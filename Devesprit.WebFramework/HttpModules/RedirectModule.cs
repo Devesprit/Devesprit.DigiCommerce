@@ -2,7 +2,9 @@
 using System.Web;
 using System.Web.Mvc;
 using Devesprit.Core;
+using Devesprit.Core.Settings;
 using Devesprit.Data.Enums;
+using Devesprit.Services;
 using Devesprit.Services.Events;
 using Devesprit.Services.Redirects;
 
@@ -26,7 +28,6 @@ namespace Devesprit.WebFramework.HttpModules
                 var requestedUrl = request.Url;
 
                 var redirectsService = DependencyResolver.Current.GetService<IRedirectsService>();
-                var eventPublisher = DependencyResolver.Current.GetService<IEventPublisher>();
                 var rule = redirectsService.FindMatchedRuleForRequestedUrl(request.Url.AbsoluteUri.Trim(), null);
 
                 while (rule != null)
@@ -52,8 +53,9 @@ namespace Devesprit.WebFramework.HttpModules
                 if (rule != null)
                 {
                     var responseUrl = redirectsService.GenerateRedirectUrl(rule, requestedUrl);
-                    
-                    if (responseUrl.StartsWith("/")) //check language iso code added to url if redirect to local path
+
+                    var siteSettings = DependencyResolver.Current.GetService<ISettingService>().LoadSetting<SiteSettings>();
+                    if (siteSettings.AppendLanguageCodeToUrl && responseUrl.StartsWith("/")) //check language iso code added to url if redirect to local path
                     {
                         var currentLanguage = DependencyResolver.Current.GetService<IWorkContext>().CurrentLanguage;
                         var isLocaleDefined = responseUrl.TrimStart('/').StartsWith(currentLanguage.IsoCode + "/",
@@ -70,6 +72,7 @@ namespace Devesprit.WebFramework.HttpModules
                         }
                     }
 
+                    var eventPublisher = DependencyResolver.Current.GetService<IEventPublisher>();
                     switch (rule.ResponseType)
                     {
                         case ResponseType.Redirect:
