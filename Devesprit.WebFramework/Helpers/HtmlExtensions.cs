@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Text;
 using System.Web.Mvc;
 using System.Web.Mvc.Html;
 using Devesprit.Core.Localization;
@@ -12,6 +13,7 @@ using Devesprit.Services.Languages;
 using Devesprit.Utilities.Extensions;
 using Devesprit.WebFramework.ResourceBundler;
 using Microsoft.Ajax.Utilities;
+using Yahoo.Yui.Compressor;
 
 namespace Devesprit.WebFramework.Helpers
 {
@@ -504,12 +506,15 @@ namespace Devesprit.WebFramework.Helpers
             string notMinifiedJs = (markup.Invoke(html.ViewContext)?.ToString() ?? "").TrimStart("<script>")
                 .TrimStart("<text>").TrimEnd("</script>").TrimEnd("</text>");
 
-            var minifier = new Minifier();
-            var minifiedJs = minifier.MinifyJavaScript(notMinifiedJs, new CodeSettings
+            var minifier = new Yahoo.Yui.Compressor.JavaScriptCompressor()
             {
-                EvalTreatment = EvalTreatment.MakeImmediateSafe,
-                PreserveImportantComments = false
-            });
+                CompressionType = CompressionType.Standard,
+                Encoding = Encoding.UTF8,
+                ObfuscateJavascript = true,
+                PreserveAllSemicolons = true,
+            };
+            var minifiedJs = minifier.Compress(notMinifiedJs);
+
             return new MvcHtmlString("<script type='text/javascript'>" + minifiedJs + "</script>");
         }
         public static MvcHtmlString MinifyInlineCss(this HtmlHelper html, Func<object, object> markup)
@@ -517,11 +522,13 @@ namespace Devesprit.WebFramework.Helpers
             string notMinifiedCss = (markup.Invoke(html.ViewContext)?.ToString() ?? "").TrimStart("<style>")
                 .TrimStart("<text>").TrimEnd("</style>").TrimEnd("</text>");
 
-            var minifier = new Minifier();
-            var minifiedCss = minifier.MinifyStyleSheet(notMinifiedCss, new CssSettings()
+            var minifier = new Yahoo.Yui.Compressor.CssCompressor()
             {
-                CommentMode = CssComment.None
-            });
+                RemoveComments = true
+            };
+            minifier.CompressionType = Yahoo.Yui.Compressor.CompressionType.Standard;
+            var minifiedCss = minifier.Compress(notMinifiedCss);
+
             return new MvcHtmlString("<style>" + minifiedCss + "</style>");
         }
     }

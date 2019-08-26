@@ -40,8 +40,9 @@ namespace Devesprit.Utilities
             var qscoll = HttpUtility.ParseQueryString(newQueryString);
 
             var queryData = string.Join("&",
-                nvc.AllKeys.Where(key => !qscoll.AllKeys.Any(newKey => newKey.Contains(key))).
-                    Select(key => string.Format("{0}={1}",
+                nvc.AllKeys.Where(key =>
+                    !string.IsNullOrWhiteSpace(key) && !qscoll.AllKeys.Any(newKey => newKey.Contains(key))).Select(
+                    key => string.Format("{0}={1}",
                         HttpUtility.UrlEncode(key), HttpUtility.UrlEncode(nvc[key]))).ToArray());
             //Fetch Existing QueryString Except New QueryString
 

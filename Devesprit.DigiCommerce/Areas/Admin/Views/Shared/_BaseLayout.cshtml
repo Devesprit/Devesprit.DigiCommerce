@@ -28,7 +28,7 @@
     Html.AppendScriptParts(ResourceLocation.Header, "~/Scripts/jquery.unobtrusive-ajax.js");
     Html.AppendScriptParts(ResourceLocation.Header, "~/Scripts/jquery.validate.unobtrusive.js");
     Html.AppendScriptParts(ResourceLocation.Header, "~/Scripts/jquery.validate.js");
-    Html.AppendScriptParts(ResourceLocation.Header, "~/Scripts/bootstrap.bundle.js");
+    Html.AppendScriptParts(ResourceLocation.Header, "~/Scripts/bootstrap.bundle.min.js");
     Html.AppendScriptParts(ResourceLocation.Header, "~/Scripts/jquery-3.4.1.js");
 
     //Java scripts footer
@@ -42,8 +42,6 @@
 
 
     //CSS header
-    Html.AppendCssFileParts(ResourceLocation.HeaderBeforeOther, "~/Content/bootstrap.min.css", true);
-
     if (currentLang.IsRtl)
     {
         Html.AppendCssFileParts(ResourceLocation.Header, "~/Content/Styles.rtl.css");
@@ -62,7 +60,8 @@
     Html.AppendCssFileParts(ResourceLocation.Header, "~/Content/ej/web/office-365/ej.theme.css");
     Html.AppendCssFileParts(ResourceLocation.Header, "~/Content/ej/web/ej.widgets.core.office-365.min.css");
 
-    Html.AppendCssFileParts(ResourceLocation.Header, "~/Content/font-awesome.min.css");
+    Html.AppendCssFileParts(ResourceLocation.Header, "~/Content/font-awesome.css");
+    Html.AppendCssFileParts(ResourceLocation.Header, "~/Content/bootstrap.css");
 
 
     Html.AddHeadCustomParts("<meta name=\"robots\" content=\"noindex,nofollow\">");
@@ -169,7 +168,7 @@
                              "cancelLabel": "@T("Cancel")"
                          }
                      });
-                     
+
                      $('.datetimepicker').on('apply.daterangepicker',
                          function(ev, picker) {
                              $(this).val(picker.startDate.format('YYYY/MM/DD HH:mm:ss'));
@@ -193,7 +192,7 @@
                              "cancelLabel": "@T("Cancel")"
                      }
                      });
-                     
+
                      $('.datepicker').on('apply.daterangepicker',
                          function (ev, picker) {
                              $(this).val(picker.startDate.format('YYYY/MM/DD'));

@@ -21,12 +21,12 @@
         </a>
     }
     <div class="card-body p-3">
-        <h6 class="card-title text-center @Html.Raw(Model.Title.IsRtlLanguage() ? "rtl-dir" : "ltr-dir") mb-4">
+        <h5 class="card-title text-center @Html.Raw(Model.Title.IsRtlLanguage() ? "rtl-dir" : "ltr-dir") mb-4">
             <a href="@Model.PostUrl">
                 @Html.Raw(Model.Title)
             </a>
-        </h6>
-        <p class="card-text fs-12 pb-4 @Html.Raw(Model.DescriptionTruncated.TruncateText(150).IsRtlLanguage() ? "rtl-dir text-right" : "ltr-dir text-left")">@Html.Raw(Model.DescriptionTruncated.TruncateText(150))</p>
+        </h5>
+        <p class="card-text pb-4 @Html.Raw(Model.DescriptionTruncated.TruncateText(150).IsRtlLanguage() ? "rtl-dir text-right" : "ltr-dir text-left")">@Html.Raw(Model.DescriptionTruncated.TruncateText(150))</p>
         <div class="card-attr text-muted fs-10">
             @{ counter = 0;}
             @foreach (var cat in Model.Categories)

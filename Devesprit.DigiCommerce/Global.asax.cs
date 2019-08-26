@@ -57,8 +57,6 @@ namespace Devesprit.DigiCommerce
         {
             var exception = Server.GetLastError();
 
-            Response.Clear();
-
             var httpException = exception as HttpException;
 
             var routeData = new RouteData();
@@ -93,9 +91,10 @@ namespace Devesprit.DigiCommerce
                 }
             }
 
+            Response.Clear();
             // Clear the error on server.
             Server.ClearError();
-
+            Response.ContentType = "text/html";
             // Avoid IIS7 getting in the middle
             Response.TrySkipIisCustomErrors = true;
 

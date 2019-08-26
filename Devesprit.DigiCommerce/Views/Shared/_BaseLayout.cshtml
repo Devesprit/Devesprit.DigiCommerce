@@ -24,14 +24,12 @@
     Html.AppendScriptParts(ResourceLocation.Footer, "~/Scripts/jquery.unobtrusive-ajax.js");
     Html.AppendScriptParts(ResourceLocation.Footer, "~/Scripts/jquery.validate.unobtrusive.js");
     Html.AppendScriptParts(ResourceLocation.Footer, "~/Scripts/jquery.validate.js");
-    Html.AppendScriptParts(ResourceLocation.Footer, "~/Scripts/bootstrap.bundle.js");
+    Html.AppendScriptParts(ResourceLocation.Footer, "~/Scripts/bootstrap.bundle.min.js");
     Html.AppendScriptParts(ResourceLocation.Footer, "~/Scripts/jquery-3.4.1.js");
 
 
 
     //CSS
-    Html.AppendCssFileParts(ResourceLocation.HeaderBeforeOther, "~/Content/bootstrap.min.css", true);
-
     if (currentLang.IsRtl)
     {
         Html.AppendCssFileParts(ResourceLocation.Header, "~/Content/Styles.rtl.css");
@@ -39,8 +37,9 @@
     Html.AppendCssFileParts(ResourceLocation.Header, "~/Content/Styles.css");
     Html.AppendCssFileParts(ResourceLocation.Header, "~/Content/HelperStyles.css");
     Html.AppendCssFileParts(ResourceLocation.Header, "~/Content/iziToast.min.css");
-    Html.AppendCssFileParts(ResourceLocation.Header, "~/Content/SmartWizard-master/dist/css/smart_wizard.min.css");
-    Html.AppendCssFileParts(ResourceLocation.Header, "~/Content/font-awesome.min.css");
+    Html.AppendCssFileParts(ResourceLocation.Header, "~/Content/SmartWizard-master/dist/css/smart_wizard.css");
+    Html.AppendCssFileParts(ResourceLocation.Header, "~/Content/font-awesome.css");
+    Html.AppendCssFileParts(ResourceLocation.Header, "~/Content/bootstrap.css");
 }
 
 <!DOCTYPE html>

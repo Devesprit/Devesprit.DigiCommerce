@@ -1,4 +1,5 @@
 ﻿@using System.Web.Mvc.Html
+@using Devesprit.DigiCommerce.Models.Post
 @using Devesprit.Services.Localization
 @using Devesprit.Utilities
 @model Devesprit.DigiCommerce.Models.Products.ProductsExplorerModel
@@ -21,6 +22,7 @@
             page = Model.PageIndex,
             pageSize = Model.PageSize,
             catId = Model.FilterByCategoryId,
+            numberOfCol = NumberOfCol.Three,
             fromDate = Model.FromDate
         });}
 </div>

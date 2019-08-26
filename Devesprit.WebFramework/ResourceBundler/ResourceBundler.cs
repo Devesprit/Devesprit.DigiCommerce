@@ -7,9 +7,17 @@ using System.Text;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Optimization;
+using BundleTransformer.Core.Assets;
+using BundleTransformer.Core.Builders;
+using BundleTransformer.Core.Orderers;
+using BundleTransformer.Core.Resolvers;
+using BundleTransformer.Core.Transformers;
+using BundleTransformer.Yui.Configuration;
+using BundleTransformer.Yui.Minifiers;
 using Devesprit.Core.Settings;
 using Devesprit.Services;
 using Microsoft.Ajax.Utilities;
+using CompressionType = BundleTransformer.Yui.CompressionType;
 
 namespace Devesprit.WebFramework.ResourceBundler
 {
@@ -99,7 +107,7 @@ namespace Devesprit.WebFramework.ResourceBundler
                 Part = part
             });
         }
-        public void AddInlineScript(ResourceLocation location, string script, bool addToBundle)
+        public void AddInlineScript(ResourceLocation location, string script, bool addToBundle = false)
         {
             if (!_inlineScripts.ContainsKey(location))
                 _inlineScripts.Add(location, new List<ScriptReferenceMeta>());
@@ -113,7 +121,7 @@ namespace Devesprit.WebFramework.ResourceBundler
                 ExcludeFromBundle = !addToBundle
             });
         }
-        public void AppendInlineScript(ResourceLocation location, string script, bool addToBundle)
+        public void AppendInlineScript(ResourceLocation location, string script, bool addToBundle = false)
         {
             if (!_inlineScripts.ContainsKey(location))
                 _inlineScripts.Add(location, new List<ScriptReferenceMeta>());
@@ -184,12 +192,9 @@ namespace Devesprit.WebFramework.ResourceBundler
                         if (bundleFor == null)
                         {
                             var bundle = new ScriptBundle(bundleVirtualPath);
-                            //bundle.Transforms.Clear();
-
-                            //"As is" ordering
-                            bundle.Orderer = new AsIsBundleOrderer();
+                            
                             //disable file extension replacements. renders scripts which were specified by a developer
-                            bundle.EnableFileExtensionReplacements = false;
+                            bundle.EnableFileExtensionReplacements = true;
                             bundle.Include(partsToBundle.Select(x => x.Part).ToArray());
 
                             if (inlinePartsToBundle.Any())
@@ -199,6 +204,29 @@ namespace Devesprit.WebFramework.ResourceBundler
                                     string.Join(Environment.NewLine, inlinePartsToBundle.Select(x => x.Part)));
                                 bundle.Include($"~/App_Data/{hash}.js");
                             }
+
+                            var scriptTransformer = new ScriptTransformer(new YuiJsMinifier(new YuiSettings()
+                            {
+                                JsMinifier =
+                                {
+                                    CompressionType = CompressionType.Standard,
+                                    ObfuscateJavascript = true,
+                                    Encoding = "UTF8",
+                                    PreserveAllSemicolons = true,
+                                    Severity = 0
+                                }
+                            }))
+                            {
+                                EnableTracing = false,
+                                CombineFilesBeforeMinification = false,
+                                UsePreMinifiedFiles = true
+                            };
+                            
+                            BundleResolver.Current = new CustomBundleResolver();
+                            bundle.Builder = new NullBuilder();
+                            bundle.Transforms.Clear();
+                            bundle.Transforms.Add(scriptTransformer);
+                            bundle.Orderer = new NullOrderer();
 
                             BundleTable.Bundles.Add(bundle);
                         }
@@ -228,12 +256,15 @@ namespace Devesprit.WebFramework.ResourceBundler
 
                     if (_siteSettings.EnableInlineJsMinification)
                     {
-                        var minifier = new Minifier();
-                        script = minifier.MinifyJavaScript(script, new CodeSettings
+                        var minifier = new Yahoo.Yui.Compressor.JavaScriptCompressor()
                         {
-                            EvalTreatment = EvalTreatment.MakeImmediateSafe,
-                            PreserveImportantComments = false
-                        });
+                            CompressionType = Yahoo.Yui.Compressor.CompressionType.Standard,
+                            Encoding = Encoding.UTF8,
+                            ObfuscateJavascript = true,
+                            PreserveAllSemicolons = true,
+                        };
+
+                        script = minifier.Compress(script);
                     }
 
                     result.Append("<script type=\"text/javascript\">");
@@ -270,12 +301,15 @@ namespace Devesprit.WebFramework.ResourceBundler
 
                     if (_siteSettings.EnableInlineJsMinification)
                     {
-                        var minifier = new Minifier();
-                        script = minifier.MinifyJavaScript(script, new CodeSettings
+                        var minifier = new Yahoo.Yui.Compressor.JavaScriptCompressor()
                         {
-                            EvalTreatment = EvalTreatment.MakeImmediateSafe,
-                            PreserveImportantComments = false
-                        });
+                            CompressionType = Yahoo.Yui.Compressor.CompressionType.Standard,
+                            Encoding = Encoding.UTF8,
+                            ObfuscateJavascript = true,
+                            PreserveAllSemicolons = true,
+                        };
+
+                        script = minifier.Compress(script);
                     }
 
                     result.Append("<script type=\"text/javascript\">");
@@ -320,7 +354,7 @@ namespace Devesprit.WebFramework.ResourceBundler
                 Part = part
             });
         }
-        public void AddInlineCss(ResourceLocation location, string style, bool addToBundle)
+        public void AddInlineCss(ResourceLocation location, string style, bool addToBundle = false)
         {
             if (!_inlineCss.ContainsKey(location))
                 _inlineCss.Add(location, new List<CssReferenceMeta>());
@@ -334,7 +368,7 @@ namespace Devesprit.WebFramework.ResourceBundler
                 ExcludeFromBundle = !addToBundle
             });
         }
-        public void AppendInlineCss(ResourceLocation location, string style, bool addToBundle)
+        public void AppendInlineCss(ResourceLocation location, string style, bool addToBundle = false)
         {
             if (!_inlineCss.ContainsKey(location))
                 _inlineCss.Add(location, new List<CssReferenceMeta>());
@@ -408,12 +442,9 @@ namespace Devesprit.WebFramework.ResourceBundler
                         if (bundleFor == null)
                         {
                             var bundle = new StyleBundle(bundleVirtualPath);
-                            //bundle.Transforms.Clear();
                             
-                            //"As is" ordering
-                            bundle.Orderer = new AsIsBundleOrderer();
                             //disable file extension replacements. renders scripts which were specified by a developer
-                            bundle.EnableFileExtensionReplacements = false;
+                            bundle.EnableFileExtensionReplacements = true;
                             foreach (var ptb in partsToBundle.Select(x => x.Part))
                             {
                                 bundle.Include(ptb, GetCssTransform());
@@ -427,6 +458,25 @@ namespace Devesprit.WebFramework.ResourceBundler
                                 bundle.Include($"~/App_Data/{hash}.css", GetCssTransform());
                             }
 
+                            var styleTransformer = new StyleTransformer(new YuiCssMinifier(new YuiSettings()
+                            {
+                                CssMinifier =
+                                {
+                                    CompressionType = CompressionType.Standard,
+                                    RemoveComments = true
+                                }
+                            }))
+                            {
+                                EnableTracing = false,
+                                CombineFilesBeforeMinification = false,
+                                UsePreMinifiedFiles = true
+                            };
+                            BundleResolver.Current = new CustomBundleResolver();
+                            bundle.Builder = new NullBuilder();
+                            bundle.Transforms.Clear();
+                            bundle.Transforms.Add(styleTransformer);
+                            bundle.Orderer = new NullOrderer();
+                            
                             BundleTable.Bundles.Add(bundle);
                         }
                     }
@@ -455,11 +505,12 @@ namespace Devesprit.WebFramework.ResourceBundler
 
                     if (_siteSettings.EnableInlineCssMinification)
                     {
-                        var minifier = new Minifier();
-                        style = minifier.MinifyStyleSheet(style, new CssSettings()
+                        var minifier = new Yahoo.Yui.Compressor.CssCompressor()
                         {
-                            CommentMode = CssComment.None
-                        });
+                            RemoveComments = true
+                        };
+                        minifier.CompressionType = Yahoo.Yui.Compressor.CompressionType.Standard;
+                        style = minifier.Compress(style);
                     }
 
                     result.Append("<style>");
@@ -496,11 +547,12 @@ namespace Devesprit.WebFramework.ResourceBundler
 
                     if (_siteSettings.EnableInlineCssMinification)
                     {
-                        var minifier = new Minifier();
-                        style = minifier.MinifyStyleSheet(style, new CssSettings()
+                        var minifier = new Yahoo.Yui.Compressor.CssCompressor()
                         {
-                            CommentMode = CssComment.None
-                        });
+                            RemoveComments = true
+                        };
+                        minifier.CompressionType = Yahoo.Yui.Compressor.CompressionType.Standard;
+                        style = minifier.Compress(style);
                     }
 
                     result.Append("<style>");

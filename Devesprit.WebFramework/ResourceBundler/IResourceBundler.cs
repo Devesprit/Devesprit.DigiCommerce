@@ -11,14 +11,14 @@ namespace Devesprit.WebFramework.ResourceBundler
     {
         void AddScriptParts(ResourceLocation location, string part, bool excludeFromBundle, bool isAsync);
         void AppendScriptParts(ResourceLocation location, string part, bool excludeFromBundle, bool isAsync);
-        void AddInlineScript(ResourceLocation location, string script, bool addToBundle);
-        void AppendInlineScript(ResourceLocation location, string script, bool addToBundle);
+        void AddInlineScript(ResourceLocation location, string script, bool addToBundle = false);
+        void AppendInlineScript(ResourceLocation location, string script, bool addToBundle = false);
         string GenerateScripts(UrlHelper urlHelper, ResourceLocation location, bool? bundleFiles = null);
 
         void AddCssFileParts(ResourceLocation location, string part, bool excludeFromBundle = false);
         void AppendCssFileParts(ResourceLocation location, string part, bool excludeFromBundle = false);
-        void AddInlineCss(ResourceLocation location, string style, bool addToBundle);
-        void AppendInlineCss(ResourceLocation location, string style, bool addToBundle);
+        void AddInlineCss(ResourceLocation location, string style, bool addToBundle = false);
+        void AppendInlineCss(ResourceLocation location, string style, bool addToBundle = false);
         string GenerateCssFiles(UrlHelper urlHelper, ResourceLocation location, bool? bundleFiles = null);
 
         void AddCanonicalUrlParts(string part);

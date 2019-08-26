@@ -72,6 +72,12 @@
     <Reference Include="BrotliSharpLib, Version=0.3.2.0, Culture=neutral, PublicKeyToken=3f4e2a1cd615fcb7, processorArchitecture=MSIL">
       <HintPath>..\packages\BrotliSharpLib.0.3.3\lib\net451\BrotliSharpLib.dll</HintPath>
     </Reference>
+    <Reference Include="BundleTransformer.Core, Version=1.10.0.0, Culture=neutral, PublicKeyToken=973c344c93aac60d, processorArchitecture=MSIL">
+      <HintPath>..\packages\BundleTransformer.Core.1.10.0\lib\net40\BundleTransformer.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="BundleTransformer.Yui, Version=1.10.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\BundleTransformer.Yui.1.10.0\lib\net40\BundleTransformer.Yui.dll</HintPath>
+    </Reference>
     <Reference Include="CronExpressionDescriptor, Version=2.11.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\CronExpressionDescriptor.2.11.0\lib\netstandard2.0\CronExpressionDescriptor.dll</HintPath>
     </Reference>
@@ -397,15 +403,9 @@
   <ItemGroup>
     <Content Include="Content\32px.png" />
     <Content Include="Content\40px.png" />
-    <Content Include="Content\bootstrap-grid.css" />
-    <Content Include="Content\bootstrap-grid.min.css" />
-    <Content Include="Content\bootstrap-reboot.css" />
-    <Content Include="Content\bootstrap-reboot.min.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
-    <Content Include="Content\Bootstrap\bootstrap.min.css" />
-    <Content Include="Content\css\select2.css" />
-    <Content Include="Content\css\select2.min.css" />
+    <Content Include="Content\select2.min.css" />
     <Content Include="Content\daterangepicker.css" />
     <Content Include="Content\ej\mobile\android-theme\ej.mobile.android-core.css" />
     <Content Include="Content\ej\mobile\android-theme\ej.mobile.android-core.min.css" />
@@ -892,12 +892,6 @@
     <Content Include="Areas\Admin\Views\ManageUserMessages\ReplyToUserMessage.cshtml" />
     <Content Include="Areas\Admin\Views\ManageBackgroundJobs\Index.cshtml" />
     <Content Include="Areas\Admin\Views\ManageBackgroundJobs\Editor.cshtml" />
-    <Content Include="Content\bootstrap.min.css.map" />
-    <Content Include="Content\bootstrap.css.map" />
-    <Content Include="Content\bootstrap-reboot.min.css.map" />
-    <Content Include="Content\bootstrap-reboot.css.map" />
-    <Content Include="Content\bootstrap-grid.min.css.map" />
-    <Content Include="Content\bootstrap-grid.css.map" />
     <Content Include="Areas\Admin\Views\ManageSocialAccounts\GridView.cshtml" />
     <Content Include="Areas\Admin\Views\ManageSocialAccounts\Editor.cshtml" />
     <Content Include="Content\ej\web\office-365\icons\ejicons.woff" />
@@ -1080,8 +1074,6 @@
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <Content Include="Scripts\bootstrap.bundle.js" />
     <Content Include="Scripts\bootstrap.bundle.min.js" />
-    <Content Include="Scripts\bootstrap.js" />
-    <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Scripts\CKEditor\CHANGES.md" />
     <Content Include="Scripts\CKEditor\LICENSE.md" />
     <Content Include="Scripts\CKEditor\Plugins\a11yhelp\dialogs\a11yhelp.js" />
@@ -1348,10 +1340,6 @@
     <Content Include="Scripts\CKEditor\Plugins\scayt\README.md" />
     <Content Include="Scripts\CKEditor\Plugins\wsc\LICENSE.md" />
     <Content Include="Scripts\CKEditor\Plugins\wsc\README.md" />
-    <Content Include="Scripts\bootstrap.min.js.map" />
-    <Content Include="Scripts\bootstrap.js.map" />
-    <Content Include="Scripts\bootstrap.bundle.min.js.map" />
-    <Content Include="Scripts\bootstrap.bundle.js.map" />
     <Content Include="Scripts\CKEditor\adapters\jquery.js" />
     <Content Include="Scripts\CKEditor\build-config.js" />
     <Content Include="Scripts\CKEditor\ckeditor.js" />
@@ -1834,8 +1822,6 @@
     <Content Include="Scripts\jquery-3.4.1.min.js" />
     <Content Include="Scripts\jquery-3.4.1.slim.js" />
     <Content Include="Scripts\jquery-3.4.1.slim.min.js" />
-    <Content Include="Scripts\jquery-3.4.1.slim.min.map" />
-    <Content Include="Scripts\jquery-3.4.1.min.map" />
     <None Include="Scripts\jquery.validate-vsdoc.js" />
     <Content Include="Scripts\jquery.autocomplete.js" />
     <Content Include="Scripts\jquery.unobtrusive-ajax.js" />
@@ -2210,11 +2196,6 @@
     <Content Include="Scripts\umd\popper.js.map" />
     <Content Include="Scripts\umd\popper-utils.min.js.map" />
     <Content Include="Scripts\umd\popper-utils.js.map" />
-    <Content Include="Scripts\README.md" />
-    <Content Include="Scripts\popper.min.js.map" />
-    <Content Include="Scripts\popper.js.map" />
-    <Content Include="Scripts\popper-utils.min.js.map" />
-    <Content Include="Scripts\popper-utils.js.map" />
     <Content Include="Views\Shared\_BaseLayout.cshtml" />
     <Content Include="Views\Shared\Partials\_PageNotFound.cshtml" />
     <Content Include="Views\Shared\Partials\_Error.cshtml" />
