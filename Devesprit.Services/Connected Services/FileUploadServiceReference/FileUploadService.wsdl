@@ -4,6 +4,38 @@
     <wsp:ExactlyOne>
       <wsp:All>
         <wsoma:OptimizedMimeSerialization xmlns:wsoma="http://schemas.xmlsoap.org/ws/2004/09/policy/optimizedmimeserialization" />
+        <sp:TransportBinding xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy">
+          <wsp:Policy>
+            <sp:TransportToken>
+              <wsp:Policy>
+                <sp:HttpsToken RequireClientCertificate="false" />
+              </wsp:Policy>
+            </sp:TransportToken>
+            <sp:AlgorithmSuite>
+              <wsp:Policy>
+                <sp:Basic256 />
+              </wsp:Policy>
+            </sp:AlgorithmSuite>
+            <sp:Layout>
+              <wsp:Policy>
+                <sp:Lax />
+              </wsp:Policy>
+            </sp:Layout>
+            <sp:IncludeTimestamp />
+          </wsp:Policy>
+        </sp:TransportBinding>
+        <sp:SignedSupportingTokens xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy">
+          <wsp:Policy>
+            <sp:UsernameToken sp:IncludeToken="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy/IncludeToken/AlwaysToRecipient">
+              <wsp:Policy>
+                <sp:WssUsernameToken10 />
+              </wsp:Policy>
+            </sp:UsernameToken>
+          </wsp:Policy>
+        </sp:SignedSupportingTokens>
+        <sp:Wss10 xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy">
+          <wsp:Policy />
+        </sp:Wss10>
       </wsp:All>
     </wsp:ExactlyOne>
   </wsp:Policy>
@@ -27,10 +59,20 @@
     <wsdl:part name="Md5Hash" element="tns:Md5Hash" />
     <wsdl:part name="Success" element="tns:Success" />
   </wsdl:message>
+  <wsdl:message name="IFileUploadService_GetFileFromWeb_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetFileFromWeb" />
+  </wsdl:message>
+  <wsdl:message name="IFileUploadService_GetFileFromWeb_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetFileFromWebResponse" />
+  </wsdl:message>
   <wsdl:portType name="IFileUploadService">
     <wsdl:operation name="UploadFile">
       <wsdl:input wsaw:Action="http://tempuri.org/IFileUploadService/UploadFile" name="UploadFileRequest" message="tns:UploadFileRequest" />
       <wsdl:output wsaw:Action="http://tempuri.org/IFileUploadService/UploadFileResponse" name="UploadFileResult" message="tns:UploadFileResult" />
+    </wsdl:operation>
+    <wsdl:operation name="GetFileFromWeb">
+      <wsdl:input wsaw:Action="http://tempuri.org/IFileUploadService/GetFileFromWeb" message="tns:IFileUploadService_GetFileFromWeb_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IFileUploadService/GetFileFromWebResponse" message="tns:IFileUploadService_GetFileFromWeb_OutputMessage" />
     </wsdl:operation>
   </wsdl:portType>
   <wsdl:binding name="BasicHttpBinding_IFileUploadService" type="tns:IFileUploadService">
@@ -48,10 +90,19 @@
         <soap:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="GetFileFromWeb">
+      <soap:operation soapAction="http://tempuri.org/IFileUploadService/GetFileFromWeb" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
   </wsdl:binding>
   <wsdl:service name="FileUploadService">
     <wsdl:port name="BasicHttpBinding_IFileUploadService" binding="tns:BasicHttpBinding_IFileUploadService">
-      <soap:address location="http://localhost:57738/FileUploadService.svc" />
+      <soap:address location="https://localhost:44315/FileUploadService.svc" />
     </wsdl:port>
   </wsdl:service>
 </wsdl:definitions>

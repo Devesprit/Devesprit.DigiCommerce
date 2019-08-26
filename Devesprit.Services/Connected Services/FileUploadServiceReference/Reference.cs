@@ -21,6 +21,12 @@ namespace Devesprit.Services.FileUploadServiceReference {
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IFileUploadService/UploadFile", ReplyAction="http://tempuri.org/IFileUploadService/UploadFileResponse")]
         System.Threading.Tasks.Task<Devesprit.Services.FileUploadServiceReference.UploadFileResult> UploadFileAsync(Devesprit.Services.FileUploadServiceReference.UploadFileRequest request);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IFileUploadService/GetFileFromWeb", ReplyAction="http://tempuri.org/IFileUploadService/GetFileFromWebResponse")]
+        System.IO.Stream GetFileFromWeb(string fileUrl);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IFileUploadService/GetFileFromWeb", ReplyAction="http://tempuri.org/IFileUploadService/GetFileFromWebResponse")]
+        System.Threading.Tasks.Task<System.IO.Stream> GetFileFromWebAsync(string fileUrl);
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
@@ -116,6 +122,14 @@ namespace Devesprit.Services.FileUploadServiceReference {
             inValue.UploadRequestKey = UploadRequestKey;
             inValue.FileByteStream = FileByteStream;
             return ((Devesprit.Services.FileUploadServiceReference.IFileUploadService)(this)).UploadFileAsync(inValue);
+        }
+        
+        public System.IO.Stream GetFileFromWeb(string fileUrl) {
+            return base.Channel.GetFileFromWeb(fileUrl);
+        }
+        
+        public System.Threading.Tasks.Task<System.IO.Stream> GetFileFromWebAsync(string fileUrl) {
+            return base.Channel.GetFileFromWebAsync(fileUrl);
         }
     }
 }

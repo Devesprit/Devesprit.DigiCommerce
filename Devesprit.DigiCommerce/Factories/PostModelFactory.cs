@@ -25,7 +25,7 @@ namespace Devesprit.DigiCommerce.Factories
         private readonly HttpContextBase _httpContext;
 
         public PostModelFactory(IPostService<TblPosts> postService,
-            IUserLikesService userLikesService,
+            IUserLikesService userLikesService, 
             IUserWishlistService userWishlistService,
             HttpContextBase httpContext)
         {

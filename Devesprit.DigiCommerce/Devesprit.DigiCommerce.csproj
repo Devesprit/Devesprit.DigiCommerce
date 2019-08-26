@@ -1071,6 +1071,12 @@
     <Content Include="Content\fonts\LatoLatin\LatoLatin-ThinItalic.ttf" />
     <Content Include="Content\fonts\LatoLatin\LatoLatin-ThinItalic.woff" />
     <Content Include="Content\fonts\LatoLatin\LatoLatin-ThinItalic.woff2" />
+    <Content Include="x64\SQLite.Interop.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="x86\SQLite.Interop.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <Content Include="Scripts\bootstrap.bundle.js" />
     <Content Include="Scripts\bootstrap.bundle.min.js" />

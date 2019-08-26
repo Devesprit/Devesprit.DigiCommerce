@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.ServiceModel;
 using System.Threading.Tasks;
 
@@ -9,6 +10,9 @@ namespace Devesprit.FileServer
     {
         [OperationContract]
         Task<UploadFileResult> UploadFile(UploadFileRequest request);
+
+        [OperationContract]
+        Task<Stream> GetFileFromWeb(string fileUrl);
     }
 
     [MessageContract]

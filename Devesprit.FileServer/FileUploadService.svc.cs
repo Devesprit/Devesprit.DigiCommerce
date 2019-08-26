@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Configuration;
 using System.IO;
+using System.Net;
+using System.Security.Cryptography;
 using System.ServiceModel;
 using System.ServiceModel.Activation;
 using System.Threading.Tasks;
@@ -8,6 +10,7 @@ using System.Web;
 using Devesprit.FileServer.ElmahConfig;
 using Devesprit.Utilities;
 using Devesprit.Utilities.Extensions;
+using Elmah;
 
 namespace Devesprit.FileServer
 {
@@ -94,6 +97,22 @@ namespace Devesprit.FileServer
                     Success = false
                 };
             }
+        }
+
+        public virtual async Task<Stream> GetFileFromWeb(string fileUrl)
+        {
+            if (fileUrl.IsValidUrl() && fileUrl.IsAbsoluteUrl())
+            {
+                byte[] fileBytes;
+                using (var client = new WebClient())
+                {
+                    fileBytes = await client.DownloadDataTaskAsync(fileUrl);
+                }
+
+                return new MemoryStream(fileBytes);
+            }
+
+            return null;
         }
     }
 

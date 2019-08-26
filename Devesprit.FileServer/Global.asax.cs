@@ -1,4 +1,5 @@
-﻿using Autofac;
+﻿using System.IO;
+using Autofac;
 using Autofac.Extras.CommonServiceLocator;
 using Autofac.Integration.Wcf;
 using CommonServiceLocator;
@@ -13,6 +14,11 @@ namespace Devesprit.FileServer
     {
         protected void Application_Start()
         {
+            if (!Directory.Exists(Server.MapPath("App_Data")))
+            {
+                Directory.CreateDirectory(Server.MapPath("App_Data"));
+            }
+
             ConfigAutofac();
         }
 
