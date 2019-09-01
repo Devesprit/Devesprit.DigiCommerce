@@ -108,12 +108,12 @@ namespace Devesprit.DigiCommerce.Models.Products
                 };
 
                 var relatedProducts = DependencyResolver.Current.GetService<ISearchEngine>()
-                    .MoreLikeThis(Id, null, 0, PostType.Product);
+                    .MoreLikeThis(Id, null, 0, PostType.Product, SearchPlace.Title | SearchPlace.Description | SearchPlace.Tags, 20);
                 var relatedLinks = new List<Uri>();
                 if (!relatedProducts.HasError && relatedProducts.Documents.Count > 0)
                 {
                     var posts = DependencyResolver.Current.GetService<IPostService<TblPosts>>().GetItemsById(
-                        relatedProducts.Documents.OrderByDescending(p => p.Score).Select(p => p.DocumentId)
+                        relatedProducts.Documents.Select(p => p.DocumentId).Take(5)
                             .ToList(), 1,
                         5);
 

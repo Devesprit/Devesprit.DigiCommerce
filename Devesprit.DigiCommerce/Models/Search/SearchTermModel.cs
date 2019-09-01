@@ -25,7 +25,7 @@ namespace Devesprit.DigiCommerce.Models.Search
         public static IEnumerable<SelectListItem> CategoriesList => DependencyResolver.Current.GetService<IPostCategoriesService>().GetAsSelectList();
 
         [DisplayNameLocalized("SearchIn")]
-        public SearchPlace SearchPlace { get; set; } = SearchPlace.Title;
+        public SearchPlace SearchPlace { get; set; } = SearchPlace.Anywhere;
 
         [DisplayNameLocalized("OrderBy")]
         public SearchResultSortType OrderBy { get; set; } = SearchResultSortType.LastUpDate;

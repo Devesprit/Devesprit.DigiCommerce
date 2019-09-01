@@ -46,25 +46,10 @@ namespace Devesprit.Services.Posts
             _cacheKey = nameof(T);
         }
 
-        public virtual IPagedList<T> GetItemsById(List<int> ids, int pageIndex = 1, int pageSize = int.MaxValue, SearchResultSortType sortType = SearchResultSortType.Score)
+        public virtual IPagedList<T> GetItemsById(List<int> ids, int pageIndex = 1, int pageSize = int.MaxValue)
         {
             var skippedIds = ids.Skip(pageSize * (pageIndex - 1)).Take(pageSize).ToList();
-            IQueryable<T> query = _dbContext.Set<T>().Where(p => p.Published && ids.Contains(p.Id));
-            switch (sortType)
-            {
-                case SearchResultSortType.NumberOfVisits:
-                    query = query.OrderByDescending(p => p.NumberOfViews).Skip(pageSize * (pageIndex - 1)).Take(pageSize);
-                    break;
-                case SearchResultSortType.PublishDate:
-                    query = query.OrderByDescending(p => p.PublishDate).Skip(pageSize * (pageIndex - 1)).Take(pageSize);
-                    break;
-                case SearchResultSortType.LastUpDate:
-                    query = query.OrderByDescending(p => p.LastUpDate).Skip(pageSize * (pageIndex - 1)).Take(pageSize);
-                    break;
-                case SearchResultSortType.Score:
-                    query = _dbContext.Set<T>().Where(p => p.Published && skippedIds.Contains(p.Id));
-                    break;
-            }
+            IQueryable<T> query = _dbContext.Set<T>().Where(p => p.Published && skippedIds.Contains(p.Id));
 
             var postsList = query
                 .Include(p => p.Descriptions)
@@ -75,10 +60,7 @@ namespace Devesprit.Services.Posts
                     QueryCacheTag.PostDescription,
                     QueryCacheTag.PostImage);
                 
-            if (sortType == SearchResultSortType.Score)
-            {
-                postsList = postsList.OrderBy(p => skippedIds.IndexOf(p.Id));
-            }
+            postsList = postsList.OrderBy(p => skippedIds.IndexOf(p.Id));
 
             var result = new StaticPagedList<T>(
                 postsList,
@@ -313,7 +295,10 @@ namespace Devesprit.Services.Posts
             var record = await FindByIdAsync(id);
             await _userLikesService.DeletePostLikesAsync(id);
             await _userWishlistService.DeletePostFromWishlistAsync(id);
-            await _dbContext.Set<T>().Where(p => p.Id == id).DeleteAsync();
+            await _dbContext.PostComments.Where(p => p.PostId == id).DeleteAsync();
+            var post = await FindByIdAsync(id);
+            _dbContext.Set<T>().Remove(post);
+            await _dbContext.SaveChangesAsync();
             await _localizedEntityService.DeleteEntityAllLocalizedStringsAsync(typeof(T).Name, id);
 
             QueryCacheManager.ExpireTag(_cacheKey);

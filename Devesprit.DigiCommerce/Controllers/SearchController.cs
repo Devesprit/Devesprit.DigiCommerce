@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Mvc;
+using System.Web.UI;
 using Devesprit.Data.Domain;
 using Devesprit.Data.Enums;
 using Devesprit.DigiCommerce.Factories.Interfaces;
@@ -31,6 +32,7 @@ namespace Devesprit.DigiCommerce.Controllers
 
         [Route("{lang}/Search", Order = 0)]
         [Route("Search", Order = 1)]
+        [OutputCache(Duration = 60 * 30, Location = OutputCacheLocation.ServerAndClient, VaryByParam = "*")]
         public virtual async Task<ActionResult> Index(SearchTermModel model)
         {
             if (model.Query.IsNullOrWhiteSpace())
@@ -38,9 +40,13 @@ namespace Devesprit.DigiCommerce.Controllers
                 return View();
             }
 
-            model.LanguageId = model.LanguageId ?? WorkContext.CurrentLanguage.Id;
+            if (Request.QueryString.AllKeys.Length == 1 && !string.IsNullOrWhiteSpace(Request.QueryString["Query"]))
+            {
+                model.SearchPlace = SearchPlace.Title;
+            }
 
-            var result = await _searchEngine.SearchAsync(model.Query, model.FilterByCategory, model.LanguageId.Value, model.PostType, model.SearchPlace);
+            var result = await _searchEngine.SearchAsync(model.Query, model.FilterByCategory, model.LanguageId ?? 0,
+                model.PostType, model.SearchPlace, model.OrderBy);
             if (result.HasError)
             {
                 var errorCode = ErrorLog.GetDefault(System.Web.HttpContext.Current).Log(new Error(result.Error, System.Web.HttpContext.Current));
@@ -53,9 +59,8 @@ namespace Devesprit.DigiCommerce.Controllers
             model.Page = model.Page ?? 1;
 
             var currentUser = UserManager.FindById(User.Identity.GetUserId());
-            var posts = _postService.GetItemsById(
-                result.Documents.OrderByDescending(p => p.Score).Select(p => p.DocumentId).ToList(), model.Page.Value,
-                model.PageSize.Value, model.OrderBy);
+            var posts = _postService.GetItemsById(result.Documents.Select(p => p.DocumentId).ToList(), model.Page.Value,
+                model.PageSize.Value);
 
             var viewModel = new SearchResultModel
             {
@@ -83,6 +88,7 @@ namespace Devesprit.DigiCommerce.Controllers
 
         [Route("{lang}/Tags/{tag}", Order = 0)]
         [Route("Tags/{tag}", Order = 1)]
+        [OutputCache(Duration = 60 * 60, Location = OutputCacheLocation.ServerAndClient, VaryByParam = "*")]
         public virtual async Task<ActionResult> Tag(string tag, int? page)
         {
             if (tag.IsNullOrWhiteSpace())
@@ -90,7 +96,8 @@ namespace Devesprit.DigiCommerce.Controllers
                 return View("Index");
             }
 
-            var result = await _searchEngine.SearchAsync($"\"{tag}\"", null, LanguagesService.GetDefaultLanguage().Id, null, SearchPlace.Tags);
+            var result = await _searchEngine.SearchAsync($"\"{tag}\"", null, 0, null, SearchPlace.Tags,
+                SearchResultSortType.Score, 1000, true);
             if (result.HasError)
             {
                 var errorCode = ErrorLog.GetDefault(System.Web.HttpContext.Current).Log(new Error(result.Error, System.Web.HttpContext.Current));
@@ -101,9 +108,8 @@ namespace Devesprit.DigiCommerce.Controllers
             var searchTerm = new SearchTermModel { Query = tag.Trim(), Page = page ?? 1, PageSize = 20 };
 
             var currentUser = UserManager.FindById(User.Identity.GetUserId());
-            var posts = _postService.GetItemsById(
-                result.Documents.OrderByDescending(p => p.Score).Select(p => p.DocumentId).ToList(), searchTerm.Page.Value,
-                searchTerm.PageSize.Value);
+            var posts = _postService.GetItemsById(result.Documents.Select(p => p.DocumentId).ToList(),
+                searchTerm.Page.Value, searchTerm.PageSize.Value);
 
             var viewModel = new SearchResultModel
             {
@@ -121,6 +127,7 @@ namespace Devesprit.DigiCommerce.Controllers
 
         [Route("{lang}/Keywords/{keyword}", Order = 0)]
         [Route("Keywords/{keyword}", Order = 1)]
+        [OutputCache(Duration = 60 * 60, Location = OutputCacheLocation.ServerAndClient, VaryByParam = "*")]
         public virtual async Task<ActionResult> Keyword(string keyword, int? page)
         {
             if (keyword.IsNullOrWhiteSpace())
@@ -128,7 +135,8 @@ namespace Devesprit.DigiCommerce.Controllers
                 return View("Index");
             }
 
-            var result = await _searchEngine.SearchAsync($"\"{keyword}\"", null, LanguagesService.GetDefaultLanguage().Id, null, SearchPlace.Keywords);
+            var result = await _searchEngine.SearchAsync($"\"{keyword}\"", null, 0, null, SearchPlace.Keywords,
+                SearchResultSortType.Score, 1000, true);
             if (result.HasError)
             {
                 var errorCode = ErrorLog.GetDefault(System.Web.HttpContext.Current).Log(new Error(result.Error, System.Web.HttpContext.Current));
@@ -139,9 +147,8 @@ namespace Devesprit.DigiCommerce.Controllers
             var searchTerm = new SearchTermModel { Query = keyword.Trim(), Page = page ?? 1, PageSize = 20 };
 
             var currentUser = UserManager.FindById(User.Identity.GetUserId());
-            var posts = _postService.GetItemsById(
-                result.Documents.OrderByDescending(p => p.Score).Select(p => p.DocumentId).ToList(), searchTerm.Page.Value,
-                searchTerm.PageSize.Value);
+            var posts = _postService.GetItemsById(result.Documents.Select(p => p.DocumentId).ToList(),
+                searchTerm.Page.Value, searchTerm.PageSize.Value);
 
             var viewModel = new SearchResultModel
             {
@@ -157,9 +164,12 @@ namespace Devesprit.DigiCommerce.Controllers
             return View("Index", viewModel);
         }
 
+        [OutputCache(Duration = 60 * 60, VaryByParam = "*")]
         public virtual ActionResult MoreLikeThis(int postId, PostType postType, int? numberOfSimilarityPosts)
         {
-            var result = _searchEngine.MoreLikeThis(postId, null, 0, postType, SearchPlace.Anywhere, numberOfSimilarityPosts ?? 5);
+            var result = _searchEngine.MoreLikeThis(postId, null, 0, postType,
+                SearchPlace.Title | SearchPlace.Description | SearchPlace.Tags,
+                numberOfSimilarityPosts ?? 20);
             if (result.HasError)
             {
                 var errorCode = ErrorLog.GetDefault(System.Web.HttpContext.Current).Log(new Error(result.Error, System.Web.HttpContext.Current));
@@ -168,27 +178,28 @@ namespace Devesprit.DigiCommerce.Controllers
             }
 
             var currentUser = UserManager.FindById(User.Identity.GetUserId());
-            var posts = _postService.GetItemsById(
-                result.Documents.OrderByDescending(p => p.Score).Select(p => p.DocumentId).ToList(), 1,
+            var posts = _postService.GetItemsById(result.Documents.Select(p => p.DocumentId).Take(5).ToList(), 1,
                 numberOfSimilarityPosts ?? 5);
             return PartialView("Partials/_MoreLikeThis", _postModelFactory.PreparePostCardViewModel(posts, currentUser, Url));
         }
 
-        public virtual async Task<JsonResult> SearchSuggestion(string searchString)
+        [OutputCache(Duration = 60 * 60, VaryByParam = "*")]
+        public virtual async Task<JsonResult> SearchSuggestion(string query)
         {
-            var result = await _searchEngine.AutoCompleteAsync(searchString);
+            var result = await _searchEngine.AutoCompleteAsync(query, 0, 20);
             if (result.HasError)
             {
-                var errorCode = ErrorLog.GetDefault(System.Web.HttpContext.Current).Log(new Error(result.Error, System.Web.HttpContext.Current));
+                var errorCode = ErrorLog.GetDefault(System.Web.HttpContext.Current)
+                    .Log(new Error(result.Error, System.Web.HttpContext.Current));
                 ViewBag.ErrorCode = errorCode;
                 return Json("", JsonRequestBehavior.AllowGet);
             }
 
             var currentUser = UserManager.FindById(User.Identity.GetUserId());
-            var posts = _postService.GetItemsById(result.Documents.OrderByDescending(p => p.Score).Select(p => p.DocumentId).ToList());
+            var posts = _postService.GetItemsById(result.Documents.Select(p => p.DocumentId).Take(10).ToList());
             var model = _postModelFactory.PreparePostCardViewModel(posts, currentUser, Url);
 
-            return Json(new {suggestions = model.Select(p => new {value = p.Title, data = p.PostUrl}).ToList()},
+            return Json(model.Select(p => new {value = p.Title, data = p.PostUrl}).ToList(),
                 JsonRequestBehavior.AllowGet);
         }
     }

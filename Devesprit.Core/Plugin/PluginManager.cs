@@ -110,7 +110,7 @@ namespace Devesprit.Core.Plugin
                                 PerformFileDeploy(plugin);
 
                             //init plugin type (only one plugin per assembly is allowed)
-                            foreach (var t in pluginDescriptor.ReferencedAssembly.GetTypes())
+                            foreach (var t in pluginDescriptor.ReferencedAssembly.GetExportedTypes())
                                 if (typeof(IPlugin).IsAssignableFrom(t))
                                     if (!t.IsInterface)
                                         if (t.IsClass && !t.IsAbstract)

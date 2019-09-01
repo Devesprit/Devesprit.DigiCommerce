@@ -101,7 +101,8 @@ namespace Devesprit.DigiCommerce.Controllers
                     }
 
                 var date = DateTime.Now.AddTimePeriodToDateTime(periodType, -1);
-                var userLatestDownloadDate = user.DownloadsLog.Where(p =>
+                var userLatestDownloadDate = _downloadsLogService.GetAsQueryable().Where(p =>
+                                                     p.UserId == user.Id &&
                                                      p.DownloadDate >= date && p.ProductId != product.Id &&
                                                      !p.IsDemoVersion)
                                                  .OrderByDescending(p => p.DownloadDate).FirstOrDefault()

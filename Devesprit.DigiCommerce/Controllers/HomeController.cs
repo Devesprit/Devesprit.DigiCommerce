@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using System.Web.Mvc;
+using System.Web.UI;
 using Devesprit.Services.Localization;
 using Devesprit.Services.Pages;
 
@@ -29,6 +30,7 @@ namespace Devesprit.DigiCommerce.Controllers
             return View();
         }
 
+        [OutputCache(Duration = 60 * 5, Location = OutputCacheLocation.ServerAndClient, VaryByParam = "none")]
         public virtual ActionResult TermsAndConditions()
         {
             var terms = CurrentSettings.GetLocalized(p => p.TermsAndConditions);

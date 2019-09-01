@@ -57,7 +57,7 @@ namespace Plugin.Other.SMS.Models
         public bool SendSMSToAdminOnSearchIndexesFailed { get; set; }
 
         [DisplayNameLocalized("Plugin.Other.SMS.SMSMessageForInvoiceCheckOut")]
-        public LocalizedString SMSMessageForInvoiceCheckOut { get; set; } = new LocalizedString("Invoice Checkout - User: {{Invoice.User.Email}} - Amount: {{PaidAmount}}");
+        public LocalizedString SMSMessageForInvoiceCheckOut { get; set; } = new LocalizedString("Invoice Checkout - User: {{Invoice.User.Email}} - Amount: {{PaidAmountExStr}} {{CurrencyIso}}, Gateway: {{PaymentGatewayName}}");
 
         [DisplayNameLocalized("Plugin.Other.SMS.SMSMessageForNewUserJoined")]
         public LocalizedString SMSMessageForNewUserJoined { get; set; } = new LocalizedString("New User Registered - {{User.Email}}");

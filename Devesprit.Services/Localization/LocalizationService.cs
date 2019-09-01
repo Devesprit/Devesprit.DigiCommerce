@@ -10,6 +10,7 @@ using Devesprit.Core;
 using Devesprit.Core.Localization;
 using Devesprit.Data;
 using Devesprit.Data.Domain;
+using Devesprit.Services.Events;
 using Devesprit.Services.Languages;
 using Devesprit.Services.MemoryCache;
 using Devesprit.Utilities.Extensions;
@@ -24,13 +25,16 @@ namespace Devesprit.Services.Localization
         private readonly IWorkContext _workContext;
         private readonly ILanguagesService _languagesService;
         private readonly IMemoryCache _memoryCache;
+        private readonly IEventPublisher _eventPublisher;
 
-        public LocalizationService(AppDbContext dbContext, IWorkContext workContext, ILanguagesService languagesService, IMemoryCache memoryCache)
+        public LocalizationService(AppDbContext dbContext, IWorkContext workContext, ILanguagesService languagesService,
+            IMemoryCache memoryCache, IEventPublisher eventPublisher)
         {
             _dbContext = dbContext;
             _workContext = workContext;
             _languagesService = languagesService;
             _memoryCache = memoryCache;
+            _eventPublisher = eventPublisher;
         }
 
         public virtual IQueryable<TblLocalizedStrings> GetAsQueryable()
@@ -40,7 +44,9 @@ namespace Devesprit.Services.Localization
 
         public virtual void Delete(int id)
         {
+            var record = FindById(id);
             _dbContext.LocalizedStrings.Where(p=> p.Id == id).Delete();
+            _eventPublisher.EntityDeleted(record);
             ClearCache();
         }
 
@@ -85,7 +91,7 @@ namespace Devesprit.Services.Localization
         {
             _dbContext.LocalizedStrings.Add(record);
             _dbContext.SaveChanges();
-
+            _eventPublisher.EntityInserted(record);
             ClearCache();
 
             return record.Id;
@@ -93,9 +99,10 @@ namespace Devesprit.Services.Localization
 
         public virtual void Update(TblLocalizedStrings record)
         {
+            var oldRecord = FindById(record.Id);
             _dbContext.LocalizedStrings.AddOrUpdate(record);
             _dbContext.SaveChanges();
-
+            _eventPublisher.EntityUpdated(record, oldRecord);
             ClearCache();
         }
 

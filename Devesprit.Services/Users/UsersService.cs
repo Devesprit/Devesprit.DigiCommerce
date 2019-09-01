@@ -361,11 +361,11 @@ namespace Devesprit.Services.Users
                 where downloads.UserId == userId
                 group downloads by downloads.ProductId
                 into grp
-                select grp.OrderByDescending(x => x.DownloadDate).FirstOrDefault();
+                select grp.OrderByDescending(x => x.Id).FirstOrDefault();
 
             var result = new StaticPagedList<TblProductDownloadsLog>(
                 await query
-                    .OrderByDescending(p=> p.DownloadDate)
+                    .OrderByDescending(p=> p.Id)
                     .Include(p => p.Product)
                     .Skip(pageSize * (pageIndex - 1))
                     .Take(pageSize)

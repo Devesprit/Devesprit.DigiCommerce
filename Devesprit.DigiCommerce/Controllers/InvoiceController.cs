@@ -42,7 +42,7 @@ namespace Devesprit.DigiCommerce.Controllers
                 ? View("PageNotFound")
                 : View(await _invoiceModelFactory.PrepareInvoiceModelAsync(model));
         }
-
+         
         public virtual async Task<ActionResult> Print(Guid id)
         {
             var model = await _invoiceService.FindByIdAsync(id);

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using System.Web.Mvc;
+using System.Web.UI;
 using Devesprit.Core.Localization;
 using Devesprit.Data.Domain;
 using Devesprit.DigiCommerce.Models.ContactUs;
@@ -20,6 +21,8 @@ namespace Devesprit.DigiCommerce.Controllers
             _localizationService = localizationService;
             _userMessagingService = userMessagingService;
         }
+
+        [OutputCache(Duration = 60 * 5, Location = OutputCacheLocation.ServerAndClient, VaryByParam = "*")]
         public virtual ActionResult Index()
         {
             if (CurrentSettings.UseGoogleRecaptchaForContactUs)

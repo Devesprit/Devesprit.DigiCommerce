@@ -38,7 +38,7 @@ namespace Devesprit.DigiCommerce.Controllers
             _localizationService = localizationService;
             _productCheckoutAttributesService = productCheckoutAttributesService;
         }
-
+         
         public virtual async Task<ActionResult> UpgradeAccount()
         {
             var user = await UserManager.FindByIdAsync(HttpContext.User.Identity.GetUserId());

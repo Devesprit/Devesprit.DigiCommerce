@@ -20,6 +20,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using Devesprit.Services.Currency;
 using Z.EntityFramework.Plus;
 
 namespace Devesprit.Services.Invoice
@@ -385,7 +386,8 @@ namespace Devesprit.Services.Invoice
 
             QueryCacheManager.ExpireTag(QueryCacheTag.Invoice);
 
-            _eventPublisher.Publish(new InvoiceCheckoutEvent(invoice, transactionId, paidAmount));
+            _eventPublisher.Publish(new InvoiceCheckoutEvent(invoice, transactionId, paidAmount,
+                paidAmount.ExchangeCurrencyStr(), invoice.PaymentGatewayName, invoice.Currency.IsoCode));
 
 
             //Process User Group Upgrade

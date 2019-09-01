@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web.Hosting;
 using Devesprit.Core.Settings;
@@ -24,6 +25,7 @@ using Lucene.Net.Search;
 using Lucene.Net.Search.Highlight;
 using Lucene.Net.Search.Similar;
 using Lucene.Net.Store;
+using Lucene.Net.Util;
 using SpellChecker.Net.Search.Spell;
 
 namespace Devesprit.Services.SearchEngine
@@ -53,11 +55,22 @@ namespace Devesprit.Services.SearchEngine
             _spellFilesPath = _indexFilesPath.TrimEnd('\\') + "\\Spell";
         }
 
-        public virtual async Task<SearchResult> SearchAsync(string term, int? filterByCategory = null, int languageId = 0, PostType? postType = null, SearchPlace searchPlace = SearchPlace.Anywhere,
-            int maxResult = 1000)
+        public virtual async Task<SearchResult> SearchAsync(string term, 
+            int? filterByCategory = null, 
+            int languageId = -1, 
+            PostType? postType = null, 
+            SearchPlace searchPlace = SearchPlace.Anywhere,
+            SearchResultSortType orderBy = SearchResultSortType.Score,
+            int maxResult = 1000,
+            bool exactSearch = false)
         {
             var result = new SearchResult();
             term = term.Trim();
+
+            //replace multiple spaces with a single space
+            RegexOptions options = RegexOptions.None;
+            Regex regex = new Regex("[ ]{2,}", options);
+            term = regex.Replace(term, " ");
 
             if (string.IsNullOrWhiteSpace(term))
             {
@@ -102,19 +115,11 @@ namespace Devesprit.Services.SearchEngine
                                 }
                             }
 
-                            var analyzer = new StandardAnalyzer(Version);
-                            
-                            QueryScorer scorer = null;
-                            var parser = new MultiFieldQueryParser(Version, searchInFields.ToArray(), analyzer);
-                            var query = ParseQuery(term, parser);
-
-                            scorer = new QueryScorer(query);
-
                             BooleanFilter filter = null;
-                            if (languageId > 0 || filterByCategory != null || postType != null)
+                            if (languageId > -1 || filterByCategory != null || postType != null)
                             {
                                 filter = new BooleanFilter();
-                                if (languageId > 0)
+                                if (languageId > -1)
                                 {
                                     filter.Add(new FilterClause(
                                         new QueryWrapperFilter(new TermQuery(new Term("LanguageId", languageId.ToString()))),
@@ -147,17 +152,51 @@ namespace Devesprit.Services.SearchEngine
                                         PostType.BlogPost.ToString()))), Occur.MUST_NOT));
                             }
 
-                            var hits = filter == null
-                                ? searcher.Search(query, maxResult).ScoreDocs
-                                : searcher.Search(query, filter, maxResult).ScoreDocs;
-                            if (hits.Length == 0)
+                            Sort sort = new Sort(SortField.FIELD_SCORE);
+
+                            switch (orderBy)
+                            {
+                                case SearchResultSortType.NumberOfVisits:
+                                    sort = new Sort(new SortField("NumberOfVisit", SortField.INT, true));
+                                    break;
+                                case SearchResultSortType.PublishDate:
+                                    sort = new Sort(new SortField("PublishDate", SortField.LONG, true));
+                                    break;
+                                case SearchResultSortType.LastUpDate:
+                                    sort = new Sort(new SortField("LastUpDate", SortField.LONG, true));
+                                    break;
+                            }
+
+                            var analyzer = new StandardAnalyzer(Version);
+                            var parser = new MultiFieldQueryParser(Version, searchInFields.ToArray(), analyzer);
+                            QueryScorer scorer = null;
+                            var hits = new List<ScoreDoc>();
+                            Query query = null;
+                            if (exactSearch)
+                            {
+                                query = ParseQuery(term, parser);
+                                hits.AddRange(searcher.Search(query, filter, maxResult, sort).ScoreDocs);
+                            }
+                            else
+                            {
+                                query = ParseQuery($"(\"{term}\")", parser);
+                                hits.AddRange(searcher.Search(query, filter, maxResult, sort).ScoreDocs);
+                                query = ParseQuery($"({term.Replace(" ", "*")})", parser);
+                                hits.AddRange(searcher.Search(query, filter, maxResult, sort).ScoreDocs);
+                                query = ParseQuery($"(+{term.Trim().Replace(" ", " +")})", parser);
+                                hits.AddRange(searcher.Search(query, filter, maxResult, sort).ScoreDocs);
+                                query = ParseQuery(term, parser);
+                                hits.AddRange(searcher.Search(query, filter, maxResult, sort).ScoreDocs);
+                            }
+
+                            scorer = new QueryScorer(query);
+
+                            if (hits.Count == 0)
                             {
                                 term = SearchByPartialWords(term);
                                 query = ParseQuery(term, parser);
                                 scorer = new QueryScorer(query);
-                                hits = filter == null
-                                    ? searcher.Search(query, maxResult).ScoreDocs
-                                    : searcher.Search(query, filter, maxResult).ScoreDocs;
+                                hits.AddRange(searcher.Search(query, filter, maxResult, sort).ScoreDocs);
                             }
 
                             var formatter = new SimpleHTMLFormatter(
@@ -182,7 +221,7 @@ namespace Devesprit.Services.SearchEngine
                                 });
                             }
 
-                            result.Documents = result.Documents.DistinctBy(p => new { p.DocumentBody, p.DocumentTitle })
+                            result.Documents = result.Documents.DistinctBy(p => new { p.DocumentId })
                                 .ToList();
 
                             analyzer.Close();
@@ -213,8 +252,8 @@ namespace Devesprit.Services.SearchEngine
             return result;
         }
 
-        public virtual SearchResult MoreLikeThis(int postId, int? filterByCategory = null, int languageId = 0, PostType? postType = null, SearchPlace searchPlace = SearchPlace.Title | SearchPlace.Description,
-            int maxResult = 5)
+        public virtual SearchResult MoreLikeThis(int postId, int? filterByCategory = null, int languageId = -1, PostType? postType = null, SearchPlace searchPlace = SearchPlace.Title | SearchPlace.Description,
+            int maxResult = 5, SearchResultSortType orderBy = SearchResultSortType.Score)
         {
             var result = new SearchResult();
 
@@ -228,7 +267,7 @@ namespace Devesprit.Services.SearchEngine
                     {
                         var docNumber = GetLuceneDocNumber(postId, searcher);
 
-                        if (docNumber == 0)
+                        if (docNumber == -1)
                         {
                             return result;
                         }
@@ -277,7 +316,7 @@ namespace Devesprit.Services.SearchEngine
                                 postId.ToString()))),
                             Occur.MUST_NOT));
 
-                        if (languageId > 0)
+                        if (languageId > -1)
                         {
                             filter.Add(new FilterClause(
                                 new QueryWrapperFilter(new TermQuery(new Term("LanguageId",
@@ -297,8 +336,22 @@ namespace Devesprit.Services.SearchEngine
                                     postType.Value.ToString()))), Occur.MUST));
                         }
 
+                        Sort sort = new Sort(SortField.FIELD_SCORE);
 
-                        var hits = searcher.Search(query, filter, maxResult).ScoreDocs;
+                        switch (orderBy)
+                        {
+                            case SearchResultSortType.NumberOfVisits:
+                                sort = new Sort(new SortField("NumberOfVisit", SortField.INT, true));
+                                break;
+                            case SearchResultSortType.PublishDate:
+                                sort = new Sort(new SortField("PublishDate", SortField.LONG, true));
+                                break;
+                            case SearchResultSortType.LastUpDate:
+                                sort = new Sort(new SortField("LastUpDate", SortField.LONG, true));
+                                break;
+                        }
+
+                        var hits = searcher.Search(query, filter, maxResult, sort).ScoreDocs;
 
                         foreach (var scoreDoc in hits)
                         {
@@ -316,7 +369,7 @@ namespace Devesprit.Services.SearchEngine
                             });
                         }
 
-                        result.Documents = result.Documents.DistinctBy(p => new { p.DocumentBody, p.DocumentTitle })
+                        result.Documents = result.Documents.DistinctBy(p => new { p.DocumentId })
                             .ToList();
 
                         analyzer.Close();
@@ -335,7 +388,7 @@ namespace Devesprit.Services.SearchEngine
             return result;
         }
 
-        public virtual async Task<SearchResult> AutoCompleteAsync(string prefix, int languageId = 0, int maxResult = 10)
+        public virtual async Task<SearchResult> AutoCompleteAsync(string prefix, int languageId = -1, int maxResult = 10, SearchResultSortType orderBy = SearchResultSortType.LastUpDate)
         {
             var result = new SearchResult();
             prefix = prefix.Trim();
@@ -344,6 +397,11 @@ namespace Devesprit.Services.SearchEngine
             {
                 return result;
             }
+
+            //replace multiple spaces with a single space
+            RegexOptions options = RegexOptions.None;
+            Regex regex = new Regex("[ ]{2,}", options);
+            prefix = regex.Replace(prefix, " ");
 
             var watch = new System.Diagnostics.Stopwatch();
             watch.Start();
@@ -356,7 +414,7 @@ namespace Devesprit.Services.SearchEngine
                         using (var searcher = new IndexSearcher(directory, readOnly: true))
                         {
                             BooleanFilter filter = null;
-                            if (languageId > 0)
+                            if (languageId > -1)
                             {
                                 filter = new BooleanFilter();
                                 filter.Add(new FilterClause(
@@ -365,16 +423,26 @@ namespace Devesprit.Services.SearchEngine
                                     Occur.MUST));
                             }
 
-                            var hits = filter == null
-                                ? searcher.Search(new PrefixQuery(new Term("Title", prefix)), maxResult).ScoreDocs
-                                : searcher.Search(new PrefixQuery(new Term("Title", prefix)), filter, maxResult).ScoreDocs;
-                            if (hits.Length == 0)
+                            Sort sort = new Sort(SortField.FIELD_SCORE);
+
+                            switch (orderBy)
                             {
-                                hits = filter == null
-                                    ? searcher.Search(new PrefixQuery(new Term("Description", prefix)), maxResult).ScoreDocs
-                                    : searcher.Search(new PrefixQuery(new Term("Description", prefix)), filter, maxResult).ScoreDocs;
+                                case SearchResultSortType.NumberOfVisits:
+                                    sort = new Sort(new SortField("NumberOfVisit", SortField.INT, true));
+                                    break;
+                                case SearchResultSortType.PublishDate:
+                                    sort = new Sort(new SortField("PublishDate", SortField.LONG, true));
+                                    break;
+                                case SearchResultSortType.LastUpDate:
+                                    sort = new Sort(new SortField("LastUpDate", SortField.LONG, true));
+                                    break;
                             }
 
+                            var analyzer = new StandardAnalyzer(Version);
+                            var parser = new QueryParser(Version, "Title", analyzer);
+                            var query = ParseQuery(prefix.Replace(" ", "*") + "*", parser);
+                            var hits = searcher.Search(query, filter, maxResult, sort).ScoreDocs;
+                            
                             foreach (var scoreDoc in hits)
                             {
                                 var doc = searcher.Doc(scoreDoc.Doc);
@@ -391,7 +459,7 @@ namespace Devesprit.Services.SearchEngine
                                 });
                             }
 
-                            result.Documents = result.Documents.DistinctBy(p => new { p.DocumentBody, p.DocumentTitle })
+                            result.Documents = result.Documents.DistinctBy(p => new { p.DocumentId })
                                 .ToList();
                         }
                     }
@@ -416,7 +484,7 @@ namespace Devesprit.Services.SearchEngine
             var doc = searcher.Search(query, 1);
             if (doc.TotalHits == 0)
             {
-                return 0;
+                return -1;
             }
             return doc.ScoreDocs[0].Doc;
         }
@@ -508,11 +576,15 @@ namespace Devesprit.Services.SearchEngine
                     using (var writer =
                         new IndexWriter(directory, analyzer, true, IndexWriter.MaxFieldLength.UNLIMITED))
                     {
-                        foreach (var language in languages.OrderByDescending(p => p.IsDefault))
+                        foreach (var post in allPosts) 
                         {
-                            foreach (var post in allPosts)
+                            writer.AddDocument(MapPost(post, post.PostType));//Default values
+
+                            foreach (var language in languages.OrderByDescending(p => p.IsDefault))
                             {
-                                writer.AddDocument(MapPost(post, language, post.PostType));
+                                var localizedMap = MapPost(post, language, post.PostType);
+                                if (localizedMap != null)
+                                        writer.AddDocument(localizedMap);//Localized values
                             }
                         }
 
@@ -551,8 +623,111 @@ namespace Devesprit.Services.SearchEngine
             }
         }
 
+        protected virtual Document MapPost(TblPosts post, PostType? postType)
+        {
+            var document = new Document();
+            
+            document.Add(new Field("ID", post.Id.ToString(), Field.Store.YES, Field.Index.NOT_ANALYZED));
+            document.Add(new Field("PostType", postType?.ToString() ?? "", Field.Store.YES, Field.Index.NOT_ANALYZED));
+            document.Add(new Field("LanguageId", "0", Field.Store.YES, Field.Index.NOT_ANALYZED));
+            document.Add(new Field("LanguageCode", "", Field.Store.YES, Field.Index.NOT_ANALYZED));
+            document.Add(new Field("PublishDate", DateTools.DateToString(post.PublishDate, DateTools.Resolution.SECOND),
+                Field.Store.YES, Field.Index.ANALYZED));
+            document.Add(new Field("LastUpDate",
+                DateTools.DateToString(post.LastUpDate ?? post.PublishDate, DateTools.Resolution.SECOND),
+                Field.Store.YES, Field.Index.ANALYZED));
+            var numberOfViewField = new NumericField("NumberOfVisit", Field.Store.YES, true);
+            numberOfViewField.SetIntValue(post.NumberOfViews);
+            document.Add(numberOfViewField);
+
+            var value = post.Title;
+            if (!string.IsNullOrEmpty(value))
+            {
+                var titleField = new Field("Title",
+                    value,
+                    Field.Store.YES,
+                    Field.Index.ANALYZED,
+                    Field.TermVector.WITH_POSITIONS_OFFSETS)
+                {
+                    Boost = 100
+                };
+                document.Add(titleField);
+            }
+
+
+            value = post.Descriptions.Where(p => p.AddToSearchEngineIndexes).Aggregate("",
+                (current, description) =>
+                    current + description.HtmlDescription.ConvertHtmlToText() +
+                    Environment.NewLine + Environment.NewLine);
+            if (!string.IsNullOrWhiteSpace(value))
+            {
+                var descriptionField = new Field("Description",
+                    value,
+                    Field.Store.YES,
+                    Field.Index.ANALYZED,
+                    Field.TermVector.WITH_POSITIONS_OFFSETS)
+                {
+                    Boost = 50
+                };
+                document.Add(descriptionField);
+            }
+
+
+            value = post.Tags.Aggregate("",
+                (current, tag) => current + (tag.Tag + ", "));
+            if (!string.IsNullOrWhiteSpace(value))
+            {
+                var tagField = new Field("Tags",
+                    value,
+                    Field.Store.YES,
+                    Field.Index.ANALYZED,
+                    Field.TermVector.WITH_POSITIONS_OFFSETS)
+                {
+                    Boost = 50
+                };
+                document.Add(tagField);
+            }
+
+
+            value = post.Categories.Aggregate("",
+                (current, cat) => current + (cat.Id + " , "));
+            var categoriesField = new Field("Categories",
+                value,
+                Field.Store.YES,
+                Field.Index.ANALYZED);
+            document.Add(categoriesField);
+
+
+            value = post.MetaKeyWords;
+            if (!string.IsNullOrEmpty(value))
+            {
+                var keywordsField = new Field("Keywords",
+                    value,
+                    Field.Store.YES,
+                    Field.Index.ANALYZED,
+                    Field.TermVector.WITH_POSITIONS_OFFSETS)
+                {
+                    Boost = 50
+                };
+                document.Add(keywordsField);
+            }
+
+            return document;
+        }
+
         protected virtual Document MapPost(TblPosts post, TblLanguages language, PostType? postType)
         {
+            var title = post.GetLocalized(p => p.Title, language.Id);
+            var descriptions = post.Descriptions.Where(p => p.AddToSearchEngineIndexes).Aggregate("",
+                (current, description) =>
+                    current + description.GetLocalized(p => p.HtmlDescription, language.Id)?.ConvertHtmlToText() +
+                    Environment.NewLine + Environment.NewLine);
+            var tags = post.Tags.Aggregate("",
+                (current, tag) => current + tag.GetLocalized(p => p.Tag, language.Id) + ", ");
+            var categories = post.Categories.Aggregate("",
+                (current, cat) => current + (cat.Id + " , "));
+            var keyWords = post.GetLocalized(p => p.MetaKeyWords, language.Id);
+
             var document = new Document();
 
 
@@ -560,65 +735,77 @@ namespace Devesprit.Services.SearchEngine
             document.Add(new Field("PostType", postType?.ToString() ?? "", Field.Store.YES, Field.Index.NOT_ANALYZED));
             document.Add(new Field("LanguageId", language.Id.ToString(), Field.Store.YES, Field.Index.NOT_ANALYZED));
             document.Add(new Field("LanguageCode", language.IsoCode, Field.Store.YES, Field.Index.NOT_ANALYZED));
+            document.Add(new Field("PublishDate", DateTools.DateToString(post.PublishDate, DateTools.Resolution.SECOND),
+                Field.Store.YES, Field.Index.ANALYZED));
+            document.Add(new Field("LastUpDate",
+                DateTools.DateToString(post.LastUpDate ?? post.PublishDate, DateTools.Resolution.SECOND),
+                Field.Store.YES, Field.Index.ANALYZED));
+            var numberOfViewField = new NumericField("NumberOfVisit", Field.Store.YES, true);
+            numberOfViewField.SetIntValue(post.NumberOfViews);
+            document.Add(numberOfViewField);
 
 
-            var titleField = new Field("Title",
-                post.GetLocalized(p => p.Title, language.Id),
-                Field.Store.YES,
-                Field.Index.ANALYZED,
-                Field.TermVector.WITH_POSITIONS_OFFSETS)
+            if (!string.IsNullOrEmpty(title))
             {
-                Boost = 100
-            };
-            document.Add(titleField);
+                var titleField = new Field("Title",
+                    title,
+                    Field.Store.YES,
+                    Field.Index.ANALYZED,
+                    Field.TermVector.WITH_POSITIONS_OFFSETS)
+                {
+                    Boost = 100
+                };
+                document.Add(titleField);
+            }
 
 
-            var postDescription = post.Descriptions.Where(p => p.AddToSearchEngineIndexes).Aggregate("",
-                (current, description) =>
-                    current + description.GetLocalized(p => p.HtmlDescription, language.Id).ConvertHtmlToText() +
-                    Environment.NewLine + Environment.NewLine);
-            var descriptionField = new Field("Description",
-                postDescription,
-                Field.Store.YES,
-                Field.Index.ANALYZED,
-                Field.TermVector.WITH_POSITIONS_OFFSETS)
+            if (!string.IsNullOrWhiteSpace(descriptions.Replace(Environment.NewLine, "")))
             {
-                Boost = 50
-            };
-            document.Add(descriptionField);
+                var descriptionField = new Field("Description",
+                    descriptions,
+                    Field.Store.YES,
+                    Field.Index.ANALYZED,
+                    Field.TermVector.WITH_POSITIONS_OFFSETS)
+                {
+                    Boost = 50
+                };
+                document.Add(descriptionField);
+            }
 
 
-            var postTags = post.Tags.Aggregate("",
-                (current, tag) => current + (tag.GetLocalized(p => p.Tag, language.Id) + ", "));
-            var tagField = new Field("Tags",
-                postTags,
-                Field.Store.YES,
-                Field.Index.ANALYZED,
-                Field.TermVector.WITH_POSITIONS_OFFSETS)
+            if (!string.IsNullOrWhiteSpace(tags.Replace(", ", "")))
             {
-                Boost = 50
-            };
-            document.Add(tagField);
+                var tagField = new Field("Tags",
+                    tags,
+                    Field.Store.YES,
+                    Field.Index.ANALYZED,
+                    Field.TermVector.WITH_POSITIONS_OFFSETS)
+                {
+                    Boost = 50
+                };
+                document.Add(tagField);
+            }
 
-            var postCategories = post.Categories.Aggregate("",
-                (current, cat) => current + (cat.Id + " , "));
+
             var categoriesField = new Field("Categories",
-                postCategories,
+                categories,
                 Field.Store.YES,
                 Field.Index.ANALYZED);
             document.Add(categoriesField);
 
 
-            var keywordsField = new Field("Keywords",
-                post.GetLocalized(p => p.MetaKeyWords, language.Id),
-                Field.Store.YES,
-                Field.Index.ANALYZED,
-                Field.TermVector.WITH_POSITIONS_OFFSETS)
+            if (!string.IsNullOrEmpty(keyWords))
             {
-                Boost = 50
-            };
-            document.Add(keywordsField);
-
+                var keywordsField = new Field("Keywords",
+                    keyWords,
+                    Field.Store.YES,
+                    Field.Index.ANALYZED,
+                    Field.TermVector.WITH_POSITIONS_OFFSETS)
+                {
+                    Boost = 50
+                };
+                document.Add(keywordsField);
+            }
 
             return document;
         }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.ServiceModel.Syndication;
 using System.Web.Mvc;
+using System.Web.UI;
 using Devesprit.Data.Domain;
 using Devesprit.Data.Enums;
 using Devesprit.DigiCommerce.Models.Post;
@@ -35,6 +36,7 @@ namespace Devesprit.DigiCommerce.Controllers
 
         [Route("{lang}/RSSFeed/{listType}", Order = 0)]
         [Route("RSSFeed/{listType}", Order = 1)]
+        [OutputCache(Duration = 60 * 5, Location = OutputCacheLocation.ServerAndClient, VaryByParam = "*")]
         public virtual ActionResult Index(PostsListType listType, int? page, int? pageSize, int? catId, DateTime? fromDate)
         {
             IPagedList<TblPosts> posts = null;
@@ -92,6 +94,7 @@ namespace Devesprit.DigiCommerce.Controllers
 
         [Route("{lang}/Products/RSS/{listType}", Order = 0)]
         [Route("Products/RSS/{listType}", Order = 1)]
+        [OutputCache(Duration = 60 * 5, Location = OutputCacheLocation.ServerAndClient, VaryByParam = "*")]
         public virtual ActionResult Products(ProductsListType listType, int? page, int? pageSize, int? catId, DateTime? fromDate)
         {
             IPagedList<TblProducts> products = null;
@@ -133,6 +136,7 @@ namespace Devesprit.DigiCommerce.Controllers
 
         [Route("{lang}/Blog/RSS/{listType}", Order = 0)]
         [Route("Blog/RSS/{listType}", Order = 1)]
+        [OutputCache(Duration = 60 * 5, Location = OutputCacheLocation.ServerAndClient, VaryByParam = "*")]
         public virtual ActionResult Blog(PostsListType listType, int? page, int? pageSize, int? catId, DateTime? fromDate)
         {
             IPagedList<TblBlogPosts> posts = null;

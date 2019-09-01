@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web.Mvc;
+using System.Web.UI;
 using Devesprit.Data.Domain;
 using Devesprit.Data.Enums;
 using Devesprit.DigiCommerce.Models.Search;
@@ -42,6 +43,7 @@ namespace Devesprit.DigiCommerce.Controllers
         }
 
         // GET: SiteMap
+        [OutputCache(Duration = 60 * 60, Location = OutputCacheLocation.ServerAndClient, VaryByParam = "*")]
         public virtual async Task<ActionResult> Index()
         {
             var items = new List<SitemapItem>();

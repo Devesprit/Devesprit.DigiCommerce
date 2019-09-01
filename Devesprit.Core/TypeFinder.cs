@@ -35,7 +35,7 @@ namespace Devesprit.Core
                     Type[] types = null;
                     try
                     {
-                        types = a.GetTypes();
+                        types = a.GetExportedTypes();
                     }
                     catch
                     {

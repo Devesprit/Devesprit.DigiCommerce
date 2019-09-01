@@ -46,11 +46,11 @@ namespace Devesprit.Services.Posts
         {
             var record = await FindByIdAsync(id);
             await _dbContext.PostDescriptions.Where(p => p.Id == id).DeleteAsync();
+            _eventPublisher.EntityDeleted(record);
+
             await _localizedEntityService.DeleteEntityAllLocalizedStringsAsync(typeof(TblPostDescriptions).Name, id);
 
             QueryCacheManager.ExpireTag(QueryCacheTag.PostDescription);
-
-            _eventPublisher.EntityDeleted(record);
         }
 
         public virtual async Task UpdateAsync(TblPostDescriptions record)

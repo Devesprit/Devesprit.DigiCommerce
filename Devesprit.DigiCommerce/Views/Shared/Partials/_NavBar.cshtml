@@ -1,5 +1,4 @@
-﻿@using Devesprit.Core
-@using Devesprit.Data.Domain
+﻿@using Devesprit.Data.Domain
 @using Devesprit.Services.Localization
 @using Devesprit.Services.NavBar
 @using Devesprit.Core.Settings
@@ -7,7 +6,6 @@
 @{
     var settings = DependencyResolver.Current.GetService<ISettingService>().LoadSetting<SiteSettings>();
     var navbarItems = DependencyResolver.Current.GetService<INavBarService>().GetAsEnumerable().ToList();
-    var currentLangDir = DependencyResolver.Current.GetService<IWorkContext>().CurrentLanguage.IsRtl ? "rtl" : "ltr";
 }
 
 @functions
@@ -29,26 +27,10 @@
             if (navbarItems.Any(p => p.ParentItemId == navbarItem.Id))
             {
                 result += $@"<li class='{dropdownliClass}'>
-            <a class='{aClass} dropdown-toggle'
-               data-toggle='dropdown'
-               aria-haspopup='true'
-               aria-expanded='false'
-               href='{navbarItem.GetLocalized(p => p.Url)}'
-               target='{navbarItem.Target}'
-               title='{navbarItem.GetLocalized(p => p.Tooltip)}'
-               {onClickScript}>
-                {iconTag}
-                {navbarItem.GetLocalized(p => p.InnerHtml)}
-            </a>
-            <ul class='dropdown-menu' aria-labelledby='navbarDropdownMenuLink'>
-                {GenerateMenu(navbarItems, navbarItem.Id)}
-            </ul>
-        </li>";
-            }
-            else
-            {
-                result += $@"<li {liClass}>
-        <a class='{aClass}'
+        <a class='{aClass} dropdown-toggle'
+           data-toggle='dropdown'
+           aria-haspopup='true'
+           aria-expanded='false'
            href='{navbarItem.GetLocalized(p => p.Url)}'
            target='{navbarItem.Target}'
            title='{navbarItem.GetLocalized(p => p.Tooltip)}'
@@ -56,7 +38,23 @@
             {iconTag}
             {navbarItem.GetLocalized(p => p.InnerHtml)}
         </a>
-     </li>";
+        <ul class='dropdown-menu' aria-labelledby='navbarDropdownMenuLink'>
+            {GenerateMenu(navbarItems, navbarItem.Id)}
+        </ul>
+    </li>";
+            }
+            else
+            {
+                result += $@"<li {liClass}>
+    <a class='{aClass}'
+       href='{navbarItem.GetLocalized(p => p.Url)}'
+       target='{navbarItem.Target}'
+       title='{navbarItem.GetLocalized(p => p.Tooltip)}'
+       {onClickScript}>
+        {iconTag}
+        {navbarItem.GetLocalized(p => p.InnerHtml)}
+    </a>
+ </li>";
             }
         }
 
@@ -80,12 +78,11 @@
                 @Html.Raw(GenerateMenu(navbarItems, null))
             </ul>
             <div class="form-inline my-1 my-md-0">
-                @using (Html.BeginForm("Index", "Search", FormMethod.Get, new { @class = "my-1 my-lg-0 search-box-placeholder", novalidate = "novalidate" }))
+                @using (Html.BeginForm("Index", "Search", FormMethod.Get, new { @class = "search-box", novalidate = "novalidate" }))
                 {
-                    <input id="txtSearch" type="text" name="query" class="form-control form-control-sm search-txt" placeholder="@T("Search")" data-val="true" data-val-required="" />
-                    <button type="submit" class="btn btn-sm btn-secondary"><i class="fa fa-search"></i></button>
+                    <input id="txtSearch" type="text" name="query" class="form-control form-control-sm " placeholder="@T("Search")" data-val="true" data-val-required="" />
                 }
-                <a class="btn btn-success btn-sm text-light mx-1 shopping-cart-btn" href="@Url.Action("Index", "Invoice", new {id = ""})">
+                <a class="btn btn-success btn-sm text-light shopping-cart-btn" href="@Url.Action("Index", "Invoice", new {id = ""})">
                     <span id="lblNumberOfItemsInShappingCart" class="badge badge-danger">0</span> <i class="fa fa-shopping-cart"></i> &nbsp;&nbsp;&nbsp; @T("MyShoppingCart")
                 </a>
             </div>
@@ -95,14 +92,32 @@
 
 @{
     Html.AddInlineScript(ResourceLocation.Footer,
-@<script>
-    $('#txtSearch').autocomplete({
-        serviceUrl: '@Url.Action("SearchSuggestion", "Search")',
-        paramName: 'searchString',
-        maxHeight: 450,
-         onSelect: function (suggestion) {
-             window.location.href =suggestion.data;
-         }
-     });
-</script>);
+        @<script>
+             var options = {
+                 url: function(phrase) {
+                     return "@Url.Action("SearchSuggestion", "Search")?query=" + phrase;
+                 },
+                 requestDelay: 400,
+                 theme: "plate-dark",
+                 getValue: "value",
+                 adjustWidth: false,
+                 list: {
+                     onClickEvent: function () {
+                         window.location.href =  $("#txtSearch").getSelectedItemData().data;
+                     },
+                     showAnimation: {
+                         type: "fade",
+                         time: 400,
+                         callback: function() {}
+                     },
+
+                     hideAnimation: {
+                         type: "slide",
+                         time: 400,
+                         callback: function() {}
+                     }
+                 }
+             };
+             $('#txtSearch').easyAutocomplete(options);
+         </script>);
 }

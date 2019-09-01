@@ -13,8 +13,7 @@ namespace Devesprit.Services.Posts
 {
     public partial interface IPostService<T> where T : TblPosts
     {
-        IPagedList<T> GetItemsById(List<int> ids, int pageIndex = 1,
-            int pageSize = int.MaxValue, SearchResultSortType sortType = SearchResultSortType.Score);
+        IPagedList<T> GetItemsById(List<int> ids, int pageIndex = 1, int pageSize = int.MaxValue);
         IPagedList<T> GetNewItems(int pageIndex = 1, int pageSize = int.MaxValue, int? filterByCategory = null, DateTime? fromDate = null);
         List<SiteMapEntity> GetNewItemsForSiteMap();
         IPagedList<T> GetPopularItems(int pageIndex = 1, int pageSize = int.MaxValue, int? filterByCategory = null, DateTime? fromDate = null);

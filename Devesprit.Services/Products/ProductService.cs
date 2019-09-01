@@ -396,9 +396,12 @@ namespace Devesprit.Services.Products
                 if (user.MaxDownloadCount > 0 && user.MaxDownloadPeriodType != null)
                 {
                     var date = DateTime.Now.AddTimePeriodToDateTime(user.MaxDownloadPeriodType, -1);
-                    if (user.MaxDownloadCount <= user.DownloadsLog
-                            .Where(p => p.DownloadDate >= date && p.ProductId != product.Id && !p.IsDemoVersion)
-                            .GroupBy(p => p.ProductId).Count())
+                    var userDownloadCount = _productDownloadsLogService.GetAsQueryable()
+                        .Where(p => p.UserId == user.Id && p.DownloadDate >= date && p.ProductId != product.Id &&
+                                    !p.IsDemoVersion)
+                        .GroupBy(p => p.ProductId).Count();
+
+                    if (user.MaxDownloadCount <= userDownloadCount)
                     {
                         result |= UserCanDownloadProductResult.UserDownloadLimitReached;
                     }
@@ -408,9 +411,12 @@ namespace Devesprit.Services.Products
                 if (user.UserGroup?.MaxDownloadCount > 0 && user.UserGroup?.MaxDownloadPeriodType != null)
                 {
                     var date = DateTime.Now.AddTimePeriodToDateTime(user.UserGroup.MaxDownloadPeriodType, -1);
-                    if (user.UserGroup.MaxDownloadCount <= user.DownloadsLog
-                            .Where(p => p.DownloadDate >= date && p.ProductId != product.Id && !p.IsDemoVersion)
-                            .GroupBy(p => p.ProductId).Count())
+                    var userDownloadCount = _productDownloadsLogService.GetAsQueryable()
+                        .Where(p => p.UserId == user.Id && p.DownloadDate >= date && p.ProductId != product.Id &&
+                                    !p.IsDemoVersion)
+                        .GroupBy(p => p.ProductId).Count();
+
+                    if (user.UserGroup.MaxDownloadCount <= userDownloadCount)
                     {
                         result |= UserCanDownloadProductResult.UserGroupDownloadLimitReached;
                     }

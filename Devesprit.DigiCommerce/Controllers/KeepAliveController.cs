@@ -1,9 +1,11 @@
 ﻿using System.Web.Mvc;
+using System.Web.UI;
 
 namespace Devesprit.DigiCommerce.Controllers
 {
     public partial class KeepAliveController : Controller
     {
+        [OutputCache(Duration = 60 * 60, Location = OutputCacheLocation.ServerAndClient, VaryByParam = "none")]
         public virtual ActionResult Index()
         {
             Response.AddHeader("Cache-Control", "no-cache");

@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Web.Mvc;
 using System.Web.Routing;
+using System.Web.UI;
 using Devesprit.DigiCommerce.Controllers.Event;
 using JetBrains.Annotations;
 
@@ -17,6 +18,7 @@ namespace Devesprit.DigiCommerce.Controllers
             base.Execute(requestContext);
         }
 
+        [OutputCache(Duration = 60 * 60, Location = OutputCacheLocation.ServerAndClient, VaryByParam = "*")]
         public virtual ActionResult PageNotFound([CanBeNull] string errorCode)
         {
             if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
@@ -29,6 +31,7 @@ namespace Devesprit.DigiCommerce.Controllers
             return View("PageNotFound");
         }
 
+        [OutputCache(Duration = 60 * 60, Location = OutputCacheLocation.ServerAndClient, VaryByParam = "*")]
         public virtual ActionResult Index([CanBeNull] string errorCode)
         {
             if (User != null && User.Identity.IsAuthenticated && User.IsInRole("Admin"))

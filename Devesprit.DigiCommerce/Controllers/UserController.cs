@@ -6,6 +6,7 @@ using System.Net;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.UI;
 using Devesprit.Core.Localization;
 using Devesprit.Data.Domain;
 using Devesprit.DigiCommerce.Models.Users;
@@ -64,6 +65,7 @@ namespace Devesprit.DigiCommerce.Controllers
         [HttpGet]
         [AllowAnonymous]
         [RedirectAuthenticatedRequests(Action = "Index", Controller = "Profile")]
+        [OutputCache(Duration = 60 * 20, Location = OutputCacheLocation.ServerAndClient, VaryByParam = "*")]
         public virtual ActionResult Login(string returnUrl)
         {
             Session["EnableExternalAuth"] = true;
@@ -153,6 +155,7 @@ namespace Devesprit.DigiCommerce.Controllers
         [HttpGet]
         [AllowAnonymous]
         [RedirectAuthenticatedRequests(Action = "Index", Controller = "Profile")]
+        [OutputCache(Duration = 60 * 20, Location = OutputCacheLocation.ServerAndClient, VaryByParam = "none")]
         public virtual async Task<ActionResult> SignUp()
         {
             Session["EnableExternalAuth"] = true;
@@ -261,6 +264,7 @@ namespace Devesprit.DigiCommerce.Controllers
 
         [AllowAnonymous]
         [RedirectAuthenticatedRequests(Action = "Index", Controller = "Profile")]
+        [OutputCache(Duration = 60 * 10, Location = OutputCacheLocation.ServerAndClient, VaryByParam = "*")]
         public virtual async Task<ActionResult> ConfirmEmail(string userId, string code)
         {
             if (userId == null || code == null)
@@ -278,6 +282,7 @@ namespace Devesprit.DigiCommerce.Controllers
         [HttpGet]
         [AllowAnonymous]
         [RedirectAuthenticatedRequests(Action = "Index", Controller = "Profile")]
+        [OutputCache(Duration = 60 * 20, Location = OutputCacheLocation.ServerAndClient, VaryByParam = "none")]
         public virtual ActionResult ForgotPassword()
         {
             var currentLanguage = WorkContext.CurrentLanguage;

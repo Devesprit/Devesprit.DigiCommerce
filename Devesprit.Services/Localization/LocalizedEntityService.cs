@@ -10,6 +10,7 @@ using Devesprit.Core.Localization;
 using Devesprit.Core.Settings;
 using Devesprit.Data;
 using Devesprit.Data.Domain;
+using Devesprit.Services.Events;
 using Devesprit.Services.MemoryCache;
 using Z.EntityFramework.Plus;
 
@@ -19,12 +20,14 @@ namespace Devesprit.Services.Localization
     {
         private readonly AppDbContext _dbContext;
         private readonly IMemoryCache _memoryCache;
+        private readonly IEventPublisher _eventPublisher;
         private readonly bool _useCache;
 
-        public LocalizedEntityService(AppDbContext dbContext, IMemoryCache memoryCache)
+        public LocalizedEntityService(AppDbContext dbContext, IMemoryCache memoryCache, IEventPublisher eventPublisher)
         {
             _dbContext = dbContext;
             _memoryCache = memoryCache;
+            _eventPublisher = eventPublisher;
             _useCache = ConfigurationManager.AppSettings["CacheLocalizedEntities"].ToBooleanOrDefault(true);
         }
 
@@ -48,6 +51,9 @@ namespace Devesprit.Services.Localization
                 throw new ArgumentNullException(nameof(localizedProperty));
 
             await _dbContext.LocalizedProperty.Where(p=> p.Id == localizedProperty.Id).DeleteAsync();
+
+            _eventPublisher.EntityDeleted(localizedProperty);
+
             ClearCache();
         }
 
@@ -76,7 +82,7 @@ namespace Devesprit.Services.Localization
 
         public virtual string GetLocalizedString(int languageId, int entityId, string localeKeyGroup, string localeKey)
         {
-            TblLocalizedProperty tblLocalizedProperty;
+            TblLocalizedProperty tblLocalizedProperty = null;
             if (_useCache)
             {
                 tblLocalizedProperty = GetAllResourcesFromCache().FirstOrDefault(p =>
@@ -103,6 +109,9 @@ namespace Devesprit.Services.Localization
             _dbContext.LocalizedProperty.Add(localizedProperty);
 
             await _dbContext.SaveChangesAsync();
+
+            _eventPublisher.EntityInserted(localizedProperty);
+
             ClearCache();
         }
 
@@ -110,6 +119,7 @@ namespace Devesprit.Services.Localization
         {
             if (localizedProperty == null)
                 throw new ArgumentNullException(nameof(localizedProperty));
+            var oldRecord = FindById(localizedProperty.Id);
             await _dbContext.LocalizedProperty.Where(p=> p.Id == localizedProperty.Id).UpdateAsync(p => new TblLocalizedProperty()
             {
                 EntityId = localizedProperty.EntityId,
@@ -118,6 +128,8 @@ namespace Devesprit.Services.Localization
                 LocaleKeyGroup = localizedProperty.LocaleKeyGroup,
                 LocaleValue = localizedProperty.LocaleValue
             });
+
+            _eventPublisher.EntityUpdated(localizedProperty, oldRecord);
 
             ClearCache();
         }
