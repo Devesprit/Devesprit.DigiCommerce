@@ -3,8 +3,6 @@
 @model Devesprit.DigiCommerce.Areas.Admin.Models.PageModel
 @{
     Layout = Html.GetCurrentThemeAdminAreaLayoutAddress(true);
-    @* https://CKEditor.com *@
-    Html.AddScriptParts(ResourceLocation.Footer, "~/Scripts/CKEditor/ckeditor.js", true);
 }
 
 <div class="container-fluid mar-v-35">
@@ -37,7 +35,7 @@
                         <div class="col-12">
                             <div class="form-group">
                                 @Html.LabelFor(p => p.Html)
-                                @Html.LocalizedTextAreaFor(p => p.Html, new { @class = "ckeditor" })
+                                @Html.LocalizedTextAreaFor(p => p.Html, new { @class = "html-editor" })
                                 @Html.ValidationMessageFor(p => p.Html, "", new { @class = "form-text text-danger fs-12" })
                             </div>
                         </div>

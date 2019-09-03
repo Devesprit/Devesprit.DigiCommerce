@@ -64,7 +64,7 @@ namespace Devesprit.DigiCommerce.Controllers
             {
                 await _invoiceService.AddItemToInvoiceAsync(
                     InvoiceDetailsItemType.SubscriptionPlan,
-                    userGroup.GetLocalized(p => p.GroupName),
+                    string.Format(_localizationService.GetResource("UpgradeUserAccountTo"), userGroup.GetLocalized(p => p.GroupName)),
                     Url.Action("UpgradeAccount", null, null, Request.Url.Scheme),
                     userGroup.Id,
                     await _userGroupsService.CalculatePlanPriceForUserAsync(userGroup.Id, currentUser),
@@ -76,7 +76,7 @@ namespace Devesprit.DigiCommerce.Controllers
             {
                 await _invoiceService.AddItemToInvoiceAsync(
                     InvoiceDetailsItemType.SubscriptionPlan,
-                    userGroup.GetLocalized(p => p.GroupName),
+                    string.Format(_localizationService.GetResource("UpgradeUserAccountTo"), userGroup.GetLocalized(p => p.GroupName)),
                     Url.Action("UpgradeAccount", null, null, Request.Url.Scheme),
                     userGroup.Id,
                     await _userGroupsService.CalculatePlanPriceForUserAsync(userGroup.Id, currentUser),

@@ -10,11 +10,6 @@
     ViewBag.MetaDescription = Model.MetaDescription;
     var settings = DependencyResolver.Current.GetService<ISettingService>().LoadSetting<SiteSettings>();
 
-    Html.AddCssFileParts(ResourceLocation.Header, "~/Content/jssocials.css");
-    Html.AddCssFileParts(ResourceLocation.Header, "~/Content/jssocials-theme-minima.css");
-
-    Html.AddScriptParts(ResourceLocation.Footer, "~/Scripts/jssocials.min.js");
-
     Html.AddHeadCustomParts("<meta name=\"robots\" content=\"index,follow\">");
     Html.AddHeadCustomParts("<meta property=\"og:title\" content=\"" + Model.Title + "\">");
     Html.AddHeadCustomParts("<meta property=\"og:url\" content=\"" + Model.PostUrl + "\">");

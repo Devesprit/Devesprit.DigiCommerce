@@ -40,15 +40,6 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Factories
             result.CacheLocalizedEntities =
                 objAppSettings.Settings["CacheLocalizedEntities"].Value.ToBooleanOrDefault(true);
 
-            if (File.Exists(_httpContext.Server.MapPath("~/Scripts/CKEditor/config.js")))
-            {
-                result.CkEditorConfig = File.ReadAllText(_httpContext.Server.MapPath("~/Scripts/CKEditor/config.js"));
-            }
-            if (File.Exists(_httpContext.Server.MapPath("~/Scripts/CKEditor/Plugins/templates/templates/default.js")))
-            {
-                result.CkEditorTemplates = File.ReadAllText(_httpContext.Server.MapPath("~/Scripts/CKEditor/Plugins/templates/templates/default.js"));
-            }
-
             return result;
         }
 

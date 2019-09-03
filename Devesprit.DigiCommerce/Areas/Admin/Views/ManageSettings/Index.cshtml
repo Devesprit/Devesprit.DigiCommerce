@@ -7,8 +7,6 @@
 @{
     ViewBag.Title = T("ManageSettings");
     var currentLang = DependencyResolver.Current.GetService<IWorkContext>().CurrentLanguage;
-    @* https://CKEditor.com *@
-    Html.AddScriptParts(ResourceLocation.Footer, "~/Scripts/CKEditor/ckeditor.js", true);
 }
 
 <div id="waitingPopup"></div>
@@ -36,7 +34,7 @@
                                 data.Add().ID("SocialNetworks").Text(T("SocialNetworks").ToString()).ContentTemplate(content => SocialNetworksSettings());
                                 data.Add().ID("Email").Text(T("EMail").ToString()).ContentTemplate(content => EmailSettings());
                                 data.Add().ID("Other").Text(T("Others").ToString()).ContentTemplate(content => OtherSettings());
-                                data.Add().ID("CKEditor").Text(T("CKEditorSettings").ToString()).ContentTemplate(content => CKEditorSettings());
+                                data.Add().ID("TinyMCE").Text(T("TinyMCESettings").ToString()).ContentTemplate(content => TinyMCESettings());
                                 data.Add().ID("Theme").Text(T("Themes").ToString()).ContentTemplate(content => ThemeSettings());
                                 data.Add().ID("LoadedAssemblies").Text(T("LoadedAssemblies").ToString()).ContentTemplate(content => LoadedAssemblies());
                             })
@@ -125,7 +123,7 @@
     <div class="col-12">
         <div class="form-group">
             @Html.LabelFor(p => p.InvoicePrintPageCompanyInfo)
-            @Html.LocalizedTextAreaFor(p => p.InvoicePrintPageCompanyInfo, new { @class = "ckeditor" })
+            @Html.LocalizedTextAreaFor(p => p.InvoicePrintPageCompanyInfo, new { @class = "html-editor" })
             @Html.ValidationMessageFor(p => p.InvoicePrintPageCompanyInfo, "", new { @class = "form-text text-danger fs-12" })
         </div>
     </div>
@@ -139,21 +137,21 @@
     <div class="col-12">
         <div class="form-group">
             @Html.LabelFor(p => p.FooterDescription)
-            @Html.LocalizedTextAreaFor(p => p.FooterDescription, new { @class = "ckeditor" })
+            @Html.LocalizedTextAreaFor(p => p.FooterDescription, new { @class = "html-editor" })
             @Html.ValidationMessageFor(p => p.FooterDescription, "", new { @class = "form-text text-danger fs-12" })
         </div>
     </div>
     <div class="col-12">
         <div class="form-group">
             @Html.LabelFor(p => p.ContactUsDescription)
-            @Html.LocalizedTextAreaFor(p => p.ContactUsDescription, new { @class = "ckeditor" })
+            @Html.LocalizedTextAreaFor(p => p.ContactUsDescription, new { @class = "html-editor" })
             @Html.ValidationMessageFor(p => p.ContactUsDescription, "", new { @class = "form-text text-danger fs-12" })
         </div>
     </div>
     <div class="col-12">
         <div class="form-group">
             @Html.LabelFor(p => p.TermsAndConditions)
-            @Html.LocalizedTextAreaFor(p => p.TermsAndConditions, new { @class = "ckeditor" })
+            @Html.LocalizedTextAreaFor(p => p.TermsAndConditions, new { @class = "html-editor" })
             @Html.ValidationMessageFor(p => p.TermsAndConditions, "", new { @class = "form-text text-danger fs-12" })
         </div>
     </div>
@@ -749,26 +747,19 @@
 
 }
 
-@helper CKEditorSettings()
+@helper TinyMCESettings()
 {
 
     <div class="row">
         <div class="col-12 text-center b-mar-20">
-            <h2><a href="https://ckeditor.com/ckeditor-4/" target="_blank"><img src="~/Content/img/ckeditor.png" /><br />@T("CKEditor")</a></h2>
-            <button class="btn btn-success" onclick="ShowFileExplorer('/Scripts/CKEditor');" type="button">@T("ExplorerCKEditorFolder")</button>
+            <h2><a href="https://www.tiny.cloud/features" target="_blank"><img src="~/Content/img/tinymce.png" /><br />@T("TinyMCE")</a></h2>
+            <button class="btn btn-success" onclick="ShowFileExplorer('/Scripts/tinymce-5.0.15/js/tinymce');" type="button">@T("ExplorerTinyMCEFolder")</button>
         </div>
         <div class="col-12">
             <div class="form-group">
-                @Html.LabelFor(p => p.CkEditorConfig)
-                @Html.TextAreaFor(p => p.CkEditorConfig, new { @class = "form-control form-control-sm ltr-dir", autocomplete = "off", autocorrect = "off", autocapitalize = "off", spellcheck = "false", rows = "15" })
-                @Html.ValidationMessageFor(p => p.CkEditorConfig, "", new { @class = "form-text text-danger fs-12" })
-            </div>
-        </div>
-        <div class="col-12">
-            <div class="form-group">
-                @Html.LabelFor(p => p.CkEditorTemplates)
-                @Html.TextAreaFor(p => p.CkEditorTemplates, new { @class = "form-control form-control-sm ltr-dir", autocomplete = "off", autocorrect = "off", autocapitalize = "off", spellcheck = "false", rows = "15" })
-                @Html.ValidationMessageFor(p => p.CkEditorTemplates, "", new { @class = "form-text text-danger fs-12" })
+                @Html.LabelFor(p => p.TinyMCESettings)
+                @Html.TextAreaFor(p => p.TinyMCESettings, new { @class = "form-control form-control-sm ltr-dir", autocomplete = "off", autocorrect = "off", autocapitalize = "off", spellcheck = "false", rows = "25", style="overflow-x: scroll;white-space: nowrap;font-family: monospace, 'dana';" })
+                @Html.ValidationMessageFor(p => p.TinyMCESettings, "", new { @class = "form-text text-danger fs-12" })
             </div>
         </div>
     </div>
@@ -838,22 +829,30 @@
 
 
 @{
-    Html.AddInlineScript(ResourceLocation.Footer,
-@<script>
-     $("#waitingPopup").data("ejWaitingPopup").hide();
+    Html.AppendInlineScript(ResourceLocation.Footer,
+        @<script>
+    var popupObj = $("#waitingPopup").data("ejWaitingPopup");
+    if (popupObj !== 'undefined') {
+        try {
+            popupObj.hide();   
+        }
+        catch(error) {
+        }
+    }
 
-     function SaveSettings() {
-         $.validator.unobtrusive.parse($('#frmSiteSettings'));
-         if ($("#frmSiteSettings").valid()) {
-             $("#waitingPopup").ejWaitingPopup({ showOnInit: true, target: "#panel", appendTo: "#panel" });
-             $("#frmSiteSettings").submit();
-         } else {
-             var formErrorList = $("#frmSiteSettings").data("validator").errorList;
-             if (formErrorList) {
-                 $("#" + formErrorList[0].element.id).focus();
-                 ErrorAlert('@T("Error")', formErrorList[0].message);
+
+    function SaveSettings() {
+                 $.validator.unobtrusive.parse($('#frmSiteSettings'));
+                 if ($("#frmSiteSettings").valid()) {
+                     $("#waitingPopup").ejWaitingPopup({ showOnInit: true, target: "#panel", appendTo: "#panel" });
+                     $("#frmSiteSettings").submit();
+                 } else {
+                     var formErrorList = $("#frmSiteSettings").data("validator").errorList;
+                     if (formErrorList) {
+                         $("#" + formErrorList[0].element.id).focus();
+                         ErrorAlert('@T("Error")', formErrorList[0].message);
+                     }
+                 }
              }
-         }
-     }
-</script>);
+         </script>);
 }

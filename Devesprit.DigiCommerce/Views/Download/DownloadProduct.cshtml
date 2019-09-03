@@ -9,8 +9,6 @@
     ViewBag.Title = $"{T("Download")} - {Model.PageTitle}";
     int counter = 0;
     var currentLang = DependencyResolver.Current.GetService<IWorkContext>().CurrentLanguage;
-    Html.AddCssFileParts(ResourceLocation.Header, "~/Content/jstree.min.css");
-    Html.AddScriptParts(ResourceLocation.Footer, "~/Scripts/jstree.min.js");
     Html.AddHeadCustomParts("<meta name=\"robots\" content=\"noindex,nofollow\">");
 }
 

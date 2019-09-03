@@ -19,7 +19,7 @@
     Html.AppendScriptParts(ResourceLocation.Header, "~/Scripts/GeneralScript.js");
     Html.AppendScriptParts(ResourceLocation.Header, "~/Scripts/iziToast.min.js");
     Html.AppendScriptParts(ResourceLocation.Header, "~/Scripts/lazyload-12.0.0/dist/lazyload.min.js");
-
+    
     @* Syncfusion Scripts *@
     Html.AppendScriptParts(ResourceLocation.Header, "~/Scripts/ej/common/ej.unobtrusive.min.js");
     Html.AppendScriptParts(ResourceLocation.Header, "~/Scripts/ej/web/ej.web.all.min.js");
@@ -30,6 +30,9 @@
     Html.AppendScriptParts(ResourceLocation.Header, "~/Scripts/jquery.validate.js");
     Html.AppendScriptParts(ResourceLocation.Header, "~/Scripts/bootstrap.bundle.min.js");
     Html.AppendScriptParts(ResourceLocation.Header, "~/Scripts/jquery-3.4.1.js");
+
+    //TinyMCE editor
+    Html.AppendScriptParts(ResourceLocation.Header, "~/Scripts/tinymce-5.0.15/js/tinymce/tinymce.min.js", true);
 
     //Java scripts footer
     @* http://www.daterangepicker.com/ *@
@@ -79,6 +82,7 @@
     <meta charset="utf-8">
     <meta http-equiv="Content-type" content="text/html;charset=UTF-8" />
     <meta name="generator" content="Devesprit DigiCommerce" />
+    <meta name="theme-color" content="#494949" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     @Html.GenerateHeadCustom()
 
@@ -104,185 +108,200 @@
 
     @{
         Html.AddInlineScript(ResourceLocation.Footer,
-@<script>
-             ej.Grid.Locale["localString"] = {
-                 SaveButton: "@T("Save")",
-                 CancelButton: "@T("Cancel")",
-                 Add: "@T("Add")",
-                 Edit: "@T("Edit")",
-                 Update: "@T("Update")",
-                 Cancel: "@T("Cancel")",
-                 Delete: "@T("Delete")",
-                 Clear: "@T("Clear")",
-                 ConfirmDelete: "@T("ConfirmDelete")",
-                 DeleteOperationAlert: "@T("DeleteOperationAlert")",
-                 EditOperationAlert: "@T("EditOperationAlert")",
-                 EmptyRecord: "@T("EmptyRecord")",
-                 ExcelExport: "@T("ExcelExport")",
-                 Filter: "@T("Filter")",
-                 GroupDropArea: "@T("GroupDropArea")",
-                 OKButton: "@T("Ok")",
-                 PdfExport: "@T("PdfExport")",
-                 PrintGrid: "@T("Print")",
-                 SortInAscendingOrder: "@T("SortInAscendingOrder")",
-                 SortInDescendingOrder: "@T("SortInDescendingOrder")",
-                 UnGroup: "@T("UnGroup")",
-                 WordExport: "@T("WordExport")",
-                 Done: "@T("Done")",
-                 Columns: "@T("Columns")"
-             };
+            @<script>
+                try {
+                    tinymce.init({
+                        selector: '.html-editor',
+                        @Html.Raw(settings.TinyMCESettings),
+                        setup: function(editor) {
+                            editor.on('change',
+                                function() {
+                                    editor.save();
+                                });
+                        }
+                    });
+                } catch (e) {
+                    console.error('TinyMCE Config Err: ', e.message);
+                };
 
-             $.extend($.validator.messages,
-                 {
-                     required: "@T("Required")"
-                 });
+                ej.Grid.Locale["localString"] = {
+                     SaveButton: "@T("Save")",
+                     CancelButton: "@T("Cancel")",
+                     Add: "@T("Add")",
+                     Edit: "@T("Edit")",
+                     Update: "@T("Update")",
+                     Cancel: "@T("Cancel")",
+                     Delete: "@T("Delete")",
+                     Clear: "@T("Clear")",
+                     ConfirmDelete: "@T("ConfirmDelete")",
+                     DeleteOperationAlert: "@T("DeleteOperationAlert")",
+                     EditOperationAlert: "@T("EditOperationAlert")",
+                     EmptyRecord: "@T("EmptyRecord")",
+                     ExcelExport: "@T("ExcelExport")",
+                     Filter: "@T("Filter")",
+                     GroupDropArea: "@T("GroupDropArea")",
+                     OKButton: "@T("Ok")",
+                     PdfExport: "@T("PdfExport")",
+                     PrintGrid: "@T("Print")",
+                     SortInAscendingOrder: "@T("SortInAscendingOrder")",
+                     SortInDescendingOrder: "@T("SortInDescendingOrder")",
+                     UnGroup: "@T("UnGroup")",
+                     WordExport: "@T("WordExport")",
+                     Done: "@T("Done")",
+                     Columns: "@T("Columns")"
+                 };
 
-             ej.Pager.Locale["localString"] = {
-                 pagerInfo: "@T("PagerInfo")",
-                 firstPageTooltip: "@T("GoToFirstPage")",
-                 lastPageTooltip: "@T("GoToLastPage")",
-                 nextPageTooltip: "@T("GoToNextPage")",
-                 previousPageTooltip: "@T("GoToPreviousPager")",
-             };
-
-             function initDateTimePicker() {
-                 $('.datetimepicker').daterangepicker({
-                     timePicker: true,
-                     timePicker24Hour: true,
-                     timePickerSeconds: true,
-                     linkedCalendars: false,
-                     showCustomRangeLabel: false,
-                     alwaysShowCalendars: true,
-                     opens: 'center',
-                     autoUpdateInput: false,
-                     autoApply: false,
-                     singleDatePicker: true,
-                     showDropdowns: true,
-                     showWeekNumbers: true,
-                     showISOWeekNumbers: true,
-                     "locale": {
-                         "format": "YYYY/MM/DD HH:mm:ss",
-                         "separator": " - ",
-                         "applyLabel": "@T("Apply")",
-                         "cancelLabel": "@T("Cancel")"
-                     }
-                 });
-
-                 $('.datetimepicker').on('apply.daterangepicker',
-                     function(ev, picker) {
-                         $(this).val(picker.startDate.format('YYYY/MM/DD HH:mm:ss')); 
+                 $.extend($.validator.messages,
+                     {
+                         required: "@T("Required")"
                      });
 
-                 $('.datepicker').daterangepicker({
-                     linkedCalendars: false,
-                     showCustomRangeLabel: false,
-                     alwaysShowCalendars: true,
-                     opens: 'center',
-                     autoUpdateInput: false,
-                     autoApply: false,
-                     singleDatePicker: true,
-                     showDropdowns: true,
-                     showWeekNumbers: true,
-                     showISOWeekNumbers: true,
-                     "locale": {
-                         "format": "YYYY/MM/DD",
-                         "separator": " - ",
-                         "applyLabel": "@T("Apply")",
-                         "cancelLabel": "@T("Cancel")"
-                     }
-                 });
-                 
-                 $('.datepicker').on('apply.daterangepicker',
-                     function (ev, picker) {
-                         $(this).val(picker.startDate.format('YYYY/MM/DD'));
-                     });
-             }
+                 ej.Pager.Locale["localString"] = {
+                     pagerInfo: "@T("PagerInfo")",
+                     firstPageTooltip: "@T("GoToFirstPage")",
+                     lastPageTooltip: "@T("GoToLastPage")",
+                     nextPageTooltip: "@T("GoToNextPage")",
+                     previousPageTooltip: "@T("GoToPreviousPager")",
+                 };
 
-             function GetActiveLocalizedEntityEditorId(entityName) {
-                 var result = $('#' + entityName + '-tab-content div.active input').attr('id');
-                 if (isBlank(result)) {
-                     result = $('#' + entityName + '-tab-content div.active textarea').attr('id');
-                 }
-
-                 return result;
-             }
-
-             function ShowFileExplorerForLocalizedEntity(entityName, path) {
-                 var element = $("#" + GetActiveLocalizedEntityEditorId(entityName));
-                 path = path || "";
-                 if (element.length > 0) {
-                     var elementId = $(element).attr('id');
-                     PopupWindows('@Url.Action("Index", "FileExplorer", new {area="Admin"})',
-                         'FileExplorer',
-                         1200,
-                         700,
-                         { textboxId: elementId, path: path },
-                         'post');
-                 }
-             }
-
-             function ShowFileExplorerFor(elementId, path) {
-                 var element = $("#" + elementId);
-                 path = path || "";
-                 if (element.length > 0) {
-                     PopupWindows('@Url.Action("Index", "FileExplorer", new {area="Admin"})',
-                         'FileExplorer',
-                         1200,
-                         700,
-                         { textboxId: elementId, path: path },
-                         'post');
-                 }
-             }
-
-             function ShowFileExplorer(path) {
-                 path = path || "";
-                 PopupWindows('@Url.Action("Index", "FileExplorer", new {area="Admin"})',
-                     'FileExplorer',
-                     1200,
-                     700,
-                     { textboxId: '', path: path },
-                     'post');
-             }
-
-             function SaveAndContinue(form) {
-                 $.validator.unobtrusive.parse($(form));
-                 if ($(form).valid()) {
-                     $('#LoadingPanel').show();
-                     var url = $(form).attr('action');
-                     url += (url.indexOf('?') >= 0 ? '&' : '?') + 'saveAndContinue=true';
-                     $(form).attr('action', url);
-                     $(form).submit();
-                 } else {
-                     $('.input-validation-error:first').focus();
-                 }
-             }
-
-             function DeleteEntity(entityIds, deleteActionUrl, refreshGridFunction) {
-                 $('#LoadingPanel').show();
-                 $.ajax({
-                     type: "POST",
-                     url: deleteActionUrl,
-                     data: {
-                         keys: entityIds
-                     },
-                     error: function(xhr, status, error) {
-                         ErrorAlert('@T("Error")', '@T("ServerConnectionError")');
-                     },
-                     success: function(response) {
-                         if (response === 'OK') {
-                             refreshGridFunction();
-                         } else {
-                             ErrorAlert('@T("Error")', response);
+                 function initDateTimePicker() {
+                     $('.datetimepicker').daterangepicker({
+                         timePicker: true,
+                         timePicker24Hour: true,
+                         timePickerSeconds: true,
+                         linkedCalendars: false,
+                         showCustomRangeLabel: false,
+                         alwaysShowCalendars: true,
+                         opens: 'center',
+                         autoUpdateInput: false,
+                         autoApply: false,
+                         singleDatePicker: true,
+                         showDropdowns: true,
+                         showWeekNumbers: true,
+                         showISOWeekNumbers: true,
+                         "locale": {
+                             "format": "YYYY/MM/DD HH:mm:ss",
+                             "separator": " - ",
+                             "applyLabel": "@T("Apply")",
+                             "cancelLabel": "@T("Cancel")"
                          }
-                     },
-                     complete: function() {
-                         $('#LoadingPanel').hide();
-                     }
-                 });
-             }
+                     });
 
-             initDateTimePicker();
-</script>);
+                     $('.datetimepicker').on('apply.daterangepicker',
+                         function(ev, picker) {
+                             $(this).val(picker.startDate.format('YYYY/MM/DD HH:mm:ss')); 
+                         });
+
+                     $('.datepicker').daterangepicker({
+                         linkedCalendars: false,
+                         showCustomRangeLabel: false,
+                         alwaysShowCalendars: true,
+                         opens: 'center',
+                         autoUpdateInput: false,
+                         autoApply: false,
+                         singleDatePicker: true,
+                         showDropdowns: true,
+                         showWeekNumbers: true,
+                         showISOWeekNumbers: true,
+                         "locale": {
+                             "format": "YYYY/MM/DD",
+                             "separator": " - ",
+                             "applyLabel": "@T("Apply")",
+                             "cancelLabel": "@T("Cancel")"
+                         }
+                     });
+                 
+                     $('.datepicker').on('apply.daterangepicker',
+                         function (ev, picker) {
+                             $(this).val(picker.startDate.format('YYYY/MM/DD'));
+                         });
+                 }
+
+                 function GetActiveLocalizedEntityEditorId(entityName) {
+                     var result = $('#' + entityName + '-tab-content div.active input').attr('id');
+                     if (isBlank(result)) {
+                         result = $('#' + entityName + '-tab-content div.active textarea').attr('id');
+                     }
+
+                     return result;
+                 }
+
+                 function ShowFileExplorerForLocalizedEntity(entityName, path) {
+                     var element = $("#" + GetActiveLocalizedEntityEditorId(entityName));
+                     path = path || "";
+                     if (element.length > 0) {
+                         var elementId = $(element).attr('id');
+                         PopupWindows('@Url.Action("Index", "FileExplorer", new {area="Admin"})',
+                             'FileExplorer',
+                             1200,
+                             700,
+                             { textboxId: elementId, path: path },
+                             'post');
+                     }
+                 }
+
+                 function ShowFileExplorerFor(elementId, path) {
+                     var element = $("#" + elementId);
+                     path = path || "";
+                     if (element.length > 0) {
+                         PopupWindows('@Url.Action("Index", "FileExplorer", new {area="Admin"})',
+                             'FileExplorer',
+                             1200,
+                             700,
+                             { textboxId: elementId, path: path },
+                             'post');
+                     }
+                 }
+
+                 function ShowFileExplorer(path) {
+                     path = path || "";
+                     PopupWindows('@Url.Action("Index", "FileExplorer", new {area="Admin"})',
+                         'FileExplorer',
+                         1200,
+                         700,
+                         { textboxId: '', path: path },
+                         'post');
+                 }
+
+                 function SaveAndContinue(form) {
+                     $.validator.unobtrusive.parse($(form));
+                     if ($(form).valid()) {
+                         $('#LoadingPanel').show();
+                         var url = $(form).attr('action');
+                         url += (url.indexOf('?') >= 0 ? '&' : '?') + 'saveAndContinue=true';
+                         $(form).attr('action', url);
+                         $(form).submit();
+                     } else {
+                         $('.input-validation-error:first').focus();
+                     }
+                 }
+
+                 function DeleteEntity(entityIds, deleteActionUrl, refreshGridFunction) {
+                     $('#LoadingPanel').show();
+                     $.ajax({
+                         type: "POST",
+                         url: deleteActionUrl,
+                         data: {
+                             keys: entityIds
+                         },
+                         error: function(xhr, status, error) {
+                             ErrorAlert('@T("Error")', '@T("ServerConnectionError")');
+                         },
+                         success: function(response) {
+                             if (response === 'OK') {
+                                 refreshGridFunction();
+                             } else {
+                                 ErrorAlert('@T("Error")', response);
+                             }
+                         },
+                         complete: function() {
+                             $('#LoadingPanel').hide();
+                         }
+                     });
+                 }
+
+                 initDateTimePicker();
+             </script>);
     }
 
     @Html.Partial("Partials/_Notifications")

@@ -73,6 +73,37 @@ namespace Devesprit.Services
         public virtual bool DeletePendingInvoices{ get; set; } = true;
         public virtual int DeletePendingInvoicesAfterDays{ get; set; } = 30;
 
+        public virtual string TinyMCESettings { get; set; } = @"theme: 'silver',
+skin: 'oxide',
+min_height: 300,
+toolbar_drawer: 'floating',
+branding: false,
+plugins: 'paste wordcount anchor autoresize fullscreen link hr image emoticons imagetools table code quickbars codesample directionality visualchars visualblocks insertdatetime lists advlist template searchreplace media nonbreaking print preview',
+toolbar: 'code | undo redo | bold italic underline strikethrough | alignleft aligncenter alignright alignjustify alignnone | styleselect fontsizeselect | ltr rtl | outdent indent blockquote removeformat subscript superscriptcode forecolor backcolor hr bullist numlist image quickimage link unlink',
+quickbars_selection_toolbar: 'bold italic | quicklink formatselect blockquote | alignleft aligncenter alignright alignjustify alignnone | ltr rtl | removeformat forecolor backcolor',
+quickbars_insert_toolbar: 'quickimage image quicktable link',
+contextmenu: 'link image imagetools template table',
+codesample_languages: [
+    {text: 'HTML/XML', value: 'markup'},
+    {text: 'JavaScript', value: 'javascript'},
+    {text: 'CSS', value: 'css'},
+    {text: 'PHP', value: 'php'},
+    {text: 'Ruby', value: 'ruby'},
+    {text: 'Python', value: 'python'},
+    {text: 'Java', value: 'java'},
+    {text: 'JSON', value: 'json'},
+    {text: 'C', value: 'c'},
+    {text: 'C#', value: 'csharp'},
+    {text: 'VB.Net', value: 'vbnet'},
+    {text: 'SQL', value: 'sql'},
+    {text: 'Pascal', value: 'pascal'},
+    {text: 'C++', value: 'cpp'}
+],
+templates: [
+    { title: 'Thank you for contacting us', description: 'Thank you for contacting us', content: '<p><b>Dear User</b> <br/>Thank you for contacting us, <br/><br/>Best Regards,<br/></p>' },
+    { title: 'با تشکر از تماس شما', description: 'با تشکر از تماس شما', content: '<p dir=""rtl""><b>کاربر گرامی</b> <br/>از اینکه با ما تماس گرفته اید متشکریم، <br/><br/>با احترام،<br/></p>' },
+]";
+
         //Reminders Settings-------------------------
         public virtual bool SendExpNotificationsForProducts { get; set; } = true;
         public virtual bool SendExpNotificationsForProductsJustOnce { get; set; } = true;

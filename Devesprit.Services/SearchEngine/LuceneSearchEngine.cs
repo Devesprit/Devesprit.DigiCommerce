@@ -12,8 +12,8 @@ using Devesprit.Data.Enums;
 using Devesprit.Services.Events;
 using Devesprit.Services.Languages;
 using Devesprit.Services.Localization;
+using Devesprit.Services.MemoryCache;
 using Devesprit.Services.Posts;
-using Devesprit.Services.Products;
 using Devesprit.Utilities;
 using Devesprit.Utilities.Extensions;
 using Lucene.Net.Analysis;
@@ -25,7 +25,6 @@ using Lucene.Net.Search;
 using Lucene.Net.Search.Highlight;
 using Lucene.Net.Search.Similar;
 using Lucene.Net.Store;
-using Lucene.Net.Util;
 using SpellChecker.Net.Search.Spell;
 
 namespace Devesprit.Services.SearchEngine
@@ -35,6 +34,7 @@ namespace Devesprit.Services.SearchEngine
         private readonly IPostService<TblPosts> _postService;
         private readonly ILanguagesService _languagesService;
         private readonly ISettingService _settingService;
+        private readonly IMemoryCache _memoryCache;
         private readonly IEventPublisher _eventPublisher;
 
         private readonly string _indexFilesPath = "LuceneFTSData";
@@ -44,11 +44,13 @@ namespace Devesprit.Services.SearchEngine
         public LuceneSearchEngine(IPostService<TblPosts> postService,
             ILanguagesService languagesService,
             ISettingService settingService,
+            IMemoryCache memoryCache,
             IEventPublisher eventPublisher)
         {
             _postService = postService;
             _languagesService = languagesService;
             _settingService = settingService;
+            _memoryCache = memoryCache;
             _eventPublisher = eventPublisher;
 
             _indexFilesPath = HostingEnvironment.MapPath("~")?.TrimEnd('\\') + "\\" + _indexFilesPath ?? _indexFilesPath;
@@ -64,6 +66,12 @@ namespace Devesprit.Services.SearchEngine
             int maxResult = 1000,
             bool exactSearch = false)
         {
+            if (_memoryCache.Contains("Search-Search", $"{term}-{filterByCategory}-{languageId}-{postType}-{searchPlace}-{orderBy}-{maxResult}-{exactSearch}"))
+            {
+                return _memoryCache.GetObject<SearchResult>("Search-Search",
+                    $"{term}-{filterByCategory}-{languageId}-{postType}-{searchPlace}-{orderBy}-{maxResult}-{exactSearch}");
+            }
+
             var result = new SearchResult();
             term = term.Trim();
 
@@ -247,6 +255,9 @@ namespace Devesprit.Services.SearchEngine
             watch.Stop();
             result.ElapsedMilliseconds = watch.ElapsedMilliseconds;
 
+            _memoryCache.AddObject("Search-Search", result, TimeSpan.FromHours(6),
+                $"{term}-{filterByCategory}-{languageId}-{postType}-{searchPlace}-{orderBy}-{maxResult}-{exactSearch}");
+
             _eventPublisher.Publish(new SearchEvent(term, filterByCategory, languageId, postType, searchPlace, maxResult, result));
 
             return result;
@@ -255,6 +266,12 @@ namespace Devesprit.Services.SearchEngine
         public virtual SearchResult MoreLikeThis(int postId, int? filterByCategory = null, int languageId = -1, PostType? postType = null, SearchPlace searchPlace = SearchPlace.Title | SearchPlace.Description,
             int maxResult = 5, SearchResultSortType orderBy = SearchResultSortType.Score)
         {
+            if (_memoryCache.Contains("Search-MoreLikeThis", $"{postId}-{filterByCategory}-{languageId}-{postType}-{searchPlace}-{maxResult}-{orderBy}"))
+            {
+                return _memoryCache.GetObject<SearchResult>("Search-MoreLikeThis",
+                    $"{postId}-{filterByCategory}-{languageId}-{postType}-{searchPlace}-{maxResult}-{orderBy}");
+            }
+
             var result = new SearchResult();
 
             var watch = new System.Diagnostics.Stopwatch();
@@ -385,11 +402,21 @@ namespace Devesprit.Services.SearchEngine
 
             watch.Stop();
             result.ElapsedMilliseconds = watch.ElapsedMilliseconds;
+
+            _memoryCache.AddObject("Search-MoreLikeThis", result, TimeSpan.FromHours(6),
+                $"{postId}-{filterByCategory}-{languageId}-{postType}-{searchPlace}-{maxResult}-{orderBy}");
+
             return result;
         }
 
         public virtual async Task<SearchResult> AutoCompleteAsync(string prefix, int languageId = -1, int maxResult = 10, SearchResultSortType orderBy = SearchResultSortType.LastUpDate)
         {
+            if (_memoryCache.Contains("Search-AutoCompleteAsync", $"{prefix}-{languageId}-{maxResult}-{orderBy}"))
+            {
+                return _memoryCache.GetObject<SearchResult>("Search-AutoCompleteAsync",
+                    $"{prefix}-{languageId}-{maxResult}-{orderBy}");
+            }
+
             var result = new SearchResult();
             prefix = prefix.Trim();
 
@@ -473,6 +500,10 @@ namespace Devesprit.Services.SearchEngine
 
             watch.Stop();
             result.ElapsedMilliseconds = watch.ElapsedMilliseconds;
+
+            _memoryCache.AddObject("Search-AutoCompleteAsync", result, TimeSpan.FromHours(6),
+                $"{prefix}-{languageId}-{maxResult}-{orderBy}");
+
             return result;
         }
 
@@ -613,6 +644,10 @@ namespace Devesprit.Services.SearchEngine
                 }
 
                 watch.Stop();
+
+                _memoryCache.RemoveObject("Search-Search");
+                _memoryCache.RemoveObject("Search-MoreLikeThis");
+                _memoryCache.RemoveObject("Search-AutoCompleteAsync");
 
                 return watch.ElapsedMilliseconds;
             }

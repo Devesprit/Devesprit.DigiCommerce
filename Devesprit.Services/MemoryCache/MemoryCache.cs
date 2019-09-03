@@ -8,11 +8,9 @@ namespace Devesprit.Services.MemoryCache
 {
     public partial class MemoryCache : IMemoryCache
     {
-        private readonly CustomMemoryCache _cache;
+        private static readonly CustomMemoryCache Cache = new CustomMemoryCache(Guid.NewGuid().ToString("N"));
         public MemoryCache()
-        {
-            _cache = new CustomMemoryCache(Guid.NewGuid().ToString("N"));
-        }
+        {}
 
         public virtual bool AddObject(string key, object obj, TimeSpan expire, string subKey = null)
         {
@@ -20,26 +18,26 @@ namespace Devesprit.Services.MemoryCache
             {
                 AbsoluteExpiration = expire == TimeSpan.MaxValue ? DateTime.MaxValue : DateTime.Now.AddMilliseconds(expire.TotalMilliseconds)
             };
-            return _cache.Add(RegionKey(key, subKey), obj, cacheItemPolicy);
+            return Cache.Add(RegionKey(key, subKey), obj, cacheItemPolicy);
         }
 
         public virtual bool Contains(string key, string subKey = null)
         {
-            return _cache.Contains(RegionKey(key, subKey));
+            return Cache.Contains(RegionKey(key, subKey));
         }
 
         public virtual T GetObject<T>(string key, string subKey = null)
         {
-            return (T)_cache.Get(RegionKey(key, subKey));
+            return (T)Cache.Get(RegionKey(key, subKey));
         }
 
         public virtual T GetObjectOrDefault<T>(string key, T defaultValue, string subKey = null)
         {
-            if (_cache.Contains(RegionKey(key, subKey)))
+            if (Cache.Contains(RegionKey(key, subKey)))
             {
                 try
                 {
-                    return (T)_cache.Get(RegionKey(key, subKey));
+                    return (T)Cache.Get(RegionKey(key, subKey));
                 }
                 catch
                 { }
@@ -52,24 +50,24 @@ namespace Devesprit.Services.MemoryCache
         {
             if (string.IsNullOrEmpty(subKey))
             {
-                _cache.Remove(key);
+                Cache.Remove(key);
                 if (removeSubKeys)
                 {
-                    foreach (var cachetKey in _cache.GetAllKeys().Where(p => p.StartsWith(key + "::")))
+                    foreach (var cachetKey in Cache.GetAllKeys().Where(p => p.StartsWith(key + "::")))
                     {
-                        _cache.Remove(cachetKey);
+                        Cache.Remove(cachetKey);
                     }
                 }
             }
             else
             {
-                _cache.Remove(RegionKey(key, subKey));
+                Cache.Remove(RegionKey(key, subKey));
             }
         }
 
         public virtual void Dispose()
         {
-            _cache.Dispose();
+            Cache.Dispose();
         }
 
         protected virtual string RegionKey(string key, string subKey)

@@ -2,8 +2,6 @@
 @model Devesprit.DigiCommerce.Areas.Admin.Models.ReplyToUserMessageModel
 @{
     Layout = Html.GetCurrentThemeAdminAreaLayoutAddress(true);
-    @* https://CKEditor.com *@
-    Html.AddScriptParts(ResourceLocation.Footer, "~/Scripts/CKEditor/ckeditor.js", true);
 }
 
 <div class="container">
@@ -61,7 +59,7 @@
                     </div>
                     <div class="form-group">
                         @Html.LabelFor(p => p.ResponseText)
-                        @Html.TextAreaFor(p => p.ResponseText, new { @class = "ckeditor" })
+                        @Html.TextAreaFor(p => p.ResponseText, new { @class = "html-editor" })
                         @Html.ValidationMessageFor(p => p.ResponseText, "", new { @class = "form-text text-danger fs-12" })
                     </div>
                 </div>

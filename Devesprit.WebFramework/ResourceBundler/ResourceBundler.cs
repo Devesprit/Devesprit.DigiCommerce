@@ -193,8 +193,6 @@ namespace Devesprit.WebFramework.ResourceBundler
                         {
                             var bundle = new ScriptBundle(bundleVirtualPath);
                             
-                            //disable file extension replacements. renders scripts which were specified by a developer
-                            bundle.EnableFileExtensionReplacements = true;
                             bundle.Include(partsToBundle.Select(x => x.Part).ToArray());
 
                             if (inlinePartsToBundle.Any())
@@ -443,11 +441,9 @@ namespace Devesprit.WebFramework.ResourceBundler
                         {
                             var bundle = new StyleBundle(bundleVirtualPath);
                             
-                            //disable file extension replacements. renders scripts which were specified by a developer
-                            bundle.EnableFileExtensionReplacements = true;
                             foreach (var ptb in partsToBundle.Select(x => x.Part))
                             {
-                                bundle.Include(ptb, GetCssTransform());
+                                bundle.Include(ptb);//, GetCssTransform());
                             }
 
                             if (inlinePartsToBundle.Any())
@@ -455,7 +451,7 @@ namespace Devesprit.WebFramework.ResourceBundler
                                 var inlineStyleFilePath = HttpContext.Current.Server.MapPath($"~/App_Data/{hash}.css");
                                 File.WriteAllText(inlineStyleFilePath,
                                     string.Join(Environment.NewLine, inlinePartsToBundle.Select(x => x.Part)));
-                                bundle.Include($"~/App_Data/{hash}.css", GetCssTransform());
+                                bundle.Include($"~/App_Data/{hash}.css");//, GetCssTransform());
                             }
 
                             var styleTransformer = new StyleTransformer(new YuiCssMinifier(new YuiSettings()
@@ -642,14 +638,6 @@ namespace Devesprit.WebFramework.ResourceBundler
             public bool ExcludeFromBundle { get; set; }
 
             public string Part { get; set; }
-        }
-
-        private class AsIsBundleOrderer : IBundleOrderer
-        {
-            public IEnumerable<BundleFile> OrderFiles(BundleContext context, IEnumerable<BundleFile> files)
-            {
-                return files;
-            }
         }
         #endregion
 

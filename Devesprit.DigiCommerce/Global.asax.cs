@@ -99,7 +99,7 @@ namespace Devesprit.DigiCommerce
             Response.TrySkipIisCustomErrors = true;
 
             // Call target Controller and pass the routeData.
-            IController errorController = new ErrorController();
+            IController errorController = DependencyResolver.Current.GetService<ErrorController>();
             errorController.Execute(new RequestContext(
                 new HttpContextWrapper(HttpContext.Current), routeData));
         }

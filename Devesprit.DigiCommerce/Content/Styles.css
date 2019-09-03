@@ -912,3 +912,10 @@ button {
 .iziToast-wrapper {
     z-index: 99999999;
 }
+
+
+/* TinyMCE Html Editor Buttons Size------------ */
+.tox-tbtn, .tox-mbtn {
+    height: 25px !important;
+}
+/* ------------TinyMCE Html Editor Buttons Size */

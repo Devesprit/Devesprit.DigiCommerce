@@ -83,10 +83,6 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
                     objAppSettings.Settings["CacheLocalizedEntities"].Value = model.CacheLocalizedEntities.ToString("true", "false");
                     objConfig.Save();
                 }
-
-                //Update CKEditor settings
-                System.IO.File.WriteAllText(HttpContext.Server.MapPath("~/Scripts/CKEditor/config.js"), model.CkEditorConfig);
-                System.IO.File.WriteAllText(HttpContext.Server.MapPath("~/Scripts/CKEditor/Plugins/templates/templates/default.js"), model.CkEditorTemplates);
             }
             catch (Exception e)
             {

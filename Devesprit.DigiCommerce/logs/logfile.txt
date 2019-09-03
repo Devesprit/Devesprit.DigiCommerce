@@ -1,4 +1,0 @@
-2019-08-23 18:06:16.9698 Plugin.Other.Seo.EventHandler Error on optimizing post description images!
-Description ID: 7396
-Image Url: https://fs.irdevelopers.com/PostDescriptionImages/Images/M/7396_2019_8_23_14_4_16_45.png
-

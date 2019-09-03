@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using System.Web.Mvc;
 using Devesprit.Core.Localization;
-using Devesprit.Services;
 using Devesprit.Services.ThemeManager;
 using Devesprit.WebFramework.Attributes;
 
@@ -207,13 +204,9 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Models
         public string EncryptionSalt { get; set; }
 
         [AllowHtml]
-        [DisplayNameLocalized("CkEditorConfig")]
-        public string CkEditorConfig { get; set; }
-
-        [AllowHtml]
-        [DisplayNameLocalized("CkEditorTemplates")]
-        public string CkEditorTemplates { get; set; }
-
+        [DisplayNameLocalized("TinyMCESettings")]
+        public string TinyMCESettings { get; set; }
+        
         [DisplayNameLocalized("AutoPublishComments")]
         public bool AutoPublishComments { get; set; }
 
