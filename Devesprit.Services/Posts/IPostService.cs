@@ -27,7 +27,6 @@ namespace Devesprit.Services.Posts
         Task UpdateAsync(T record);
         Task<int> AddAsync(T record);
         Task IncreaseNumberOfViewsAsync(T post, int value = 1);
-        int GetNumberOfLikes(int postId);
         Task UpdatePostTagsAsync(int postId, List<string> tagsList);
         Task UpdatePostCategoriesAsync(int postId, List<int> categoriesList);
         void GetStatics(out int numberOfPosts, out int numberOfVisits, out DateTime lastUpdate);

@@ -9,11 +9,14 @@ namespace Devesprit.Data.Domain
     public partial class TblInvoiceDetails:BaseEntity
     {
         [Required]
+        [Index(IsClustered = false, IsUnique = false)]
         public Guid InvoiceId { get; set; }
         public virtual  TblInvoices Invoice { get; set; }
         [Required]
+        [Index(IsClustered = false, IsUnique = false)]
         public int ItemId { get; set; }
         [Required]
+        [Index(IsClustered = false, IsUnique = false)]
         public InvoiceDetailsItemType ItemType { get; set; }
         public string ItemName { get; set; }
         public string ItemHomePage { get; set; }

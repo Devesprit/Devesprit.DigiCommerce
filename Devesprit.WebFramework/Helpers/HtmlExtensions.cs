@@ -12,7 +12,6 @@ using Devesprit.Services;
 using Devesprit.Services.Languages;
 using Devesprit.Utilities.Extensions;
 using Devesprit.WebFramework.ResourceBundler;
-using Microsoft.Ajax.Utilities;
 using Yahoo.Yui.Compressor;
 
 namespace Devesprit.WebFramework.Helpers

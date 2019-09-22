@@ -5,11 +5,13 @@ using Devesprit.Core.Plugin;
 using Devesprit.Services.Localization;
 using Devesprit.Services.Widget;
 using Plugin.Widgets.Slider.DB;
+using Z.EntityFramework.Plus;
 
 namespace Plugin.Widgets.Slider
 {
     public partial class SliderPlugin : BasePlugin, IWidgetPlugin
     {
+        internal const string CacheKey = "Plugin.Widgets.Slider";
         private readonly SliderDbContext _dbContext;
 
         public SliderPlugin(SliderDbContext dbContext)
@@ -19,7 +21,7 @@ namespace Plugin.Widgets.Slider
 
         public virtual IList<string> GetWidgetZones()
         {
-            var zoneLists = _dbContext.Slider.Select(p => p.Zone).Distinct().ToList();
+            var zoneLists = _dbContext.Slider.Select(p => p.Zone).FromCache(CacheKey).Distinct().ToList();
             return zoneLists;
         }
 

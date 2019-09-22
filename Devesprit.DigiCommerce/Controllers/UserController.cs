@@ -27,6 +27,7 @@ using reCaptcha;
 
 namespace Devesprit.DigiCommerce.Controllers
 {
+    [OutputCache(NoStore = true, Duration = 0)]
     public partial class UserController : BaseController
     {
         private readonly ICountriesService _countriesService;
@@ -65,7 +66,6 @@ namespace Devesprit.DigiCommerce.Controllers
         [HttpGet]
         [AllowAnonymous]
         [RedirectAuthenticatedRequests(Action = "Index", Controller = "Profile")]
-        [OutputCache(Duration = 60 * 20, Location = OutputCacheLocation.ServerAndClient, VaryByParam = "*")]
         public virtual ActionResult Login(string returnUrl)
         {
             Session["EnableExternalAuth"] = true;
@@ -140,7 +140,6 @@ namespace Devesprit.DigiCommerce.Controllers
             {
                 case SignInStatus.Success:
                     EventPublisher.Publish(new UserLoggedinEvent(user));
-                    _usersService.SetUserLatestIpAndLoginDate(user?.Id, HttpContext.GetClientIpAddress());
                     return RedirectToLocal(model.ReturnUrl);
                 case SignInStatus.LockedOut:
                     IncreaseFailedAttempts();
@@ -155,7 +154,6 @@ namespace Devesprit.DigiCommerce.Controllers
         [HttpGet]
         [AllowAnonymous]
         [RedirectAuthenticatedRequests(Action = "Index", Controller = "Profile")]
-        [OutputCache(Duration = 60 * 20, Location = OutputCacheLocation.ServerAndClient, VaryByParam = "none")]
         public virtual async Task<ActionResult> SignUp()
         {
             Session["EnableExternalAuth"] = true;
@@ -264,7 +262,6 @@ namespace Devesprit.DigiCommerce.Controllers
 
         [AllowAnonymous]
         [RedirectAuthenticatedRequests(Action = "Index", Controller = "Profile")]
-        [OutputCache(Duration = 60 * 10, Location = OutputCacheLocation.ServerAndClient, VaryByParam = "*")]
         public virtual async Task<ActionResult> ConfirmEmail(string userId, string code)
         {
             if (userId == null || code == null)
@@ -282,7 +279,6 @@ namespace Devesprit.DigiCommerce.Controllers
         [HttpGet]
         [AllowAnonymous]
         [RedirectAuthenticatedRequests(Action = "Index", Controller = "Profile")]
-        [OutputCache(Duration = 60 * 20, Location = OutputCacheLocation.ServerAndClient, VaryByParam = "none")]
         public virtual ActionResult ForgotPassword()
         {
             var currentLanguage = WorkContext.CurrentLanguage;
@@ -468,7 +464,6 @@ namespace Devesprit.DigiCommerce.Controllers
             {
                 case SignInStatus.Success:
                     EventPublisher.Publish(new UserLoggedinEvent(user));
-                    _usersService.SetUserLatestIpAndLoginDate(user?.Id, HttpContext.GetClientIpAddress());
                     return RedirectToLocal(returnUrl);
                 case SignInStatus.LockedOut:
                     IncreaseFailedAttempts();
@@ -588,7 +583,6 @@ namespace Devesprit.DigiCommerce.Controllers
                 {
                     await SignInManager.SignInAsync(user, isPersistent: true, rememberBrowser: false);
                     EventPublisher.Publish(new UserLoggedinEvent(user));
-                    _usersService.SetUserLatestIpAndLoginDate(user?.Id, HttpContext.GetClientIpAddress());
                     return RedirectToLocal(model.ReturnUrl);
                 }
             }

@@ -232,7 +232,6 @@ namespace Devesprit.WebFramework.ResourceBundler
 
                     //parts to bundle
                     result.AppendLine(Scripts.Render(bundleVirtualPath).ToString());
-                    GC.Collect();
                 }
 
                 //parts to do not bundle
@@ -440,18 +439,15 @@ namespace Devesprit.WebFramework.ResourceBundler
                         if (bundleFor == null)
                         {
                             var bundle = new StyleBundle(bundleVirtualPath);
-                            
-                            foreach (var ptb in partsToBundle.Select(x => x.Part))
-                            {
-                                bundle.Include(ptb);//, GetCssTransform());
-                            }
 
+                            bundle.Include(partsToBundle.Select(x => x.Part).ToArray());
+                            
                             if (inlinePartsToBundle.Any())
                             {
                                 var inlineStyleFilePath = HttpContext.Current.Server.MapPath($"~/App_Data/{hash}.css");
                                 File.WriteAllText(inlineStyleFilePath,
                                     string.Join(Environment.NewLine, inlinePartsToBundle.Select(x => x.Part)));
-                                bundle.Include($"~/App_Data/{hash}.css");//, GetCssTransform());
+                                bundle.Include($"~/App_Data/{hash}.css");
                             }
 
                             var styleTransformer = new StyleTransformer(new YuiCssMinifier(new YuiSettings()
@@ -479,7 +475,6 @@ namespace Devesprit.WebFramework.ResourceBundler
 
                     //parts to bundle
                     result.AppendLine(Styles.Render(bundleVirtualPath).ToString());
-                    GC.Collect();
                 }
 
                 //parts to do not bundle

@@ -7,6 +7,7 @@ namespace Devesprit.Data.Domain
     [Table("Tbl_UserMessages")]
     public partial class TblUserMessages : BaseEntity
     {
+        [Index(IsClustered = false, IsUnique = false)]
         public string UserId { get; set; }
         public virtual TblUsers User { get; set; }
 

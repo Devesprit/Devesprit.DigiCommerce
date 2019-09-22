@@ -11,7 +11,7 @@ namespace Devesprit.Services
         {
             var options = new CacheItemPolicy()
             {
-                SlidingExpiration = TimeSpan.FromHours(2),
+                SlidingExpiration = TimeSpan.FromDays(30),
             };
             QueryCacheManager.DefaultCacheItemPolicy = options;
         }

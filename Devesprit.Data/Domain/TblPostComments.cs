@@ -13,10 +13,13 @@ namespace Devesprit.Data.Domain
         [Required]
         public DateTime CommentDate { get; set; }
         [Required]
+        [Index(IsClustered = false, IsUnique = false)]
         public int PostId { get; set; }
         public virtual TblPosts Post { get; set; }
+        [Index(IsClustered = false, IsUnique = false)]
         public int? ParentCommentId { get; set; }
         public virtual TblPostComments ParentComment { get; set; }
+        [Index(IsClustered = false, IsUnique = false)]
         public string UserId { get; set; }
         public virtual TblUsers User { get; set; }
         public string UserName { get; set; }

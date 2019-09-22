@@ -22,6 +22,7 @@ namespace Devesprit.Data.Domain
         public bool ShowInUserMenuBar { get; set; }
         public string PanelTitle { get; set; }
         public bool Published { get; set; }
+        [Index(IsClustered = false, IsUnique = false)]
         public bool ShowAsWebsiteDefaultPage { get; set; }
     }
 }

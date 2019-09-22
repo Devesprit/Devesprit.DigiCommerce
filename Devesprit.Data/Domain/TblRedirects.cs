@@ -10,15 +10,23 @@ namespace Devesprit.Data.Domain
         public string Name { get; set; }
 
         [Required]
+        [Column(TypeName = "VARCHAR")]
+        [StringLength(450)]
+        [Index(IsClustered = false, IsUnique = false)]
         public string RequestedUrl { get; set; }
 
         [Required]
+        [Column(TypeName = "VARCHAR")]
+        [StringLength(450)]
+        [Index(IsClustered = false, IsUnique = false)]
         public string ResponseUrl { get; set; }
 
         [Required]
+        [Index(IsClustered = false, IsUnique = false)]
         public MatchType MatchType { get; set; }
 
         [Required]
+        [Index(IsClustered = false, IsUnique = false)]
         public ResponseType ResponseType { get; set; }
 
         public RedirectStatusCode? RedirectStatus { get; set; }

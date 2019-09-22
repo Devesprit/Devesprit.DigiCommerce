@@ -7,9 +7,11 @@ namespace Devesprit.Data.Domain
     public partial class TblProductDiscountsForUserGroups : BaseEntity
     {
         [Required]
+        [Index(IsClustered = false, IsUnique = false)]
         public int ProductId { get; set; }
         public virtual TblProducts Product { get; set; }
         [Required]
+        [Index(IsClustered = false, IsUnique = false)]
         public int UserGroupId { get; set; }
         public virtual TblUserGroups UserGroup { get; set; }
 

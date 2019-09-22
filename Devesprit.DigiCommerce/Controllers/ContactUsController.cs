@@ -22,7 +22,6 @@ namespace Devesprit.DigiCommerce.Controllers
             _userMessagingService = userMessagingService;
         }
 
-        [OutputCache(Duration = 60 * 5, Location = OutputCacheLocation.ServerAndClient, VaryByParam = "*")]
         public virtual ActionResult Index()
         {
             if (CurrentSettings.UseGoogleRecaptchaForContactUs)

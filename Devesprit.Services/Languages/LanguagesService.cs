@@ -9,6 +9,7 @@ using Devesprit.Core.Localization;
 using Devesprit.Data;
 using Devesprit.Data.Domain;
 using Devesprit.Services.Events;
+using Devesprit.Services.MemoryCache;
 using Z.EntityFramework.Plus;
 
 namespace Devesprit.Services.Languages
@@ -68,9 +69,9 @@ namespace Devesprit.Services.Languages
         public virtual TblLanguages FindByIso(string iso)
         {
             return _dbContext.Languages
-                .Include(p => p.DefaultCurrency)
-                .DeferredFirstOrDefault(p => p.IsoCode.Trim().ToLower() == iso.Trim().ToLower())
-                .FromCache(new []{QueryCacheTag.Language, QueryCacheTag.Currency});
+                    .Include(p => p.DefaultCurrency)
+                    .DeferredFirstOrDefault(p => p.IsoCode.Trim().ToLower() == iso.Trim().ToLower())
+                    .FromCache(new[] { QueryCacheTag.Language, QueryCacheTag.Currency });
         }
 
         public virtual async Task<TblLanguages> FindByIsoAsync(string iso)
@@ -90,8 +91,9 @@ namespace Devesprit.Services.Languages
 
         public virtual List<string> GetAllLanguagesIsoList()
         {
-            return _dbContext.Languages.Where(p => p.Published).Select(p => p.IsoCode.ToLower().Trim())
-                .FromCache(QueryCacheTag.Language).ToList();
+            return _dbContext.Languages.Where(p => p.Published)
+                .Select(p => p.IsoCode)
+                .FromCache(QueryCacheTag.Language).Select(p => p.ToLower().Trim()).ToList();
         }
 
         public virtual IEnumerable<TblLanguages> GetAsEnumerable()

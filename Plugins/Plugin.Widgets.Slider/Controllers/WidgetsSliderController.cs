@@ -2,7 +2,9 @@
 using System.Data.Entity.Migrations;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Web;
 using System.Web.Mvc;
+using System.Web.UI;
 using AutoMapper;
 using Devesprit.Core.Localization;
 using Devesprit.DigiCommerce.Controllers;
@@ -21,8 +23,6 @@ namespace Plugin.Widgets.Slider.Controllers
         private readonly ILocalizationService _localizationService;
         private readonly ILocalizedEntityService _localizedEntityService;
         private readonly SliderDbContext _dbContext;
-
-        private const string CacheKey = "Plugin.Widgets.Slider";
 
         public WidgetsSliderController(ILocalizationService localizationService, 
             ILocalizedEntityService localizedEntityService,
@@ -46,7 +46,7 @@ namespace Plugin.Widgets.Slider.Controllers
             {
                 var record = await _dbContext.Slider
                     .DeferredFirstOrDefault(p => p.Id == id)
-                    .FromCacheAsync(CacheKey);
+                    .FromCacheAsync(SliderPlugin.CacheKey);
                 if (record != null)
                 {
                     var model = Mapper.Map<SliderViewModel>(record);
@@ -76,7 +76,6 @@ namespace Plugin.Widgets.Slider.Controllers
                     //Add new record
                     _dbContext.Slider.Add(record);
                     await _dbContext.SaveChangesAsync();
-                    QueryCacheManager.ExpireTag(CacheKey);
                     recordId = record.Id;
                 }
                 else
@@ -84,8 +83,11 @@ namespace Plugin.Widgets.Slider.Controllers
                     //Edit record
                     _dbContext.Slider.AddOrUpdate(record);
                     await _dbContext.SaveChangesAsync();
-                    QueryCacheManager.ExpireTag(CacheKey);
                 }
+
+                HttpResponse.RemoveOutputCacheItem(Url.Action("Index", "WidgetsSlider"));
+
+                QueryCacheManager.ExpireTag(SliderPlugin.CacheKey);
 
                 await _localizedEntityService.SaveAllLocalizedStringsAsync(record, model);
             }
@@ -118,7 +120,10 @@ namespace Plugin.Widgets.Slider.Controllers
                     await _dbContext.Slider.Where(p => p.Id == key).DeleteAsync();
                     await _localizedEntityService.DeleteEntityAllLocalizedStringsAsync(typeof(TblSlider).Name, key);
                 }
-                QueryCacheManager.ExpireTag(CacheKey);
+
+                HttpResponse.RemoveOutputCacheItem(Url.Action("Index", "WidgetsSlider"));
+
+                QueryCacheManager.ExpireTag(SliderPlugin.CacheKey);
                 return Content("OK");
             }
             catch (Exception e)
@@ -149,10 +154,11 @@ namespace Plugin.Widgets.Slider.Controllers
         }
 
         [ChildActionOnly]
+        [OutputCache(VaryByParam = "*", Duration = 60 * 60 * 24, VaryByCustom = "lang")]
         public virtual ActionResult Index(string widgetZone, object additionalData = null)
         {
             var images = _dbContext.Slider
-                .Where(p => p.Zone == widgetZone && p.Visible).FromCache(CacheKey);
+                .Where(p => p.Zone == widgetZone && p.Visible).FromCache(SliderPlugin.CacheKey);
             return View("~/Plugins/Plugin.Widgets.Slider/Views/Slider.cshtml", images);
         }
     }

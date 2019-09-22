@@ -39,7 +39,7 @@ namespace Devesprit.DigiCommerce.Factories
             UrlHelper url)
         {
             var result = AutoMapper.Mapper.Map<PostCardViewModel>(post);
-            var likesCount = _postService.GetNumberOfLikes(post.Id);
+            var likesCount = _userLikesService.GetPostNumberOfLikes(post.Id);
             result.NumberOfLikes = likesCount;
             result.LastUpDate = post.LastUpDate ?? post.PublishDate;
             result.MainImageUrl = post.Images?.OrderBy(p => p.DisplayOrder).FirstOrDefault()
@@ -104,7 +104,7 @@ namespace Devesprit.DigiCommerce.Factories
             result.MetaDescription = post.GetLocalized(p => p.MetaDescription);
             result.MetaKeyWords = post.GetLocalized(p => p.MetaKeyWords);
 
-            var likesCount = _postService.GetNumberOfLikes(post.Id);
+            var likesCount = _userLikesService.GetPostNumberOfLikes(post.Id);
             result.NumberOfLikes = likesCount;
             result.LastUpdate = post.LastUpDate ?? post.PublishDate;
             result.Categories = post.Categories

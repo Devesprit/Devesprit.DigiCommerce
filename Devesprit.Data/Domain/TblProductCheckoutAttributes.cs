@@ -9,6 +9,7 @@ namespace Devesprit.Data.Domain
     public partial class TblProductCheckoutAttributes : BaseEntity
     {
         [Required]
+        [Index(IsClustered = false, IsUnique = false)]
         public int ProductId { get; set; }
         public virtual TblProducts Product { get; set; }
         [Required]

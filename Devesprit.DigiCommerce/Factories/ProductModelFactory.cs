@@ -49,7 +49,7 @@ namespace Devesprit.DigiCommerce.Factories
         {
             var result = AutoMapper.Mapper.Map<ProductCardViewModel>(product);
             var downloadsCount = _productService.GetNumberOfDownloads(product.Id);
-            var likesCount = _productService.GetNumberOfLikes(product.Id);
+            var likesCount = _userLikesService.GetPostNumberOfLikes(product.Id);
             result.NumberOfDownloads = downloadsCount;
             result.NumberOfLikes = likesCount;
             result.LastUpDate = product.LastUpDate ?? product.PublishDate;
@@ -95,7 +95,7 @@ namespace Devesprit.DigiCommerce.Factories
             result.MetaKeyWords = product.GetLocalized(p => p.MetaKeyWords);
             
             var downloadsCount = _productService.GetNumberOfDownloads(product.Id);
-            var likesCount = _productService.GetNumberOfLikes(product.Id);
+            var likesCount = _userLikesService.GetPostNumberOfLikes(product.Id);
             result.NumberOfDownloads = downloadsCount;
             result.NumberOfLikes = likesCount;
             result.LastUpdate = product.LastUpDate ?? product.PublishDate;
@@ -190,7 +190,8 @@ namespace Devesprit.DigiCommerce.Factories
                 });
             }
 
-            result.PostUrl = new Uri(url.Action("Index", "Product", new { slug = product.Slug }, _httpContext.Request.Url.Scheme)).ToString();
+            var protocol = _httpContext?.Request.Url?.Scheme ?? "http";
+            result.PostUrl = new Uri(url.Action("Index", "Product", new { slug = product.Slug },protocol: protocol) ?? "").ToString();
 
             return result;
         }

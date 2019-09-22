@@ -15,6 +15,7 @@ using Microsoft.AspNet.Identity;
 
 namespace Devesprit.DigiCommerce.Controllers
 {
+    [OutputCache(NoStore = true, Duration = 0)]
     public partial class PurchaseController : BaseController
     {
         private readonly IUserGroupsService _userGroupsService;

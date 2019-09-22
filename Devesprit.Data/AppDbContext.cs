@@ -3,7 +3,6 @@ using System.Data.Entity.Validation;
 using System.Threading.Tasks;
 using Devesprit.Data.Domain;
 using Microsoft.AspNet.Identity.EntityFramework;
-using MySql.Data.Entity;
 
 namespace Devesprit.Data
 {

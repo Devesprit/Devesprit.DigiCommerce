@@ -75,7 +75,7 @@ namespace Devesprit.WebFramework
                     !p.StartsWith("en", StringComparison.OrdinalIgnoreCase)) ??
                 HttpContext?.Request.UserLanguages.FirstOrDefault();
 
-            if (string.IsNullOrEmpty(userLanguage))
+            if (string.IsNullOrEmpty(userLanguage) || userLanguage.Length < 2)
                 return null;
 
             var language = _languagesService

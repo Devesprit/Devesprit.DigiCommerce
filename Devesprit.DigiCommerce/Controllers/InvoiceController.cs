@@ -14,6 +14,7 @@ using Microsoft.AspNet.Identity;
 
 namespace Devesprit.DigiCommerce.Controllers
 {
+    [OutputCache(NoStore = true, Duration = 0)]
     public partial class InvoiceController : BaseController
     {
         private readonly IInvoiceService _invoiceService;

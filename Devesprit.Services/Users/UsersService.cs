@@ -175,16 +175,10 @@ namespace Devesprit.Services.Users
 
         public void SetUserLatestIpAndLoginDate(string id, string ip)
         {
-            if (!string.IsNullOrWhiteSpace(id))
+            if (!string.IsNullOrWhiteSpace(id) && !string.IsNullOrWhiteSpace(ip))
             {
-                var user = _dbContext.Users.FirstOrDefault(p => p.Id == id);
-                if (user != null)
-                {
-                    user.UserLastLoginDate = DateTime.Now;
-                    user.UserLatestIP = ip;
-
-                    _dbContext.SaveChanges();
-                }
+                _dbContext.Users.Where(p => p.Id == id).Update(p => new TblUsers()
+                    {UserLatestIP = ip, UserLastLoginDate = DateTime.Now});
             }
         }
 

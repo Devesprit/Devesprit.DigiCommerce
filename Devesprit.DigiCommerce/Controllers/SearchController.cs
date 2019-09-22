@@ -160,6 +160,7 @@ namespace Devesprit.DigiCommerce.Controllers
             return View("Index", viewModel);
         }
 
+        [OutputCache(VaryByParam = "*", Duration = 60 * 60 * 24, VaryByCustom = "lang")]
         public virtual ActionResult MoreLikeThis(int postId, PostType postType, int? numberOfSimilarityPosts)
         {
             var result = _searchEngine.MoreLikeThis(postId, null, 0, postType,
@@ -178,6 +179,7 @@ namespace Devesprit.DigiCommerce.Controllers
             return PartialView("Partials/_MoreLikeThis", _postModelFactory.PreparePostCardViewModel(posts, currentUser, Url));
         }
 
+        [OutputCache(VaryByParam = "*", Duration = 60 * 60 * 24, VaryByCustom = "lang")]
         public virtual async Task<JsonResult> SearchSuggestion(string query)
         {
             var result = await _searchEngine.AutoCompleteAsync(query, 0, 20);

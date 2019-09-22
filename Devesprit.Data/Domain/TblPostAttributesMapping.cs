@@ -7,11 +7,13 @@ namespace Devesprit.Data.Domain
     public partial class TblPostAttributesMapping : BaseEntity
     {
         [Required]
+        [Index(IsClustered = false, IsUnique = false)]
         public int PostId { get; set; }
 
         public virtual TblPosts Post { get; set; }
 
         [Required]
+        [Index(IsClustered = false, IsUnique = false)]
         public int PostAttributeId { get; set; }
 
         public virtual TblPostAttributes PostAttribute { get; set; }

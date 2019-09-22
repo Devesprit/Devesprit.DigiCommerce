@@ -159,9 +159,15 @@ namespace Devesprit.DigiCommerce
             {
                 new WildcardUrlMatcher("/minifiers/x*ml-minifier"),
                 new WildcardUrlMatcher("*/Purchase/PurchaseProductWizard*"),
-                new WildcardUrlMatcher("*/Admin/*"),
                 new WildcardUrlMatcher("/Purchase/PurchaseProductWizard*"),
+                new WildcardUrlMatcher("*/Admin/*"),
                 new WildcardUrlMatcher("/Admin/*"),
+                new WildcardUrlMatcher("*/bundles/*"),
+                new WildcardUrlMatcher("/bundles/*"),
+                new WildcardUrlMatcher("*/Scripts/*"),
+                new WildcardUrlMatcher("/Scripts/*"),
+                new WildcardUrlMatcher("*/Content/*"),
+                new WildcardUrlMatcher("/Content/*"),
             };
             var htmlMinificationSettings = htmlMinificationManager.MinificationSettings;
             htmlMinificationSettings.RemoveRedundantAttributes = false;
@@ -187,6 +193,16 @@ namespace Devesprit.DigiCommerce
             xhtmlMinificationManager.IncludedPages = new List<IUrlMatcher>
             {
                 new WildcardUrlMatcher("/minifiers/x*ml-minifier"),
+                new WildcardUrlMatcher("*/Purchase/PurchaseProductWizard*"),
+                new WildcardUrlMatcher("/Purchase/PurchaseProductWizard*"),
+                new WildcardUrlMatcher("*/Admin/*"),
+                new WildcardUrlMatcher("/Admin/*"),
+                new WildcardUrlMatcher("*/bundles/*"),
+                new WildcardUrlMatcher("/bundles/*"),
+                new WildcardUrlMatcher("*/Scripts/*"),
+                new WildcardUrlMatcher("/Scripts/*"),
+                new WildcardUrlMatcher("*/Content/*"),
+                new WildcardUrlMatcher("/Content/*"),
             };
             var xhtmlMinificationSettings = xhtmlMinificationManager.MinificationSettings;
             xhtmlMinificationSettings.RemoveRedundantAttributes = false;

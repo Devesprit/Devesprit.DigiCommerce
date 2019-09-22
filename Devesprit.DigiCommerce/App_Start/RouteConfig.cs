@@ -10,6 +10,7 @@ namespace Devesprit.DigiCommerce
         {
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
             routes.IgnoreRoute("{*favicon}", new { favicon = @"(.*/)?favicon.ico(/.*)?" });
+            routes.IgnoreRoute("{*favicon}", new { favicon = @"(.*/)?favicon.png(/.*)?" });
             routes.MapMvcAttributeRoutes();
 
             var routePublisher = DependencyResolver.Current.GetService<IRoutePublisher>();

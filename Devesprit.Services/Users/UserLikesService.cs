@@ -94,15 +94,16 @@ namespace Devesprit.Services.Users
             {
                 return false;
             }
-            return _dbContext.UserLikes.DeferredAny(p => p.PostId == postId && p.UserId == userId)
-                .FromCache(QueryCacheTag.UserLikes);
+
+            return _dbContext.UserLikes.Where(p => p.UserId == userId).FromCache(QueryCacheTag.UserLikes)
+                .Any(p => p.PostId == postId);
         }
 
         public virtual int GetPostNumberOfLikes(int postId)
         {
             return GetAsQueryable()
                 .DeferredCount(p => p.PostId == postId)
-                .FromCache(QueryCacheTag.UserLikes);
+                .FromCache(DateTimeOffset.Now.AddHours(24));
         }
     }
 }

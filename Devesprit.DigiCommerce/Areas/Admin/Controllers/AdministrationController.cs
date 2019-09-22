@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Mvc;
+using System.Web.UI;
 using Devesprit.Core.Localization;
 using Devesprit.Data.Enums;
 using Devesprit.DigiCommerce.Areas.Admin.Models;
@@ -37,7 +38,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
             return View();
         }
 
-        [OutputCache(Duration = 60)]
+        [OutputCache(Duration = 60, Location = OutputCacheLocation.Server, VaryByParam = "*")]
         public virtual async Task<ActionResult> InvoicesChart(DateTime? FromDate, DateTime? ToDate, TimePeriodType PeriodType = TimePeriodType.Day)
         {
             if (FromDate == null || ToDate == null || FromDate >= ToDate)
@@ -99,7 +100,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
             });
         }
         
-        [OutputCache(Duration = 60)]
+        [OutputCache(Duration = 60, Location = OutputCacheLocation.Server, VaryByParam = "*")]
         public virtual async Task<ActionResult> SellsChart(DateTime? FromDate, DateTime? ToDate, TimePeriodType PeriodType = TimePeriodType.Day)
         {
             if (FromDate == null || ToDate == null || FromDate >= ToDate)
@@ -153,7 +154,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
             });
         }
 
-        [OutputCache(Duration = 60)]
+        [OutputCache(Duration = 60, Location = OutputCacheLocation.Server, VaryByParam = "*")]
         public virtual async Task<ActionResult> UsersChart(DateTime? FromDate, DateTime? ToDate, TimePeriodType PeriodType = TimePeriodType.Day)
         {
             if (FromDate == null || ToDate == null || FromDate >= ToDate)

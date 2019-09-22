@@ -43,11 +43,12 @@ namespace Devesprit.DigiCommerce.Controllers
         // GET: Download
         [Route("{lang}/Download/{productId}/{demoFiles}", Order = 0)]
         [Route("Download/{productId}/{demoFiles}", Order = 1)]
-        public virtual async Task<ActionResult> DownloadProduct(int productId, bool demoFiles)
+        public virtual async Task<ActionResult> DownloadProduct(int productId, bool? demoFiles)
         {
             var product = await _productService.FindByIdAsync(productId);
             var user = await UserManager.FindByIdAsync(HttpContext.User.Identity.GetUserId());
-            
+            var requestDemoFiles = demoFiles ?? false;
+
             if (product == null || (!product.Published && !HttpContext.User.IsInRole("Admin")))
                 return View("PageNotFound"); // product id is invalid or not published
 
@@ -55,10 +56,10 @@ namespace Devesprit.DigiCommerce.Controllers
             {
                 PageTitle = product.GetLocalized(p => p.Title),
                 ProductPageUrl = Url.Action("Index", "Product", new { slug = product.Slug }),
-                IsDemo = demoFiles
+                IsDemo = requestDemoFiles
             };
 
-            var userHasAccessToFiles = _productService.UserCanDownloadProduct(product, user, demoFiles);
+            var userHasAccessToFiles = _productService.UserCanDownloadProduct(product, user, requestDemoFiles);
             var canDownload =
                 userHasAccessToFiles.HasFlagFast(ProductService.UserCanDownloadProductResult.UserCanDownloadProduct);
 
@@ -134,7 +135,7 @@ namespace Devesprit.DigiCommerce.Controllers
             //---------------------------
 
             var productTitle = product.GetLocalized(p => p.Title);
-            var filesPath = demoFiles ? product.DemoFilesPath : product.FilesPath;
+            var filesPath = requestDemoFiles ? product.DemoFilesPath : product.FilesPath;
             if (!string.IsNullOrWhiteSpace(filesPath))
             {
                 if (product.FileServerId != null)
@@ -153,7 +154,7 @@ namespace Devesprit.DigiCommerce.Controllers
                     {
                         Title = productTitle,
                         FileListTree = entriesList.Length > 0
-                            ? GenerateFileTreeHtml(entriesList.ToList(), canDownload, productId, demoFiles)
+                            ? GenerateFileTreeHtml(entriesList.ToList(), canDownload, productId, requestDemoFiles)
                             : ""
                     });
                 }
@@ -161,7 +162,7 @@ namespace Devesprit.DigiCommerce.Controllers
                 {
                     //File(s) is in outside of server
                     var downloadLink = canDownload
-                        ? Url.Action("DownloadLog", new { productId = productId, downloadLink = filesPath, version = demoFiles ? ("DEMO" + productId).EncryptString() : ("FULL" + productId).EncryptString() })
+                        ? Url.Action("DownloadLog", new { productId = productId, downloadLink = filesPath, version = requestDemoFiles ? ("DEMO" + productId).EncryptString() : ("FULL" + productId).EncryptString() })
                         : $"#' onclick='WarningAlert(\"{_localizationService.GetResource("Note")}\", \"{_localizationService.GetResource("YouDoNotHaveAccessRightsToThisFile")}\")";
                     model.FileGroups.Add(new FileGroup()
                     {
@@ -179,7 +180,7 @@ namespace Devesprit.DigiCommerce.Controllers
                 });
             }
 
-            if (!demoFiles)
+            if (!requestDemoFiles)
             {
                 //Get product attributes files
                 var userPurchasedAttributes = await _productService.GetUserDownloadableAttributesAsync(product, user);
@@ -212,14 +213,14 @@ namespace Devesprit.DigiCommerce.Controllers
                                     }).ConfigureAwait(false);
 
                                     fileListTreeHtml += entriesList.Length > 0
-                                        ? GenerateFileTreeHtml(entriesList.ToList(), showDownloadLink, productId, demoFiles).TrimStart("<ul>").TrimEnd("</ul>")
+                                        ? GenerateFileTreeHtml(entriesList.ToList(), showDownloadLink, productId, requestDemoFiles).TrimStart("<ul>").TrimEnd("</ul>")
                                         : "";
                                 }
                                 else
                                 {
                                     //File(s) is in outside of server
                                     var downloadLink = showDownloadLink ?
-                                        Url.Action("DownloadLog", new { productId = productId, downloadLink = attributeOption.FilesPath, version = demoFiles ? ("DEMO" + productId).EncryptString() : ("FULL" + productId).EncryptString() })
+                                        Url.Action("DownloadLog", new { productId = productId, downloadLink = attributeOption.FilesPath, version = requestDemoFiles ? ("DEMO" + productId).EncryptString() : ("FULL" + productId).EncryptString() })
                                         : $"#' onclick='WarningAlert(\"{_localizationService.GetResource("Note")}\", \"{_localizationService.GetResource("YouDoNotHaveAccessRightsToThisFile")}\")";
                                     fileListTreeHtml +=
                                         $"<li data-jstree='{{\"icon\":\"/Content/img/FileExtIcons/download.png\"}}'><a target='_blank' href='{downloadLink}'><img src='/Content/img/FileExtIcons/link.png'/> <span class='{(optionName.IsRtlLanguage() ? "rtl-dir" : "ltr-dir")}'>{optionName}</span></a></li>";

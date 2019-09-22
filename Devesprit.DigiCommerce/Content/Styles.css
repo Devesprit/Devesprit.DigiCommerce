@@ -1,5 +1,7 @@
 ﻿@font-face {
     font-family: dana;
+    font-display: fallback;
+    text-rendering: optimizeLegibility;
     font-style: normal;
     font-weight: bold;
     src: url('fonts/dana/eot/dana-bold.eot');
@@ -10,6 +12,8 @@
 
 @font-face {
     font-family: dana;
+    font-display: fallback;
+    text-rendering: optimizeLegibility;
     font-style: normal;
     font-weight: normal;
     src: url('fonts/dana/eot/dana-regular.eot');
@@ -20,6 +24,7 @@
 
 @font-face {
     font-family: Lato;
+    font-display: fallback;
     src: url('fonts/LatoLatin/LatoLatin-Bold.eot'); /* IE9 Compat Modes */
     src: url('fonts/LatoLatin/LatoLatin-Bold.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
     url('fonts/LatoLatin/LatoLatin-Bold.woff2') format('woff2'), /* Modern Browsers */
@@ -32,6 +37,7 @@
 
 @font-face {
     font-family: Lato;
+    font-display: fallback;
     src: url('fonts/LatoLatin/LatoLatin-Regular.eot'); /* IE9 Compat Modes */
     src: url('fonts/LatoLatin/LatoLatin-Regular.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
     url('fonts/LatoLatin/LatoLatin-Regular.woff2') format('woff2'), /* Modern Browsers */
@@ -207,7 +213,7 @@ button {
 
 .post-description-tab {
     position: relative;
-    top: -2.6rem;
+    top: -2.4rem;
     padding-left: 20px !important;
     padding-right: 20px !important;
 }

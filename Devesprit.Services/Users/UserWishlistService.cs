@@ -94,8 +94,9 @@ namespace Devesprit.Services.Users
             {
                 return false;
             }
-            return _dbContext.UserWishlist.DeferredAny(p => p.PostId == postId && p.UserId == userId)
-                .FromCache(QueryCacheTag.UserWishlist);
+
+            return _dbContext.UserWishlist.Where(p => p.UserId == userId).FromCache(QueryCacheTag.UserWishlist)
+                .Any(p => p.PostId == postId);
         }
     }
 }

@@ -214,7 +214,7 @@ namespace Devesprit.Services.Products
         {
             return _productDownloadsLogService.GetAsQueryable()
                 .DeferredCount(p => p.ProductId == productId)
-                .FromCache(QueryCacheTag.ProductDownloadLog);
+                .FromCache(DateTimeOffset.Now.AddHours(24));
         }
 
         public virtual string GenerateDiscountsForUserGroupsDescription(TblProducts product, TblUsers user)

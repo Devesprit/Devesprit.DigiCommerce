@@ -11,9 +11,11 @@ namespace Devesprit.Data.Domain
         {
             PostType = Enums.PostType.Product;
         }
-
+        [Index(IsClustered = false, IsUnique = false)]
         public double Price { get; set; }
+        [Index(IsClustered = false, IsUnique = false)]
         public double RenewalPrice { get; set; }
+        [Index(IsClustered = false, IsUnique = false)]
         public int? PurchaseExpiration { get; set; }
         public TimePeriodType? PurchaseExpirationTimeType { get; set; }
         public string FilesPath { get; set; }
@@ -23,6 +25,7 @@ namespace Devesprit.Data.Domain
         public bool UserMustLoggedInToDownloadDemoFiles { get; set; }
         public int? FileServerId { get; set; }
         public virtual TblFileServers FileServer { get; set; }
+        [Index(IsClustered = false, IsUnique = false)]
         public int? DownloadLimitedToUserGroupId { get; set; }
         public virtual TblUserGroups DownloadLimitedToUserGroup { get; set; }
         public bool HigherUserGroupsCanDownload { get; set; }

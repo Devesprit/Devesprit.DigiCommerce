@@ -167,7 +167,8 @@ namespace Devesprit.WebFramework
             {
                 return new ViewEngineResult(CreateView(controllerContext, viewPath, masterPath), this);
             }
-            return new ViewEngineResult(strArray.Union(strArray2));
+
+            return strArray2 == null ? new ViewEngineResult(strArray) : new ViewEngineResult(strArray.Union(strArray2));
         }
 
         public override ViewEngineResult FindPartialView(ControllerContext controllerContext, string partialViewName, bool useCache)

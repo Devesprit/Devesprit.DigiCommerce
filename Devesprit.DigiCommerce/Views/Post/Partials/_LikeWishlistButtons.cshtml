@@ -20,7 +20,7 @@
             UpdateTargetId = "",
             OnBegin = "$('.btnAddedToWishlist_" + Model.PostId + "').html(\"<i class='fa fa-spinner fa-spin '></i>\");",
             OnSuccess = "if(data.response === 'add'){$('.btnAddedToWishlist_"+ Model.PostId + "').html(\"<i class='fa fa-bookmark'></i>\");}else if(data.response === 'remove'){$('.btnAddedToWishlist_" + Model.PostId + "').html(\"<i class='fa fa-bookmark-o'></i>\");}else{ErrorAlert('" + T("Error") + "', '"+@T("ToPerformOperationPleaseLogin")+ "'); $('.btnAddedToWishlist_" + Model.PostId + "').html('" + (Model.AlreadyAddedToWishlist ? @"<i class=\'fa fa-bookmark\'></i>" : @"<i class=\'fa fa-bookmark-o\'></i>") + "');}"
-        }, new { @class = "like-btn btnAddedToWishlist_" + Model.PostId, title = (Model.AlreadyAddedToWishlist ? T("RemoveFromWishlist") : T("AddToWishlist")) })
+        }, new { @class = "like-btn btnAddedToWishlist_" + Model.PostId, rel="nofollow", title = (Model.AlreadyAddedToWishlist ? T("RemoveFromWishlist") : T("AddToWishlist")) })
 
 }
 @if (settings.LikePosts)
@@ -36,5 +36,5 @@
             UpdateTargetId = "",
             OnBegin = "$('.btnLike_" + Model.PostId + "').html(\"<i class='fa fa-spinner fa-spin '></i>\");",
             OnSuccess = "if(data.response === 'add'){$('.btnLike_" + Model.PostId + "').html(\"<i class='fa fa-heart'></i>\");}else if(data.response === 'remove'){$('.btnLike_" + Model.PostId + "').html(\"<i class='fa fa-heart-o'></i>\");}else{ErrorAlert('" + T("Error") + "', '"+@T("ToPerformOperationPleaseLogin")+ "'); $('.btnLike_" + Model.PostId + "').html('" + (Model.AlreadyLiked ? @"<i class=\'fa fa-heart\'></i>" : @"<i class=\'fa fa-heart-o\'></i>") + "');}"
-        }, new { @class = "like-btn btnLike_" + Model.PostId, title = (Model.AlreadyLiked ? T("Unlike") : T("Like")) })
+        }, new { @class = "like-btn btnLike_" + Model.PostId, rel="nofollow", title = (Model.AlreadyLiked ? T("Unlike") : T("Like")) })
 }

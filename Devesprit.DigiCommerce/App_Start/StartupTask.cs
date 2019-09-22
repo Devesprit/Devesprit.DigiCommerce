@@ -28,7 +28,7 @@ namespace Devesprit.DigiCommerce
                 var jobs = connection.GetRecurringJobs().ToList();
                 if (jobs.Count(p => p.Id == "Search Engine Indexes Generator") == 0)
                 {
-                    RecurringJob.AddOrUpdate<ISearchEngine>("Search Engine Indexes Generator", searchEngine => searchEngine.CreateIndex(), () => Cron.HourInterval(6),
+                    RecurringJob.AddOrUpdate<ISearchEngine>("Search Engine Indexes Generator", searchEngine => searchEngine.CreateIndex(), () => Cron.Daily(23, 59),
                         TimeZoneInfo.Local);
                 }                
                 
@@ -37,7 +37,7 @@ namespace Devesprit.DigiCommerce
                 {
                     //Remainder Notifications Task
                     RecurringJob.AddOrUpdate<IUsersService>("Product & User Plan Expiration Notifications Sender",
-                        usersService => usersService.SendExpirationNotificationsAsync(), () => Cron.Daily(23, 59),
+                        usersService => usersService.SendExpirationNotificationsAsync(), () => Cron.Daily(0, 59),
                         TimeZoneInfo.Local);
                 }
 
@@ -45,13 +45,13 @@ namespace Devesprit.DigiCommerce
                 {
                     //Remainder Notifications Task
                     RecurringJob.AddOrUpdate<IInvoiceService>("Delete Empty & Pending Invoices",
-                        invoiceService => invoiceService.DeletePendingInvoices(), () => Cron.Daily(23, 59),
+                        invoiceService => invoiceService.DeletePendingInvoices(), () => Cron.Daily(1, 59),
                         TimeZoneInfo.Local);
                 }
 
                 //KeepAlive Task
                 var url = _settingService.LoadSetting<SiteSettings>().SiteUrl.Trim().TrimEnd('/') + "/KeepAlive/Index";
-                RecurringJob.AddOrUpdate("Keep Website Alive", () => FireKeepAliveController(url), () => Cron.MinuteInterval(5));
+                RecurringJob.AddOrUpdate("Keep Website Alive", () => FireKeepAliveController(url), Cron.Minutely);
             }
         }
 

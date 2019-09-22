@@ -7,6 +7,7 @@
 @using Devesprit.Services.Localization
 @using Devesprit.Services.SocialAccounts
 @using Devesprit.Utilities.Extensions
+@using Glimpse.Mvc.Html
 @using Schema.NET
 @{
     var settings = DependencyResolver.Current.GetService<ISettingService>().LoadSetting<SiteSettings>();
@@ -17,7 +18,7 @@
         Headline = settings.SiteName.ToString(),
         PotentialAction = new OneOrMany<IAction>(new SearchAction()
         {
-            Target = new Uri(Url.Action("Index", "Search", new {Query = "{search_term_string}"}).GetAbsoluteUrl().UrlDecode()),
+            Target = new Uri(Url.Action("Index", "Search", new { Query = "{search_term_string}" }).GetAbsoluteUrl().UrlDecode()),
             QueryInput = "required name=search_term_string"
         }),
         Description = settings.SiteDescription.ToString(),
@@ -30,12 +31,11 @@
         Name = settings.SiteName.ToString(),
         Email = settings.SiteEmailAddress,
         Logo = new Uri(settings.SiteLogoHeader.ToString().GetAbsoluteUrl()),
-        SameAs = new OneOrMany<Uri>(socialAccounts.Select(p=> new Uri(p.YourAccountUrl)).ToList()),
-        
+        SameAs = new OneOrMany<Uri>(socialAccounts.Select(p => new Uri(p.YourAccountUrl)).ToList()),
+
     };
     Html.AddHeadCustomParts("<meta name=\"robots\" content=\"index,follow\">");
 }
-
 @Html.Widget("home_page_start")
 <div class="row t-pad-20">
     <div class="col-12 b-mar-70">
@@ -44,12 +44,12 @@
             <a class="text-warning fs-12" href="@Url.Action("ProductsExplorer", "Product", new {listType = ProductsListType.Newest})">@T("SeeMore")</a>
         </div>
         @{Html.RenderAction("GetProductsList", "Product", new
-          {
-              listType = ProductsListType.Newest,
-              pageSize = 12,
-              numberOfCol = NumberOfCol.Three,
-              showPager = false
-          });}
+            {
+                listType = ProductsListType.Newest,
+                pageSize = 12,
+                numberOfCol = NumberOfCol.Three,
+                showPager = false
+            });}
         <a class="btn btn-sm btn-secondary btn-block mt-2" href="@Url.Action("ProductsExplorer", "Product", new {listType = ProductsListType.Newest})"><i class="fa fa-list"></i> @T("SeeMore")</a>
     </div>
     <div class="col-12 col-md-4 col-lg-4 col-xl-3 b-mar-70">
@@ -58,13 +58,13 @@
             <a class="text-warning fs-12" href="@Url.Action("ProductsExplorer", "Product", new {listType = ProductsListType.HotList})">@T("SeeMore")</a>
         </div>
         @{Html.RenderAction("GetProductsList", "Product", new
-          {
-              listType = ProductsListType.HotList,
-              pageSize = 9,
-              showPager = false,
-              numberOfCol = NumberOfCol.One,
-              style = ViewStyles.Small
-          });}
+            {
+                listType = ProductsListType.HotList,
+                pageSize = 9,
+                showPager = false,
+                numberOfCol = NumberOfCol.One,
+                style = ViewStyles.Small
+            });}
         <a class="btn btn-sm btn-secondary btn-block mt-2" href="@Url.Action("ProductsExplorer", "Product", new {listType = ProductsListType.HotList})"><i class="fa fa-list"></i> @T("SeeMore")</a>
     </div>
     <div class="col b-mar-70">
@@ -73,14 +73,14 @@
             <a class="text-warning fs-12" href="@Url.Action("ProductsExplorer", "Product", new {listType = ProductsListType.MostDownloaded, fromDate = DateTime.Now.AddYears(-1)})">@T("SeeMore")</a>
         </div>
         @{Html.RenderAction("GetProductsList", "Product", new
-          {
-              listType = ProductsListType.MostDownloaded,
-              pageSize = 5,
-              showPager = false,
-              numberOfCol = NumberOfCol.One,
-              style = ViewStyles.Large,
-              fromDate = DateTime.Now.AddYears(-1)
-          });}
+            {
+                listType = ProductsListType.MostDownloaded,
+                pageSize = 5,
+                showPager = false,
+                numberOfCol = NumberOfCol.One,
+                style = ViewStyles.Large,
+                fromDate = DateTime.Now.AddYears(-1)
+            });}
         <a class="btn btn-sm btn-secondary btn-block mt-2" href="@Url.Action("ProductsExplorer", "Product", new {listType = ProductsListType.MostDownloaded, fromDate = DateTime.Now.AddYears(-1)})"><i class="fa fa-list"></i> @T("SeeMore")</a>
     </div>
     @if (settings.EnableBlog)
@@ -92,13 +92,13 @@
                 <a class="text-warning fs-12" href="@Url.Action("BlogExplorer", "Blog", new {listType = PostsListType.Newest})">@T("SeeMore")</a>
             </div>
             @{Html.RenderAction("GetBlogPostsList", "Blog", new
-              {
-                  listType = PostsListType.Newest,
-                  pageSize = 4,
-                  showPager = false,
-                  numberOfCol = NumberOfCol.Four,
-                  style = ViewStyles.Small
-              });}
+                {
+                    listType = PostsListType.Newest,
+                    pageSize = 4,
+                    showPager = false,
+                    numberOfCol = NumberOfCol.Four,
+                    style = ViewStyles.Small
+                });}
         </div>
     }
 </div>

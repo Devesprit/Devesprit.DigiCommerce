@@ -7,6 +7,7 @@ namespace Devesprit.Data.Domain
     public partial class TblPostDescriptions: BaseEntity
     {
         [Required]
+        [Index(IsClustered = false, IsUnique = false)]
         public int PostId { get; set; }
         public virtual TblPosts Post { get; set; }
         [Required, MaxLength(250)]

@@ -1,8 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Net;
+using System.Threading;
 using System.Web;
+using System.Web.Helpers;
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
@@ -12,12 +16,9 @@ using AutoMapper;
 using Devesprit.Core;
 using Devesprit.Core.Localization;
 using Devesprit.Core.Plugin;
-using Devesprit.Core.Settings;
 using Devesprit.Data.Domain;
-using Devesprit.DigiCommerce.Controllers;
 using Devesprit.DigiCommerce.Models.Post;
 using Devesprit.DigiCommerce.Models.Products;
-using Devesprit.Services;
 using Devesprit.WebFramework;
 using Devesprit.WebFramework.ModelBinder;
 using Elmah;
@@ -29,7 +30,7 @@ namespace Devesprit.DigiCommerce
         protected void Application_Start()
         {
 #if DEBUG
-            //HibernatingRhinos.Profiler.Appender.EntityFramework.EntityFrameworkProfiler.Initialize();
+            HibernatingRhinos.Profiler.Appender.EntityFramework.EntityFrameworkProfiler.Initialize();
 #endif
 
             if (!Directory.Exists(Server.MapPath("App_Data")))
@@ -51,28 +52,52 @@ namespace Devesprit.DigiCommerce
             ModelBinders.Binders.Add(typeof(LocalizedString), new LocalizedStringModelBinder());
             ViewEngines.Engines.Clear();
             ViewEngines.Engines.Add(new RazorThemeViewEngine());
+
+            AntiForgeryConfig.SuppressIdentityHeuristicChecks = true;
+
+            //most of API providers require TLS 1.2 nowadays
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+
+            //disable "X-AspNetMvc-Version" header name
+            MvcHandler.DisableMvcResponseHeader = true;
+        }
+
+        protected void Application_BeginRequest(object sender, EventArgs e)
+        {
+            AntiForgeryConfig.RequireSsl = HttpContext.Current.Request.IsSecureConnection;
+        }
+
+        protected void Application_AcquireRequestState(object sender, EventArgs e)
+        {
+            //Set Current Thread Culture
+            var langIso = DependencyResolver.Current.GetService<IWorkContext>().CurrentLanguage.IsoCode;
+            if (HttpContext.Current?.Request.RequestContext?.RouteData?.DataTokens["area"]?.ToString().ToLower() == "admin")
+            {
+                Thread.CurrentThread.CurrentCulture = CultureInfo.GetCultureInfo(langIso);
+
+                var newCulture = (CultureInfo)Thread.CurrentThread.CurrentCulture.Clone();
+                newCulture.DateTimeFormat.Calendar = new GregorianCalendar();
+                Thread.CurrentThread.CurrentCulture = newCulture;
+                Thread.CurrentThread.CurrentUICulture = newCulture;
+            }
+            else
+            {
+                Thread.CurrentThread.CurrentCulture = CultureInfo.GetCultureInfo(langIso);
+                Thread.CurrentThread.CurrentUICulture = CultureInfo.GetCultureInfo(langIso);
+            }
         }
 
         protected void Application_Error(object sender, EventArgs e)
         {
             var exception = Server.GetLastError();
+            // Clear the error on server.
+            Server.ClearError();
 
             var httpException = exception as HttpException;
-
-            var routeData = new RouteData();
-            routeData.Values.Add("controller", "Error");
-            if (DependencyResolver.Current.GetService<ISettingService>().LoadSetting<SiteSettings>().AppendLanguageCodeToUrl)
-            {
-                routeData.Values.Add("lang",
-                    DependencyResolver.Current.GetService<IWorkContext>().CurrentLanguage.IsoCode);
-            }
-
             if (httpException == null)
             {
-                routeData.Values.Add("action", "Index");
-                // Log the exception.
-                var errorCode = ErrorLog.GetDefault(HttpContext.Current).Log(new Error(Server.GetLastError(), System.Web.HttpContext.Current));
-                routeData.Values.Add("errorCode", errorCode);
+                var errorCode = ErrorLog.GetDefault(HttpContext.Current).Log(new Error(exception, HttpContext.Current));
+                Response.Redirect("~/Error/Index?errorCode=" + errorCode);
             }
             else //It's an Http Exception, Let's handle it.
             {
@@ -80,28 +105,14 @@ namespace Devesprit.DigiCommerce
                 {
                     case 404:
                         // Page not found.
-                        routeData.Values.Add("action", "PageNotFound");
+                        Response.Redirect("~/Error/PageNotFound");
                         break;
                     default:
-                        routeData.Values.Add("action", "Index");
-                        // Log the exception.
-                        var errorCode = ErrorLog.GetDefault(System.Web.HttpContext.Current).Log(new Error(exception, System.Web.HttpContext.Current));
-                        routeData.Values.Add("errorCode", errorCode);
+                        var errorCode = ErrorLog.GetDefault(HttpContext.Current).Log(new Error(exception, HttpContext.Current));
+                        Response.Redirect("~/Error/Index?errorCode=" + errorCode);
                         break;
                 }
             }
-
-            Response.Clear();
-            // Clear the error on server.
-            Server.ClearError();
-            Response.ContentType = "text/html";
-            // Avoid IIS7 getting in the middle
-            Response.TrySkipIisCustomErrors = true;
-
-            // Call target Controller and pass the routeData.
-            IController errorController = DependencyResolver.Current.GetService<ErrorController>();
-            errorController.Execute(new RequestContext(
-                new HttpContextWrapper(HttpContext.Current), routeData));
         }
         
         private void ConfigAutofac()
@@ -153,6 +164,8 @@ namespace Devesprit.DigiCommerce
 
             var container = builder.Build();
 
+            container.ActivateGlimpse();
+
             // Set the dependency resolver to be Autofac.
             DependencyResolver.SetResolver(new AutofacDependencyResolver(container));
         }
@@ -177,6 +190,15 @@ namespace Devesprit.DigiCommerce
                 cfg.CreateMap<LocalizedString, string>().ConstructUsing(LocalizedStringToString);
                 cfg.CreateMap<LocalizedString, LocalizedString>().ConstructUsing(LocalizedStringToLocalizedString);
             });
+        }
+
+        public override string GetVaryByCustomString(HttpContext context, string value)
+        {
+            if (value.Equals("lang"))
+            {
+                return Thread.CurrentThread.CurrentUICulture.Name;
+            }
+            return base.GetVaryByCustomString(context, value);
         }
 
         private LocalizedString LocalizedStringToLocalizedString(LocalizedString arg1, ResolutionContext arg2)

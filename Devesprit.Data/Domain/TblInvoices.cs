@@ -11,9 +11,11 @@ namespace Devesprit.Data.Domain
     {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid Id { get; set; }
+        [Index(IsClustered = false, IsUnique = false)]
         public string UserId { get; set; }
         public virtual TblUsers User { get; set; }
         [Required]
+        [Index(IsClustered = false, IsUnique = false)]
         public DateTime CreateDate { get; set; }
         public DateTime? PaymentDate { get; set; }
         public double? DiscountAmount { get; set; }
@@ -24,6 +26,7 @@ namespace Devesprit.Data.Domain
         public int? CurrencyId { get; set; }
         public virtual TblCurrencies Currency { get; set; }
         [Required]
+        [Index(IsClustered = false, IsUnique = false)]
         public InvoiceStatus Status { get; set; }
         [MaxLength(200)]
         public string PaymentGatewayName { get; set; }

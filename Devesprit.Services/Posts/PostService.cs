@@ -347,12 +347,7 @@ namespace Devesprit.Services.Posts
             post.NumberOfViews += value;
             await _dbContext.SaveChangesAsync();
         }
-
-        public virtual int GetNumberOfLikes(int postId)
-        {
-            return _userLikesService.GetPostNumberOfLikes(postId);
-        }
-
+        
         public virtual async Task UpdatePostTagsAsync(int postId, List<string> tagsList)
         {
             var post = await _dbContext.Set<T>()

@@ -55,7 +55,7 @@ namespace Devesprit.WebFramework
             builder.RegisterType<PostCategoriesService>().As<IPostCategoriesService>().InstancePerLifetimeScope();
             builder.RegisterType<PostTagsService>().As<IPostTagsService>().InstancePerLifetimeScope();
             builder.RegisterType<ProductService>().As<IProductService>().InstancePerLifetimeScope();
-            builder.RegisterType<LanguagesService>().As<ILanguagesService>().InstancePerLifetimeScope().PropertiesAutowired();
+            builder.RegisterType<LanguagesService>().As<ILanguagesService>().InstancePerLifetimeScope();
             builder.RegisterType<CurrencyService>().As<ICurrencyService>().InstancePerLifetimeScope(); 
             builder.RegisterType<InvoiceService>().As<IInvoiceService>().InstancePerLifetimeScope(); 
             builder.RegisterType<PagesService>().As<IPagesService>().InstancePerLifetimeScope(); 
@@ -79,9 +79,8 @@ namespace Devesprit.WebFramework
             builder.RegisterType<RedirectsService>().As<IRedirectsService>().InstancePerLifetimeScope(); 
             builder.RegisterType<EmailService>().As<IEmailService>().InstancePerLifetimeScope();
             builder.RegisterType<TemplateEngine>().As<ITemplateEngine>().InstancePerLifetimeScope();
-            builder.RegisterType<MemoryCache>().As<IMemoryCache>().SingleInstance();
-            builder.RegisterType<PaymentGatewayManager>().As<IPaymentGatewayManager>().SingleInstance();
-            builder.RegisterType<Services.LicenseManager.LicenseManager>().As<Services.LicenseManager.ILicenseManager>().SingleInstance();
+            builder.RegisterType<PaymentGatewayManager>().As<IPaymentGatewayManager>().InstancePerLifetimeScope();
+            builder.RegisterType<Services.LicenseManager.LicenseManager>().As<Services.LicenseManager.ILicenseManager>().InstancePerLifetimeScope();
             builder.RegisterType<FileServersService>().As<IFileServersService>().InstancePerLifetimeScope();
             builder.RegisterType<TaxesService>().As<ITaxesService>().InstancePerLifetimeScope();
             builder.RegisterType<LuceneSearchEngine>().As<ISearchEngine>().InstancePerLifetimeScope();
@@ -99,6 +98,7 @@ namespace Devesprit.WebFramework
             builder.RegisterType<BlogPostService>().As<IBlogPostService>().InstancePerLifetimeScope();
             builder.RegisterType<PostService<TblPosts>>().As<PostService<TblPosts>>().InstancePerLifetimeScope();
             builder.RegisterGeneric(typeof(PostService<>)).As(typeof(IPostService<>)).InstancePerLifetimeScope();
+            builder.RegisterType<MemoryCache>().As<IMemoryCache>().SingleInstance();
 
 
             //Register event consumers
@@ -114,8 +114,8 @@ namespace Devesprit.WebFramework
 
                 builder.RegisterType(consumer).As(interfaceType).InstancePerLifetimeScope();
             }
-            builder.RegisterType<EventPublisher>().As<IEventPublisher>().SingleInstance();
-            builder.RegisterType<SubscriptionService>().As<ISubscriptionService>().SingleInstance();
+            builder.RegisterType<EventPublisher>().As<IEventPublisher>().InstancePerLifetimeScope();
+            builder.RegisterType<SubscriptionService>().As<ISubscriptionService>().InstancePerLifetimeScope();
         }
 
         public int Order => 0;

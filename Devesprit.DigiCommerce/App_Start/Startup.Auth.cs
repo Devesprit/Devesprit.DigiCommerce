@@ -39,11 +39,7 @@ namespace Devesprit.DigiCommerce
                 {
                     OnValidateIdentity = SecurityStampValidator.OnValidateIdentity<ApplicationUserManager, TblUsers>(
                         validateInterval: TimeSpan.FromMinutes(10),
-                        regenerateIdentity: (manager, users) => users.GenerateUserIdentityAsync(manager)),
-                    OnResponseSignedIn = context =>
-                    {
-                        usersService.SetUserLatestIpAndLoginDate(context.Identity.GetUserId(), context.Request.LocalIpAddress);
-                    }
+                        regenerateIdentity: (manager, users) => users.GenerateUserIdentityAsync(manager))
                 },
                 ExpireTimeSpan = TimeSpan.FromDays(30),
                 SlidingExpiration = true,

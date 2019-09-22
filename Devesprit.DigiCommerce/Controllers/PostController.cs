@@ -60,7 +60,6 @@ namespace Devesprit.DigiCommerce.Controllers
             return View("Partials/_LikeWishlistButtons", model);
         }
 
-        [ChildActionOnly]
         public virtual ActionResult PostCardViewPartialView(PostCardViewModel model, ViewStyles style = ViewStyles.Large)
         {
             switch (style)
@@ -74,7 +73,6 @@ namespace Devesprit.DigiCommerce.Controllers
                 default:
                     throw new ArgumentOutOfRangeException(nameof(style), style, null);
             }
-            
         }
     }
 }
