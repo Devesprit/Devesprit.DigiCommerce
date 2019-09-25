@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using Devesprit.Utilities.Extensions;
 
 namespace Devesprit.DigiCommerce.Models.Post
 {

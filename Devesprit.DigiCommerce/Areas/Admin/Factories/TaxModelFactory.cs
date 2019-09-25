@@ -1,9 +1,9 @@
 ﻿using System.Threading.Tasks;
-using AutoMapper;
 using Devesprit.Data.Domain;
 using Devesprit.DigiCommerce.Areas.Admin.Factories.Interfaces;
 using Devesprit.DigiCommerce.Areas.Admin.Models;
 using Devesprit.Services.Localization;
+using Mapster;
 
 namespace Devesprit.DigiCommerce.Areas.Admin.Factories
 {
@@ -18,7 +18,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Factories
             }
             else
             {
-                result = Mapper.Map<TaxModel>(tax);
+                result = tax.Adapt<TaxModel>();
                 await tax.LoadAllLocalizedStringsToModelAsync(result);
             }
 
@@ -27,7 +27,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Factories
 
         public virtual TblTaxes PrepareTblTaxes(TaxModel tax)
         {
-            var result = Mapper.Map<TblTaxes>(tax);
+            var result = tax.Adapt<TblTaxes>();
             return result;
         }
     }

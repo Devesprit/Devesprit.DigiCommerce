@@ -11,6 +11,17 @@ namespace Devesprit.Core.Localization
             Add(0, defaultValue);
         }
 
+        public LocalizedString(LocalizedString localizedString)
+        {
+            if (localizedString != null)
+            {
+                foreach (var key in localizedString.Keys)
+                {
+                    Add(key, localizedString[key]);
+                }
+            }
+        }
+
         public override string ToString()
         {
             if (ContainsKey(0))

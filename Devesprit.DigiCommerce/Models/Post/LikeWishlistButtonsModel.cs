@@ -1,6 +1,4 @@
-﻿using Devesprit.Data.Enums;
-
-namespace Devesprit.DigiCommerce.Models.Post
+﻿namespace Devesprit.DigiCommerce.Models.Post
 {
     public partial class LikeWishlistButtonsModel
     {

@@ -12,16 +12,14 @@ using System.Web.Optimization;
 using System.Web.Routing;
 using Autofac;
 using Autofac.Integration.Mvc;
-using AutoMapper;
 using Devesprit.Core;
 using Devesprit.Core.Localization;
 using Devesprit.Core.Plugin;
-using Devesprit.Data.Domain;
-using Devesprit.DigiCommerce.Models.Post;
-using Devesprit.DigiCommerce.Models.Products;
 using Devesprit.WebFramework;
 using Devesprit.WebFramework.ModelBinder;
 using Elmah;
+using Mapster;
+using Microsoft.AspNet.Identity;
 
 namespace Devesprit.DigiCommerce
 {
@@ -44,7 +42,7 @@ namespace Devesprit.DigiCommerce
             }
 
             ConfigAutofac();
-            ConfigAutoMapper();
+            ConfigMapster();
             AreaRegistration.RegisterAllAreas();
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
@@ -170,57 +168,66 @@ namespace Devesprit.DigiCommerce
             DependencyResolver.SetResolver(new AutofacDependencyResolver(container));
         }
 
-        private void ConfigAutoMapper()
+        private void ConfigMapster()
         {
-            Mapper.Initialize(cfg =>
-            {
-                cfg.ValidateInlineMaps = false;
-                cfg.CreateMissingTypeMaps = true;
-                cfg.AllowNullCollections = true;
-                cfg.AllowNullDestinationValues = true;
+            TypeAdapterConfig.GlobalSettings.Default.IgnoreNullValues(true);
+            TypeAdapterConfig.GlobalSettings.Default.PreserveReference(true);
+            TypeAdapterConfig.GlobalSettings.Default.ShallowCopyForSameType(true);
 
-                cfg.CreateMap<TblProducts, ProductCardViewModel>();
-                cfg.CreateMap<TblPosts, ProductCardViewModel>();
-                cfg.CreateMap<TblPosts, PostCardViewModel>();
-                cfg.CreateMap<TblBlogPosts, PostCardViewModel>();
-                cfg.CreateMap<byte[], HttpPostedFileBase>().ConstructUsing(p => Utils.ConstructHttpPostedFile(p, ""));
-                cfg.CreateMap<HttpPostedFileBase, byte[]>().ConstructUsing(p => p.InputStream.ToByteArray());
-                cfg.CreateMap<string, HttpPostedFileBase>().ConstructUsing(p => Utils.ConstructHttpPostedFile(null, p));
-                cfg.CreateMap<object, LocalizedString>().ConstructUsing(p => new LocalizedString());
-                cfg.CreateMap<LocalizedString, string>().ConstructUsing(LocalizedStringToString);
-                cfg.CreateMap<LocalizedString, LocalizedString>().ConstructUsing(LocalizedStringToLocalizedString);
-            });
+            TypeAdapterConfig.GlobalSettings.ForType<byte[], HttpPostedFileBase>()
+                .MapWith(src => Utils.ConstructHttpPostedFile(src, ""));
+            TypeAdapterConfig.GlobalSettings.ForType<HttpPostedFileBase, byte[]>()
+                .MapWith(src => src.InputStream.ToByteArray());
+            TypeAdapterConfig.GlobalSettings.ForType<string, HttpPostedFileBase>()
+                .MapWith(src => Utils.ConstructHttpPostedFile(null, src));
+            TypeAdapterConfig.GlobalSettings.ForType<string, LocalizedString>()
+                .MapWith(src=> new LocalizedString(src));
+            TypeAdapterConfig.GlobalSettings.ForType<LocalizedString, string>()
+                .MapWith(src => src != null && src.ContainsKey(0) ? src[0] : "");
+            TypeAdapterConfig.GlobalSettings.ForType<LocalizedString, LocalizedString>()
+                .MapWith(src => new LocalizedString(src));
+
+            TypeAdapterConfig.GlobalSettings.Compile();
         }
 
         public override string GetVaryByCustomString(HttpContext context, string value)
         {
-            if (value.Equals("lang"))
-            {
-                return Thread.CurrentThread.CurrentUICulture.Name;
-            }
-            return base.GetVaryByCustomString(context, value);
-        }
+            if(string.IsNullOrWhiteSpace(value))
+                return base.GetVaryByCustomString(context, value);
 
-        private LocalizedString LocalizedStringToLocalizedString(LocalizedString arg1, ResolutionContext arg2)
-        {
-            var result = new LocalizedString();
-            if (arg1 != null)
+            var paramsList = value.Split(new[] {";"}, StringSplitOptions.RemoveEmptyEntries)
+                .Select(p => p.Trim().ToLower()).ToList();
+            var result = string.Empty;
+            if (paramsList.Contains("lang"))
             {
-                foreach (var key in arg1.Keys)
+                result += Thread.CurrentThread.CurrentUICulture.Name + ";";
+            }
+            if (paramsList.Contains("user"))
+            {
+                if (context.User?.Identity?.IsAuthenticated == true)
                 {
-                    result.Add(key, arg1[key]);
+                    if (context.User.IsInRole("Admin"))
+                    {
+                        //Cache disabled for Admin user
+                        result += DateTime.Now.ToString("F") + ";";
+                    }
+                    else
+                    {
+                        result += context.User.Identity.GetUserId() + ";";
+                    }
+                }
+                else
+                {
+                    result += "none;";
                 }
             }
-            return result;
-        }
 
-        private string LocalizedStringToString(LocalizedString arg1, ResolutionContext arg2)
-        {
-            if (arg1 != null && arg1.ContainsKey(0))
+            if (!string.IsNullOrEmpty(result))
             {
-                return arg1[0];// default local value
+                return result;
             }
-            return "";
+
+            return base.GetVaryByCustomString(context, value);
         }
     }
 }

@@ -1,7 +1,7 @@
-﻿using AutoMapper;
-using Devesprit.Data.Domain;
+﻿using Devesprit.Data.Domain;
 using Devesprit.DigiCommerce.Areas.Admin.Factories.Interfaces;
 using Devesprit.DigiCommerce.Areas.Admin.Models;
+using Mapster;
 
 namespace Devesprit.DigiCommerce.Areas.Admin.Factories
 {
@@ -11,7 +11,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Factories
         {
             var result = record == null
                 ? new ProductDiscountsForUserGroupsModel()
-                : Mapper.Map<ProductDiscountsForUserGroupsModel>(record);
+                : record.Adapt<ProductDiscountsForUserGroupsModel>();
 
             result.ProductId = productId;
             return result;
@@ -19,7 +19,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Factories
 
         public virtual TblProductDiscountsForUserGroups PrepareTblProductDiscountsForUserGroups(ProductDiscountsForUserGroupsModel model)
         {
-            var result = Mapper.Map<TblProductDiscountsForUserGroups>(model);
+            var result = model.Adapt<TblProductDiscountsForUserGroups>();
             return result;
         }
     }

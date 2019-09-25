@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Web;
-using Devesprit.Data.Events;
+﻿using Devesprit.Data.Events;
 using Syncfusion.JavaScript;
 
 namespace Devesprit.DigiCommerce.Areas.Admin.Controllers.Event

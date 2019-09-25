@@ -1,5 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using Devesprit.Core.Localization;
+﻿using Devesprit.Core.Localization;
 using Devesprit.WebFramework.Attributes;
 
 

@@ -17,7 +17,6 @@ namespace Devesprit.DigiCommerce.Controllers
         // GET: Page
         [Route("{lang}/Pages/{slug}", Order = 0)]
         [Route("Pages/{slug}", Order = 1)]
-        [OutputCache(Duration = 60, Location = OutputCacheLocation.ServerAndClient, VaryByParam = "*")]
         public virtual async Task<ActionResult> Index(string slug)
         {
             var page = await _pagesService.FindBySlugAsync(slug);

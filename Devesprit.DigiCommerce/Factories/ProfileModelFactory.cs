@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
-using AutoMapper;
 using Devesprit.Core.Localization;
 using Devesprit.Data.Domain;
 using Devesprit.Data.Enums;
@@ -16,6 +15,7 @@ using Devesprit.Services.Notifications;
 using Devesprit.Services.Posts;
 using Devesprit.Services.SearchEngine;
 using Devesprit.Services.Users;
+using Mapster;
 using X.PagedList;
 
 namespace Devesprit.DigiCommerce.Factories
@@ -54,7 +54,7 @@ namespace Devesprit.DigiCommerce.Factories
 
         public virtual async Task<UserInfoModel> PrepareUserInfoModelAsync(TblUsers user)
         {
-            var result = AutoMapper.Mapper.Map<UserInfoModel>(user);
+            var result = user.Adapt<UserInfoModel>();
             result.ShowUserSubscriptionInfo = (await _userGroupsService.GetAsEnumerableAsync()).Any();
 
             if (user.UserCountry != null)
@@ -113,7 +113,7 @@ namespace Devesprit.DigiCommerce.Factories
 
         public virtual UpdateProfileModel PrepareUpdateProfileModel(TblUsers user)
         {
-            return AutoMapper.Mapper.Map<UpdateProfileModel>(user);
+            return user.Adapt<UpdateProfileModel>();
         }
 
         public virtual async Task<IPagedList<UserLikeWishlistModel>> PrepareUserLikedEntitiesModelAsync(IPagedList<TblUserLikes> likes)
@@ -122,7 +122,7 @@ namespace Devesprit.DigiCommerce.Factories
             var result = new List<UserLikeWishlistModel>();
             foreach (var item in likes)
             {
-                var userLikeWishlistModel = Mapper.Map<UserLikeWishlistModel>(item);
+                var userLikeWishlistModel = item.Adapt<UserLikeWishlistModel>();
                 var post = await _postService.FindByIdAsync(item.PostId);
                 userLikeWishlistModel.PostTitle = post.GetLocalized(p => p.Title);
 
@@ -160,7 +160,7 @@ namespace Devesprit.DigiCommerce.Factories
             var result = new List<UserLikeWishlistModel>();
             foreach (var item in wishlist)
             {
-                var userLikeWishlistModel = Mapper.Map<UserLikeWishlistModel>(item);
+                var userLikeWishlistModel = item.Adapt<UserLikeWishlistModel>();
                 var post = await _postService.FindByIdAsync(item.PostId);
                 userLikeWishlistModel.PostTitle = post.GetLocalized(p => p.Title);
 

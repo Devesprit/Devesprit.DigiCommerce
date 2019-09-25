@@ -38,7 +38,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
             return View();
         }
 
-        [OutputCache(Duration = 60, Location = OutputCacheLocation.Server, VaryByParam = "*")]
+        [OutputCache(Duration = 60, Location = OutputCacheLocation.Server, VaryByParam = "*", VaryByCustom = "lang")]
         public virtual async Task<ActionResult> InvoicesChart(DateTime? FromDate, DateTime? ToDate, TimePeriodType PeriodType = TimePeriodType.Day)
         {
             if (FromDate == null || ToDate == null || FromDate >= ToDate)
@@ -100,7 +100,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
             });
         }
         
-        [OutputCache(Duration = 60, Location = OutputCacheLocation.Server, VaryByParam = "*")]
+        [OutputCache(Duration = 60, Location = OutputCacheLocation.Server, VaryByParam = "*", VaryByCustom = "lang")]
         public virtual async Task<ActionResult> SellsChart(DateTime? FromDate, DateTime? ToDate, TimePeriodType PeriodType = TimePeriodType.Day)
         {
             if (FromDate == null || ToDate == null || FromDate >= ToDate)
@@ -154,7 +154,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
             });
         }
 
-        [OutputCache(Duration = 60, Location = OutputCacheLocation.Server, VaryByParam = "*")]
+        [OutputCache(Duration = 60, Location = OutputCacheLocation.Server, VaryByParam = "*", VaryByCustom = "lang")]
         public virtual async Task<ActionResult> UsersChart(DateTime? FromDate, DateTime? ToDate, TimePeriodType PeriodType = TimePeriodType.Day)
         {
             if (FromDate == null || ToDate == null || FromDate >= ToDate)

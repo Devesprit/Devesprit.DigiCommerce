@@ -109,7 +109,7 @@ namespace Devesprit.Core
             }
         }
 
-        private string assemblySkipLoadingPattern = "^MySql\\.Data|^HtmlAgilityPack|^Owin\\.Security\\.Providers|^System|^mscorlib|^Microsoft|^Antlr3|^Autofac|^AutoMapper|^EntityFramework|^Dapper|^DotNetZip|^Elmah|^MvcContrib|^Newtonsoft|^Hangfire|^HibernatingRhinos|^JetBrains|^Lucene|^reCaptcha|^Scriban|^Syncfusion|^X\\.PagedList|^WebMarkupMin|^Z\\.|^WebActivator|^WebDev|^WebGrease";
+        private string assemblySkipLoadingPattern = "^MySql\\.Data|^HtmlAgilityPack|^Owin\\.Security\\.Providers|^System|^mscorlib|^Microsoft|^Antlr3|^Mapster|^AutoMapper|^EntityFramework|^Dapper|^DotNetZip|^Elmah|^MvcContrib|^Newtonsoft|^Hangfire|^HibernatingRhinos|^JetBrains|^Lucene|^reCaptcha|^Scriban|^Syncfusion|^X\\.PagedList|^WebMarkupMin|^Z\\.|^WebActivator|^WebDev|^WebGrease";
         private string assemblyRestrictToLoadingPattern = ".*";
         public virtual bool Matches(string assemblyFullName)
         {

@@ -1,9 +1,9 @@
 ﻿using System.Threading.Tasks;
-using AutoMapper;
 using Devesprit.Data.Domain;
 using Devesprit.DigiCommerce.Areas.Admin.Factories.Interfaces;
 using Devesprit.DigiCommerce.Areas.Admin.Models;
 using Devesprit.Services.Localization;
+using Mapster;
 
 namespace Devesprit.DigiCommerce.Areas.Admin.Factories
 {
@@ -18,7 +18,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Factories
             }
             else
             {
-                result = Mapper.Map<PostTagModel>(tag);
+                result = tag.Adapt<PostTagModel>();
                 await tag.LoadAllLocalizedStringsToModelAsync(result);
             }
 
@@ -27,7 +27,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Factories
 
         public virtual TblPostTags PrepareTblPostTags(PostTagModel tag)
         {
-            var result = Mapper.Map<TblPostTags>(tag);
+            var result = tag.Adapt<TblPostTags>();
             return result;
         }
     }

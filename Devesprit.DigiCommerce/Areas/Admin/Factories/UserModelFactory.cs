@@ -1,11 +1,11 @@
 ﻿using System.Threading.Tasks;
 using System.Web;
-using AutoMapper;
 using Devesprit.Data.Domain;
 using Devesprit.DigiCommerce.Areas.Admin.Factories.Interfaces;
 using Devesprit.DigiCommerce.Areas.Admin.Models;
 using Devesprit.Services.Countries;
 using Devesprit.Services.Users;
+using Mapster;
 using Microsoft.AspNet.Identity.Owin;
 
 namespace Devesprit.DigiCommerce.Areas.Admin.Factories
@@ -23,7 +23,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Factories
 
         public virtual async Task<UserModel> PrepareUserModelAsync(TblUsers user)
         {
-            var result = user == null ? new UserModel() : Mapper.Map<UserModel>(user);
+            var result = user == null ? new UserModel() : user.Adapt<UserModel>();
             if (user != null)
             {
                 result.CurrentAvatarUrl = user.Avatar;
@@ -37,7 +37,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Factories
 
         public virtual TblUsers PrepareTblUsers(UserModel user)
         {
-            var result = Mapper.Map<TblUsers>(user);
+            var result = user.Adapt<TblUsers>();
             return result;
         }
     }

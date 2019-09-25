@@ -5,7 +5,7 @@ namespace Devesprit.DigiCommerce.Controllers
 {
     public partial class KeepAliveController : Controller
     {
-        [OutputCache(Duration = 60 * 60, Location = OutputCacheLocation.ServerAndClient, VaryByParam = "none")]
+        [OutputCache(Duration = 60 * 60, Location = OutputCacheLocation.Server, VaryByParam = "none")]
         public virtual ActionResult Index()
         {
             Response.AddHeader("Cache-Control", "no-cache");

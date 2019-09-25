@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using AutoMapper;
 using Devesprit.Core;
 using Devesprit.Data.Domain;
 using Devesprit.Data.Enums;
@@ -9,6 +8,7 @@ using Devesprit.DigiCommerce.Factories.Interfaces;
 using Devesprit.DigiCommerce.Models.Invoice;
 using Devesprit.Services.Invoice;
 using Devesprit.Services.PaymentGateway;
+using Mapster;
 
 namespace Devesprit.DigiCommerce.Factories
 {
@@ -29,7 +29,7 @@ namespace Devesprit.DigiCommerce.Factories
 
         public virtual async Task<InvoiceModel> PrepareInvoiceModelAsync(TblInvoices invoice)
         {
-            var result = Mapper.Map<InvoiceModel>(invoice);
+            var result = invoice.Adapt<InvoiceModel>();
             result.UserName = invoice.User?.UserName;
             result.InvoiceDetails = PrepareInvoiceDetailsModel(invoice.InvoiceDetails);
 
@@ -87,7 +87,7 @@ namespace Devesprit.DigiCommerce.Factories
                 var rowNumber = 1;
                 foreach (var detail in details.OrderBy(p=> p.ItemName))
                 {
-                    var item = Mapper.Map<InvoiceDetailsModel>(detail);
+                    var item = detail.Adapt<InvoiceDetailsModel>();
                     item.RowNumber = rowNumber;
                     result.Add(item);
 
@@ -104,13 +104,13 @@ namespace Devesprit.DigiCommerce.Factories
                 return new InvoiceBillingAddressModel();
             }
 
-            var result = Mapper.Map<InvoiceBillingAddressModel>(address);
+            var result = address.Adapt<InvoiceBillingAddressModel>();
             return result;
         }
 
         public virtual TblInvoiceBillingAddress PrepareTblInvoiceBillingAddress(InvoiceBillingAddressModel address)
         {
-            var result = Mapper.Map<TblInvoiceBillingAddress>(address);
+            var result = address.Adapt<TblInvoiceBillingAddress>();
             result.Country = null;
             result.CountryId = address.CountryId;
             return result;

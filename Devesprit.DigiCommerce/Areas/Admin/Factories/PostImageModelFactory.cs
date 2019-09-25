@@ -1,11 +1,10 @@
 ﻿using System.Threading.Tasks;
-using AutoMapper;
 using Devesprit.Data.Domain;
 using Devesprit.DigiCommerce.Areas.Admin.Factories.Interfaces;
 using Devesprit.DigiCommerce.Areas.Admin.Models;
 using Devesprit.Services.Localization;
 using Devesprit.Services.Posts;
-using Devesprit.Services.Products;
+using Mapster;
 
 namespace Devesprit.DigiCommerce.Areas.Admin.Factories
 {
@@ -27,7 +26,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Factories
             }
             else
             {
-                result = Mapper.Map<PostImageModel>(image);
+                result = image.Adapt<PostImageModel>();
                 result.PostId = image.PostId;
                 await image.LoadAllLocalizedStringsToModelAsync(result);
             }
@@ -38,7 +37,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Factories
 
         public virtual async Task<TblPostImages> PrepareTblPostImagesAsync(PostImageModel image)
         {
-            var result = Mapper.Map<TblPostImages>(image);
+            var result = image.Adapt<TblPostImages>();
             result.PostId = image.PostId;
             if (string.IsNullOrWhiteSpace(result.Alt))
             {

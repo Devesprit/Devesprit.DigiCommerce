@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using Devesprit.Core;
+﻿using Devesprit.Core;
 using Devesprit.Core.Plugin;
 using Devesprit.Core.Settings;
 using Devesprit.Data;
@@ -21,6 +20,7 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using Devesprit.Services.Currency;
+using Mapster;
 using Z.EntityFramework.Plus;
 
 namespace Devesprit.Services.Invoice
@@ -241,7 +241,7 @@ namespace Devesprit.Services.Invoice
 
             QueryCacheManager.ExpireTag(QueryCacheTag.Invoice);
 
-            var newRecord = Mapper.Map<TblInvoiceDetails>(oldRecord);
+            var newRecord = oldRecord.Adapt<TblInvoiceDetails>();
             newRecord.ItemLicenseCode = license;
             _eventPublisher.EntityUpdated(newRecord, oldRecord);
         }
@@ -257,7 +257,7 @@ namespace Devesprit.Services.Invoice
 
             QueryCacheManager.ExpireTag(QueryCacheTag.Invoice);
 
-            var newRecord = Mapper.Map<TblInvoiceDetails>(oldRecord);
+            var newRecord = oldRecord.Adapt<TblInvoiceDetails>();
             newRecord.PurchaseExpiration = expiration;
             _eventPublisher.EntityUpdated(newRecord, oldRecord);
         }
@@ -290,7 +290,7 @@ namespace Devesprit.Services.Invoice
 
             QueryCacheManager.ExpireTag(QueryCacheTag.Invoice);
 
-            var newRecord = Mapper.Map<TblInvoiceDetails>(oldRecord);
+            var newRecord = oldRecord.Adapt<TblInvoiceDetails>();
             newRecord.Qty += qty;
             _eventPublisher.EntityUpdated(newRecord, oldRecord);
 
@@ -326,7 +326,7 @@ namespace Devesprit.Services.Invoice
 
             QueryCacheManager.ExpireTag(QueryCacheTag.Invoice);
 
-            var newRecord = Mapper.Map<TblInvoiceDetails>(oldRecord);
+            var newRecord = oldRecord.Adapt<TblInvoiceDetails>();
             newRecord.Qty = newRecord.Qty > qty ? newRecord.Qty - qty : 1;
             _eventPublisher.EntityUpdated(newRecord, oldRecord);
 
@@ -343,7 +343,7 @@ namespace Devesprit.Services.Invoice
 
             QueryCacheManager.ExpireTag(QueryCacheTag.Invoice);
 
-            var newRecord = Mapper.Map<TblInvoiceDetails>(oldRecord);
+            var newRecord = oldRecord.Adapt<TblInvoiceDetails>();
             newRecord.UnitPrice = price;
             _eventPublisher.EntityUpdated(newRecord, oldRecord);
 
@@ -582,7 +582,7 @@ namespace Devesprit.Services.Invoice
         public virtual async Task SetInvoiceNoteAsync(Guid invoiceId, string note, bool isForAdmin)
         {
             var oldRecord = await FindByIdAsync(invoiceId);
-            var newRecord = Mapper.Map<TblInvoices>(oldRecord);
+            var newRecord = oldRecord.Adapt<TblInvoices>();
             if (isForAdmin)
             {
                 await _dbContext.Invoices.Where(p => p.Id == invoiceId)
@@ -655,7 +655,7 @@ namespace Devesprit.Services.Invoice
 
             QueryCacheManager.ExpireTag(QueryCacheTag.Invoice);
 
-            var newRecord = Mapper.Map<TblInvoices>(oldRecord);
+            var newRecord = oldRecord.Adapt<TblInvoices>();
             newRecord.PaymentGatewayToken = token;
             newRecord.PaymentGatewaySystemName = gatewaySystemName;
             newRecord.PaymentGatewayName = gatewayName;
@@ -674,7 +674,7 @@ namespace Devesprit.Services.Invoice
 
             QueryCacheManager.ExpireTag(QueryCacheTag.Invoice);
 
-            var newRecord = Mapper.Map<TblInvoices>(oldRecord);
+            var newRecord = oldRecord.Adapt<TblInvoices>();
             newRecord.Status = status;
             _eventPublisher.EntityUpdated(newRecord, oldRecord);
         }
@@ -690,7 +690,7 @@ namespace Devesprit.Services.Invoice
 
             QueryCacheManager.ExpireTag(QueryCacheTag.Invoice);
 
-            var newRecord = Mapper.Map<TblInvoices>(oldRecord);
+            var newRecord = oldRecord.Adapt<TblInvoices>();
             newRecord.PaymentDate = paymentDate;
             _eventPublisher.EntityUpdated(newRecord, oldRecord);
         }
@@ -706,7 +706,7 @@ namespace Devesprit.Services.Invoice
 
             QueryCacheManager.ExpireTag(QueryCacheTag.Invoice);
 
-            var newRecord = Mapper.Map<TblInvoices>(oldRecord);
+            var newRecord = oldRecord.Adapt<TblInvoices>();
             newRecord.UserId = userId;
             _eventPublisher.EntityUpdated(newRecord, oldRecord);
         }
@@ -721,7 +721,7 @@ namespace Devesprit.Services.Invoice
 
             QueryCacheManager.ExpireTag(QueryCacheTag.Invoice);
 
-            var newRecord = Mapper.Map<TblInvoices>(oldRecord);
+            var newRecord = oldRecord.Adapt<TblInvoices>();
             newRecord.TotalTaxAmount = taxAmount;
             newRecord.TaxDescription = taxDescription;
             _eventPublisher.EntityUpdated(newRecord, oldRecord);
@@ -737,7 +737,7 @@ namespace Devesprit.Services.Invoice
 
             QueryCacheManager.ExpireTag(QueryCacheTag.Invoice);
 
-            var newRecord = Mapper.Map<TblInvoices>(oldRecord);
+            var newRecord = oldRecord.Adapt<TblInvoices>();
             newRecord.DiscountAmount = discountAmount;
             newRecord.DiscountDescription = discountDescription;
             _eventPublisher.EntityUpdated(newRecord, oldRecord);

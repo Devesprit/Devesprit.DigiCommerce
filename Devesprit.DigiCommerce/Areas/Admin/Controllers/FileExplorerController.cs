@@ -3,7 +3,6 @@ using System.IO;
 using System.Web.Mvc;
 using Devesprit.DigiCommerce.Areas.Admin.Controllers.Event;
 using Devesprit.DigiCommerce.Controllers;
-using Devesprit.Services.Events;
 using Syncfusion.JavaScript;
 
 namespace Devesprit.DigiCommerce.Areas.Admin.Controllers

@@ -1,9 +1,9 @@
 ﻿using System.Threading.Tasks;
-using AutoMapper;
 using Devesprit.Data.Domain;
 using Devesprit.DigiCommerce.Areas.Admin.Factories.Interfaces;
 using Devesprit.DigiCommerce.Areas.Admin.Models;
 using Devesprit.Services.Localization;
+using Mapster;
 
 namespace Devesprit.DigiCommerce.Areas.Admin.Factories
 {
@@ -18,7 +18,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Factories
             }
             else
             {
-                result = Mapper.Map<PostAttributeMappingModel>(attribute);
+                result = attribute.Adapt<PostAttributeMappingModel>();
                 await attribute.LoadAllLocalizedStringsToModelAsync(result);
             }
 
@@ -28,7 +28,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Factories
 
         public virtual TblPostAttributesMapping PrepareTblPostAttributesMapping(PostAttributeMappingModel attribute)
         {
-            var result = Mapper.Map<TblPostAttributesMapping>(attribute);
+            var result = attribute.Adapt<TblPostAttributesMapping>();
             return result;
         }
     }

@@ -1,9 +1,9 @@
 ﻿using System.Threading.Tasks;
-using AutoMapper;
 using Devesprit.Data.Domain;
 using Devesprit.DigiCommerce.Areas.Admin.Factories.Interfaces;
 using Devesprit.DigiCommerce.Areas.Admin.Models;
 using Devesprit.Services.Localization;
+using Mapster;
 
 namespace Devesprit.DigiCommerce.Areas.Admin.Factories
 {
@@ -18,7 +18,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Factories
             }
             else
             {
-                result = Mapper.Map<UserGroupModel>(userGroup);
+                result = userGroup.Adapt<UserGroupModel>();
                 await userGroup.LoadAllLocalizedStringsToModelAsync(result);
             }
             return result;
@@ -26,7 +26,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Factories
 
         public virtual TblUserGroups PrepareTblUserGroup(UserGroupModel userGroup)
         {
-            var result = Mapper.Map<TblUserGroups>(userGroup);
+            var result = userGroup.Adapt<TblUserGroups>();
             return result;
         }
     }

@@ -8,7 +8,6 @@ using Devesprit.DigiCommerce.Areas.Admin.Factories.Interfaces;
 using Devesprit.DigiCommerce.Areas.Admin.Models;
 using Devesprit.DigiCommerce.Controllers;
 using Devesprit.Services.Blog;
-using Devesprit.Services.Languages;
 using Devesprit.Services.Pages;
 using Devesprit.Services.Products;
 using Devesprit.Services.Redirects;

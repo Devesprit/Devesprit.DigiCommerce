@@ -1,11 +1,10 @@
 ﻿using System.Threading.Tasks;
-using AutoMapper;
 using Devesprit.Data.Domain;
 using Devesprit.DigiCommerce.Areas.Admin.Factories.Interfaces;
 using Devesprit.DigiCommerce.Areas.Admin.Models;
 using Devesprit.Services.Localization;
 using Devesprit.Services.Posts;
-using Devesprit.Services.Products;
+using Mapster;
 
 namespace Devesprit.DigiCommerce.Areas.Admin.Factories
 {
@@ -27,7 +26,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Factories
             }
             else
             {
-                result = Mapper.Map<PostCategoryModel>(category);
+                result = category.Adapt<PostCategoryModel>();
                 await category.LoadAllLocalizedStringsToModelAsync(result);
             }
             result.CategoriesList = await _postCategoriesService.GetAsSelectListAsync();
@@ -36,7 +35,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Factories
 
         public virtual TblPostCategories PrepareTblPostCategories(PostCategoryModel category)
         {
-            var result = Mapper.Map<TblPostCategories>(category);
+            var result = category.Adapt<TblPostCategories>();
             return result;
         }
     }

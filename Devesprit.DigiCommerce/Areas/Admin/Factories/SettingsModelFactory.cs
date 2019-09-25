@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Configuration;
-using System.IO;
 using System.Web;
-using AutoMapper;
 using Devesprit.DigiCommerce.Areas.Admin.Factories.Interfaces;
 using Devesprit.DigiCommerce.Areas.Admin.Models;
 using Devesprit.Services;
+using Mapster;
 
 namespace Devesprit.DigiCommerce.Areas.Admin.Factories
 {
@@ -27,7 +26,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Factories
             }
             else
             {
-                result = Mapper.Map<SiteSettingModel>(setting);
+                result = setting.Adapt<SiteSettingModel>();
                 result.AccountLockoutTime = (int) setting.AccountLockoutTimeSpan.TotalMinutes;
             }
 
@@ -45,7 +44,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Factories
 
         public virtual SiteSettings PrepareSiteSettings(SiteSettingModel setting)
         {
-            var result = Mapper.Map<SiteSettings>(setting);
+            var result = setting.Adapt<SiteSettings>();
             result.AccountLockoutTimeSpan = TimeSpan.FromMinutes(setting.AccountLockoutTime);
             return result;
         }

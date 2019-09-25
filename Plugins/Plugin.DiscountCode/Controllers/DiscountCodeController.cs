@@ -5,7 +5,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 using System.Web.Routing;
-using AutoMapper;
 using Devesprit.Core.Localization;
 using Devesprit.Data.Enums;
 using Devesprit.DigiCommerce.Controllers;
@@ -14,6 +13,7 @@ using Devesprit.Services.Invoice;
 using Devesprit.Services.Localization;
 using Devesprit.WebFramework.Helpers;
 using Elmah;
+using Mapster;
 using Plugin.DiscountCode.DB;
 using Plugin.DiscountCode.Models;
 using Syncfusion.JavaScript;
@@ -70,7 +70,7 @@ namespace Plugin.DiscountCode.Controllers
                     .FirstOrDefaultAsync(p => p.Id == id);
                 if (record != null)
                 {
-                    var model = Mapper.Map<DiscountCodeViewModel>(record);
+                    var model = record.Adapt<DiscountCodeViewModel>();
                     await record.LoadAllLocalizedStringsToModelAsync(model);
                     return View("~/Plugins/Plugin.DiscountCode/Views/Editor.cshtml", model);
                 }
@@ -93,7 +93,7 @@ namespace Plugin.DiscountCode.Controllers
                 return View("~/Plugins/Plugin.DiscountCode/Views/Editor.cshtml", model);
             }
 
-            var record = Mapper.Map<TblDiscountCodes>(model);
+            var record = model.Adapt<TblDiscountCodes>();
             var recordId = model.Id;
             try
             {

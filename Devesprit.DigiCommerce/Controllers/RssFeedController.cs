@@ -36,7 +36,7 @@ namespace Devesprit.DigiCommerce.Controllers
 
         [Route("{lang}/RSSFeed/{listType}", Order = 0)]
         [Route("RSSFeed/{listType}", Order = 1)]
-        [OutputCache(Duration = 60 * 5, Location = OutputCacheLocation.ServerAndClient, VaryByParam = "*")]
+        [OutputCache(Duration = 60 * 60, Location = OutputCacheLocation.Server, VaryByParam = "*", VaryByCustom = "lang")]
         public virtual ActionResult Index(PostsListType listType, int? page, int? pageSize, int? catId, DateTime? fromDate)
         {
             IPagedList<TblPosts> posts = null;
@@ -94,7 +94,7 @@ namespace Devesprit.DigiCommerce.Controllers
 
         [Route("{lang}/Products/RSS/{listType}", Order = 0)]
         [Route("Products/RSS/{listType}", Order = 1)]
-        [OutputCache(Duration = 60 * 5, Location = OutputCacheLocation.ServerAndClient, VaryByParam = "*")]
+        [OutputCache(Duration = 60 * 60, Location = OutputCacheLocation.Server, VaryByParam = "*", VaryByCustom = "lang")]
         public virtual ActionResult Products(ProductsListType listType, int? page, int? pageSize, int? catId, DateTime? fromDate)
         {
             IPagedList<TblProducts> products = null;
@@ -136,7 +136,7 @@ namespace Devesprit.DigiCommerce.Controllers
 
         [Route("{lang}/Blog/RSS/{listType}", Order = 0)]
         [Route("Blog/RSS/{listType}", Order = 1)]
-        [OutputCache(Duration = 60 * 5, Location = OutputCacheLocation.ServerAndClient, VaryByParam = "*")]
+        [OutputCache(Duration = 60 * 60, Location = OutputCacheLocation.Server, VaryByParam = "*", VaryByCustom = "lang")]
         public virtual ActionResult Blog(PostsListType listType, int? page, int? pageSize, int? catId, DateTime? fromDate)
         {
             IPagedList<TblBlogPosts> posts = null;

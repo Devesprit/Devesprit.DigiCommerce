@@ -1,10 +1,10 @@
 ﻿using System.Threading.Tasks;
-using AutoMapper;
 using Devesprit.Data.Domain;
 using Devesprit.DigiCommerce.Areas.Admin.Factories.Interfaces;
 using Devesprit.DigiCommerce.Areas.Admin.Models;
 using Devesprit.Services.Localization;
 using JetBrains.Annotations;
+using Mapster;
 
 namespace Devesprit.DigiCommerce.Areas.Admin.Factories
 {
@@ -19,7 +19,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Factories
             }
             else
             {
-                result = Mapper.Map<CurrencyModel>(currency);
+                result = currency.Adapt<CurrencyModel>();
                 await currency.LoadAllLocalizedStringsToModelAsync(result);
             }
             return result;
@@ -27,7 +27,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Factories
 
         public virtual TblCurrencies PrepareTblCurrencies(CurrencyModel currency)
         {
-            var result = Mapper.Map<TblCurrencies>(currency);
+            var result = currency.Adapt<TblCurrencies>();
             return result;
         }
     }

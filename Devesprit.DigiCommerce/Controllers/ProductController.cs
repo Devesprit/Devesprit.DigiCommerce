@@ -62,6 +62,7 @@ namespace Devesprit.DigiCommerce.Controllers
 
         [Route("{lang}/Products/{listType}", Order = 0)]
         [Route("Products/{listType}", Order = 1)]
+        [OutputCache(Duration = 60 * 10, Location = OutputCacheLocation.Server, VaryByParam = "*", VaryByCustom = "lang;user")]
         public virtual ActionResult ProductsExplorer(ProductsListType listType, int? page, int? pageSize, int? catId, DateTime? fromDate)
         {
             return View(new ProductsExplorerModel()
@@ -118,6 +119,7 @@ namespace Devesprit.DigiCommerce.Controllers
 
         [Route("{lang}/Categories/{slug}", Order = 0)]
         [Route("Categories/{slug}", Order = 1)]
+        [OutputCache(Duration = 60 * 10, Location = OutputCacheLocation.Server, VaryByParam = "*", VaryByCustom = "lang;user")]
         public virtual async Task<ActionResult> FilterByCategory(string slug, int? page, int? pageSize)
         {
             var category = await _categoriesService.FindBySlugAsync(slug);

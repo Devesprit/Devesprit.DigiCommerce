@@ -1,7 +1,7 @@
-﻿using AutoMapper;
-using Devesprit.Data.Domain;
+﻿using Devesprit.Data.Domain;
 using Devesprit.DigiCommerce.Areas.Admin.Factories.Interfaces;
 using Devesprit.DigiCommerce.Areas.Admin.Models;
+using Mapster;
 
 namespace Devesprit.DigiCommerce.Areas.Admin.Factories
 {
@@ -9,13 +9,13 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Factories
     {
         public virtual FileServerModel PrepareFileServerModel(TblFileServers fileServer)
         {
-            var result = fileServer == null ? new FileServerModel() : Mapper.Map<FileServerModel>(fileServer);
+            var result = fileServer == null ? new FileServerModel() : fileServer.Adapt<FileServerModel>();
             return result;
         }
 
         public virtual TblFileServers PrepareTblFileServers(FileServerModel fileServer)
         {
-            var result = Mapper.Map<TblFileServers>(fileServer);
+            var result = fileServer.Adapt<TblFileServers>();
             return result;
         }
     }

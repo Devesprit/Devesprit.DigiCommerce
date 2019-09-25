@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using System.Web.Mvc;
+using System.Web.UI;
 using Devesprit.Data.Domain;
 using Devesprit.DigiCommerce.Factories.Interfaces;
 using Devesprit.DigiCommerce.Models;
@@ -69,6 +70,7 @@ namespace Devesprit.DigiCommerce.Controllers
 
         [Route("{lang}/Blog/{listType}", Order = 0)]
         [Route("Blog/{listType}", Order = 1)]
+        [OutputCache(Duration = 60 * 10, Location = OutputCacheLocation.Server, VaryByParam = "*", VaryByCustom = "lang;user")]
         public virtual ActionResult BlogExplorer(PostsListType listType, int? page, int? pageSize, int? catId, DateTime? fromDate)
         {
             if (!CurrentSettings.EnableBlog)
@@ -129,6 +131,7 @@ namespace Devesprit.DigiCommerce.Controllers
 
         [Route("{lang}/BlogCategories/{slug}", Order = 0)]
         [Route("BlogCategories/{slug}", Order = 1)]
+        [OutputCache(Duration = 60 * 10, Location = OutputCacheLocation.Server, VaryByParam = "*", VaryByCustom = "lang;user")]
         public virtual async Task<ActionResult> FilterByCategory(string slug, int? page, int? pageSize)
         {
             if (!CurrentSettings.EnableBlog)

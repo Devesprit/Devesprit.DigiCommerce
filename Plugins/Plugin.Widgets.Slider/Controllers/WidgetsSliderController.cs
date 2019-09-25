@@ -4,13 +4,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
-using System.Web.UI;
-using AutoMapper;
 using Devesprit.Core.Localization;
 using Devesprit.DigiCommerce.Controllers;
 using Devesprit.Services.Localization;
 using Devesprit.WebFramework.Helpers;
 using Elmah;
+using Mapster;
 using Plugin.Widgets.Slider.DB;
 using Plugin.Widgets.Slider.Models;
 using Syncfusion.JavaScript;
@@ -49,7 +48,7 @@ namespace Plugin.Widgets.Slider.Controllers
                     .FromCacheAsync(SliderPlugin.CacheKey);
                 if (record != null)
                 {
-                    var model = Mapper.Map<SliderViewModel>(record);
+                    var model = record.Adapt<SliderViewModel>();
                     await record.LoadAllLocalizedStringsToModelAsync(model);
                     return View("~/Plugins/Plugin.Widgets.Slider/Views/Editor.cshtml", model);
                 }
@@ -67,7 +66,7 @@ namespace Plugin.Widgets.Slider.Controllers
                 return View("~/Plugins/Plugin.Widgets.Slider/Views/Editor.cshtml", model);
             }
 
-            var record = Mapper.Map<TblSlider>(model);
+            var record = model.Adapt<TblSlider>();
             var recordId = model.Id;
             try
             {

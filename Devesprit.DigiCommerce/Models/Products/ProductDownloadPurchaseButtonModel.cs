@@ -1,5 +1,4 @@
 ﻿using Devesprit.Data.Domain;
-using Devesprit.DigiCommerce.Models.Post;
 using Devesprit.Services.Products;
 
 namespace Devesprit.DigiCommerce.Models.Products

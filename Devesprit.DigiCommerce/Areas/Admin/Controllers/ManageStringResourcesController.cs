@@ -8,7 +8,6 @@ using System.Web.Mvc;
 using Devesprit.Core.Localization;
 using Devesprit.Data.Domain;
 using Devesprit.DigiCommerce.Controllers;
-using Devesprit.Services.Languages;
 using Devesprit.WebFramework.Helpers;
 using Elmah;
 using Syncfusion.JavaScript;

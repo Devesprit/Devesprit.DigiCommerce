@@ -1,5 +1,4 @@
 ﻿using System;
-using Devesprit.DigiCommerce.Models.Products;
 
 namespace Devesprit.DigiCommerce.Models.Post
 {

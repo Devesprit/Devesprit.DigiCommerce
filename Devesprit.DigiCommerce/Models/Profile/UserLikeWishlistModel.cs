@@ -1,5 +1,4 @@
 ﻿using System;
-using Devesprit.Data.Enums;
 
 namespace Devesprit.DigiCommerce.Models.Profile
 {

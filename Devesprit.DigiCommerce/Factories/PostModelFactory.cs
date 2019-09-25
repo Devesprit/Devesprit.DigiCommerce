@@ -13,6 +13,7 @@ using Devesprit.Services.SearchEngine;
 using Devesprit.Services.Users;
 using Devesprit.Utilities;
 using Devesprit.Utilities.Extensions;
+using Mapster;
 using X.PagedList;
 
 namespace Devesprit.DigiCommerce.Factories
@@ -38,7 +39,7 @@ namespace Devesprit.DigiCommerce.Factories
         public virtual PostCardViewModel PreparePostCardViewModel(TblPosts post, TblUsers currentUser,
             UrlHelper url)
         {
-            var result = AutoMapper.Mapper.Map<PostCardViewModel>(post);
+            var result = post.Adapt<PostCardViewModel>();
             var likesCount = _userLikesService.GetPostNumberOfLikes(post.Id);
             result.NumberOfLikes = likesCount;
             result.LastUpDate = post.LastUpDate ?? post.PublishDate;
@@ -98,7 +99,7 @@ namespace Devesprit.DigiCommerce.Factories
         public virtual PostModel PreparePostModel(TblPosts post, TblUsers currentUser,
             UrlHelper url)
         {
-            var result = AutoMapper.Mapper.Map<PostModel>(post);
+            var result = post.Adapt<PostModel>();
             result.Title = post.GetLocalized(p => p.Title);
             result.PageTitle = post.GetLocalized(p => p.PageTitle);
             result.MetaDescription = post.GetLocalized(p => p.MetaDescription);

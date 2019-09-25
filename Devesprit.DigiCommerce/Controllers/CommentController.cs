@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using System.Web.Mvc;
+using System.Web.UI;
 using Devesprit.Core.Localization;
-using Devesprit.Data.Enums;
 using Devesprit.DigiCommerce.Factories.Interfaces;
 using Devesprit.DigiCommerce.Models.Comment;
 using Devesprit.Services.Comments;

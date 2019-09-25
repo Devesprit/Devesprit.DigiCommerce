@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using Devesprit.Data.Domain;
 using Devesprit.Data.Enums;
 using Devesprit.DigiCommerce.Factories.Interfaces;
-using Devesprit.DigiCommerce.Models;
 using Devesprit.DigiCommerce.Models.Post;
 using Devesprit.DigiCommerce.Models.Products;
 using Devesprit.Services.Localization;
@@ -14,6 +12,7 @@ using Devesprit.Services.Products;
 using Devesprit.Services.Users;
 using Devesprit.Utilities;
 using Devesprit.Utilities.Extensions;
+using Mapster;
 using X.PagedList;
 
 namespace Devesprit.DigiCommerce.Factories
@@ -47,7 +46,7 @@ namespace Devesprit.DigiCommerce.Factories
 
         public virtual ProductCardViewModel PrepareProductCardViewModel(TblProducts product, TblUsers currentUser, UrlHelper url)
         {
-            var result = AutoMapper.Mapper.Map<ProductCardViewModel>(product);
+            var result = product.Adapt<ProductCardViewModel>();
             var downloadsCount = _productService.GetNumberOfDownloads(product.Id);
             var likesCount = _userLikesService.GetPostNumberOfLikes(product.Id);
             result.NumberOfDownloads = downloadsCount;
@@ -88,7 +87,7 @@ namespace Devesprit.DigiCommerce.Factories
 
         public virtual ProductModel PrepareProductModel(TblProducts product, TblUsers currentUser, UrlHelper url)
         {
-            var result = AutoMapper.Mapper.Map<ProductModel>(product);
+            var result = product.Adapt<TblProducts, ProductModel>();
             result.Title = product.GetLocalized(p => p.Title);
             result.PageTitle = product.GetLocalized(p => p.PageTitle);
             result.MetaDescription = product.GetLocalized(p => p.MetaDescription);
@@ -185,8 +184,7 @@ namespace Devesprit.DigiCommerce.Factories
                     MinRange = attr.MinRange,
                     LicenseGeneratorServiceId = attr.LicenseGeneratorServiceId,
                     UnitPrice = attr.UnitPrice,
-                    Options = attr.Options.Select(AutoMapper.Mapper.Map<TblProductCheckoutAttributeOptions>
-                    ).ToList()
+                    Options = attr.Options.Select(p=> p.Adapt<TblProductCheckoutAttributeOptions>()).ToList()
                 });
             }
 

@@ -1,11 +1,10 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
-using AutoMapper;
 using Devesprit.Data.Domain;
 using Devesprit.DigiCommerce.Areas.Admin.Factories.Interfaces;
 using Devesprit.DigiCommerce.Areas.Admin.Models;
 using Devesprit.Services.Localization;
+using Mapster;
 using X.PagedList;
 
 namespace Devesprit.DigiCommerce.Areas.Admin.Factories
@@ -21,7 +20,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Factories
             }
             else
             {
-                result = Mapper.Map<BlogPostModel>(blogPost);
+                result = blogPost.Adapt<BlogPostModel>();
                 await blogPost.LoadAllLocalizedStringsToModelAsync(result);
                 
                 var tags = await blogPost.Tags.Select(p => p.Tag).OrderBy(p => p).ToListAsync();
@@ -36,7 +35,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Factories
 
         public virtual TblBlogPosts PrepareTblBlogPosts(BlogPostModel post)
         {
-            var result = Mapper.Map<TblBlogPosts>(post);
+            var result = post.Adapt<TblBlogPosts>();
             result.Tags = post.PostTags?.Select(p => new TblPostTags() { Tag = p }).ToList();
             result.Categories =
                 post.PostCategories?.Select(p => new TblPostCategories() { Id = p }).ToList();

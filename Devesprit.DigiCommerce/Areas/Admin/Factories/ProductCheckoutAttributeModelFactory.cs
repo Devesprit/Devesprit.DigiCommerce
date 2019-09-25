@@ -1,9 +1,9 @@
 ﻿using System.Threading.Tasks;
-using AutoMapper;
 using Devesprit.Data.Domain;
 using Devesprit.DigiCommerce.Areas.Admin.Factories.Interfaces;
 using Devesprit.DigiCommerce.Areas.Admin.Models;
 using Devesprit.Services.Localization;
+using Mapster;
 
 namespace Devesprit.DigiCommerce.Areas.Admin.Factories
 {
@@ -18,7 +18,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Factories
             }
             else
             {
-                result = Mapper.Map<ProductCheckoutAttributeModel>(attribute);
+                result = attribute.Adapt<ProductCheckoutAttributeModel>();
                 await attribute.LoadAllLocalizedStringsToModelAsync(result);
             }
 
@@ -28,7 +28,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Factories
 
         public virtual TblProductCheckoutAttributes PrepareTblProductCheckoutAttributes(ProductCheckoutAttributeModel attribute)
         {
-            var result = Mapper.Map<TblProductCheckoutAttributes>(attribute);
+            var result = attribute.Adapt<TblProductCheckoutAttributes>();
             return result;
         }
 
@@ -44,7 +44,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Factories
             }
             else
             {
-                result = Mapper.Map<ProductCheckoutAttributeOptionModel>(option);
+                result = option.Adapt<ProductCheckoutAttributeOptionModel>();
                 await option.LoadAllLocalizedStringsToModelAsync(result);
             }
 
@@ -54,7 +54,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Factories
 
         public virtual TblProductCheckoutAttributeOptions PrepareTblProductCheckoutAttributeOptions(ProductCheckoutAttributeOptionModel option)
         {
-            var result = Mapper.Map<TblProductCheckoutAttributeOptions>(option);
+            var result = option.Adapt<TblProductCheckoutAttributeOptions>();
             return result;
         }
 

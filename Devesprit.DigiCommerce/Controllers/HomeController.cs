@@ -15,6 +15,7 @@ namespace Devesprit.DigiCommerce.Controllers
             _pagesService = pagesService;
         }
 
+        [OutputCache(Duration = 60 * 10, Location = OutputCacheLocation.Server, VaryByParam = "none", VaryByCustom = "lang;user")]
         public virtual async Task<ActionResult> Index()
         {
             var defaultPage = await _pagesService.GetWebsiteDefaultPageAsync();
@@ -30,7 +31,7 @@ namespace Devesprit.DigiCommerce.Controllers
             return View();
         }
 
-        [OutputCache(Duration = 60 * 5, Location = OutputCacheLocation.ServerAndClient, VaryByParam = "none")]
+        [OutputCache(Duration = 60 * 5, Location = OutputCacheLocation.Server, VaryByParam = "none", VaryByCustom = "lang")]
         public virtual ActionResult TermsAndConditions()
         {
             var terms = CurrentSettings.GetLocalized(p => p.TermsAndConditions);

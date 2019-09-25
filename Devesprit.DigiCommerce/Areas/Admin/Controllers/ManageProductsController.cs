@@ -6,7 +6,6 @@ using Devesprit.Core.Localization;
 using Devesprit.DigiCommerce.Areas.Admin.Factories.Interfaces;
 using Devesprit.DigiCommerce.Areas.Admin.Models;
 using Devesprit.DigiCommerce.Controllers;
-using Devesprit.Services.Localization;
 using Devesprit.Services.Products;
 using Devesprit.Utilities.Extensions;
 using Devesprit.WebFramework.Helpers;

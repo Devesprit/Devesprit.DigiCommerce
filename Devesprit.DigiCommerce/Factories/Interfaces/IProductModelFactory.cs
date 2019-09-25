@@ -1,7 +1,5 @@
-﻿using System.Threading.Tasks;
-using System.Web.Mvc;
+﻿using System.Web.Mvc;
 using Devesprit.Data.Domain;
-using Devesprit.DigiCommerce.Models;
 using Devesprit.DigiCommerce.Models.Products;
 using X.PagedList;
 

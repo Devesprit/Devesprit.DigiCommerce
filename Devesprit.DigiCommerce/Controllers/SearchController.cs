@@ -32,6 +32,7 @@ namespace Devesprit.DigiCommerce.Controllers
 
         [Route("{lang}/Search", Order = 0)]
         [Route("Search", Order = 1)]
+        [OutputCache(Duration = 60 * 60, Location = OutputCacheLocation.Server, VaryByParam = "*", VaryByCustom = "lang;user")]
         public virtual async Task<ActionResult> Index(SearchTermModel model)
         {
             if (model.Query.IsNullOrWhiteSpace())
@@ -86,6 +87,7 @@ namespace Devesprit.DigiCommerce.Controllers
 
         [Route("{lang}/Tags/{tag}", Order = 0)]
         [Route("Tags/{tag}", Order = 1)]
+        [OutputCache(Duration = 60 * 60, Location = OutputCacheLocation.Server, VaryByParam = "*", VaryByCustom = "lang;user")]
         public virtual async Task<ActionResult> Tag(string tag, int? page)
         {
             if (tag.IsNullOrWhiteSpace())
@@ -124,6 +126,7 @@ namespace Devesprit.DigiCommerce.Controllers
 
         [Route("{lang}/Keywords/{keyword}", Order = 0)]
         [Route("Keywords/{keyword}", Order = 1)]
+        [OutputCache(Duration = 60 * 60, Location = OutputCacheLocation.Server, VaryByParam = "*", VaryByCustom = "lang;user")]
         public virtual async Task<ActionResult> Keyword(string keyword, int? page)
         {
             if (keyword.IsNullOrWhiteSpace())
