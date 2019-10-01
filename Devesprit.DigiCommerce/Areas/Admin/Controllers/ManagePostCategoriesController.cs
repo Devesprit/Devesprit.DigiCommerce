@@ -128,6 +128,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
                 p.Id,
                 p.CategoryName,
                 p.Slug,
+                p.DisplayOrder,
                 ParentCategoryName = p.ParentCategory.CategoryName ?? ""
             });
 

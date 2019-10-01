@@ -56,6 +56,7 @@
                     col.Field("Id").HeaderText(T("Id").ToString()).Width(60).IsPrimaryKey(true).Visible(false).Add();
                     col.Field("CategoryName").HeaderText(T("CategoryName").ToString()).Add();
                     col.Field("ParentCategoryName").HeaderText(T("ParentCategory").ToString()).Add();
+                    col.Field("DisplayOrder").HeaderText(T("DisplayOrder").ToString()).Width(120).Add();
                     col.Field("Slug").HeaderText(T("Slug").ToString()).Add();
                     col.HeaderText(T("Action").ToString()).TextAlign(TextAlign.Center).Width(230).Template("#ActionTemplate").Add();
                 }))

@@ -4,6 +4,7 @@
 @using Syncfusion.MVC.EJ
 
 @{
+    Layout = null;
     var currentLang = DependencyResolver.Current.GetService<IWorkContext>().CurrentLanguage;
 }
 
@@ -48,6 +49,7 @@
                   col.Field("Id").Width(50).HeaderText(T("Id").ToString()).IsPrimaryKey(true).Visible(false).Add();
                   col.Field("UserGroup").HeaderText(T("UserGroup").ToString()).Width(160).Add();
                   col.Field("DiscountPercent").Format("{0:n2}").HeaderText(T("DiscountPercent").ToString()).Width(60).Add();
+                  col.Field("ApplyDiscountToHigherUserGroups").HeaderText(T("ApplyDiscountToHigherUserGroups").ToString()).Width(160).Add();
                   col.Field("ApplyDiscountToProductAttributes").HeaderText(T("ApplyDiscountToProductAttributes").ToString()).Width(160).Add();
               }))
 <script id="ProductDiscountsForUserGroupsGridRefresh" type="text/x-jsrender">

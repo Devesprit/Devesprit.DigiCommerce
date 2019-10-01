@@ -216,7 +216,7 @@ namespace Devesprit.DigiCommerce.Factories
                                       productCheckoutAttributes.Any(p =>
                                           p.Options.Any(x => !string.IsNullOrWhiteSpace(x.FilesPath))),
                 PriceForCurrentUser = _productService.CalculateProductPriceForUser(product, currentUser),
-                DiscountForUserGroupsDescription = _productService.GenerateDiscountsForUserGroupsDescription(product, currentUser),
+                DiscountForUserGroupsDescription = _productService.GenerateUserGroupDiscountsDescription(product, currentUser),
                 DownloadBlockingReason = _productService.UserCanDownloadProduct(product, currentUser, false)
             };
 

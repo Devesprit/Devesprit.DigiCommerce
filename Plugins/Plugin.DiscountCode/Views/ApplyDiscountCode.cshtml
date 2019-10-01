@@ -1,10 +1,11 @@
 ﻿@model Plugin.DiscountCode.Models.ApplyDiscountCodeViewModel
 @using Devesprit.Data.Enums
+@{ Layout = null;}
 <div class="invoice-bg pad-5">
     <span>@T("Plugin.DiscountCode.DiscountCode"):</span>
     @if (Model.InvoiceStatus == InvoiceStatus.Pending)
     {
-        using (Ajax.BeginForm("ApplyDiscountCode", "DiscountCode", new { Namespaces  = "Plugin.DiscountCode.Controllers", area = ""}, new AjaxOptions()
+        using (Ajax.BeginForm("ApplyDiscountCode", "DiscountCode", new { Namespaces = "Plugin.DiscountCode.Controllers", area = "" }, new AjaxOptions()
         {
             HttpMethod = "POST",
             UpdateTargetId = "InvoiceTblHolder",
@@ -13,7 +14,7 @@
         }))
         {
             @Html.AntiForgeryToken()
-            @Html.HiddenFor(p=> p.InvoiceId)
+            @Html.HiddenFor(p => p.InvoiceId)
             <div class="input-group input-group-sm">
                 @Html.TextBoxFor(p => p.DiscountCode, new { @class = "form-control form-control-sm" })
                 <div class="input-group-append">

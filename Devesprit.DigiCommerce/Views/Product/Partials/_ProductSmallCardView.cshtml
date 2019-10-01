@@ -4,6 +4,7 @@
 @using Devesprit.Utilities.Extensions
 @model Devesprit.DigiCommerce.Models.Products.ProductCardViewModel
 @{
+    Layout = null;
     var counter = 0;
     var settings = DependencyResolver.Current.GetService<ISettingService>().LoadSetting<SiteSettings>();
 }

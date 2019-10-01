@@ -5,6 +5,7 @@
 @using Devesprit.Services.Localization
 
 @{
+    Layout = null;
     var currencyService = DependencyResolver.Current.GetService<ICurrencyService>();
     var workContext = DependencyResolver.Current.GetService<IWorkContext>();
     var allCurrencies = currencyService.GetAsEnumerable().ToList();

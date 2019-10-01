@@ -68,7 +68,7 @@ namespace Devesprit.DigiCommerce.Controllers
                     p.Options.Any(x => !string.IsNullOrWhiteSpace(x.FilesPath)))))
             {
                 model.UserHasAccessToFiles = userHasAccessToFiles;
-                model.DiscountsForUserGroups = _productService.GenerateDiscountsForUserGroupsDescription(product, user);
+                model.DiscountsForUserGroups = _productService.GenerateUserGroupDiscountsDescription(product, user);
             }
             //---------------------------
 
@@ -253,7 +253,7 @@ namespace Devesprit.DigiCommerce.Controllers
             foreach (var file in entries.Where(p => p.Type == FileSystemEntryType.File).OrderByDescending(p => p.ModifiedDateUtc))
             {
                 var downloadLink = includeDownloadLink
-                    ? Url.Action("DownloadLog", new { productId = productId, downloadLink = file.DownloadLink, version = isDemo ? ("DEMO" + productId).EncryptString() : ("FULL" + productId).EncryptString() })
+                    ? Url.Action("DownloadLog", "Download", new { productId = productId, downloadLink = file.DownloadLink, version = isDemo ? ("DEMO" + productId).EncryptString() : ("FULL" + productId).EncryptString() })
                     : $"#' onclick='WarningAlert(\"{_localizationService.GetResource("Note")}\", \"{_localizationService.GetResource("YouDoNotHaveAccessRightsToThisFile")}\")";
                 result += $"<li data-jstree='{{\"icon\":\"/Content/img/FileExtIcons/download.png\"}}'><a target='_blank' href='{downloadLink}'><img src='{GetFileImage(file)}'/><span class='{(file.Name.IsRtlLanguage() ? "rtl-dir" : "ltr-dir")}'>{file.Name.Replace("_", " ")}     <small class='text-muted'>({_localizationService.GetResource("Size")}: {file.DisplaySize} - {_localizationService.GetResource("Date")}: {file.ModifiedDateUtc:G})</small></span></a></li>";
             }

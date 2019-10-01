@@ -4,6 +4,7 @@
 @using Devesprit.Core.Settings
 @using Devesprit.Services
 @{
+    Layout = null;
     var settings = DependencyResolver.Current.GetService<ISettingService>().LoadSetting<SiteSettings>();
     var navbarItems = DependencyResolver.Current.GetService<INavBarService>().GetAsEnumerable().ToList();
 }

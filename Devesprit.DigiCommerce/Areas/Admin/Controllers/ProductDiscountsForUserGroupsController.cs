@@ -118,6 +118,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
             {
                 p.Id,
                 p.ApplyDiscountToProductAttributes,
+                p.ApplyDiscountToHigherUserGroups,
                 p.DiscountPercent,
                 UserGroup = p.UserGroup.GroupName
             });

@@ -7,9 +7,9 @@
 @using Devesprit.WebFramework.Helpers
 @model Devesprit.DigiCommerce.Models.Invoice.InvoiceModel
 @{
+    Layout = null;
     var settings = DependencyResolver.Current.GetService<ISettingService>().LoadSetting<SiteSettings>();
     var isAdmin = User.IsInRole("Admin");
-    Layout = null;
 }
 
 

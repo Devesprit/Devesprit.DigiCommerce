@@ -6,6 +6,7 @@
 @using Devesprit.Services
 
 @{
+    Layout = null;
     var languageService = DependencyResolver.Current.GetService<ILanguagesService>();
     var settings = DependencyResolver.Current.GetService<ISettingService>().LoadSetting<SiteSettings>();
     var workContext = DependencyResolver.Current.GetService<IWorkContext>();

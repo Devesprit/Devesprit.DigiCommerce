@@ -175,7 +175,6 @@ namespace Devesprit.DigiCommerce.Controllers
                 return View("PageNotFound");
             }
             ViewBag.InvoiceId = id;
-            var transactionId = "";
             if (invoice.ComputeInvoiceTotalAmount() > 0)
             {
                 var paymentGateway = _paymentGatewayManager.FindPaymentMethodBySystemName(invoice.PaymentGatewaySystemName);
@@ -187,20 +186,16 @@ namespace Devesprit.DigiCommerce.Controllers
                 var result = await paymentGateway.VerifyPayment(invoice);
                 if (result.IsSuccess)
                 {
-                    transactionId = result.TransactionId;
+                    await _invoiceService.CheckoutInvoiceAsync(invoice, result.TransactionId);
                 }
                 else
                 {
                     //error
                     ViewBag.Error = result.ErrorMessage;
-                    return View("Partials/_PaymentResult", await _invoiceModelFactory.PrepareInvoiceModelAsync(invoice));
                 }
-
             }
 
-            await _invoiceService.CheckoutInvoiceAsync(invoice, transactionId);
-
-            return View("Partials/_PaymentResult", new { id = id });
+            return View();
         }
 
         public virtual async Task<ActionResult> GetCurrentInvoiceItemsCount()

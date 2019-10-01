@@ -15,6 +15,7 @@ namespace Devesprit.Data.Domain
         Column(TypeName = "NVARCHAR")]
         public string Slug { get; set; }
         public bool ShowInFooter { get; set; }
+        public int DisplayOrder { get; set; }
         public int? ParentCategoryId { get; set; }
         public virtual TblPostCategories ParentCategory { get; set; }
         public virtual ICollection<TblPosts> Posts { get; set; } = new HashSet<TblPosts>();

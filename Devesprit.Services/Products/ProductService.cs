@@ -217,7 +217,7 @@ namespace Devesprit.Services.Products
                 .FromCache(DateTimeOffset.Now.AddHours(24));
         }
 
-        public virtual string GenerateDiscountsForUserGroupsDescription(TblProducts product, TblUsers user)
+        public virtual string GenerateUserGroupDiscountsDescription(TblProducts product, TblUsers user)
         {
             if (product == null)
             {
@@ -237,25 +237,53 @@ namespace Devesprit.Services.Products
                 if (price <= 0)
                 {
                     //Free
-                    result += string.Format(
-                        _localizationService.GetResource("FreeForUserGroups"),
-                        groupName,
-                        discount.UserGroup.Id,
-                        discount.UserGroup.GroupPriority,
-                        product.Id,
-                        product.Slug);
+                    if (discount.ApplyDiscountToHigherUserGroups)
+                    {
+                        result += string.Format(
+                            _localizationService.GetResource("FreeForUserGroupsOrHigher"),
+                            groupName,
+                            discount.UserGroup.Id,
+                            discount.UserGroup.GroupPriority,
+                            product.Id,
+                            product.Slug);
+                    }
+                    else
+                    {
+                        result += string.Format(
+                            _localizationService.GetResource("FreeForUserGroups"),
+                            groupName,
+                            discount.UserGroup.Id,
+                            discount.UserGroup.GroupPriority,
+                            product.Id,
+                            product.Slug);
+                    }
                 }
                 else
                 {
-                    result += string.Format(
-                        _localizationService.GetResource("DiscountForUserGroups"),
-                        discount.DiscountPercent,
-                        groupName,
-                        price.ExchangeCurrencyStr(),
-                        discount.UserGroup.Id,
-                        discount.UserGroup.GroupPriority,
-                        product.Id,
-                        product.Slug);
+                    if (discount.ApplyDiscountToHigherUserGroups)
+                    {
+                        result += string.Format(
+                            _localizationService.GetResource("DiscountForUserGroupsOrHigher"),
+                            discount.DiscountPercent,
+                            groupName,
+                            price.ExchangeCurrencyStr(),
+                            discount.UserGroup.Id,
+                            discount.UserGroup.GroupPriority,
+                            product.Id,
+                            product.Slug);
+                    }
+                    else
+                    {
+                        result += string.Format(
+                            _localizationService.GetResource("DiscountForUserGroups"),
+                            discount.DiscountPercent,
+                            groupName,
+                            price.ExchangeCurrencyStr(),
+                            discount.UserGroup.Id,
+                            discount.UserGroup.GroupPriority,
+                            product.Id,
+                            product.Slug);
+                    }
                 }
             }
 
@@ -286,17 +314,39 @@ namespace Devesprit.Services.Products
                 result = product.RenewalPrice;
             }
 
-            var discountsForUserGroup = _productDiscountsForUserGroupsService.FindProductDiscounts(product.Id)?.ToList();
-            if (user?.UserGroup != null && discountsForUserGroup != null && discountsForUserGroup.Any())
+            if (user?.UserGroup != null &&
+                user.SubscriptionExpireDate > DateTime.Now)
             {
-                var discount =
-                    discountsForUserGroup.FirstOrDefault(p => p.UserGroupId == user.UserGroupId);
-                if (discount != null)
+                var discountsForUserGroup = _productDiscountsForUserGroupsService.FindProductDiscounts(product.Id)?.ToList();
+                if (discountsForUserGroup != null &&
+                    discountsForUserGroup.Any())
                 {
-                    result = result - ((result * discount.DiscountPercent) / 100);
-                    if (result < 0)
+                    var discount =
+                        discountsForUserGroup.FirstOrDefault(p => p.UserGroupId == user.UserGroupId);
+                    if (discount?.DiscountPercent > 0)
                     {
-                        result = 0;
+                        result = result - (result * discount.DiscountPercent) / 100;
+                        if (result < 0)
+                        {
+                            result = 0;
+                        }
+                    }
+                    else
+                    {
+                        discount =
+                            discountsForUserGroup
+                                .Where(p => p.ApplyDiscountToHigherUserGroups &&
+                                            p.UserGroup.GroupPriority <= user.UserGroup.GroupPriority)
+                                .OrderByDescending(p => p.UserGroup.GroupPriority)
+                                .FirstOrDefault();
+                        if (discount?.DiscountPercent > 0)
+                        {
+                            result = result - ((result * discount.DiscountPercent) / 100);
+                            if (result < 0)
+                            {
+                                result = 0;
+                            }
+                        }
                     }
                 }
             }
@@ -362,25 +412,45 @@ namespace Devesprit.Services.Products
             var userNeedToPurchase = product.Price > 0;
             if (user != null)
             {
-                var discountsForUserGroup = _productDiscountsForUserGroupsService.FindProductDiscounts(product.Id)?.ToList();
-
                 //Discounts for user groups
-                if (discountsForUserGroup != null &&
-                    discountsForUserGroup.Any() && //product has discount for user groups ?
-                    user.UserGroupId != null && //user has subscribed to a user group ?
-                    user.SubscriptionExpireDate > DateTime.Now)//user subscription not expired ?
+                if (user.UserGroupId != null && //user has subscribed to a user group ?
+                    user.SubscriptionExpireDate > DateTime.Now) //user subscription not expired ?
                 {
-                    var discountForUserGroup =
-                        discountsForUserGroup.FirstOrDefault(p => p.UserGroupId == user.UserGroupId);
-
-                    if (discountForUserGroup?.DiscountPercent > 0)
+                    var discountsForUserGroup = _productDiscountsForUserGroupsService.FindProductDiscounts(product.Id)?.ToList();
+                    if (discountsForUserGroup != null &&
+                        discountsForUserGroup.Any()) //product has discount for user groups ?
                     {
-                        var priceForCurrentUser =
-                            product.Price - (discountForUserGroup.DiscountPercent * product.Price) / 100;
+                        var discountForUserGroup =
+                            discountsForUserGroup.FirstOrDefault(p => p.UserGroupId == user.UserGroupId);
 
-                        if (priceForCurrentUser <= 0)
+                        if (discountForUserGroup?.DiscountPercent > 0)
                         {
-                            userNeedToPurchase = false;
+                            var priceForCurrentUser =
+                                product.Price - (product.Price * discountForUserGroup.DiscountPercent) / 100;
+
+                            if (priceForCurrentUser <= 0)
+                            {
+                                userNeedToPurchase = false;
+                            }
+                        }
+                        else
+                        {
+                            discountForUserGroup =
+                                discountsForUserGroup
+                                    .Where(p => p.ApplyDiscountToHigherUserGroups &&
+                                                p.UserGroup.GroupPriority <= user.UserGroup.GroupPriority)
+                                    .OrderByDescending(p => p.UserGroup.GroupPriority)
+                                    .FirstOrDefault();
+                            if (discountForUserGroup?.DiscountPercent > 0)
+                            {
+                                var priceForCurrentUser =
+                                    product.Price - (product.Price * discountForUserGroup.DiscountPercent) / 100;
+
+                                if (priceForCurrentUser <= 0)
+                                {
+                                    userNeedToPurchase = false;
+                                }
+                            }
                         }
                     }
                 }
@@ -474,16 +544,14 @@ namespace Devesprit.Services.Products
 
                     return result;
                 }
-                else
+
+                //Get all attributes which purchased by user
+                var purchasedProductAttributes = await _usersService.GetUserPurchasedProductAttributesAsync(user.Id, product.Id);
+                foreach (var purchasedAttribute in purchasedProductAttributes.OrderByDescending(p => p.PurchaseDate))
                 {
-                    //Get all attributes which purchased by user
-                    var purchasedProductAttributes = await _usersService.GetUserPurchasedProductAttributesAsync(user.Id, product.Id);
-                    foreach (var purchasedAttribute in purchasedProductAttributes.OrderByDescending(p => p.PurchaseDate))
+                    if (purchasedAttribute.PurchaseExpiration > DateTime.Now)
                     {
-                        if (purchasedAttribute.PurchaseExpiration > DateTime.Now)
-                        {
-                            result.Add(purchasedAttribute.Option);
-                        }
+                        result.Add(purchasedAttribute.Option);
                     }
                 }
             }
@@ -526,15 +594,14 @@ namespace Devesprit.Services.Products
                     }
                     else
                     {
-                        if (user != null)
+                        if (user?.UserGroupId != null &&
+                            user.SubscriptionExpireDate > DateTime.Now)//user subscription not expired ?
                         {
                             var discountsForUserGroup = _productDiscountsForUserGroupsService
                                 .FindProductDiscounts(product.Id)?.ToList();
                             //Discounts for user groups
                             if (discountsForUserGroup != null &&
-                                discountsForUserGroup.Any() && //product has discount for user groups ?
-                                user.UserGroupId != null && //user has subscribed to a user group ?
-                                user.SubscriptionExpireDate > DateTime.Now)//user subscription not expired ?
+                                discountsForUserGroup.Any()) //product has discount for user groups ?
                             {
                                 var discountForUserGroup = discountsForUserGroup
                                     .Where(p => p.ApplyDiscountToProductAttributes)
@@ -543,11 +610,31 @@ namespace Devesprit.Services.Products
                                 if (discountForUserGroup?.DiscountPercent > 0)
                                 {
                                     var priceForCurrentUser =
-                                        option.Price - (discountForUserGroup.DiscountPercent * option.Price) / 100;
+                                        option.Price - (option.Price * discountForUserGroup.DiscountPercent) / 100;
 
                                     if (priceForCurrentUser <= 0)
                                     {
                                         result.Add(option);
+                                    }
+                                }
+                                else
+                                {
+                                    discountForUserGroup =
+                                        discountsForUserGroup
+                                            .Where(p => p.ApplyDiscountToProductAttributes && 
+                                                        p.ApplyDiscountToHigherUserGroups &&
+                                                        p.UserGroup.GroupPriority <= user.UserGroup.GroupPriority)
+                                            .OrderByDescending(p => p.UserGroup.GroupPriority)
+                                            .FirstOrDefault();
+                                    if (discountForUserGroup?.DiscountPercent > 0)
+                                    {
+                                        var priceForCurrentUser =
+                                            option.Price - (option.Price * discountForUserGroup.DiscountPercent) / 100;
+
+                                        if (priceForCurrentUser <= 0)
+                                        {
+                                            result.Add(option);
+                                        }
                                     }
                                 }
                             }

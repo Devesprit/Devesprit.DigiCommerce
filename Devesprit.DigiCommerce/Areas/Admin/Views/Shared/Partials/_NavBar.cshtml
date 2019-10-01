@@ -6,6 +6,7 @@
 @using Devesprit.Services.AdminAreaMenu
 @using Devesprit.Services.Localization
 @{
+    Layout = null;
     var settings = DependencyResolver.Current.GetService<ISettingService>().LoadSetting<SiteSettings>();
     var localizationService = DependencyResolver.Current.GetService<ILocalizationService>();
     var adminPluginMenus = DependencyResolver.Current.GetService<IAdminAreaMenuManager>().LoadAllPluginsMenu(HttpContext.Current, localizationService, Url);

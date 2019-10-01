@@ -12,7 +12,7 @@ namespace Devesprit.Services.Products
         IPagedList<TblProducts> GetBestSelling(int pageIndex = 1, int pageSize = int.MaxValue, int? filterByCategory = null, DateTime? fromDate = null);
         IPagedList<TblProducts> GetMostDownloadedItems(int pageIndex = 1, int pageSize = int.MaxValue, int? filterByCategory = null, DateTime? fromDate = null);
         int GetNumberOfDownloads(int productId);
-        string GenerateDiscountsForUserGroupsDescription(TblProducts product, TblUsers user);
+        string GenerateUserGroupDiscountsDescription(TblProducts product, TblUsers user);
         double CalculateProductPriceForUser(TblProducts product, TblUsers user);
         ProductService.UserCanDownloadProductResult UserCanDownloadProduct(TblProducts product, TblUsers user, bool demoFiles);
         Task<List<TblProductCheckoutAttributeOptions>> GetUserDownloadableAttributesAsync(TblProducts product,

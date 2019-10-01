@@ -26,6 +26,10 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Models
         [DisplayNameLocalized("ShowInFooter")]
         public bool ShowInFooter { get; set; } = true;
 
+        [DisplayNameLocalized("DisplayOrder")]
+        [RequiredLocalized(AllowEmptyStrings = false)]
+        public int DisplayOrder { get; set; }
+
         public List<SelectListItem> CategoriesList { get; set; }
     }
 }

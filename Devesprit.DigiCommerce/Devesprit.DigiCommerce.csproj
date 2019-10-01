@@ -931,7 +931,7 @@
     <Content Include="Areas\Admin\Views\ManageUserMessages\ReplyToUserMessage.cshtml" />
     <Content Include="Areas\Admin\Views\ManageBackgroundJobs\Index.cshtml" />
     <Content Include="Areas\Admin\Views\ManageBackgroundJobs\Editor.cshtml" />
-    <Content Include="Areas\Admin\Views\ManageSocialAccounts\GridView.cshtml" />
+    <Content Include="Areas\Admin\Views\ManageSocialAccounts\Grid.cshtml" />
     <Content Include="Areas\Admin\Views\ManageSocialAccounts\Editor.cshtml" />
     <Content Include="Content\ej\web\office-365\icons\ejicons.woff" />
     <Content Include="Content\ej\web\office-365\icons\ejicons.ttf" />
@@ -1813,7 +1813,7 @@
     <Content Include="Views\Invoice\Partials\_AddNewItemToInvoiceWizard.cshtml" />
     <Content Include="Views\Invoice\Partials\_InvoiceBillingAddress.cshtml" />
     <Content Include="Views\Invoice\Partials\_InvoiceTable.cshtml" />
-    <Content Include="Views\Invoice\Partials\_PaymentResult.cshtml" />
+    <Content Include="Views\Invoice\VerifyPayment.cshtml" />
     <Content Include="Views\Invoice\Partials\_AdminInvoiceEditor.cshtml" />
     <Content Include="Views\Comment\Partials\_CommentBody.cshtml" />
     <Content Include="Views\Comment\CommentsList.cshtml" />

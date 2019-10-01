@@ -5,6 +5,7 @@
 @using Devesprit.Services
 @using Devesprit.Services.SocialAccounts
 @{
+    Layout = null;
     var settings = DependencyResolver.Current.GetService<ISettingService>().LoadSetting<SiteSettings>();
     var pagesService = DependencyResolver.Current.GetService<IPagesService>();
     var socialAccountsService = DependencyResolver.Current.GetService<ISocialAccountsService>();

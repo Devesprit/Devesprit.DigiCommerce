@@ -2,6 +2,7 @@
 @using Devesprit.Services
 @using Devesprit.Services.Localization
 @{
+    Layout = null;
     var settings = DependencyResolver.Current.GetService<ISettingService>().LoadSetting<SiteSettings>();
 }
 <div class="container-fluid footer no-t-mar pad-v-10 fixed-bottom">

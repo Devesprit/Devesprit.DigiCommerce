@@ -4,6 +4,7 @@
 @using Devesprit.WebFramework.Helpers
 @model Devesprit.DigiCommerce.Models.Search.SearchTermModel
 @{
+    Layout = null;
     var settings = DependencyResolver.Current.GetService<ISettingService>().LoadSetting<SiteSettings>();
 }
 

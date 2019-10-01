@@ -18,14 +18,17 @@ namespace Devesprit.Services.Products
     {
         private readonly AppDbContext _dbContext;
         private readonly ILocalizedEntityService _localizedEntityService;
+        private readonly IProductDiscountsForUserGroupsService _productDiscountsForUserGroupsService;
         private readonly IEventPublisher _eventPublisher;
 
         public ProductCheckoutAttributesService(AppDbContext dbContext, 
             ILocalizedEntityService localizedEntityService,
+            IProductDiscountsForUserGroupsService productDiscountsForUserGroupsService,
             IEventPublisher eventPublisher)
         {
             _dbContext = dbContext;
             _localizedEntityService = localizedEntityService;
+            _productDiscountsForUserGroupsService = productDiscountsForUserGroupsService;
             _eventPublisher = eventPublisher;
         }
 
@@ -112,20 +115,41 @@ namespace Devesprit.Services.Products
                 result = option.RenewalPrice;
             }
 
-            var userGroupsDiscount = await
-                option.ProductCheckoutAttribute.Product.DiscountsForUserGroups.Where(p =>
-                    p.ApplyDiscountToProductAttributes).ToListAsync();
-
-            if (user?.UserGroup != null && userGroupsDiscount.Any())
+            if (user?.UserGroup != null &&
+                user.SubscriptionExpireDate > DateTime.Now)
             {
-                var discount =
-                    userGroupsDiscount.FirstOrDefault(p => p.UserGroupId == user.UserGroupId);
-                if (discount != null)
+                var userGroupsDiscount = _productDiscountsForUserGroupsService
+                    .FindProductDiscounts(option.ProductCheckoutAttribute.ProductId)?.ToList()
+                    .Where(p =>
+                    p.ApplyDiscountToProductAttributes).ToList();
+                if (userGroupsDiscount != null && userGroupsDiscount.Any())
                 {
-                    result = result - ((result * discount.DiscountPercent) / 100);
-                    if (result < 0)
+                    var discount =
+                        userGroupsDiscount.FirstOrDefault(p => p.UserGroupId == user.UserGroupId);
+                    if (discount?.DiscountPercent > 0)
                     {
-                        result = 0;
+                        result = result - ((result * discount.DiscountPercent) / 100);
+                        if (result < 0)
+                        {
+                            result = 0;
+                        }
+                    }
+                    else
+                    {
+                        discount =
+                            userGroupsDiscount
+                                .Where(p => p.ApplyDiscountToHigherUserGroups &&
+                                            p.UserGroup.GroupPriority <= user.UserGroup.GroupPriority)
+                                .OrderByDescending(p => p.UserGroup.GroupPriority)
+                                .FirstOrDefault();
+                        if (discount?.DiscountPercent > 0)
+                        {
+                            result = result - ((result * discount.DiscountPercent) / 100);
+                            if (result < 0)
+                            {
+                                result = 0;
+                            }
+                        }
                     }
                 }
             }

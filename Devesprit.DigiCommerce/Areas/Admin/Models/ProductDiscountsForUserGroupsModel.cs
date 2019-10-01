@@ -21,6 +21,10 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Models
         public double DiscountPercent { get; set; }
 
 
+
+        [DisplayNameLocalized("ApplyDiscountToHigherUserGroups")]
+        public bool ApplyDiscountToHigherUserGroups { get; set; }
+
         [DisplayNameLocalized("ApplyDiscountToProductAttributes")]
         public bool ApplyDiscountToProductAttributes { get; set; }
 

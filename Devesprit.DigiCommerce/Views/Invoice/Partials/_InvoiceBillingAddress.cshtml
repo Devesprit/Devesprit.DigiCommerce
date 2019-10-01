@@ -4,6 +4,7 @@
 @using Devesprit.Services
 @model Devesprit.DigiCommerce.Models.Invoice.InvoiceBillingAddressModel
 @{
+    Layout = null;
     var readOnly = Model.InvoiceStatus == InvoiceStatus.Paid && !User.IsInRole("Admin");
     var settings = DependencyResolver.Current.GetService<ISettingService>().LoadSetting<SiteSettings>();
 }

@@ -39,11 +39,18 @@
                                 @Html.ValidationMessageFor(p => p.ParentCategoryId, "", new { @class = "form-text text-danger fs-12" })
                             </div>
                         </div>
-                        <div class="col-12">
+                        <div class="col-12 col-md-6">
                             <div class="form-group">
                                 @Html.LabelFor(p => p.Slug)
                                 @Html.TextBoxFor(p => p.Slug, new { @class = "form-control form-control-sm ltr-dir", placeholder = "test-page" })
                                 @Html.ValidationMessageFor(p => p.Slug, "", new { @class = "form-text text-danger fs-12" })
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <div class="form-group">
+                                @Html.LabelFor(p => p.DisplayOrder)
+                                @Html.TextBoxFor(p => p.DisplayOrder, new { @class = "form-control form-control-sm ltr-dir", type = "number" })
+                                @Html.ValidationMessageFor(p => p.DisplayOrder, "", new { @class = "form-text text-danger fs-12" })
                             </div>
                         </div>
                     </div>

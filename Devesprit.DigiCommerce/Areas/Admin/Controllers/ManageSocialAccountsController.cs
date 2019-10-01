@@ -32,7 +32,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
             _localizedEntityService = localizedEntityService;
         }
 
-        public virtual ActionResult GridView()
+        public virtual ActionResult Grid()
         {
             return PartialView();
         }

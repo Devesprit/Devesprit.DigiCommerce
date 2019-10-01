@@ -17,6 +17,7 @@ namespace Devesprit.Data.Domain
 
         [Required]
         public double DiscountPercent { get; set; }
+        public bool ApplyDiscountToHigherUserGroups { get; set; }
         public bool ApplyDiscountToProductAttributes { get; set; }
     }
 }
