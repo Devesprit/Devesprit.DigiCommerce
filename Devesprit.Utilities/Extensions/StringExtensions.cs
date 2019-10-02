@@ -35,6 +35,19 @@ namespace Devesprit.Utilities.Extensions
             return Uri.TryCreate(url, UriKind.RelativeOrAbsolute, out _);
         }
 
+        public static bool IsValidEmail(this string email)
+        {
+            try
+            {
+                var emailAddress = new System.Net.Mail.MailAddress(email);
+                return emailAddress.Address == email;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
         public static bool IsRtlLanguage(this string text)
         {
             if (string.IsNullOrWhiteSpace(text))

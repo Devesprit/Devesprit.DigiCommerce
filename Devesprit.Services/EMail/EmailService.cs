@@ -74,10 +74,15 @@ namespace Devesprit.Services.EMail
                 templateFile = serverRoot + templateFileName + ".html";
             }
             else
+            if (File.Exists(templateFileName))
+            {
+                templateFile = templateFileName;
+            }
+            else
             {
                 throw new FileNotFoundException("Template file not found!\n\n" + serverRoot + templateFileName + "." +
                                                 currentLangIso.IsoCode + ".html\n" + serverRoot + templateFileName +
-                                                ".html");
+                                                ".html\n"+ templateFileName);
             }
 
             var socialMediaAccounts = _socialAccountsService.GetAsEnumerable();

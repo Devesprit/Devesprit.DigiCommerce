@@ -161,9 +161,7 @@ namespace Devesprit.DigiCommerce
                 dependencyRegistrar.Register(builder, typeFinder);
 
             var container = builder.Build();
-
-            container.ActivateGlimpse();
-
+            
             // Set the dependency resolver to be Autofac.
             DependencyResolver.SetResolver(new AutofacDependencyResolver(container));
         }

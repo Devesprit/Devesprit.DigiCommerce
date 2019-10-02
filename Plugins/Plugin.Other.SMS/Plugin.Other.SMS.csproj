@@ -92,8 +92,8 @@
     </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="Twilio, Version=5.31.3.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Twilio.5.31.3\lib\net451\Twilio.dll</HintPath>
+    <Reference Include="Twilio, Version=5.33.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Twilio.5.33.0\lib\net451\Twilio.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
