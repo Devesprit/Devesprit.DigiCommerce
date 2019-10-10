@@ -28,14 +28,14 @@ namespace Devesprit.Services.Products
         {
             return await _dbContext.ProductDownloadsLog
                 .DeferredFirstOrDefault(p => p.Id == id)
-                .FromCacheAsync(QueryCacheTag.ProductDownloadLog);
+                .FromCacheAsync(CacheTags.ProductDownloadLog);
         }
 
         public virtual async Task DeleteAsync(int id)
         {
             var record = await FindByIdAsync(id);
             await _dbContext.ProductDownloadsLog.Where(p => p.Id == id).DeleteAsync();
-            QueryCacheManager.ExpireTag(QueryCacheTag.ProductDownloadLog);
+            QueryCacheManager.ExpireTag(CacheTags.ProductDownloadLog);
 
             _eventPublisher.EntityDeleted(record);
         }
@@ -45,14 +45,14 @@ namespace Devesprit.Services.Products
             _dbContext.ProductDownloadsLog.Add(log);
             await _dbContext.SaveChangesAsync();
 
-            QueryCacheManager.ExpireTag(QueryCacheTag.ProductDownloadLog);
+            QueryCacheManager.ExpireTag(CacheTags.ProductDownloadLog);
 
             _eventPublisher.EntityInserted(log);
         }
 
         public virtual int GetNumberOfDownloads()
         {
-            return _dbContext.ProductDownloadsLog.DeferredCount().FromCache(QueryCacheTag.ProductDownloadLog);
+            return _dbContext.ProductDownloadsLog.DeferredCount().FromCache(CacheTags.ProductDownloadLog);
         }
     }
 }

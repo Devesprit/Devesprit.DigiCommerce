@@ -4,12 +4,12 @@ using System.Data.Entity.Migrations;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Mvc;
+using Autofac.Extras.DynamicProxy;
 using Devesprit.Core;
 using Devesprit.Core.Localization;
 using Devesprit.Data;
 using Devesprit.Data.Domain;
 using Devesprit.Services.Events;
-using Devesprit.Services.Languages;
 using Devesprit.Services.Localization;
 using Devesprit.Services.MemoryCache;
 using Z.EntityFramework.Plus;
@@ -19,58 +19,35 @@ namespace Devesprit.Services.Countries
     public partial class CountriesService : ICountriesService
     {
         private readonly AppDbContext _dbContext;
-        private readonly IMemoryCache _memoryCache;
-        private readonly ILanguagesService _languagesService;
         private readonly ILocalizedEntityService _localizedEntityService;
-        private readonly IWorkContext _workContext;
         private readonly IEventPublisher _eventPublisher;
 
         public CountriesService(AppDbContext dbContext, 
-            IMemoryCache memoryCache, 
-            ILanguagesService languagesService,
             ILocalizedEntityService localizedEntityService,
-            IWorkContext workContext, 
             IEventPublisher eventPublisher)
         {
             _dbContext = dbContext;
-            _memoryCache = memoryCache;
-            _languagesService = languagesService;
             _localizedEntityService = localizedEntityService;
-            _workContext = workContext;
             _eventPublisher = eventPublisher;
         }
 
         public virtual async Task<List<Country>> GetAsEnumerableAsync()
         {
-            // Try get result from cache (for ignore localizedProperty Cache expire)
-            if (_memoryCache.Contains(QueryCacheTag.Country, _workContext.CurrentLanguage.IsoCode))
-            {
-                return _memoryCache.GetObject<List<Country>>(QueryCacheTag.Country, _workContext.CurrentLanguage.IsoCode);
-            }
-
             var result = (await GetAsQueryable()
-                .FromCacheAsync(QueryCacheTag.Country))
+                .FromCacheAsync(CacheTags.Country))
                 .Select(p => new Country() {Id = p.Id, CountryName = p.GetLocalized(x => x.CountryName)})
                 .ToList();
             
-            _memoryCache.AddObject(QueryCacheTag.Country, result, TimeSpan.FromDays(30), _workContext.CurrentLanguage.IsoCode);
             return result;
         }
 
         public virtual IEnumerable<Country> GetAsEnumerable()
         {
-            // Try get result from cache (for ignore localizedProperty Cache expire)
-            if (_memoryCache.Contains(QueryCacheTag.Country, _workContext.CurrentLanguage.IsoCode))
-            {
-                return _memoryCache.GetObject<List<Country>>(QueryCacheTag.Country, _workContext.CurrentLanguage.IsoCode);
-            }
-
             var result = GetAsQueryable()
-                    .FromCache(QueryCacheTag.Country)
+                    .FromCache(CacheTags.Country)
                 .Select(p => new Country() { Id = p.Id, CountryName = p.GetLocalized(x => x.CountryName) })
                 .ToList();
 
-            _memoryCache.AddObject(QueryCacheTag.Country, result, TimeSpan.FromDays(30), _workContext.CurrentLanguage.IsoCode);
             return result;
         }
 
@@ -97,7 +74,7 @@ namespace Devesprit.Services.Countries
         {
             var result = await _dbContext.Countries
                 .DeferredFirstOrDefault(p => p.Id == id)
-                .FromCacheAsync(QueryCacheTag.Country);
+                .FromCacheAsync(CacheTags.Country);
             return result;
         }
 
@@ -134,8 +111,8 @@ namespace Devesprit.Services.Countries
 
         protected virtual void ClearCache()
         {
-            QueryCacheManager.ExpireTag(QueryCacheTag.Country);
-            _memoryCache.RemoveObject(QueryCacheTag.Country);
+            QueryCacheManager.ExpireTag(CacheTags.Country);
+            MethodCache.ExpireTag(CacheTags.Country);
         }
     }
 }

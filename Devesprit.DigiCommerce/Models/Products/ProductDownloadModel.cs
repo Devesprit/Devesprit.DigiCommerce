@@ -3,7 +3,7 @@ using Devesprit.Services.Products;
 
 namespace Devesprit.DigiCommerce.Models.Products
 {
-    public partial class ProductDownloadPurchaseButtonModel
+    public partial class ProductDownloadModel
     {
         public int ProductId { get; set; }
         public bool HasDownloadableFile { get; set; }
@@ -16,7 +16,6 @@ namespace Devesprit.DigiCommerce.Models.Products
         public bool CanDownloadByCurrentUser { get; set; }
         public ProductService.UserCanDownloadProductResult DownloadBlockingReason { get; set; }
         public bool AlwaysShowDownloadButton { get; set; }
-
         public bool ShowUpgradeUserAccountBtn { get; set; }
         public bool ShowDownloadFullVersionBtn { get; set; }
         public bool ShowPurchaseBtn { get; set; }

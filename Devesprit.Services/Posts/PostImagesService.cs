@@ -29,7 +29,7 @@ namespace Devesprit.Services.Posts
         {
             return await _dbContext.PostImages
                 .DeferredFirstOrDefault(p => p.Id == id)
-                .FromCacheAsync(QueryCacheTag.PostImage);
+                .FromCacheAsync(CacheTags.PostImage);
         }
 
         public virtual IQueryable<TblPostImages> GetAsQueryable(int? filterByPostId)
@@ -48,7 +48,7 @@ namespace Devesprit.Services.Posts
             await _dbContext.PostImages.Where(p => p.Id == id).DeleteAsync();
             await _localizedEntityService.DeleteEntityAllLocalizedStringsAsync(typeof(TblPostImages).Name, id);
 
-            QueryCacheManager.ExpireTag(QueryCacheTag.PostImage);
+            QueryCacheManager.ExpireTag(CacheTags.PostImage);
 
             _eventPublisher.EntityDeleted(record);
         }
@@ -59,7 +59,7 @@ namespace Devesprit.Services.Posts
 
             _dbContext.PostImages.AddOrUpdate(record);
             await _dbContext.SaveChangesAsync();
-            QueryCacheManager.ExpireTag(QueryCacheTag.PostImage);
+            QueryCacheManager.ExpireTag(CacheTags.PostImage);
 
             _eventPublisher.EntityUpdated(record, oldRecord);
         }
@@ -69,7 +69,7 @@ namespace Devesprit.Services.Posts
             _dbContext.PostImages.Add(record);
             await _dbContext.SaveChangesAsync();
 
-            QueryCacheManager.ExpireTag(QueryCacheTag.PostImage);
+            QueryCacheManager.ExpireTag(CacheTags.PostImage);
 
             _eventPublisher.EntityInserted(record);
 

@@ -198,7 +198,7 @@ namespace Devesprit.DigiCommerce.Controllers
             return View();
         }
 
-        public virtual async Task<ActionResult> GetCurrentInvoiceItemsCount()
+        public virtual async Task<ActionResult> GetUserShoppingCartItemsCount()
         {
             var invoice = await _invoiceService.GetUserCurrentInvoiceAsync(false);
             var itemsCount = invoice?.InvoiceDetails?.Count ?? 0;

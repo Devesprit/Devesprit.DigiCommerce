@@ -12,7 +12,6 @@ using Devesprit.Data.Enums;
 using Devesprit.Services.Events;
 using Devesprit.Services.Notifications;
 using Devesprit.Services.Posts;
-using Devesprit.Services.Products;
 using Devesprit.Services.Users;
 using X.PagedList;
 using Z.EntityFramework.Plus;
@@ -65,12 +64,12 @@ namespace Devesprit.Services.Comments
                     .Include(p => p.User)
                     .Skip(pageSize * (pageIndex - 1))
                     .Take(pageSize)
-                    .FromCacheAsync(QueryCacheTag.Comment),
+                    .FromCacheAsync(CacheTags.Comment),
                 pageIndex,
                 pageSize,
                 await query
                     .DeferredCount()
-                    .FromCacheAsync(QueryCacheTag.Comment));
+                    .FromCacheAsync(CacheTags.Comment));
 
             return result;
         }
@@ -85,12 +84,12 @@ namespace Devesprit.Services.Comments
                     .OrderByDescending(p => p.CommentDate)
                     .Skip(pageSize * (pageIndex - 1))
                     .Take(pageSize)
-                    .FromCacheAsync(QueryCacheTag.Comment),
+                    .FromCacheAsync(CacheTags.Comment),
                 pageIndex,
                 pageSize,
                 await query
                     .DeferredCount()
-                    .FromCacheAsync(QueryCacheTag.Comment));
+                    .FromCacheAsync(CacheTags.Comment));
 
             return result;
         }
@@ -108,7 +107,7 @@ namespace Devesprit.Services.Comments
                 query = query.Where(p => p.Published);
             }
 
-            var rowIndex = await query.OrderByDescending(p => p.CommentDate).DeferredCount(p=> p.Id > commentId).FromCacheAsync(QueryCacheTag.Comment);
+            var rowIndex = await query.OrderByDescending(p => p.CommentDate).DeferredCount(p=> p.Id > commentId).FromCacheAsync(CacheTags.Comment);
             int pageIndex = (rowIndex / pageSize) + 1;
 
             var result = new StaticPagedList<TblPostComments>(
@@ -117,12 +116,12 @@ namespace Devesprit.Services.Comments
                     .Include(p => p.User)
                     .Skip(pageSize * (pageIndex - 1))
                     .Take(pageSize)
-                    .FromCacheAsync(QueryCacheTag.Comment),
+                    .FromCacheAsync(CacheTags.Comment),
                 pageIndex,
                 pageSize,
                 await query
                     .DeferredCount()
-                    .FromCacheAsync(QueryCacheTag.Comment));
+                    .FromCacheAsync(CacheTags.Comment));
 
             return result;
         }
@@ -138,7 +137,7 @@ namespace Devesprit.Services.Comments
                 .Include(p => p.ParentComment)
                 .Include(p => p.User)
                 .DeferredFirstOrDefault(p => p.Id == id)
-                .FromCacheAsync(QueryCacheTag.Comment);
+                .FromCacheAsync(CacheTags.Comment);
             return result;
         }
 
@@ -148,7 +147,7 @@ namespace Devesprit.Services.Comments
                 .UpdateAsync(p => new TblPostComments() {ParentCommentId = null});
             var record = await FindByIdAsync(id);
             await _dbContext.PostComments.Where(p=> p.Id == id).DeleteAsync();
-            QueryCacheManager.ExpireTag(QueryCacheTag.Comment);
+            QueryCacheManager.ExpireTag(CacheTags.Comment);
 
             _eventPublisher.EntityDeleted(record);
         }
@@ -158,7 +157,7 @@ namespace Devesprit.Services.Comments
             var oldRecord = await FindByIdAsync(record.Id);
             _dbContext.PostComments.AddOrUpdate(record);
             await _dbContext.SaveChangesAsync();
-            QueryCacheManager.ExpireTag(QueryCacheTag.Comment);
+            QueryCacheManager.ExpireTag(CacheTags.Comment);
 
             _eventPublisher.EntityUpdated(record, oldRecord);
         }
@@ -167,7 +166,7 @@ namespace Devesprit.Services.Comments
         {
             _dbContext.PostComments.Add(record);
             await _dbContext.SaveChangesAsync();
-            QueryCacheManager.ExpireTag(QueryCacheTag.Comment);
+            QueryCacheManager.ExpireTag(CacheTags.Comment);
 
             _eventPublisher.EntityInserted(record);
 
@@ -266,7 +265,7 @@ namespace Devesprit.Services.Comments
         protected virtual async Task<List<string>> GetUsersToNotifyNewComment(int productId)
         {
             var result = await _dbContext.PostComments.Where(p => p.PostId == productId && p.NotifyWhenNewComment && p.UserId != null)
-                .FromCacheAsync(QueryCacheTag.Comment);
+                .FromCacheAsync(CacheTags.Comment);
 
             return result.Select(p => p.UserId).Distinct().ToList();
         }

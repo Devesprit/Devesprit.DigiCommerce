@@ -1,35 +1,36 @@
 ﻿namespace Devesprit.Services
 {
-    public static partial class QueryCacheTag
+    public static partial class CacheTags
     {
-        public  static string PostDescription => "PostDescription";
-        public  static string PostImage => "PostImage";
-        public static string PostTag => "PostTag";
-        public  static string PostCategory => "PostCategory";
-        public  static string PostAttribute => "PostAttribute";
-        public  static string ProductCheckoutAttribute => "ProductCheckoutAttribute";
-        public  static string ProductDiscountForUserGroup => "ProductDiscountForUserGroup";
-        public  static string ProductDownloadLog => "ProductDownloadLog";
-        public  static string UserGroup => "UserGroup";
-        public  static string UserWishlist => "UserWishlist";
-        public  static string FileServer => "FileServer";
-        public  static string UserLikes => "UserLikes";
-        public  static string UserMessages => "UserMessages";
-        public  static string Invoice => "Invoice";
-        public static string Slider => "Slider";
-        public static string SiteSetting => "SiteSetting";
-        public static string Setting => "Setting";
-        public static string RedirectRule => "RedirectRule";
-        public static string Notification => "Notification";
-        public static string Page => "Page";
-        public static string SocialAccounts => "SocialAccounts";
-        public static string NavbarItem => "NavbarItem";
-        public static string Country => "Country";
-        public static string Currency => "Currency";
-        public static string Language => "Language";
-        public static string LocalizedProperty => "LocalizedProperty";
-        public static string LocalizedString => "LocalizedString";
-        public static string Tax => "Tax";
-        public static string Comment => "Comment";
+        public const string PostDescription = "PostDescription";
+        public const string PostImage = "PostImage";
+        public const string PostTag = "PostTag";
+        public const string PostCategory = "PostCategory";
+        public const string PostAttribute = "PostAttribute";
+        public const string ProductCheckoutAttribute = "ProductCheckoutAttribute";
+        public const string ProductDiscountForUserGroup = "ProductDiscountForUserGroup";
+        public const string ProductDownloadLog = "ProductDownloadLog";
+        public const string UserGroup = "UserGroup";
+        public const string UserWishlist = "UserWishlist";
+        public const string FileServer = "FileServer";
+        public const string UserLikes = "UserLikes";
+        public const string UserMessages = "UserMessages";
+        public const string Invoice = "Invoice";
+        public const string Slider = "Slider";
+        public const string SiteSetting = "SiteSetting";
+        public const string Setting = "Setting";
+        public const string RedirectRule = "RedirectRule";
+        public const string Notification = "Notification";
+        public const string Page = "Page";
+        public const string SocialAccounts = "SocialAccounts";
+        public const string NavbarItem = "NavbarItem";
+        public const string Country = "Country";
+        public const string Currency = "Currency";
+        public const string Language = "Language";
+        public const string LocalizedProperty = "LocalizedProperty";
+        public const string LocalizedString = "LocalizedString";
+        public const string Tax = "Tax";
+        public const string Comment = "Comment";
+        public const string Search = "Search";
     }
 }

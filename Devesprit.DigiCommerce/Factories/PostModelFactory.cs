@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -36,64 +37,75 @@ namespace Devesprit.DigiCommerce.Factories
             _httpContext = httpContext;
         }
 
-        public virtual PostCardViewModel PreparePostCardViewModel(TblPosts post, TblUsers currentUser,
-            UrlHelper url)
-        {
-            var result = post.Adapt<PostCardViewModel>();
-            var likesCount = _userLikesService.GetPostNumberOfLikes(post.Id);
-            result.NumberOfLikes = likesCount;
-            result.LastUpDate = post.LastUpDate ?? post.PublishDate;
-            result.MainImageUrl = post.Images?.OrderBy(p => p.DisplayOrder).FirstOrDefault()
-                                         ?.ImageUrl ?? "";
-            result.Categories = post.Categories
-                .Select(p => new PostCategoriesModel()
-                {
-                    Id = p.Id,
-                    CategoryName = p.GetLocalized(x => x.CategoryName),
-                    Slug = p.Slug,
-                    CategoryUrl = post.PostType == PostType.BlogPost ? 
-                        url.Action("FilterByCategory", "Blog", new { slug = p.Slug }) :
-                        url.Action("FilterByCategory", "Product", new { slug = p.Slug })
-                })
-                .ToList();
-            var desc = post.Descriptions?.OrderBy(p => p.DisplayOrder).FirstOrDefault()?.GetLocalized(x => x.HtmlDescription) ?? "";
-            result.DescriptionTruncated = desc.ConvertHtmlToText().TruncateText(350);
-
-            result.LikeWishlistButtonsModel = new LikeWishlistButtonsModel()
-            {
-                PostId = post.Id,
-                AlreadyAddedToWishlist = _userWishlistService.UserAddedThisPostToWishlist(post.Id, currentUser?.Id),
-                AlreadyLiked = _userLikesService.UserLikedThisPost(post.Id, currentUser?.Id)
-            };
-
-            if (post.PostType == PostType.BlogPost)
-            {
-                result.PostUrl = new Uri(url.Action("Post", "Blog", new { slug = post.Slug }, _httpContext.Request.Url.Scheme)).ToString();
-            }
-            else if (post.PostType == PostType.Product)
-            {
-                result.PostUrl = new Uri(url.Action("Index", "Product", new { slug = post.Slug }, _httpContext.Request.Url.Scheme)).ToString();
-            }
-            else
-            {
-                result.PostUrl = new Uri(url.Action("Index", "Search", new SearchTermModel()
-                {
-                    PostType = null,
-                    OrderBy = SearchResultSortType.Score,
-                    SearchPlace = SearchPlace.Title,
-                    Query = post.Title
-                }, _httpContext.Request.Url.Scheme)).ToString();
-            }
-            
-            return result;
-        }
 
         public virtual IPagedList<PostCardViewModel> PreparePostCardViewModel(IPagedList<TblPosts> posts,
             TblUsers currentUser, UrlHelper url)
         {
-            return new StaticPagedList<PostCardViewModel>(posts.Select(post =>
-                    PreparePostCardViewModel(post, currentUser, url)), posts.PageNumber,
-                posts.PageSize, posts.TotalItemCount); 
+            var numberOfLikes = _userLikesService.GetNumberOfLikes(posts.Select(p => p.Id).ToArray());
+            var userAddedThisPostsToWishlist = _userWishlistService.UserAddedThisPostToWishlist(posts.Select(p => p.Id).ToArray(), currentUser?.Id);
+            var userLikedThisPosts = _userLikesService.UserLikedThisPost(posts.Select(p => p.Id).ToArray(), currentUser?.Id);
+
+            var result = new List<PostCardViewModel>();
+            foreach (var post in posts)
+            {
+                var model = post.Adapt<PostCardViewModel>();
+
+                model.LastUpDate = post.LastUpDate ?? post.PublishDate;
+                model.MainImageUrl = post.Images?.OrderBy(p => p.DisplayOrder).FirstOrDefault()
+                                          ?.ImageUrl ?? "";
+                model.Categories = post.Categories
+                    .Select(p => new PostCategoriesModel()
+                    {
+                        Id = p.Id,
+                        CategoryName = p.GetLocalized(x => x.CategoryName),
+                        Slug = p.Slug,
+                        CategoryUrl = post.PostType == PostType.BlogPost ?
+                            url.Action("FilterByCategory", "Blog", new { slug = p.Slug }) :
+                            url.Action("FilterByCategory", "Product", new { slug = p.Slug })
+                    })
+                    .ToList();
+                var desc = post.Descriptions?.OrderBy(p => p.DisplayOrder).FirstOrDefault()?.GetLocalized(x => x.HtmlDescription) ?? "";
+                model.DescriptionTruncated = desc.ConvertHtmlToText().TruncateText(350);
+
+                if (post.PostType == PostType.BlogPost)
+                {
+                    model.PostUrl = new Uri(url.Action("Post", "Blog", new { slug = post.Slug }, _httpContext.Request.Url.Scheme)).ToString();
+                }
+                else if (post.PostType == PostType.Product)
+                {
+                    model.PostUrl = new Uri(url.Action("Index", "Product", new { slug = post.Slug }, _httpContext.Request.Url.Scheme)).ToString();
+                }
+                else
+                {
+                    model.PostUrl = new Uri(url.Action("Index", "Search", new SearchTermModel()
+                    {
+                        PostType = null,
+                        OrderBy = SearchResultSortType.Score,
+                        SearchPlace = SearchPlace.Title,
+                        Query = post.Title
+                    }, _httpContext.Request.Url.Scheme)).ToString();
+                }
+
+                if (numberOfLikes.ContainsKey(model.Id))
+                    model.NumberOfLikes = numberOfLikes[model.Id];
+
+                var likeWishlistButtonsModel = new LikeWishlistButtonsModel()
+                {
+                    PostId = model.Id
+                };
+
+                if (userAddedThisPostsToWishlist.ContainsKey(model.Id))
+                    likeWishlistButtonsModel.AlreadyAddedToWishlist = userAddedThisPostsToWishlist[model.Id];
+                if (userLikedThisPosts.ContainsKey(model.Id))
+                    likeWishlistButtonsModel.AlreadyLiked = userLikedThisPosts[model.Id];
+
+                model.LikeWishlistButtonsModel = likeWishlistButtonsModel;
+                
+                result.Add(model);
+            }
+
+            return new StaticPagedList<PostCardViewModel>(result, posts.PageNumber,
+                posts.PageSize, posts.TotalItemCount);
         }
 
         public virtual PostModel PreparePostModel(TblPosts post, TblUsers currentUser,
@@ -105,7 +117,7 @@ namespace Devesprit.DigiCommerce.Factories
             result.MetaDescription = post.GetLocalized(p => p.MetaDescription);
             result.MetaKeyWords = post.GetLocalized(p => p.MetaKeyWords);
 
-            var likesCount = _userLikesService.GetPostNumberOfLikes(post.Id);
+            var likesCount = _userLikesService.GetNumberOfLikes(post.Id);
             result.NumberOfLikes = likesCount;
             result.LastUpdate = post.LastUpDate ?? post.PublishDate;
             result.Categories = post.Categories

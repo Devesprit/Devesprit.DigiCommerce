@@ -34,7 +34,7 @@ namespace Devesprit.Services.Pages
         {
             var result = await _dbContext.Pages
                 .DeferredFirstOrDefault(p => p.Id == id)
-                .FromCacheAsync(QueryCacheTag.Page);
+                .FromCacheAsync(CacheTags.Page);
             return result;
         }
 
@@ -42,7 +42,7 @@ namespace Devesprit.Services.Pages
         {
             var result = await _dbContext.Pages
                 .DeferredFirstOrDefault(p => p.Slug == slug)
-                .FromCacheAsync(QueryCacheTag.Page);
+                .FromCacheAsync(CacheTags.Page);
             return result;
         }
 
@@ -51,7 +51,7 @@ namespace Devesprit.Services.Pages
             var record = await FindByIdAsync(id);
             await _dbContext.Pages.Where(p=> p.Id == id).DeleteAsync();
             await _localizedEntityService.DeleteEntityAllLocalizedStringsAsync(typeof(TblPages).Name, id);   
-            QueryCacheManager.ExpireTag(QueryCacheTag.Page);
+            QueryCacheManager.ExpireTag(CacheTags.Page);
 
             _eventPublisher.EntityDeleted(record);
         }
@@ -67,7 +67,7 @@ namespace Devesprit.Services.Pages
 
             _dbContext.Pages.AddOrUpdate(record);
             await _dbContext.SaveChangesAsync();
-            QueryCacheManager.ExpireTag(QueryCacheTag.Page);
+            QueryCacheManager.ExpireTag(CacheTags.Page);
 
             _eventPublisher.EntityUpdated(record, oldRecord);
         }
@@ -82,7 +82,7 @@ namespace Devesprit.Services.Pages
 
             _dbContext.Pages.Add(record);
             await _dbContext.SaveChangesAsync();
-            QueryCacheManager.ExpireTag(QueryCacheTag.Page);
+            QueryCacheManager.ExpireTag(CacheTags.Page);
 
             _eventPublisher.EntityInserted(record);
 
@@ -92,7 +92,7 @@ namespace Devesprit.Services.Pages
         public virtual async Task<IEnumerable<TblPages>> GetAsEnumerableAsync()
         {
             var result = await GetAsQueryable()
-                .FromCacheAsync(QueryCacheTag.Page);
+                .FromCacheAsync(CacheTags.Page);
             return result;
         }
 
@@ -100,7 +100,7 @@ namespace Devesprit.Services.Pages
         {
             var result = GetAsQueryable().Where(p => p.ShowInFooter && p.Published)
                 .OrderBy(p=> p.Title)
-                .FromCache(QueryCacheTag.Page);
+                .FromCache(CacheTags.Page);
             return result;
         }
 
@@ -108,7 +108,7 @@ namespace Devesprit.Services.Pages
         {
             var result = GetAsQueryable().Where(p => p.ShowInUserMenuBar && p.Published)
                 .OrderBy(p => p.Title)
-                .FromCache(QueryCacheTag.Page);
+                .FromCache(CacheTags.Page);
             return result;
         }
 
@@ -116,7 +116,7 @@ namespace Devesprit.Services.Pages
         {
             var result = await _dbContext.Pages
                 .DeferredFirstOrDefault(p => p.ShowAsWebsiteDefaultPage && p.Published)
-                .FromCacheAsync(QueryCacheTag.Page);
+                .FromCacheAsync(CacheTags.Page);
             return result;
         }
     }

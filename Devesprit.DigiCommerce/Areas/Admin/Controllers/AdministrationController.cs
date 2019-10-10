@@ -4,17 +4,20 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 using System.Web.UI;
+using Autofac.Extras.DynamicProxy;
 using Devesprit.Core.Localization;
 using Devesprit.Data.Enums;
 using Devesprit.DigiCommerce.Areas.Admin.Models;
 using Devesprit.DigiCommerce.Controllers;
 using Devesprit.Services.Invoice;
 using Devesprit.Services.Localization;
+using Devesprit.Services.MemoryCache;
 using Devesprit.Services.Users;
 
 namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
 {
     [Authorize(Roles = "Admin")]
+    [Intercept(typeof(MethodCache))]
     public partial class AdministrationController : BaseController
     {
         private readonly IInvoiceService _invoiceService;
@@ -38,7 +41,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
             return View();
         }
 
-        [OutputCache(Duration = 60, Location = OutputCacheLocation.Server, VaryByParam = "*", VaryByCustom = "lang")]
+        [MethodCache(VaryByCustom = "lang", DurationSec = 60 * 5)]
         public virtual async Task<ActionResult> InvoicesChart(DateTime? FromDate, DateTime? ToDate, TimePeriodType PeriodType = TimePeriodType.Day)
         {
             if (FromDate == null || ToDate == null || FromDate >= ToDate)
@@ -99,8 +102,8 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
                 UpdateTargetId = "invoiceChartHolder"
             });
         }
-        
-        [OutputCache(Duration = 60, Location = OutputCacheLocation.Server, VaryByParam = "*", VaryByCustom = "lang")]
+
+        [MethodCache(VaryByCustom = "lang", DurationSec = 60 * 5)]
         public virtual async Task<ActionResult> SellsChart(DateTime? FromDate, DateTime? ToDate, TimePeriodType PeriodType = TimePeriodType.Day)
         {
             if (FromDate == null || ToDate == null || FromDate >= ToDate)
@@ -154,7 +157,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
             });
         }
 
-        [OutputCache(Duration = 60, Location = OutputCacheLocation.Server, VaryByParam = "*", VaryByCustom = "lang")]
+        [MethodCache(VaryByCustom = "lang", DurationSec = 60 * 5)]
         public virtual async Task<ActionResult> UsersChart(DateTime? FromDate, DateTime? ToDate, TimePeriodType PeriodType = TimePeriodType.Day)
         {
             if (FromDate == null || ToDate == null || FromDate >= ToDate)

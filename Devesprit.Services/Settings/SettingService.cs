@@ -37,14 +37,14 @@ namespace Devesprit.Services.Settings
         protected virtual IEnumerable<TblSettings> GetAsEnumerable()
         {
             // Try get result from cache
-            if (_memoryCache.Contains(QueryCacheTag.Setting)) 
+            if (_memoryCache.Contains(CacheTags.Setting)) 
             {
-                return _memoryCache.GetObject<List<TblSettings>>(QueryCacheTag.Setting);
+                return _memoryCache.GetObject<List<TblSettings>>(CacheTags.Setting);
             }
 
-            var result = _dbContext.Settings.FromCache(QueryCacheTag.Setting).ToList();
+            var result = _dbContext.Settings.FromCache(CacheTags.Setting).ToList();
 
-            _memoryCache.AddObject(QueryCacheTag.Setting, result, TimeSpan.FromDays(30));
+            _memoryCache.AddObject(CacheTags.Setting, result, TimeSpan.FromDays(30));
             return result;
         }
 
@@ -195,9 +195,9 @@ namespace Devesprit.Services.Settings
         public virtual T LoadSetting<T>() where T : ISettings, new()
         {
             // Try get result from cache
-            if (_memoryCache.Contains(QueryCacheTag.Setting, typeof(T).FullName))
+            if (_memoryCache.Contains(CacheTags.Setting, typeof(T).FullName))
             {
-                return _memoryCache.GetObject<T>(QueryCacheTag.Setting, typeof(T).FullName);
+                return _memoryCache.GetObject<T>(CacheTags.Setting, typeof(T).FullName);
             }
 
             var settings = Activator.CreateInstance<T>();
@@ -252,7 +252,7 @@ namespace Devesprit.Services.Settings
                 }
             }
 
-            _memoryCache.AddObject(QueryCacheTag.Setting, settings, TimeSpan.FromDays(30), typeof(T).FullName);
+            _memoryCache.AddObject(CacheTags.Setting, settings, TimeSpan.FromDays(30), typeof(T).FullName);
 
             return settings;
         }
@@ -260,9 +260,9 @@ namespace Devesprit.Services.Settings
         public virtual async Task<T> LoadSettingAsync<T>() where T : ISettings, new()
         {
             // Try get result from cache
-            if (_memoryCache.Contains(QueryCacheTag.Setting, typeof(T).FullName))
+            if (_memoryCache.Contains(CacheTags.Setting, typeof(T).FullName))
             {
-                return _memoryCache.GetObject<T>(QueryCacheTag.Setting, typeof(T).FullName);
+                return _memoryCache.GetObject<T>(CacheTags.Setting, typeof(T).FullName);
             }
 
             var settings = Activator.CreateInstance<T>();
@@ -319,7 +319,7 @@ namespace Devesprit.Services.Settings
                 }
             }
 
-            _memoryCache.AddObject(QueryCacheTag.Setting, settings, TimeSpan.FromDays(30), typeof(T).FullName);
+            _memoryCache.AddObject(CacheTags.Setting, settings, TimeSpan.FromDays(30), typeof(T).FullName);
 
             return settings;
         }
@@ -449,8 +449,8 @@ namespace Devesprit.Services.Settings
 
         protected virtual void ClearCache()
         {
-            QueryCacheManager.ExpireTag(QueryCacheTag.Setting);
-            _memoryCache.RemoveObject(QueryCacheTag.Setting);
+            QueryCacheManager.ExpireTag(CacheTags.Setting);
+            _memoryCache.RemoveObject(CacheTags.Setting);
         }
     }
 }

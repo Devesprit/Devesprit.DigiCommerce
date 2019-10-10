@@ -37,7 +37,7 @@ namespace Devesprit.Services.Products
             return await _dbContext.ProductCheckoutAttributes
                 .Include(p => p.Options)
                 .DeferredFirstOrDefault(p => p.Id == id)
-                .FromCacheAsync(QueryCacheTag.ProductCheckoutAttribute);
+                .FromCacheAsync(CacheTags.ProductCheckoutAttribute);
         }
 
         public virtual IQueryable<TblProductCheckoutAttributes> GetAsQueryable(int? filterByProductId)
@@ -55,7 +55,7 @@ namespace Devesprit.Services.Products
             return await _dbContext.ProductCheckoutAttributes
                 .Where(p => p.ProductId == productId)
                 .Include(p => p.Options)
-                .FromCacheAsync(QueryCacheTag.ProductCheckoutAttribute);
+                .FromCacheAsync(CacheTags.ProductCheckoutAttribute);
         }
 
         public virtual async Task DeleteAsync(int id)
@@ -64,7 +64,7 @@ namespace Devesprit.Services.Products
             await _dbContext.ProductCheckoutAttributes.Where(p => p.Id == id).DeleteAsync();
             await _localizedEntityService.DeleteEntityAllLocalizedStringsAsync(
                 typeof(TblProductCheckoutAttributes).Name, id);
-            QueryCacheManager.ExpireTag(QueryCacheTag.ProductCheckoutAttribute);
+            QueryCacheManager.ExpireTag(CacheTags.ProductCheckoutAttribute);
 
             _eventPublisher.EntityDeleted(record);
         }
@@ -74,7 +74,7 @@ namespace Devesprit.Services.Products
             var oldRecord = await FindByIdAsync(record.Id);
             _dbContext.ProductCheckoutAttributes.AddOrUpdate(record);
             await _dbContext.SaveChangesAsync();
-            QueryCacheManager.ExpireTag(QueryCacheTag.ProductCheckoutAttribute);
+            QueryCacheManager.ExpireTag(CacheTags.ProductCheckoutAttribute);
 
             _eventPublisher.EntityUpdated(record, oldRecord);
         }
@@ -83,7 +83,7 @@ namespace Devesprit.Services.Products
         {
             _dbContext.ProductCheckoutAttributes.Add(record);
             await _dbContext.SaveChangesAsync();
-            QueryCacheManager.ExpireTag(QueryCacheTag.ProductCheckoutAttribute);
+            QueryCacheManager.ExpireTag(CacheTags.ProductCheckoutAttribute);
 
             _eventPublisher.EntityInserted(record);
 
@@ -164,7 +164,7 @@ namespace Devesprit.Services.Products
         {
             return await _dbContext.ProductCheckoutAttributeOptions
                 .DeferredFirstOrDefault(p => p.Id == id)
-                .FromCacheAsync(QueryCacheTag.ProductCheckoutAttribute);
+                .FromCacheAsync(CacheTags.ProductCheckoutAttribute);
         }
 
         public virtual IQueryable<TblProductCheckoutAttributeOptions> GetOptionsAsQueryable(int? filterByAttributeId)
@@ -184,7 +184,7 @@ namespace Devesprit.Services.Products
             await _localizedEntityService.DeleteEntityAllLocalizedStringsAsync(
                 typeof(TblProductCheckoutAttributeOptions).Name, id);
 
-            QueryCacheManager.ExpireTag(QueryCacheTag.ProductCheckoutAttribute);
+            QueryCacheManager.ExpireTag(CacheTags.ProductCheckoutAttribute);
 
             _eventPublisher.EntityDeleted(record);
         }
@@ -194,7 +194,7 @@ namespace Devesprit.Services.Products
             var oldRecord = await FindOptionByIdAsync(record.Id);
             _dbContext.ProductCheckoutAttributeOptions.AddOrUpdate(record);
             await _dbContext.SaveChangesAsync();
-            QueryCacheManager.ExpireTag(QueryCacheTag.ProductCheckoutAttribute);
+            QueryCacheManager.ExpireTag(CacheTags.ProductCheckoutAttribute);
 
             _eventPublisher.EntityUpdated(record, oldRecord);
         }
@@ -203,7 +203,7 @@ namespace Devesprit.Services.Products
         {
             _dbContext.ProductCheckoutAttributeOptions.Add(record);
             await _dbContext.SaveChangesAsync();
-            QueryCacheManager.ExpireTag(QueryCacheTag.ProductCheckoutAttribute);
+            QueryCacheManager.ExpireTag(CacheTags.ProductCheckoutAttribute);
 
             _eventPublisher.EntityInserted(record);
 

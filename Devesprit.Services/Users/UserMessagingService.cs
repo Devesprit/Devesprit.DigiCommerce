@@ -51,7 +51,7 @@ namespace Devesprit.Services.Users
         {
             return await _dbContext.UserMessages
                 .DeferredFirstOrDefault(p => p.Id == id)
-                .FromCacheAsync(QueryCacheTag.UserMessages);
+                .FromCacheAsync(CacheTags.UserMessages);
         }
 
         public virtual async Task UpdateAsync(TblUserMessages record)
@@ -60,7 +60,7 @@ namespace Devesprit.Services.Users
             _dbContext.UserMessages.AddOrUpdate(record);
             await _dbContext.SaveChangesAsync();
 
-            QueryCacheManager.ExpireTag(QueryCacheTag.UserMessages);
+            QueryCacheManager.ExpireTag(CacheTags.UserMessages);
 
             _eventPublisher.EntityUpdated(record, oldRecord);
         }
@@ -70,7 +70,7 @@ namespace Devesprit.Services.Users
             _dbContext.UserMessages.Add(record);
             await _dbContext.SaveChangesAsync();
 
-            QueryCacheManager.ExpireTag(QueryCacheTag.UserMessages);
+            QueryCacheManager.ExpireTag(CacheTags.UserMessages);
 
             _eventPublisher.EntityInserted(record);
 
@@ -99,7 +99,7 @@ namespace Devesprit.Services.Users
         public virtual async Task<int> NumberOfUreadedMessages()
         {
             return await _dbContext.UserMessages.DeferredCount(p => p.Readed == false)
-                .FromCacheAsync(QueryCacheTag.UserMessages);
+                .FromCacheAsync(CacheTags.UserMessages);
         }
 
         public virtual async Task DeleteAsync(int id)
@@ -107,7 +107,7 @@ namespace Devesprit.Services.Users
             var record = await FindByIdAsync(id);
             await _dbContext.UserMessages.Where(p => p.Id == id).DeleteAsync();
 
-            QueryCacheManager.ExpireTag(QueryCacheTag.UserMessages);
+            QueryCacheManager.ExpireTag(CacheTags.UserMessages);
 
             _eventPublisher.EntityDeleted(record);
         }

@@ -7,9 +7,6 @@ namespace Devesprit.DigiCommerce.Factories.Interfaces
 {
     public partial interface IPostModelFactory
     {
-        PostCardViewModel PreparePostCardViewModel(TblPosts post, TblUsers currentUser,
-            UrlHelper url);
-
         IPagedList<PostCardViewModel> PreparePostCardViewModel(IPagedList<TblPosts> posts, TblUsers currentUser,
             UrlHelper url);
 

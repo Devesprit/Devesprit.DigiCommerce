@@ -244,7 +244,7 @@ namespace Devesprit.Services.Users
                 .Include(p => p.InvoiceDetails)
                 .Include(p => p.User)
                 .Include(p => p.Currency)
-                .AsNoTracking().FromCache(QueryCacheTag.Invoice);
+                .AsNoTracking().FromCache(CacheTags.Invoice);
 
             var result = new List<UserPurchasedProduct>();
             foreach (var invoice in userInvoices)
@@ -292,7 +292,7 @@ namespace Devesprit.Services.Users
         {
             var userInvoices = await _dbContext.Invoices
                 .Where(p => p.UserId == userId && p.Status == InvoiceStatus.Paid)
-                .Include(p => p.InvoiceDetails).Include(p => p.User).Include(p => p.Currency).AsNoTracking().FromCacheAsync(QueryCacheTag.Invoice);
+                .Include(p => p.InvoiceDetails).Include(p => p.User).Include(p => p.Currency).AsNoTracking().FromCacheAsync(CacheTags.Invoice);
 
             var result = new List<UserPurchasedProductAttribute>();
             foreach (var invoice in userInvoices)
@@ -363,12 +363,12 @@ namespace Devesprit.Services.Users
                     .Include(p => p.Product)
                     .Skip(pageSize * (pageIndex - 1))
                     .Take(pageSize)
-                    .FromCacheAsync(QueryCacheTag.ProductDownloadLog),
+                    .FromCacheAsync(CacheTags.ProductDownloadLog),
                 pageIndex,
                 pageSize,
                 await query
                     .DeferredCount(p => p.UserId == userId)
-                    .FromCacheAsync(QueryCacheTag.ProductDownloadLog));
+                    .FromCacheAsync(CacheTags.ProductDownloadLog));
 
             return result;
         }
@@ -381,12 +381,12 @@ namespace Devesprit.Services.Users
                     .OrderByDescending(p => p.Date)
                     .Skip(pageSize * (pageIndex - 1))
                     .Take(pageSize)
-                    .FromCacheAsync(QueryCacheTag.UserWishlist),
+                    .FromCacheAsync(CacheTags.UserWishlist),
                 pageIndex,
                 pageSize,
                 await _dbContext.UserWishlist
                     .DeferredCount(p => p.UserId == userId)
-                    .FromCacheAsync(QueryCacheTag.UserWishlist));
+                    .FromCacheAsync(CacheTags.UserWishlist));
 
             return result;
         }
@@ -399,12 +399,12 @@ namespace Devesprit.Services.Users
                     .OrderByDescending(p => p.Date)
                     .Skip(pageSize * (pageIndex - 1))
                     .Take(pageSize)
-                    .FromCacheAsync(QueryCacheTag.UserLikes),
+                    .FromCacheAsync(CacheTags.UserLikes),
                 pageIndex,
                 pageSize,
                 await _dbContext.UserLikes
                     .DeferredCount(p => p.UserId == userId)
-                    .FromCacheAsync(QueryCacheTag.UserLikes));
+                    .FromCacheAsync(CacheTags.UserLikes));
 
             return result;
         }
@@ -428,12 +428,12 @@ namespace Devesprit.Services.Users
                     .AsNoTracking()
                     .Skip(pageSize * (pageIndex - 1))
                     .Take(pageSize)
-                    .FromCacheAsync(QueryCacheTag.Invoice),
+                    .FromCacheAsync(CacheTags.Invoice),
                 pageIndex,
                 pageSize,
                 await _dbContext.Invoices
                     .DeferredCount(p => p.UserId == userId)
-                    .FromCacheAsync(QueryCacheTag.Invoice));
+                    .FromCacheAsync(CacheTags.Invoice));
 
             return result;
         }
@@ -475,7 +475,7 @@ namespace Devesprit.Services.Users
                        p.PurchaseExpiration != null &&
                        p.PurchaseExpiration >= fromDate &&
                        p.PurchaseExpiration <= toDate)
-                   .Include(p => p.Invoice).Select(p => p.Invoice.UserId).FromCacheAsync(QueryCacheTag.Invoice);
+                   .Include(p => p.Invoice).Select(p => p.Invoice.UserId).FromCacheAsync(CacheTags.Invoice);
 
                 foreach (var user in usersList.Distinct())
                 {
@@ -628,7 +628,7 @@ namespace Devesprit.Services.Users
                                p.PurchaseExpiration != null &&
                                p.PurchaseExpiration >= fromDate &&
                                p.PurchaseExpiration <= toDate)
-                   .Include(p => p.Invoice).Include(p => p.Invoice.User).FromCacheAsync(QueryCacheTag.Invoice);
+                   .Include(p => p.Invoice).Include(p => p.Invoice.User).FromCacheAsync(CacheTags.Invoice);
 
                 foreach (var invoiceDetail in invoiceDetails)
                 {

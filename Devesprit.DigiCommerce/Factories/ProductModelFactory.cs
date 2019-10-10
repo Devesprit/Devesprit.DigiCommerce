@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -44,45 +45,68 @@ namespace Devesprit.DigiCommerce.Factories
             _httpContext = httpContext;
         }
 
-        public virtual ProductCardViewModel PrepareProductCardViewModel(TblProducts product, TblUsers currentUser, UrlHelper url)
-        {
-            var result = product.Adapt<ProductCardViewModel>();
-            var downloadsCount = _productService.GetNumberOfDownloads(product.Id);
-            var likesCount = _userLikesService.GetPostNumberOfLikes(product.Id);
-            result.NumberOfDownloads = downloadsCount;
-            result.NumberOfLikes = likesCount;
-            result.LastUpDate = product.LastUpDate ?? product.PublishDate;
-            result.MainImageUrl = product.Images?.OrderBy(p => p.DisplayOrder).FirstOrDefault()
-                                         ?.ImageUrl ?? "";
-            result.Categories = product.Categories
-                .Select(p => new PostCategoriesModel()
-                {
-                    Id = p.Id,
-                    CategoryName = p.GetLocalized(x => x.CategoryName),
-                    Slug = p.Slug,
-                    CategoryUrl = url.Action("FilterByCategory", "Product", new { slug = p.Slug })
-                })
-                .ToList();
-            var desc = product.Descriptions?.OrderBy(p => p.DisplayOrder).FirstOrDefault()?.GetLocalized(x => x.HtmlDescription) ?? "";
-            result.DescriptionTruncated = desc.ConvertHtmlToText().TruncateText(350);
-
-            result.LikeWishlistButtonsModel = new LikeWishlistButtonsModel()
-            {
-                PostId = product.Id,
-                AlreadyAddedToWishlist = _userWishlistService.UserAddedThisPostToWishlist(product.Id, currentUser?.Id),
-                AlreadyLiked = _userLikesService.UserLikedThisPost(product.Id, currentUser?.Id)
-            };
-
-            result.PostUrl = new Uri(url.Action("Index", "Product", new { slug = product.Slug }, _httpContext.Request.Url.Scheme)).ToString();
-            result.DownloadPurchaseButtonModel = PrepareProductDownloadPurchaseButtonModel(product, currentUser);
-            return result;
-        }
-
         public virtual IPagedList<ProductCardViewModel> PrepareProductCardViewModel(IPagedList<TblProducts> products, TblUsers currentUser, UrlHelper url)
         {
-            return new StaticPagedList<ProductCardViewModel>(products.Select(tblProducts =>
-                    PrepareProductCardViewModel(tblProducts, currentUser, url)), products.PageNumber,
-                products.PageSize, products.TotalItemCount); 
+            var numberOfLikes = _userLikesService.GetNumberOfLikes(products.Select(p => p.Id).ToArray());
+            var numberOfDownloads = _productService.GetNumberOfDownloads(products.Select(p => p.Id).ToArray());
+            var userAddedThisPostsToWishlist = _userWishlistService.UserAddedThisPostToWishlist(products.Select(p => p.Id).ToArray(), currentUser?.Id);
+            var userLikedThisPosts = _userLikesService.UserLikedThisPost(products.Select(p => p.Id).ToArray(), currentUser?.Id);
+            var userGroups = _userGroupsService.GetAsEnumerable().ToList();
+
+            var result = new List<ProductCardViewModel>();
+            foreach (var product in products)
+            {
+                var model = product.Adapt<ProductCardViewModel>();
+
+                model.LastUpDate = product.LastUpDate ?? product.PublishDate;
+                model.MainImageUrl = product.Images?.OrderBy(p => p.DisplayOrder).FirstOrDefault()
+                                          ?.ImageUrl ?? "";
+                model.Categories = product.Categories
+                    .Select(p => new PostCategoriesModel()
+                    {
+                        Id = p.Id,
+                        CategoryName = p.GetLocalized(x => x.CategoryName),
+                        Slug = p.Slug,
+                        CategoryUrl = url.Action("FilterByCategory", "Product", new { slug = p.Slug })
+                    })
+                    .ToList();
+                var desc = product.Descriptions?.OrderBy(p => p.DisplayOrder).FirstOrDefault()?.GetLocalized(x => x.HtmlDescription) ?? "";
+                model.DescriptionTruncated = desc.ConvertHtmlToText().TruncateText(350);
+
+                model.PostUrl = new Uri(url.Action("Index", "Product", new { slug = product.Slug }, _httpContext.Request.Url.Scheme)).ToString();
+
+                if (numberOfLikes.ContainsKey(model.Id))
+                    model.NumberOfLikes = numberOfLikes[model.Id];
+
+                if (numberOfDownloads.ContainsKey(model.Id))
+                    model.NumberOfDownloads = numberOfDownloads[model.Id];
+
+                var likeWishlistButtonsModel = new LikeWishlistButtonsModel()
+                {
+                    PostId = model.Id
+                };
+
+                if (userAddedThisPostsToWishlist.ContainsKey(model.Id))
+                    likeWishlistButtonsModel.AlreadyAddedToWishlist = userAddedThisPostsToWishlist[model.Id];
+                if (userLikedThisPosts.ContainsKey(model.Id))
+                    likeWishlistButtonsModel.AlreadyLiked = userLikedThisPosts[model.Id];
+
+                model.LikeWishlistButtonsModel = likeWishlistButtonsModel;
+
+                model.DownloadModel = new ProductCardDownloadModel
+                {
+                    ProductId = product.Id,
+                    DownloadLimitedToUserGroup = product.DownloadLimitedToUserGroupId != null ? userGroups.FirstOrDefault(p => p.Id == product.DownloadLimitedToUserGroupId.Value) : null,
+                    ShowPurchaseBtn = product.Price > 0 || !string.IsNullOrWhiteSpace(product.LicenseGeneratorServiceId),
+                    HigherUserGroupsCanDownload = product.HigherUserGroupsCanDownload,
+                    PriceForCurrentUser = product.Price
+                };
+
+                result.Add(model);
+            }
+
+            return new StaticPagedList<ProductCardViewModel>(result, products.PageNumber,
+                products.PageSize, products.TotalItemCount);
         }
 
         public virtual ProductModel PrepareProductModel(TblProducts product, TblUsers currentUser, UrlHelper url)
@@ -94,7 +118,7 @@ namespace Devesprit.DigiCommerce.Factories
             result.MetaKeyWords = product.GetLocalized(p => p.MetaKeyWords);
             
             var downloadsCount = _productService.GetNumberOfDownloads(product.Id);
-            var likesCount = _userLikesService.GetPostNumberOfLikes(product.Id);
+            var likesCount = _userLikesService.GetNumberOfLikes(product.Id);
             result.NumberOfDownloads = downloadsCount;
             result.NumberOfLikes = likesCount;
             result.LastUpdate = product.LastUpDate ?? product.PublishDate;
@@ -128,7 +152,7 @@ namespace Devesprit.DigiCommerce.Factories
                 AlreadyLiked = _userLikesService.UserLikedThisPost(product.Id, currentUser?.Id)
             };
 
-            result.DownloadPurchaseButtonModel = PrepareProductDownloadPurchaseButtonModel(product, currentUser);
+            result.DownloadModel = PrepareProductDownloadPurchaseButtonModel(product, currentUser);
 
             result.Images.Clear();
             foreach (var img in product.Images.OrderBy(p => p.DisplayOrder))
@@ -194,7 +218,7 @@ namespace Devesprit.DigiCommerce.Factories
             return result;
         }
 
-        public virtual ProductDownloadPurchaseButtonModel PrepareProductDownloadPurchaseButtonModel(TblProducts product, TblUsers currentUser)
+        public virtual ProductDownloadModel PrepareProductDownloadPurchaseButtonModel(TblProducts product, TblUsers currentUser)
         {
             var productCheckoutAttributes = AsyncHelper
                 .RunSync(() => _checkoutAttributesService.FindProductAttributesAsync(product.Id)).ToList();
@@ -206,7 +230,7 @@ namespace Devesprit.DigiCommerce.Factories
                     .RunSync(() => _userGroupsService.FindByIdAsync(product.DownloadLimitedToUserGroupId.Value));
             }
 
-            var result = new ProductDownloadPurchaseButtonModel
+            var result = new ProductDownloadModel
             {
                 ProductId = product.Id,
                 AlwaysShowDownloadButton = product.AlwaysShowDownloadButton,

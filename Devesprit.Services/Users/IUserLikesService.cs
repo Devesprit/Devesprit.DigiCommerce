@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Devesprit.Data.Domain;
 using Devesprit.Data.Enums;
@@ -14,6 +15,8 @@ namespace Devesprit.Services.Users
         Task AddAsync(TblUserLikes like);
         Task<bool> LikePostAsync(int postId, string userId, PostType? postType);
         bool UserLikedThisPost(int postId, string userId);
-        int GetPostNumberOfLikes(int postId);
+        Dictionary<int, bool> UserLikedThisPost(int[] postIds, string userId);
+        int GetNumberOfLikes(int postId);
+        Dictionary<int, int> GetNumberOfLikes(int[] postIds);
     }
 }

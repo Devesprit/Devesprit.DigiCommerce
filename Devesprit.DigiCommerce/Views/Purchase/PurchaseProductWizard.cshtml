@@ -88,7 +88,7 @@
                                 </div>
                             }
 
-                            @if (!string.IsNullOrWhiteSpace(Model.DownloadPurchaseButtonModel.DiscountForUserGroupsDescription))
+                            @if (!string.IsNullOrWhiteSpace(Model.DownloadModel.DiscountForUserGroupsDescription))
                             {
                                 <div class="alert alert-warning pad-10">
                                     <h6 class="alert-heading my-0">
@@ -97,7 +97,7 @@
                                     </h6>
                                     <hr class="my-1" />
                                     <small class="my-0">
-                                        @Html.Raw(Model.DownloadPurchaseButtonModel.DiscountForUserGroupsDescription)
+                                        @Html.Raw(Model.DownloadModel.DiscountForUserGroupsDescription)
                                     </small>
                                 </div>
                             }

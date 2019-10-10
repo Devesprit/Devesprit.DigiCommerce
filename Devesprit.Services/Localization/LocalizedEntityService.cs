@@ -34,14 +34,14 @@ namespace Devesprit.Services.Localization
         protected virtual List<TblLocalizedProperty> GetAllResourcesFromCache()
         {
             // Try get result from cache
-            if (_memoryCache.Contains(QueryCacheTag.LocalizedProperty))
+            if (_memoryCache.Contains(CacheTags.LocalizedProperty))
             {
-                return _memoryCache.GetObject<List<TblLocalizedProperty>>(QueryCacheTag.LocalizedProperty);
+                return _memoryCache.GetObject<List<TblLocalizedProperty>>(CacheTags.LocalizedProperty);
             }
 
-            var result = _dbContext.LocalizedProperty.FromCache(QueryCacheTag.LocalizedProperty).ToList();
+            var result = _dbContext.LocalizedProperty.FromCache(CacheTags.LocalizedProperty).ToList();
 
-            _memoryCache.AddObject(QueryCacheTag.LocalizedProperty, result, TimeSpan.FromDays(30));
+            _memoryCache.AddObject(CacheTags.LocalizedProperty, result, TimeSpan.FromDays(30));
             return result;
         }
 
@@ -77,7 +77,7 @@ namespace Devesprit.Services.Localization
             }
 
             return _dbContext.LocalizedProperty.DeferredFirstOrDefault(p => p.Id == localizedPropertyId)
-                .FromCache(QueryCacheTag.LocalizedProperty);
+                .FromCache(CacheTags.LocalizedProperty);
         }
 
         public virtual string GetLocalizedString(int languageId, int entityId, string localeKeyGroup, string localeKey)
@@ -94,7 +94,7 @@ namespace Devesprit.Services.Localization
                 tblLocalizedProperty = _dbContext.LocalizedProperty
                     .DeferredFirstOrDefault(p => p.LanguageId == languageId && p.EntityId == entityId &&
                                                  p.LocaleKeyGroup == localeKeyGroup && p.LocaleKey == localeKey)
-                    .FromCache(QueryCacheTag.LocalizedProperty);
+                    .FromCache(CacheTags.LocalizedProperty);
             }
 
             if (tblLocalizedProperty != null)
@@ -419,7 +419,7 @@ namespace Devesprit.Services.Localization
             return _dbContext.LocalizedProperty.OrderBy(p => p.Id)
                 .Where(p => p.EntityId == entityId &&
                             p.LocaleKeyGroup == localeKeyGroup)
-                .FromCache(QueryCacheTag.LocalizedProperty).ToList();
+                .FromCache(CacheTags.LocalizedProperty).ToList();
         }
 
         public virtual async Task<IList<TblLocalizedProperty>> GetLocalizedPropertiesAsync(int entityId, string localeKeyGroup)
@@ -436,7 +436,7 @@ namespace Devesprit.Services.Localization
             return (await _dbContext.LocalizedProperty.OrderBy(p => p.Id)
                 .Where(p => p.EntityId == entityId &&
                             p.LocaleKeyGroup == localeKeyGroup)
-                .FromCacheAsync(QueryCacheTag.LocalizedProperty)).ToList();
+                .FromCacheAsync(CacheTags.LocalizedProperty)).ToList();
         }
 
         public virtual IList<TblLocalizedProperty> GetLocalizedProperties(int entityId, string localeKeyGroup, string localKey)
@@ -456,7 +456,7 @@ namespace Devesprit.Services.Localization
                 .Where(p => p.EntityId == entityId &&
                             p.LocaleKeyGroup == localeKeyGroup &&
                             p.LocaleKey == localKey)
-                .FromCache(QueryCacheTag.LocalizedProperty).ToList();
+                .FromCache(CacheTags.LocalizedProperty).ToList();
         }
 
         public virtual async Task<IList<TblLocalizedProperty>> GetLocalizedPropertiesAsync(int entityId, string localeKeyGroup, string localKey)
@@ -476,16 +476,16 @@ namespace Devesprit.Services.Localization
                 .Where(p => p.EntityId == entityId &&
                             p.LocaleKeyGroup == localeKeyGroup &&
                             p.LocaleKey == localKey)
-                .FromCacheAsync(QueryCacheTag.LocalizedProperty)).ToList();
+                .FromCacheAsync(CacheTags.LocalizedProperty)).ToList();
         }
 
         public virtual void ClearCache()
         {
-            QueryCacheManager.ExpireTag(QueryCacheTag.LocalizedProperty);
+            QueryCacheManager.ExpireTag(CacheTags.LocalizedProperty);
 
             if (_useCache)
             {
-                _memoryCache.RemoveObject(QueryCacheTag.LocalizedProperty);
+                _memoryCache.RemoveObject(CacheTags.LocalizedProperty);
             }
         }
     }

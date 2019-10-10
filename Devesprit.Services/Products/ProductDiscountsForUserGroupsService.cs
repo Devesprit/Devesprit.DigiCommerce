@@ -26,7 +26,7 @@ namespace Devesprit.Services.Products
         {
             return await _dbContext.ProductDiscountsForUserGroups
                 .DeferredFirstOrDefault(p => p.Id == id)
-                .FromCacheAsync(QueryCacheTag.ProductDiscountForUserGroup);
+                .FromCacheAsync(CacheTags.ProductDiscountForUserGroup);
         }
 
         public virtual IQueryable<TblProductDiscountsForUserGroups> GetAsQueryable(int? filterByProductId)
@@ -45,15 +45,15 @@ namespace Devesprit.Services.Products
                 .Where(p => p.ProductId == productId)
                 .OrderByDescending(p => p.DiscountPercent)
                 .Include(p => p.UserGroup)
-                .FromCache(new []{QueryCacheTag.ProductDiscountForUserGroup,
-                    QueryCacheTag.UserGroup});
+                .FromCache(new []{CacheTags.ProductDiscountForUserGroup,
+                    CacheTags.UserGroup});
         }
 
         public virtual async Task DeleteAsync(int id)
         {
             var record = await FindByIdAsync(id);
             await _dbContext.ProductDiscountsForUserGroups.Where(p => p.Id == id).DeleteAsync();
-            QueryCacheManager.ExpireTag(QueryCacheTag.ProductDiscountForUserGroup);
+            QueryCacheManager.ExpireTag(CacheTags.ProductDiscountForUserGroup);
 
             _eventPublisher.EntityDeleted(record);
         }
@@ -63,7 +63,7 @@ namespace Devesprit.Services.Products
             var oldRecord = await FindByIdAsync(record.Id);
             _dbContext.ProductDiscountsForUserGroups.AddOrUpdate(record);
             await _dbContext.SaveChangesAsync();
-            QueryCacheManager.ExpireTag(QueryCacheTag.ProductDiscountForUserGroup);
+            QueryCacheManager.ExpireTag(CacheTags.ProductDiscountForUserGroup);
 
             _eventPublisher.EntityUpdated(record, oldRecord);
         }
@@ -72,7 +72,7 @@ namespace Devesprit.Services.Products
         {
             _dbContext.ProductDiscountsForUserGroups.Add(record);
             await _dbContext.SaveChangesAsync();
-            QueryCacheManager.ExpireTag(QueryCacheTag.ProductDiscountForUserGroup);
+            QueryCacheManager.ExpireTag(CacheTags.ProductDiscountForUserGroup);
 
             _eventPublisher.EntityInserted(record);
 

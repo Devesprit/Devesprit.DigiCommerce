@@ -11,6 +11,7 @@ using Devesprit.Data;
 using Devesprit.Data.Domain;
 using Devesprit.Data.Enums;
 using Devesprit.Services.Events;
+using Devesprit.Services.MemoryCache;
 using Devesprit.Services.SearchEngine;
 using Devesprit.Services.SEO;
 using Devesprit.Services.Users;
@@ -43,7 +44,7 @@ namespace Devesprit.Services.Posts
             _categoriesService = categoriesService;
             _eventPublisher = eventPublisher;
 
-            _cacheKey = nameof(T);
+            _cacheKey = typeof(T).Name;
         }
 
         public virtual IPagedList<T> GetItemsById(List<int> ids, int pageIndex = 1, int pageSize = int.MaxValue)
@@ -56,9 +57,9 @@ namespace Devesprit.Services.Posts
                 .Include(p => p.Images)
                 .Include(p => p.Categories)
                 .FromCache(_cacheKey,
-                    QueryCacheTag.PostCategory,
-                    QueryCacheTag.PostDescription,
-                    QueryCacheTag.PostImage);
+                    CacheTags.PostCategory,
+                    CacheTags.PostDescription,
+                    CacheTags.PostImage);
                 
             postsList = postsList.OrderBy(p => skippedIds.IndexOf(p.Id));
 
@@ -95,9 +96,9 @@ namespace Devesprit.Services.Posts
                     .Skip(pageSize * (pageIndex - 1))
                     .Take(pageSize)
                     .FromCache(_cacheKey,
-                        QueryCacheTag.PostCategory,
-                        QueryCacheTag.PostDescription,
-                        QueryCacheTag.PostImage),
+                        CacheTags.PostCategory,
+                        CacheTags.PostDescription,
+                        CacheTags.PostImage),
                 pageIndex,
                 pageSize,
                 query
@@ -124,10 +125,7 @@ namespace Devesprit.Services.Posts
                     PublishDate = p.PublishDate,
                     PostType = p.PostType
                 })
-                .FromCache(_cacheKey,
-                    QueryCacheTag.PostCategory,
-                    QueryCacheTag.PostDescription,
-                    QueryCacheTag.PostImage);
+                .FromCache(_cacheKey);
 
             return result.ToList();
         }
@@ -155,9 +153,9 @@ namespace Devesprit.Services.Posts
                     .Skip(pageSize * (pageIndex - 1))
                     .Take(pageSize)
                     .FromCache(_cacheKey,
-                        QueryCacheTag.PostCategory,
-                        QueryCacheTag.PostDescription,
-                        QueryCacheTag.PostImage),
+                        CacheTags.PostCategory,
+                        CacheTags.PostDescription,
+                        CacheTags.PostImage),
                 pageIndex,
                 pageSize,
                 query
@@ -193,9 +191,9 @@ namespace Devesprit.Services.Posts
                     .Skip(pageSize * (pageIndex - 1))
                     .Take(pageSize)
                     .FromCache(_cacheKey,
-                        QueryCacheTag.PostCategory,
-                        QueryCacheTag.PostDescription,
-                        QueryCacheTag.PostImage),
+                        CacheTags.PostCategory,
+                        CacheTags.PostDescription,
+                        CacheTags.PostImage),
                 pageIndex,
                 pageSize,
                 _dbContext.Set<T>()
@@ -231,9 +229,9 @@ namespace Devesprit.Services.Posts
                     .Skip(pageSize * (pageIndex - 1))
                     .Take(pageSize)
                     .FromCache(_cacheKey,
-                        QueryCacheTag.PostCategory,
-                        QueryCacheTag.PostDescription,
-                        QueryCacheTag.PostImage),
+                        CacheTags.PostCategory,
+                        CacheTags.PostDescription,
+                        CacheTags.PostImage),
                 pageIndex,
                 pageSize,
                 _dbContext.Set<T>()
@@ -256,11 +254,11 @@ namespace Devesprit.Services.Posts
                 .DeferredFirstOrDefault()
                 .FromCacheAsync(
                     _cacheKey,
-                    QueryCacheTag.PostCategory,
-                    QueryCacheTag.PostDescription,
-                    QueryCacheTag.PostImage,
-                    QueryCacheTag.PostAttribute,
-                    QueryCacheTag.PostTag);
+                    CacheTags.PostCategory,
+                    CacheTags.PostDescription,
+                    CacheTags.PostImage,
+                    CacheTags.PostAttribute,
+                    CacheTags.PostTag);
             return result;
         }
 
@@ -277,11 +275,11 @@ namespace Devesprit.Services.Posts
                 .DeferredFirstOrDefault()
                 .FromCacheAsync(
                     _cacheKey,
-                    QueryCacheTag.PostCategory,
-                    QueryCacheTag.PostDescription,
-                    QueryCacheTag.PostImage,
-                    QueryCacheTag.PostAttribute,
-                    QueryCacheTag.PostTag);
+                    CacheTags.PostCategory,
+                    CacheTags.PostDescription,
+                    CacheTags.PostImage,
+                    CacheTags.PostAttribute,
+                    CacheTags.PostTag);
             return result;
         }
 
@@ -302,6 +300,7 @@ namespace Devesprit.Services.Posts
             await _localizedEntityService.DeleteEntityAllLocalizedStringsAsync(typeof(T).Name, id);
 
             QueryCacheManager.ExpireTag(_cacheKey);
+            MethodCache.ExpireTag(_cacheKey);
 
             _eventPublisher.EntityDeleted(record);
         }
@@ -317,6 +316,7 @@ namespace Devesprit.Services.Posts
             await UpdatePostCategoriesAsync(record.Id, record.Categories?.Select(p => p.Id).ToList());
 
             QueryCacheManager.ExpireTag(_cacheKey);
+            MethodCache.ExpireTag(_cacheKey);
 
             _eventPublisher.EntityUpdated(record, oldRecord);
         }
@@ -336,6 +336,7 @@ namespace Devesprit.Services.Posts
             await UpdatePostCategoriesAsync(record.Id, postCategories);
 
             QueryCacheManager.ExpireTag(_cacheKey);
+            MethodCache.ExpireTag(_cacheKey);
 
             _eventPublisher.EntityInserted(record);
 
@@ -362,7 +363,7 @@ namespace Devesprit.Services.Posts
             {
                 post.Tags.Clear();
                 await _dbContext.SaveChangesAsync();
-                QueryCacheManager.ExpireTag(QueryCacheTag.PostTag);
+                QueryCacheManager.ExpireTag(CacheTags.PostTag);
                 return;
             }
 
@@ -382,7 +383,7 @@ namespace Devesprit.Services.Posts
             }
 
             await _dbContext.SaveChangesAsync();
-            QueryCacheManager.ExpireTag(QueryCacheTag.PostTag);
+            QueryCacheManager.ExpireTag(CacheTags.PostTag);
         }
 
         public virtual async Task UpdatePostCategoriesAsync(int postId, List<int> categoriesList)
@@ -398,7 +399,7 @@ namespace Devesprit.Services.Posts
             {
                 post.Categories.Clear();
                 await _dbContext.SaveChangesAsync();
-                QueryCacheManager.ExpireTag(QueryCacheTag.PostCategory);
+                QueryCacheManager.ExpireTag(CacheTags.PostCategory);
                 return;
             }
 
@@ -415,7 +416,7 @@ namespace Devesprit.Services.Posts
             }
 
             await _dbContext.SaveChangesAsync();
-            QueryCacheManager.ExpireTag(QueryCacheTag.PostCategory);
+            QueryCacheManager.ExpireTag(CacheTags.PostCategory);
         }
 
         public virtual void GetStatics(out int numberOfPosts, out int numberOfVisits, out DateTime lastUpdate)

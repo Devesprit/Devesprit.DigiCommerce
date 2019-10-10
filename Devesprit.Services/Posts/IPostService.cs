@@ -1,11 +1,10 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Autofac.Extras.DynamicProxy;
 using Devesprit.Data.Domain;
-using Devesprit.Data.Enums;
-using Devesprit.Services.SearchEngine;
+using Devesprit.Services.MemoryCache;
 using Devesprit.Services.SEO;
 using X.PagedList;
 

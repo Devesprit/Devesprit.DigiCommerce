@@ -32,7 +32,7 @@ namespace Devesprit.Services.Users
         {
             return await _dbContext.UserLikes
                 .DeferredFirstOrDefault(p => p.Id == id)
-                .FromCacheAsync(QueryCacheTag.UserLikes);
+                .FromCacheAsync(CacheTags.UserLikes);
         }
 
         public virtual async Task DeleteAsync(int id)
@@ -40,7 +40,7 @@ namespace Devesprit.Services.Users
             var record = await FindByIdAsync(id);
             await _dbContext.UserLikes.Where(p=> p.Id == id).DeleteAsync();
             
-            QueryCacheManager.ExpireTag(QueryCacheTag.UserLikes);
+            QueryCacheManager.ExpireTag(CacheTags.UserLikes);
 
             _eventPublisher.EntityDeleted(record);
         }
@@ -48,13 +48,13 @@ namespace Devesprit.Services.Users
         public virtual async Task DeletePostLikesAsync(int postId)
         {
             var records = (await _dbContext.UserLikes.Where(p => p.PostId == postId)
-                .FromCacheAsync(QueryCacheTag.UserLikes)).ToList();
+                .FromCacheAsync(CacheTags.UserLikes)).ToList();
             if (records.Any())
             {
                 var recordIds = records.Select(x => x.Id).ToList();
                 await _dbContext.UserLikes.Where(p => recordIds.Contains(p.Id)).DeleteAsync();
 
-                QueryCacheManager.ExpireTag(QueryCacheTag.UserLikes);
+                QueryCacheManager.ExpireTag(CacheTags.UserLikes);
 
                 records.ForEach(p => _eventPublisher.EntityDeleted(p));
             }
@@ -65,7 +65,7 @@ namespace Devesprit.Services.Users
             _dbContext.UserLikes.Add(like);
             await _dbContext.SaveChangesAsync();
 
-            QueryCacheManager.ExpireTag(QueryCacheTag.UserLikes);
+            QueryCacheManager.ExpireTag(CacheTags.UserLikes);
 
             _eventPublisher.EntityInserted(like);
         }
@@ -73,11 +73,11 @@ namespace Devesprit.Services.Users
         public virtual async Task<bool> LikePostAsync(int postId, string userId, PostType? postType)
         {
             var alreadyLiked = (await _dbContext.UserLikes.Where(p => p.PostId == postId && p.UserId == userId)
-                .FromCacheAsync(QueryCacheTag.UserLikes)).ToList();
+                .FromCacheAsync(CacheTags.UserLikes)).ToList();
             if (alreadyLiked.Any())
             {
                 await _dbContext.UserLikes.Where(p => p.PostId == postId && p.UserId == userId).DeleteAsync();
-                QueryCacheManager.ExpireTag(QueryCacheTag.UserLikes);
+                QueryCacheManager.ExpireTag(CacheTags.UserLikes);
 
                 alreadyLiked.ForEach(x => _eventPublisher.EntityDeleted(x));
 
@@ -95,15 +95,45 @@ namespace Devesprit.Services.Users
                 return false;
             }
 
-            return _dbContext.UserLikes.Where(p => p.UserId == userId).FromCache(QueryCacheTag.UserLikes)
+            return _dbContext.UserLikes.Where(p => p.UserId == userId).FromCache(CacheTags.UserLikes)
                 .Any(p => p.PostId == postId);
         }
 
-        public virtual int GetPostNumberOfLikes(int postId)
+        public virtual Dictionary<int, bool> UserLikedThisPost(int[] postIds, string userId)
+        {
+            if (string.IsNullOrWhiteSpace(userId))
+            {
+                return postIds.ToDictionary(p => p, p => false);
+            }
+
+            var records = _dbContext.UserLikes
+                .Where(p => postIds.Contains(p.PostId) && p.UserId == userId)
+                .FromCache(CacheTags.UserLikes)
+                .ToList();
+
+            return postIds.ToDictionary(postId => postId, postId => records.Any(p => p.PostId == postId));
+        }
+
+        public virtual int GetNumberOfLikes(int postId)
         {
             return GetAsQueryable()
                 .DeferredCount(p => p.PostId == postId)
                 .FromCache(DateTimeOffset.Now.AddHours(24));
+        }
+
+        public virtual Dictionary<int, int> GetNumberOfLikes(int[] postIds)
+        {
+            var res = GetAsQueryable()
+                .Where(p => postIds.Contains(p.PostId))
+                .GroupBy(p => p.PostId)
+                .Select(n => new
+                    {
+                        PostId = n.Key,
+                        LikeCount = n.Count()
+                    }
+                ).FromCache(DateTimeOffset.Now.AddHours(24));
+
+            return res.ToDictionary(p => p.PostId, p => p.LikeCount);
         }
     }
 }

@@ -2,12 +2,15 @@
 using System.Threading.Tasks;
 using System.Web.Mvc;
 using System.Web.UI;
+using Autofac.Extras.DynamicProxy;
 using Devesprit.Data.Domain;
 using Devesprit.DigiCommerce.Factories.Interfaces;
 using Devesprit.DigiCommerce.Models;
 using Devesprit.DigiCommerce.Models.Post;
 using Devesprit.DigiCommerce.Models.Products;
+using Devesprit.Services;
 using Devesprit.Services.Localization;
+using Devesprit.Services.MemoryCache;
 using Devesprit.Services.Posts;
 using Devesprit.Services.Products;
 using Microsoft.AspNet.Identity;
@@ -15,6 +18,7 @@ using X.PagedList;
 
 namespace Devesprit.DigiCommerce.Controllers
 {
+    [Intercept(typeof(MethodCache))]
     public partial class ProductController : BaseController
     {
         private readonly IProductService _productService;
@@ -34,6 +38,7 @@ namespace Devesprit.DigiCommerce.Controllers
         // GET: Product
         [Route("{lang}/Product/{slug}", Order = 0)]
         [Route("Product/{slug}", Order = 1)]
+        [MethodCache(Tags = new[] { nameof(TblProducts) }, VaryByCustom = "lang,user")]
         public virtual async Task<ActionResult> Index(string slug)
         {
             var currentUser = await UserManager.FindByIdAsync(HttpContext.User.Identity.GetUserId());
@@ -62,7 +67,7 @@ namespace Devesprit.DigiCommerce.Controllers
 
         [Route("{lang}/Products/{listType}", Order = 0)]
         [Route("Products/{listType}", Order = 1)]
-        [OutputCache(Duration = 60 * 10, Location = OutputCacheLocation.Server, VaryByParam = "*", VaryByCustom = "lang;user")]
+        [MethodCache(Tags = new[] { nameof(TblProducts) }, VaryByCustom = "lang,user")]
         public virtual ActionResult ProductsExplorer(ProductsListType listType, int? page, int? pageSize, int? catId, DateTime? fromDate)
         {
             return View(new ProductsExplorerModel()
@@ -76,6 +81,7 @@ namespace Devesprit.DigiCommerce.Controllers
         }
 
         [ChildActionOnly]
+        [MethodCache(Tags = new[] { nameof(TblProducts) }, VaryByCustom = "lang,user")]
         public virtual ActionResult GetProductsList(ProductsListType listType, int? page, int? pageSize, int? catId, DateTime? fromDate, ViewStyles? style, NumberOfCol? numberOfCol, bool? showPager)
         {
             var currentUser = UserManager.FindById(User.Identity.GetUserId());
@@ -119,7 +125,7 @@ namespace Devesprit.DigiCommerce.Controllers
 
         [Route("{lang}/Categories/{slug}", Order = 0)]
         [Route("Categories/{slug}", Order = 1)]
-        [OutputCache(Duration = 60 * 10, Location = OutputCacheLocation.Server, VaryByParam = "*", VaryByCustom = "lang;user")]
+        [MethodCache(Tags = new[] { nameof(TblProducts) }, VaryByCustom = "lang,user")]
         public virtual async Task<ActionResult> FilterByCategory(string slug, int? page, int? pageSize)
         {
             var category = await _categoriesService.FindBySlugAsync(slug);

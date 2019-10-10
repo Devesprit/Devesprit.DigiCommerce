@@ -11,7 +11,7 @@ namespace Plugin.DiscountCode
         public void Register(ContainerBuilder builder, ITypeFinder typeFinder)
         {
             builder.RegisterType<DiscountCodeAdminAreaMenu>().As<IAdminAreaPluginMenu>().InstancePerLifetimeScope();
-            builder.RegisterType<SliderDbContextCustomizer>().As<IDbContextCustomizer>().InstancePerLifetimeScope();
+            builder.RegisterType<DiscountCodeDbContextCustomizer>().As<IDbContextCustomizer>().InstancePerLifetimeScope();
             builder.RegisterType<DiscountCodeDbContext>().As<DiscountCodeDbContext>().InstancePerLifetimeScope();
         }
 

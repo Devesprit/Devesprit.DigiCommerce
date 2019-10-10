@@ -3,11 +3,15 @@ using System.Threading;
 using System.Web.Mvc;
 using System.Web.Routing;
 using System.Web.UI;
+using Autofac.Extras.DynamicProxy;
+using Devesprit.Data.Domain;
 using Devesprit.DigiCommerce.Controllers.Event;
+using Devesprit.Services.MemoryCache;
 using JetBrains.Annotations;
 
 namespace Devesprit.DigiCommerce.Controllers
 {
+    [Intercept(typeof(MethodCache))]
     public partial class ErrorController : BaseController
     {
         protected override void Execute(RequestContext requestContext)
@@ -18,7 +22,7 @@ namespace Devesprit.DigiCommerce.Controllers
             base.Execute(requestContext);
         }
 
-        [OutputCache(Duration = 60 * 60, Location = OutputCacheLocation.Server, VaryByParam = "*", VaryByCustom = "lang")]
+        [MethodCache(VaryByCustom = "lang")]
         public virtual ActionResult PageNotFound([CanBeNull] string errorCode)
         {
             if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
@@ -31,7 +35,7 @@ namespace Devesprit.DigiCommerce.Controllers
             return View("PageNotFound");
         }
 
-        [OutputCache(Duration = 60 * 60, Location = OutputCacheLocation.Server, VaryByParam = "*", VaryByCustom = "lang")]
+        [MethodCache(VaryByCustom = "lang")]
         public virtual ActionResult Index([CanBeNull] string errorCode)
         {
             if (User != null && User.Identity.IsAuthenticated && User.IsInRole("Admin"))

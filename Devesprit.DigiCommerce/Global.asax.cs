@@ -11,10 +11,13 @@ using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
 using Autofac;
+using Autofac.Extras.DynamicProxy;
 using Autofac.Integration.Mvc;
 using Devesprit.Core;
 using Devesprit.Core.Localization;
 using Devesprit.Core.Plugin;
+using Devesprit.DigiCommerce.Controllers;
+using Devesprit.Services.MemoryCache;
 using Devesprit.WebFramework;
 using Devesprit.WebFramework.ModelBinder;
 using Elmah;
@@ -41,6 +44,8 @@ namespace Devesprit.DigiCommerce
                 Directory.CreateDirectory(Server.MapPath("Plugins"));
             }
 
+            MethodCache.GetVaryByCustom += MethodCacheGetVaryByCustom;
+
             ConfigAutofac();
             ConfigMapster();
             AreaRegistration.RegisterAllAreas();
@@ -58,6 +63,30 @@ namespace Devesprit.DigiCommerce
 
             //disable "X-AspNetMvc-Version" header name
             MvcHandler.DisableMvcResponseHeader = true;
+        }
+
+        private string MethodCacheGetVaryByCustom(string str)
+        {
+            if (str.Trim().ToLower() == "lang")
+            {
+                return Thread.CurrentThread.CurrentUICulture.Name;
+            }
+
+            if (str.Trim().ToLower() == "user")
+            {
+                var context = HttpContext.Current;
+                if (context != null)
+                {
+                    if (context.User?.Identity?.IsAuthenticated == true)
+                    {
+                        return context.User.Identity.GetUserId();
+                    }
+                }
+
+                return "none-unknown";
+            }
+
+            return str;
         }
 
         protected void Application_BeginRequest(object sender, EventArgs e)
@@ -119,10 +148,6 @@ namespace Devesprit.DigiCommerce
             var typeFinder = new TypeFinder();
             var assemblies = typeFinder.GetAssemblies().ToArray();
 
-            // Register your MVC controllers. (MvcApplication is the name of
-            // the class in Global.asax.)
-            builder.RegisterControllers(assemblies);
-
             // OPTIONAL: Register model binders that require DI.
             builder.RegisterModelBinders(assemblies);
             builder.RegisterModelBinderProvider();
@@ -137,6 +162,9 @@ namespace Devesprit.DigiCommerce
 
             // OPTIONAL: Enable property injection into action filters.
             builder.RegisterFilterProvider();
+
+            // Register your MVC controllers.
+            builder.RegisterControllers(assemblies).EnableClassInterceptors();
 
             //Register All Other Services
             //dependencies
@@ -159,7 +187,7 @@ namespace Devesprit.DigiCommerce
             drInstances = drInstances.AsQueryable().OrderBy(t => t.Order).ToList();
             foreach (var dependencyRegistrar in drInstances)
                 dependencyRegistrar.Register(builder, typeFinder);
-
+            
             var container = builder.Build();
             
             // Set the dependency resolver to be Autofac.
@@ -186,46 +214,6 @@ namespace Devesprit.DigiCommerce
                 .MapWith(src => new LocalizedString(src));
 
             TypeAdapterConfig.GlobalSettings.Compile();
-        }
-
-        public override string GetVaryByCustomString(HttpContext context, string value)
-        {
-            if(string.IsNullOrWhiteSpace(value))
-                return base.GetVaryByCustomString(context, value);
-
-            var paramsList = value.Split(new[] {";"}, StringSplitOptions.RemoveEmptyEntries)
-                .Select(p => p.Trim().ToLower()).ToList();
-            var result = string.Empty;
-            if (paramsList.Contains("lang"))
-            {
-                result += Thread.CurrentThread.CurrentUICulture.Name + ";";
-            }
-            if (paramsList.Contains("user"))
-            {
-                if (context.User?.Identity?.IsAuthenticated == true)
-                {
-                    if (context.User.IsInRole("Admin"))
-                    {
-                        //Cache disabled for Admin user
-                        result += DateTime.Now.ToString("F") + ";";
-                    }
-                    else
-                    {
-                        result += context.User.Identity.GetUserId() + ";";
-                    }
-                }
-                else
-                {
-                    result += "none;";
-                }
-            }
-
-            if (!string.IsNullOrEmpty(result))
-            {
-                return result;
-            }
-
-            return base.GetVaryByCustomString(context, value);
         }
     }
 }

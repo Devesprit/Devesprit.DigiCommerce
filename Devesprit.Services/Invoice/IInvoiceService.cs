@@ -11,7 +11,7 @@ namespace Devesprit.Services.Invoice
     {
         #region CURD
 
-        Task<TblInvoices> FindByIdAsync(Guid id);
+        Task<TblInvoices> FindByIdAsync(Guid id, bool checkUserAccess = true);
         Task<Guid> AddAsync(TblInvoices record);
         Task DeleteAsync(Guid id);
         IQueryable<TblInvoices> GetAsQueryable();

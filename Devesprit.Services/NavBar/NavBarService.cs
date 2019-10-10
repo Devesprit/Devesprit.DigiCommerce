@@ -36,7 +36,7 @@ namespace Devesprit.Services.NavBar
         {
             var result = await _dbContext.NavBarItems
                 .DeferredFirstOrDefault(p => p.Id == id)
-                .FromCacheAsync(QueryCacheTag.NavbarItem);
+                .FromCacheAsync(CacheTags.NavbarItem);
             return result;
         }
 
@@ -52,7 +52,7 @@ namespace Devesprit.Services.NavBar
                 Index = p.Index - 1
             });
 
-            QueryCacheManager.ExpireTag(QueryCacheTag.NavbarItem);
+            QueryCacheManager.ExpireTag(CacheTags.NavbarItem);
 
             _eventPublisher.EntityDeleted(record);
         }
@@ -68,7 +68,7 @@ namespace Devesprit.Services.NavBar
 
             _dbContext.NavBarItems.AddOrUpdate(record);
             await _dbContext.SaveChangesAsync();
-            QueryCacheManager.ExpireTag(QueryCacheTag.NavbarItem);
+            QueryCacheManager.ExpireTag(CacheTags.NavbarItem);
 
             _eventPublisher.EntityUpdated(record, oldRecord);
         }
@@ -91,7 +91,7 @@ namespace Devesprit.Services.NavBar
             _dbContext.NavBarItems.Add(record);
             await _dbContext.SaveChangesAsync();
 
-            QueryCacheManager.ExpireTag(QueryCacheTag.NavbarItem);
+            QueryCacheManager.ExpireTag(CacheTags.NavbarItem);
 
             _eventPublisher.EntityInserted(record);
         }
@@ -99,13 +99,13 @@ namespace Devesprit.Services.NavBar
         public virtual async Task<IEnumerable<TblNavBarItems>> GetAsEnumerableAsync()
         {
             var result = await GetAsQueryable()
-                .FromCacheAsync(QueryCacheTag.NavbarItem);
+                .FromCacheAsync(CacheTags.NavbarItem);
             return result;
         }
 
         public virtual IEnumerable<TblNavBarItems> GetAsEnumerable()
         {
-            var result = GetAsQueryable().FromCache(QueryCacheTag.NavbarItem);
+            var result = GetAsQueryable().FromCache(CacheTags.NavbarItem);
             return result;
         }
 
@@ -124,7 +124,7 @@ namespace Devesprit.Services.NavBar
                 ParentItemId = newParentId
             });
 
-            QueryCacheManager.ExpireTag(QueryCacheTag.NavbarItem);
+            QueryCacheManager.ExpireTag(CacheTags.NavbarItem);
 
             _eventPublisher.Publish(new NavbarItemsIndexChangeEvent(itemsOrder, id, newParentId));
         }

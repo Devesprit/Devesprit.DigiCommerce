@@ -306,6 +306,12 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Models
         [DisplayNameLocalized("CacheLocalizedEntities")]
         public bool CacheLocalizedEntities { get; set; }
 
+        [DisplayNameLocalized("DisableMemoryCache")]
+        public bool DisableMemoryCache { get; set; }
+
+        [DisplayNameLocalized("DisableSQLQueryCache")]
+        public bool DisableSqlQueryCache { get; set; }
+
         public List<ThemeConfiguration> ListOfInstalledThemes
         {
             get

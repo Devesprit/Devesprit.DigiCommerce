@@ -80,6 +80,8 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
                     objAppSettings.Settings["EncryptionKey"].Value = model.EncryptionKey;
                     objAppSettings.Settings["EncryptionSalt"].Value = model.EncryptionSalt;
                     objAppSettings.Settings["CacheLocalizedEntities"].Value = model.CacheLocalizedEntities.ToString("true", "false");
+                    objAppSettings.Settings["DisableMemoryCache"].Value = model.DisableMemoryCache.ToString("true", "false");
+                    objAppSettings.Settings["DisableSqlQueryCache"].Value = model.DisableSqlQueryCache.ToString("true", "false");
                     objConfig.Save();
                 }
             }

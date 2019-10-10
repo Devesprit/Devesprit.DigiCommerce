@@ -29,7 +29,7 @@ namespace Devesprit.Services.Posts
         {
             return await _dbContext.PostDescriptions
                 .DeferredFirstOrDefault(p => p.Id == id)
-                .FromCacheAsync(QueryCacheTag.PostDescription);
+                .FromCacheAsync(CacheTags.PostDescription);
         }
 
         public virtual IQueryable<TblPostDescriptions> GetAsQueryable(int? filterByPostId)
@@ -50,7 +50,7 @@ namespace Devesprit.Services.Posts
 
             await _localizedEntityService.DeleteEntityAllLocalizedStringsAsync(typeof(TblPostDescriptions).Name, id);
 
-            QueryCacheManager.ExpireTag(QueryCacheTag.PostDescription);
+            QueryCacheManager.ExpireTag(CacheTags.PostDescription);
         }
 
         public virtual async Task UpdateAsync(TblPostDescriptions record)
@@ -58,7 +58,7 @@ namespace Devesprit.Services.Posts
             var oldRecord = await FindByIdAsync(record.Id);
             _dbContext.PostDescriptions.AddOrUpdate(record);
             await _dbContext.SaveChangesAsync();
-            QueryCacheManager.ExpireTag(QueryCacheTag.PostDescription);
+            QueryCacheManager.ExpireTag(CacheTags.PostDescription);
 
             _eventPublisher.EntityUpdated(record, oldRecord);
         }
@@ -67,7 +67,7 @@ namespace Devesprit.Services.Posts
         {
             _dbContext.PostDescriptions.Add(record);
             await _dbContext.SaveChangesAsync();
-            QueryCacheManager.ExpireTag(QueryCacheTag.PostDescription);
+            QueryCacheManager.ExpireTag(CacheTags.PostDescription);
 
             _eventPublisher.EntityInserted(record);
 

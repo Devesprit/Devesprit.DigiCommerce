@@ -32,14 +32,14 @@ namespace Devesprit.Services.SocialAccounts
 
         public virtual IEnumerable<TblSocialAccounts> GetAsEnumerable()
         {
-            return _dbContext.SocialAccounts.FromCache(QueryCacheTag.SocialAccounts);
+            return _dbContext.SocialAccounts.FromCache(CacheTags.SocialAccounts);
         }
 
         public virtual async Task<TblSocialAccounts> FindByIdAsync(int id)
         {
             var result = await _dbContext.SocialAccounts
                 .DeferredFirstOrDefault(p => p.Id == id)
-                .FromCacheAsync(QueryCacheTag.SocialAccounts);
+                .FromCacheAsync(CacheTags.SocialAccounts);
             return result;
         }
 
@@ -48,7 +48,7 @@ namespace Devesprit.Services.SocialAccounts
             var record = await FindByIdAsync(id);
             await _dbContext.SocialAccounts.Where(p => p.Id == id).DeleteAsync();
             await _localizedEntityService.DeleteEntityAllLocalizedStringsAsync(typeof(TblSocialAccounts).Name, id);
-            QueryCacheManager.ExpireTag(QueryCacheTag.SocialAccounts);
+            QueryCacheManager.ExpireTag(CacheTags.SocialAccounts);
 
             _eventPublisher.EntityDeleted(record);
         }
@@ -58,7 +58,7 @@ namespace Devesprit.Services.SocialAccounts
             var oldRecord = await FindByIdAsync(record.Id);
             _dbContext.SocialAccounts.AddOrUpdate(record);
             await _dbContext.SaveChangesAsync();
-            QueryCacheManager.ExpireTag(QueryCacheTag.SocialAccounts);
+            QueryCacheManager.ExpireTag(CacheTags.SocialAccounts);
 
             _eventPublisher.EntityUpdated(record, oldRecord);
         }
@@ -67,7 +67,7 @@ namespace Devesprit.Services.SocialAccounts
         {
             _dbContext.SocialAccounts.Add(record);
             await _dbContext.SaveChangesAsync();
-            QueryCacheManager.ExpireTag(QueryCacheTag.SocialAccounts);
+            QueryCacheManager.ExpireTag(CacheTags.SocialAccounts);
 
             _eventPublisher.EntityInserted(record);
 

@@ -185,11 +185,11 @@ function randomPassword(length) {
 }
 
 function UpdateNumberOfItemsInShoppingCard() {
-    var label = $('#lblNumberOfItemsInShappingCart');
+    var label = $('#lblNumberOfItemsInShoppingCart');
     if (label.length) {
         $.ajax({
             type: "GET",
-            url: '/Invoice/GetCurrentInvoiceItemsCount',
+            url: '/Invoice/GetUserShoppingCartItemsCount',
             error: function (xhr, status, error) {
                 $(label).text('0');
             },

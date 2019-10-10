@@ -2,11 +2,14 @@
 using System.Threading.Tasks;
 using System.Web.Mvc;
 using System.Web.UI;
+using Autofac.Extras.DynamicProxy;
 using Devesprit.Data.Domain;
 using Devesprit.Data.Enums;
 using Devesprit.DigiCommerce.Factories.Interfaces;
 using Devesprit.DigiCommerce.Models;
 using Devesprit.DigiCommerce.Models.Search;
+using Devesprit.Services;
+using Devesprit.Services.MemoryCache;
 using Devesprit.Services.Posts;
 using Devesprit.Services.SearchEngine;
 using Elmah;
@@ -14,6 +17,7 @@ using Microsoft.AspNet.Identity;
 
 namespace Devesprit.DigiCommerce.Controllers
 {
+    [Intercept(typeof(MethodCache))]
     public partial class SearchController : BaseController
     {
         private readonly IPostService<TblPosts> _postService;
@@ -32,7 +36,7 @@ namespace Devesprit.DigiCommerce.Controllers
 
         [Route("{lang}/Search", Order = 0)]
         [Route("Search", Order = 1)]
-        [OutputCache(Duration = 60 * 60, Location = OutputCacheLocation.Server, VaryByParam = "*", VaryByCustom = "lang;user")]
+        [MethodCache(Tags = new[] { CacheTags.Search }, VaryByCustom = "lang")]
         public virtual async Task<ActionResult> Index(SearchTermModel model)
         {
             if (model.Query.IsNullOrWhiteSpace())
@@ -87,7 +91,7 @@ namespace Devesprit.DigiCommerce.Controllers
 
         [Route("{lang}/Tags/{tag}", Order = 0)]
         [Route("Tags/{tag}", Order = 1)]
-        [OutputCache(Duration = 60 * 60, Location = OutputCacheLocation.Server, VaryByParam = "*", VaryByCustom = "lang;user")]
+        [MethodCache(Tags = new[] { CacheTags.Search }, VaryByCustom = "lang")]
         public virtual async Task<ActionResult> Tag(string tag, int? page)
         {
             if (tag.IsNullOrWhiteSpace())
@@ -126,7 +130,7 @@ namespace Devesprit.DigiCommerce.Controllers
 
         [Route("{lang}/Keywords/{keyword}", Order = 0)]
         [Route("Keywords/{keyword}", Order = 1)]
-        [OutputCache(Duration = 60 * 60, Location = OutputCacheLocation.Server, VaryByParam = "*", VaryByCustom = "lang;user")]
+        [MethodCache(Tags = new[] { CacheTags.Search }, VaryByCustom = "lang")]
         public virtual async Task<ActionResult> Keyword(string keyword, int? page)
         {
             if (keyword.IsNullOrWhiteSpace())
@@ -163,7 +167,7 @@ namespace Devesprit.DigiCommerce.Controllers
             return View("Index", viewModel);
         }
 
-        [OutputCache(VaryByParam = "*", Duration = 60 * 60 * 24, VaryByCustom = "lang")]
+        [MethodCache(Tags = new[] { CacheTags.Search }, VaryByCustom = "lang")]
         public virtual ActionResult MoreLikeThis(int postId, PostType postType, int? numberOfSimilarityPosts)
         {
             var result = _searchEngine.MoreLikeThis(postId, null, 0, postType,
@@ -182,7 +186,7 @@ namespace Devesprit.DigiCommerce.Controllers
             return PartialView("Partials/_MoreLikeThis", _postModelFactory.PreparePostCardViewModel(posts, currentUser, Url));
         }
 
-        [OutputCache(VaryByParam = "*", Duration = 60 * 60 * 24, VaryByCustom = "lang")]
+        [MethodCache(Tags = new[] { CacheTags.Search }, VaryByCustom = "lang")]
         public virtual async Task<JsonResult> SearchSuggestion(string query)
         {
             var result = await _searchEngine.AutoCompleteAsync(query, 0, 20);

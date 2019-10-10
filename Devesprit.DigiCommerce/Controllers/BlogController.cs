@@ -1,19 +1,21 @@
 ﻿using System;
 using System.Threading.Tasks;
 using System.Web.Mvc;
-using System.Web.UI;
+using Autofac.Extras.DynamicProxy;
 using Devesprit.Data.Domain;
 using Devesprit.DigiCommerce.Factories.Interfaces;
 using Devesprit.DigiCommerce.Models;
 using Devesprit.DigiCommerce.Models.Post;
 using Devesprit.Services.Blog;
 using Devesprit.Services.Localization;
+using Devesprit.Services.MemoryCache;
 using Devesprit.Services.Posts;
 using Microsoft.AspNet.Identity;
 using X.PagedList;
 
 namespace Devesprit.DigiCommerce.Controllers
 {
+    [Intercept(typeof(MethodCache))]
     public partial class BlogController : BaseController
     {
         private readonly IBlogPostService _blogPostService;
@@ -30,6 +32,7 @@ namespace Devesprit.DigiCommerce.Controllers
             _categoriesService = categoriesService;
         }
 
+        [MethodCache(Tags = new[] { nameof(TblBlogPosts) }, VaryByCustom = "lang")]
         public virtual ActionResult Index()
         {
             return View();
@@ -37,6 +40,7 @@ namespace Devesprit.DigiCommerce.Controllers
 
         [Route("{lang}/Blog/Post/{slug}", Order = 0)]
         [Route("Blog/Post/{slug}", Order = 1)]
+        [MethodCache(Tags = new[] { nameof(TblBlogPosts) }, VaryByCustom = "lang,user")]
         public virtual async Task<ActionResult> Post(string slug)
         {
             if (!CurrentSettings.EnableBlog)
@@ -70,7 +74,7 @@ namespace Devesprit.DigiCommerce.Controllers
 
         [Route("{lang}/Blog/{listType}", Order = 0)]
         [Route("Blog/{listType}", Order = 1)]
-        [OutputCache(Duration = 60 * 10, Location = OutputCacheLocation.Server, VaryByParam = "*", VaryByCustom = "lang;user")]
+        [MethodCache(Tags = new[] { nameof(TblBlogPosts) }, VaryByCustom = "lang")]
         public virtual ActionResult BlogExplorer(PostsListType listType, int? page, int? pageSize, int? catId, DateTime? fromDate)
         {
             if (!CurrentSettings.EnableBlog)
@@ -89,6 +93,7 @@ namespace Devesprit.DigiCommerce.Controllers
         }
 
         [ChildActionOnly]
+        [MethodCache(Tags = new[] { nameof(TblBlogPosts) }, VaryByCustom = "lang")]
         public virtual ActionResult GetBlogPostsList(PostsListType listType, int? page, int? pageSize, int? catId, DateTime? fromDate, ViewStyles? style, NumberOfCol? numberOfCol, bool? showPager)
         {
             if (!CurrentSettings.EnableBlog)
@@ -131,7 +136,7 @@ namespace Devesprit.DigiCommerce.Controllers
 
         [Route("{lang}/BlogCategories/{slug}", Order = 0)]
         [Route("BlogCategories/{slug}", Order = 1)]
-        [OutputCache(Duration = 60 * 10, Location = OutputCacheLocation.Server, VaryByParam = "*", VaryByCustom = "lang;user")]
+        [MethodCache(Tags = new[] { nameof(TblBlogPosts) }, VaryByCustom = "lang")]
         public virtual async Task<ActionResult> FilterByCategory(string slug, int? page, int? pageSize)
         {
             if (!CurrentSettings.EnableBlog)

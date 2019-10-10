@@ -31,6 +31,11 @@ namespace Devesprit.Services.MemoryCache
             return (T)Cache.Get(RegionKey(key, subKey));
         }
 
+        public object GetObject(string key, string subKey = null)
+        {
+            return Cache.Get(RegionKey(key, subKey));
+        }
+
         public virtual T GetObjectOrDefault<T>(string key, T defaultValue, string subKey = null)
         {
             if (Cache.Contains(RegionKey(key, subKey)))
@@ -62,6 +67,22 @@ namespace Devesprit.Services.MemoryCache
             else
             {
                 Cache.Remove(RegionKey(key, subKey));
+            }
+        }
+
+        public virtual void RemoveAllObjectsStartWithKey(string key)
+        {
+            foreach (var cachetKey in Cache.GetAllKeys().Where(p => p.StartsWith(key)))
+            {
+                Cache.Remove(cachetKey);
+            }
+        }
+
+        public virtual void RemoveAllObjectsContainKey(string key)
+        {
+            foreach (var cachetKey in Cache.GetAllKeys().Where(p => p.Contains(key)))
+            {
+                Cache.Remove(cachetKey);
             }
         }
 

@@ -32,7 +32,7 @@ namespace Devesprit.Services.Currency
         public virtual IEnumerable<TblCurrencies> GetAsEnumerable()
         {
             return _dbContext.Currencies.Where(p => p.Published).OrderBy(p => p.DisplayOrder)
-                .FromCache(QueryCacheTag.Currency);
+                .FromCache(CacheTags.Currency);
         }
 
         public virtual IQueryable<TblCurrencies> GetAsQueryable()
@@ -43,7 +43,7 @@ namespace Devesprit.Services.Currency
         public virtual async Task<IEnumerable<TblCurrencies>> GetAsEnumerableAsync()
         {
             var result = await _dbContext.Currencies.Where(p => p.Published).OrderBy(p => p.DisplayOrder)
-                .FromCacheAsync(QueryCacheTag.Currency);
+                .FromCacheAsync(CacheTags.Currency);
             return result;
         }
 
@@ -58,16 +58,16 @@ namespace Devesprit.Services.Currency
         {
             return _dbContext.Currencies
                        .DeferredFirstOrDefault(p => p.IsMainCurrency && p.Published)
-                       .FromCache(QueryCacheTag.Currency) ??
+                       .FromCache(CacheTags.Currency) ??
                    _dbContext.Currencies
-                       .DeferredFirstOrDefault(p => p.Published).FromCache(QueryCacheTag.Currency);
+                       .DeferredFirstOrDefault(p => p.Published).FromCache(CacheTags.Currency);
         }
 
         public virtual async Task<TblCurrencies> FindByIdAsync(int id)
         {
             var result = await _dbContext.Currencies
                 .DeferredFirstOrDefault(p => p.Id == id)
-                .FromCacheAsync(QueryCacheTag.Currency);
+                .FromCacheAsync(CacheTags.Currency);
             return result;
         }
 
@@ -75,13 +75,13 @@ namespace Devesprit.Services.Currency
         {
             return _dbContext.Currencies
                 .DeferredFirstOrDefault(p => p.IsoCode.Trim().ToLower() == iso.Trim().ToLower())
-                .FromCache(QueryCacheTag.Currency);
+                .FromCache(CacheTags.Currency);
         }
 
         public virtual List<string> GetAllCurrenciesIsoList()
         {
             return _dbContext.Currencies.Where(p => p.Published).Select(p => p.IsoCode.ToLower().Trim())
-                .FromCache(QueryCacheTag.Currency).ToList();
+                .FromCache(CacheTags.Currency).ToList();
         }
 
         public virtual async Task DeleteAsync(int id)
@@ -94,7 +94,7 @@ namespace Devesprit.Services.Currency
 
             await _dbContext.Currencies.Where(p=> p.Id == id).DeleteAsync();
             await _localizedEntityService.DeleteEntityAllLocalizedStringsAsync(record);
-            QueryCacheManager.ExpireTag(QueryCacheTag.Currency);
+            QueryCacheManager.ExpireTag(CacheTags.Currency);
 
             _eventPublisher.EntityDeleted(record);
         }
@@ -103,7 +103,7 @@ namespace Devesprit.Services.Currency
         {
             if (await _dbContext.Languages
                 .DeferredAny(p => p.IsoCode.Trim() == record.IsoCode.Trim() && p.Id != record.Id)
-                .FromCacheAsync(QueryCacheTag.Currency))
+                .FromCacheAsync(CacheTags.Currency))
             {
                 throw new Exception($"The \"{record.IsoCode}\" ISO code already exist.");
             }
@@ -120,7 +120,7 @@ namespace Devesprit.Services.Currency
                 _dbContext.Currencies.AddOrUpdate(record);
                 await _dbContext.SaveChangesAsync();
 
-                QueryCacheManager.ExpireTag(QueryCacheTag.Currency);
+                QueryCacheManager.ExpireTag(CacheTags.Currency);
 
                 _eventPublisher.EntityUpdated(record, oldRecord);
             }
@@ -129,14 +129,14 @@ namespace Devesprit.Services.Currency
         public virtual async Task<int> AddAsync(TblCurrencies record)
         {
             if (await _dbContext.Languages.DeferredAny(p => p.IsoCode.Trim() == record.IsoCode.Trim())
-                .FromCacheAsync(QueryCacheTag.Currency))
+                .FromCacheAsync(CacheTags.Currency))
             {
                 throw new Exception($"The \"{record.IsoCode}\" ISO code already exist.");
             }
 
             _dbContext.Currencies.Add(record);
             await _dbContext.SaveChangesAsync();
-            QueryCacheManager.ExpireTag(QueryCacheTag.Currency);
+            QueryCacheManager.ExpireTag(CacheTags.Currency);
 
             _eventPublisher.EntityInserted(record);
 
@@ -160,7 +160,7 @@ namespace Devesprit.Services.Currency
             await _dbContext.Currencies.Where(p => p.Id == id)
                 .UpdateAsync(p => new TblCurrencies() { IsMainCurrency = true });
 
-            QueryCacheManager.ExpireTag(QueryCacheTag.Currency);
+            QueryCacheManager.ExpireTag(CacheTags.Currency);
 
             _eventPublisher.Publish(new DefaultCurrencyChangeEvent(record));
         }

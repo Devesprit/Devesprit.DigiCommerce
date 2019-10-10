@@ -37,7 +37,7 @@ namespace Devesprit.DigiCommerce.Models.Products
         public bool HigherUserGroupsCanDownload { get; set; }
         public bool AlwaysShowDownloadButton { get; set; }
         public bool CurrentUserHasAlreadyPurchasedThisProduct { get; set; }
-        public ProductDownloadPurchaseButtonModel DownloadPurchaseButtonModel { get; set; }
+        public ProductDownloadModel DownloadModel { get; set; }
         public List<TblProductCheckoutAttributes> CheckoutAttributes { get; set; } =
             new List<TblProductCheckoutAttributes>();
 

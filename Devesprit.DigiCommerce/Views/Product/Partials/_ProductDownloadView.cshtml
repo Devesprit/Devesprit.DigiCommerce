@@ -1,0 +1,98 @@
+﻿
+@using Devesprit.DigiCommerce.Models
+@using Devesprit.Services.Currency
+@using Devesprit.Services.Localization
+@model Devesprit.DigiCommerce.Models.Products.ProductDownloadModel
+
+@{
+    Layout = null;
+}
+
+@helper PurchaseBtnInnerHtml()
+{
+    var discounts = Model.DiscountForUserGroupsDescription;
+    if (Model.CurrentUserHasAlreadyPurchasedThisProduct)
+    {
+        <small>@Html.Raw(T("BuyAgainUpgrade"))</small>
+    }
+    else
+    {
+        <small>@Html.Raw(T("PurchaseNow"))</small>
+        <br />
+        <b>@Model.PriceForCurrentUser.ExchangeCurrencyStr()</b>
+        if (!string.IsNullOrWhiteSpace(discounts))
+        {
+            <hr />
+            <p class="fs-14 line-height-1-3">
+                @Html.Raw(discounts)
+            </p>
+        }
+    }
+}
+
+@helper UpgradeUserAccountBtnInnerHtml()
+{
+    if (Model.DownloadLimitedToUserGroup != null)
+    {
+        <img src="@Model.DownloadLimitedToUserGroup.GetLocalized(p => p.GroupLargeIcon)" class="d-block mx-auto b-mar-5 mw-100" />
+        @Html.Raw(T("SubscribeToPlan",
+            "<span style='color: "+Model.DownloadLimitedToUserGroup.GetLocalized(p => p.GroupTextColor)+" !important;'> "+
+            Model.DownloadLimitedToUserGroup.GetLocalized(p => p.GroupName)+ "</span>"))
+        <hr class="my-1" />
+        <small>
+            @Html.Raw(string.Format(Model.HigherUserGroupsCanDownload ?
+                T("ForDownloadSubscribeToPlanOrHigher").ToString()
+                : T("ForDownloadSubscribeToPlan").ToString(),
+                "<span style='color: " + Model.DownloadLimitedToUserGroup.GetLocalized(p => p.GroupTextColor) + " !important;'>" +
+                Model.DownloadLimitedToUserGroup.GetLocalized(p => p.GroupName) + "</span>"))
+        </small>
+    }
+}
+
+@{
+    //Subscribe to a plan
+    if (Model.ShowUpgradeUserAccountBtn)
+    {
+        <a href="@Url.Action("UpgradeAccount", "Purchase")"
+           target="_blank"
+           class="btn btn-lg text-light fs-16 d-block white-space-initial b-mar-20"
+           style="background-color: @Model.DownloadLimitedToUserGroup.GetLocalized(p => p.GroupBackgroundColor);">
+            @UpgradeUserAccountBtnInnerHtml()
+        </a>
+    }
+
+    //Purchase button
+    if (Model.ShowPurchaseBtn)
+    {
+        @Ajax.HtmlActionLink(PurchaseBtnInnerHtml().ToHtmlString(), "PurchaseProductWizard", "Purchase", new {productId = Model.ProductId}, new AjaxOptions()
+        {
+            InsertionMode = InsertionMode.Replace,
+            UpdateTargetId = "dlgProductPurchaseWizard",
+            LoadingElementId = "LoadingPanel",
+            LoadingElementDuration = 10,
+            OnFailure = "ErrorAlert('" + T("Error") + "', '" + T("ServerConnectionError") + "');"
+        }, new {@class = "btn btn-success btn-lg text-light fs-25 d-block white-space-initial b-mar-20"})
+    }
+
+    //Full version download button
+    if (Model.ShowDownloadFullVersionBtn)
+    {
+        <a href="@Url.Action("DownloadProduct", "Download", new {productId = Model.ProductId, demoFiles = false})"
+           target="_blank"
+           class="btn btn-warning btn-lg fs-20 d-block white-space-initial b-mar-20">
+            <i class="fa fa-download fa-2x"></i>
+            <br />
+            @Html.Raw(T("DownloadNow"))
+        </a>
+    }
+
+    //Demo version download button
+    if (Model.ShowDownloadDemoVersionBtn)
+    {
+        <a href="@Url.Action("DownloadProduct", "Download", new {productId = Model.ProductId, demoFiles = true})"
+           target="_blank"
+           class="btn btn-warning btn-lg fs-16 d-block b-mar-20 white-space-initial">
+            @Html.Raw(T("DownloadDemo"))
+        </a>
+    }
+}

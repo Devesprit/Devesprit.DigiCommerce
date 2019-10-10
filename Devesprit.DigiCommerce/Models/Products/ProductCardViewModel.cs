@@ -7,6 +7,6 @@ namespace Devesprit.DigiCommerce.Models.Products
     {
         public int NumberOfDownloads { get; set; }
         public string NumberOfDownloadsStr => NumberOfDownloads.FormatNumber();
-        public ProductDownloadPurchaseButtonModel DownloadPurchaseButtonModel { get; set; }
+        public ProductCardDownloadModel DownloadModel { get; set; }
     }
 }

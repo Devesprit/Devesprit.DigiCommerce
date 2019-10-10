@@ -37,7 +37,7 @@ namespace Devesprit.Services.Posts
             var result = await _dbContext.PostAttributes
                 .Include(p => p.Options)
                 .DeferredFirstOrDefault(p => p.Id == id)
-                .FromCacheAsync(QueryCacheTag.PostAttribute);
+                .FromCacheAsync(CacheTags.PostAttribute);
             return result;
         }
 
@@ -46,7 +46,7 @@ namespace Devesprit.Services.Posts
             var record = await FindByIdAsync(id);
             await _dbContext.PostAttributes.Where(p => p.Id == id).DeleteAsync();
             await _localizedEntityService.DeleteEntityAllLocalizedStringsAsync(typeof(TblPostAttributes).Name, id);
-            QueryCacheManager.ExpireTag(QueryCacheTag.PostAttribute);
+            QueryCacheManager.ExpireTag(CacheTags.PostAttribute);
 
             _eventPublisher.EntityDeleted(record);
         }
@@ -56,7 +56,7 @@ namespace Devesprit.Services.Posts
             var oldRecord = await FindByIdAsync(record.Id);
             _dbContext.PostAttributes.AddOrUpdate(record);
             await _dbContext.SaveChangesAsync();
-            QueryCacheManager.ExpireTag(QueryCacheTag.PostAttribute);
+            QueryCacheManager.ExpireTag(CacheTags.PostAttribute);
 
             _eventPublisher.EntityUpdated(record, oldRecord);
         }
@@ -65,7 +65,7 @@ namespace Devesprit.Services.Posts
         {
             _dbContext.PostAttributes.Add(record);
             await _dbContext.SaveChangesAsync();
-            QueryCacheManager.ExpireTag(QueryCacheTag.PostAttribute);
+            QueryCacheManager.ExpireTag(CacheTags.PostAttribute);
 
             _eventPublisher.EntityInserted(record);
 
@@ -74,7 +74,7 @@ namespace Devesprit.Services.Posts
 
         public virtual List<SelectListItem> GetAsSelectList()
         {
-            var attributes = GetAsQueryable().FromCache(QueryCacheTag.PostAttribute).ToList();
+            var attributes = GetAsQueryable().FromCache(CacheTags.PostAttribute).ToList();
             if (attributes.Any())
             {
                 return attributes.Select(p => new SelectListItem()
@@ -104,7 +104,7 @@ namespace Devesprit.Services.Posts
         {
             var result = await _dbContext.PostAttributeOptions
                 .DeferredFirstOrDefault(p => p.Id == id)
-                .FromCacheAsync(QueryCacheTag.PostAttribute);
+                .FromCacheAsync(CacheTags.PostAttribute);
             return result;
         }
 
@@ -114,7 +114,7 @@ namespace Devesprit.Services.Posts
             await _dbContext.PostAttributeOptions.Where(p => p.Id == id).DeleteAsync();
             await _localizedEntityService.DeleteEntityAllLocalizedStringsAsync(typeof(TblPostAttributeOptions).Name,
                 id);
-            QueryCacheManager.ExpireTag(QueryCacheTag.PostAttribute);
+            QueryCacheManager.ExpireTag(CacheTags.PostAttribute);
 
             _eventPublisher.EntityDeleted(record);
         }
@@ -124,7 +124,7 @@ namespace Devesprit.Services.Posts
             var oldRecord = await FindOptionByIdAsync(record.Id);
             _dbContext.PostAttributeOptions.AddOrUpdate(record);
             await _dbContext.SaveChangesAsync();
-            QueryCacheManager.ExpireTag(QueryCacheTag.PostAttribute);
+            QueryCacheManager.ExpireTag(CacheTags.PostAttribute);
 
             _eventPublisher.EntityUpdated(record, oldRecord);
         }
@@ -133,7 +133,7 @@ namespace Devesprit.Services.Posts
         {
             _dbContext.PostAttributeOptions.Add(record);
             await _dbContext.SaveChangesAsync();
-            QueryCacheManager.ExpireTag(QueryCacheTag.PostAttribute);
+            QueryCacheManager.ExpireTag(CacheTags.PostAttribute);
 
             _eventPublisher.EntityInserted(record);
 
@@ -142,7 +142,7 @@ namespace Devesprit.Services.Posts
 
         public virtual List<SelectListItem> GetOptionsAsSelectList(int attributeId)
         {
-            var attribute = GetOptionsAsQueryable(attributeId).FromCache(QueryCacheTag.PostAttribute).ToList();
+            var attribute = GetOptionsAsQueryable(attributeId).FromCache(CacheTags.PostAttribute).ToList();
             if (attribute.Any())
             {
                 return attribute.Select(p => new SelectListItem()

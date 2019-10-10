@@ -35,7 +35,7 @@ namespace Devesprit.Services.Redirects
         {
             var record = await FindByIdAsync(id);
             await _dbContext.Redirects.Where(p => p.Id == id).DeleteAsync();
-            QueryCacheManager.ExpireTag(QueryCacheTag.RedirectRule);
+            QueryCacheManager.ExpireTag(CacheTags.RedirectRule);
 
             _eventPublisher.EntityDeleted(record);
         }
@@ -44,7 +44,7 @@ namespace Devesprit.Services.Redirects
         {
             var result = await _dbContext.Redirects
                 .DeferredFirstOrDefault(p => p.Id == id)
-                .FromCacheAsync(QueryCacheTag.RedirectRule);
+                .FromCacheAsync(CacheTags.RedirectRule);
             return result;
         }
 
@@ -53,7 +53,7 @@ namespace Devesprit.Services.Redirects
             record.Name = string.IsNullOrWhiteSpace(record.Name) ? record.RequestedUrl : record.Name;
             _dbContext.Redirects.Add(record);
             await _dbContext.SaveChangesAsync();
-            QueryCacheManager.ExpireTag(QueryCacheTag.RedirectRule);
+            QueryCacheManager.ExpireTag(CacheTags.RedirectRule);
 
             _eventPublisher.EntityInserted(record);
 
@@ -66,14 +66,14 @@ namespace Devesprit.Services.Redirects
             _dbContext.Redirects.AddOrUpdate(record);
             await _dbContext.SaveChangesAsync();
 
-            QueryCacheManager.ExpireTag(QueryCacheTag.RedirectRule);
+            QueryCacheManager.ExpireTag(CacheTags.RedirectRule);
 
             _eventPublisher.EntityUpdated(record, oldRecord);
         }
 
         public virtual TblRedirects FindMatchedRuleForRequestedUrl(string url, int? fromOrder)
         {
-            var rules = GetAsQueryable().FromCache(QueryCacheTag.RedirectRule);
+            var rules = GetAsQueryable().FromCache(CacheTags.RedirectRule);
             if (fromOrder != null)
             {
                 rules = rules.Where(p => p.Order > fromOrder.Value);

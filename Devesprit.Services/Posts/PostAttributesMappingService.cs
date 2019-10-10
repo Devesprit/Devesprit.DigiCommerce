@@ -28,7 +28,7 @@ namespace Devesprit.Services.Posts
         {
             return await _dbContext.PostAttributesMapping
                 .DeferredFirstOrDefault(p => p.Id == id)
-                .FromCacheAsync(QueryCacheTag.PostAttribute);
+                .FromCacheAsync(CacheTags.PostAttribute);
         }
 
         public virtual IQueryable<TblPostAttributesMapping> GetAsQueryable(int productId)
@@ -41,7 +41,7 @@ namespace Devesprit.Services.Posts
             var record = await FindByIdAsync(id);
             await _dbContext.PostAttributesMapping.Where(p => p.Id == id).DeleteAsync();
             await _localizedEntityService.DeleteEntityAllLocalizedStringsAsync(typeof(TblPostAttributesMapping).Name, id);
-            QueryCacheManager.ExpireTag(QueryCacheTag.PostAttribute);
+            QueryCacheManager.ExpireTag(CacheTags.PostAttribute);
 
             _eventPublisher.EntityDeleted(record);
         }
@@ -52,7 +52,7 @@ namespace Devesprit.Services.Posts
 
             _dbContext.PostAttributesMapping.AddOrUpdate(record);
             await _dbContext.SaveChangesAsync();
-            QueryCacheManager.ExpireTag(QueryCacheTag.PostAttribute);
+            QueryCacheManager.ExpireTag(CacheTags.PostAttribute);
 
             _eventPublisher.EntityUpdated(record, oldRecord);
         }
@@ -61,7 +61,7 @@ namespace Devesprit.Services.Posts
         {
             _dbContext.PostAttributesMapping.Add(record);
             await _dbContext.SaveChangesAsync();
-            QueryCacheManager.ExpireTag(QueryCacheTag.PostAttribute);
+            QueryCacheManager.ExpireTag(CacheTags.PostAttribute);
 
             _eventPublisher.EntityInserted(record);
 

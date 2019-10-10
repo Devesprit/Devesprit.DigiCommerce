@@ -1,10 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
-using System.Data.Entity.Migrations;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Web.Mvc;
 using Devesprit.Core.Localization;
 using Devesprit.Data;
 using Devesprit.Data.Domain;
@@ -13,7 +11,6 @@ using Devesprit.Services.Currency;
 using Devesprit.Services.Events;
 using Devesprit.Services.Localization;
 using Devesprit.Services.Posts;
-using Devesprit.Services.SearchEngine;
 using Devesprit.Services.Users;
 using Devesprit.Utilities;
 using Devesprit.Utilities.Extensions;
@@ -83,7 +80,7 @@ namespace Devesprit.Services.Products
                 .Select(p => new {p.FirstOrDefault().ItemId, Sum = p.Sum(c => c.Qty)}).OrderByDescending(p => p.Sum)
                 .Skip(pageSize * (pageIndex - 1))
                 .Take(pageSize)
-                .FromCache(QueryCacheTag.Invoice).Select(p => p.ItemId).ToList();
+                .FromCache(CacheTags.Invoice).Select(p => p.ItemId).ToList();
 
             var query = _dbContext.Products.Where(p => p.Published);
 
@@ -99,9 +96,9 @@ namespace Devesprit.Services.Products
                 .Include(p => p.Images)
                 .Include(p => p.Categories)
                 .FromCache(_cacheKey,
-                    QueryCacheTag.PostCategory,
-                    QueryCacheTag.PostDescription,
-                    QueryCacheTag.PostImage);
+                    CacheTags.PostCategory,
+                    CacheTags.PostDescription,
+                    CacheTags.PostImage);
             var result = new StaticPagedList<TblProducts>(
                 products.OrderBy(p=> sortedItems.IndexOf(p.Id)),
                 pageIndex,
@@ -109,7 +106,7 @@ namespace Devesprit.Services.Products
                 invoiceQuery
                     .GroupBy(p => p.ItemId)
                     .Select(p => new {p.FirstOrDefault().ItemId, Sum = p.Sum(c => c.Qty)}).DeferredCount()
-                    .FromCache(QueryCacheTag.Invoice));
+                    .FromCache(CacheTags.Invoice));
 
             return result;
         }
@@ -138,9 +135,9 @@ namespace Devesprit.Services.Products
                     .Skip(pageSize * (pageIndex - 1))
                     .Take(pageSize)
                     .FromCache(_cacheKey,
-                        QueryCacheTag.PostCategory,
-                        QueryCacheTag.PostDescription,
-                        QueryCacheTag.PostImage),
+                        CacheTags.PostCategory,
+                        CacheTags.PostDescription,
+                        CacheTags.PostImage),
                 pageIndex,
                 pageSize,
                 query
@@ -168,15 +165,15 @@ namespace Devesprit.Services.Products
                 .Include(p => p.FileServer)
                 .DeferredFirstOrDefault()
                 .FromCacheAsync(_cacheKey,
-                    QueryCacheTag.PostCategory,
-                    QueryCacheTag.PostDescription,
-                    QueryCacheTag.PostImage,
-                    QueryCacheTag.PostAttribute,
-                    QueryCacheTag.ProductCheckoutAttribute,
-                    QueryCacheTag.ProductDiscountForUserGroup,
-                    QueryCacheTag.UserGroup,
-                    QueryCacheTag.PostTag,
-                    QueryCacheTag.FileServer);
+                    CacheTags.PostCategory,
+                    CacheTags.PostDescription,
+                    CacheTags.PostImage,
+                    CacheTags.PostAttribute,
+                    CacheTags.ProductCheckoutAttribute,
+                    CacheTags.ProductDiscountForUserGroup,
+                    CacheTags.UserGroup,
+                    CacheTags.PostTag,
+                    CacheTags.FileServer);
             return result;
         }
 
@@ -198,15 +195,15 @@ namespace Devesprit.Services.Products
                 .Include(p => p.FileServer)
                 .DeferredFirstOrDefault()
                 .FromCacheAsync(_cacheKey,
-                    QueryCacheTag.PostCategory,
-                    QueryCacheTag.PostDescription,
-                    QueryCacheTag.PostImage,
-                    QueryCacheTag.PostAttribute,
-                    QueryCacheTag.ProductCheckoutAttribute,
-                    QueryCacheTag.ProductDiscountForUserGroup,
-                    QueryCacheTag.UserGroup,
-                    QueryCacheTag.PostTag,
-                    QueryCacheTag.FileServer);
+                    CacheTags.PostCategory,
+                    CacheTags.PostDescription,
+                    CacheTags.PostImage,
+                    CacheTags.PostAttribute,
+                    CacheTags.ProductCheckoutAttribute,
+                    CacheTags.ProductDiscountForUserGroup,
+                    CacheTags.UserGroup,
+                    CacheTags.PostTag,
+                    CacheTags.FileServer);
             return result;
         }
 
@@ -215,6 +212,21 @@ namespace Devesprit.Services.Products
             return _productDownloadsLogService.GetAsQueryable()
                 .DeferredCount(p => p.ProductId == productId)
                 .FromCache(DateTimeOffset.Now.AddHours(24));
+        }
+
+        public virtual Dictionary<int, int> GetNumberOfDownloads(int[] productIds)
+        {
+            var res = _productDownloadsLogService.GetAsQueryable()
+                .Where(p => productIds.Contains(p.ProductId))
+                .GroupBy(p => p.ProductId)
+                .Select(n => new
+                    {
+                        PostId = n.Key,
+                        LikeCount = n.Count()
+                    }
+                ).FromCache(DateTimeOffset.Now.AddHours(24));
+
+            return res.ToDictionary(p => p.PostId, p => p.LikeCount);
         }
 
         public virtual string GenerateUserGroupDiscountsDescription(TblProducts product, TblUsers user)

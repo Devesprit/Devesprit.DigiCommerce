@@ -150,28 +150,28 @@ namespace Devesprit.Services.Localization
         public virtual async Task<IEnumerable<TblLocalizedStrings>> GetAsEnumerableAsync()
         {
             // Try get result from cache
-            if (_memoryCache.Contains(QueryCacheTag.LocalizedString))
+            if (_memoryCache.Contains(CacheTags.LocalizedString))
             {
-                return _memoryCache.GetObject<List<TblLocalizedStrings>>(QueryCacheTag.LocalizedString);
+                return _memoryCache.GetObject<List<TblLocalizedStrings>>(CacheTags.LocalizedString);
             }
 
-            var result = await GetAsQueryable().FromCacheAsync(QueryCacheTag.LocalizedString);
+            var result = await GetAsQueryable().FromCacheAsync(CacheTags.LocalizedString);
 
-            _memoryCache.AddObject(QueryCacheTag.LocalizedString, result, TimeSpan.FromDays(30));
+            _memoryCache.AddObject(CacheTags.LocalizedString, result, TimeSpan.FromDays(30));
             return result;
         }
 
         public virtual IEnumerable<TblLocalizedStrings> GetAsEnumerable()
         {
             // Try get result from cache
-            if (_memoryCache.Contains(QueryCacheTag.LocalizedString))
+            if (_memoryCache.Contains(CacheTags.LocalizedString))
             {
-                return _memoryCache.GetObject<List<TblLocalizedStrings>>(QueryCacheTag.LocalizedString);
+                return _memoryCache.GetObject<List<TblLocalizedStrings>>(CacheTags.LocalizedString);
             }
 
-            var result = GetAsQueryable().FromCache(QueryCacheTag.LocalizedString).ToList();
+            var result = GetAsQueryable().FromCache(CacheTags.LocalizedString).ToList();
 
-            _memoryCache.AddObject(QueryCacheTag.LocalizedString, result, TimeSpan.FromDays(30));
+            _memoryCache.AddObject(CacheTags.LocalizedString, result, TimeSpan.FromDays(30));
             return result;
         }
 
@@ -262,8 +262,8 @@ namespace Devesprit.Services.Localization
 
         public virtual void ClearCache()
         {
-            QueryCacheManager.ExpireTag(QueryCacheTag.LocalizedString);
-            _memoryCache.RemoveObject(QueryCacheTag.LocalizedString);
+            QueryCacheManager.ExpireTag(CacheTags.LocalizedString);
+            _memoryCache.RemoveObject(CacheTags.LocalizedString);
         }
     }
 }

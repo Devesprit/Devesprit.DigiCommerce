@@ -61,6 +61,10 @@
     <Reference Include="Autofac, Version=4.9.4.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
       <HintPath>..\packages\Autofac.4.9.4\lib\net45\Autofac.dll</HintPath>
     </Reference>
+    <Reference Include="Autofac.Extras.DynamicProxy, Version=4.5.0.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Autofac.Extras.DynamicProxy.4.5.0\lib\net45\Autofac.Extras.DynamicProxy.dll</HintPath>
+    </Reference>
     <Reference Include="Autofac.Integration.Mvc, Version=4.0.0.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
       <HintPath>..\packages\Autofac.Mvc5.4.0.2\lib\net45\Autofac.Integration.Mvc.dll</HintPath>
     </Reference>
@@ -1697,12 +1701,13 @@
     <Compile Include="Models\Post\PostAttributesModel.cs" />
     <Compile Include="Models\Post\PostDescriptionsModel.cs" />
     <Compile Include="Models\Post\PostImagesModel.cs" />
+    <Compile Include="Models\Products\ProductDownloadSmallModel.cs" />
     <Compile Include="Models\ViewStyles.cs" />
     <Compile Include="Models\Post\PostsListModel.cs" />
     <Compile Include="Models\Post\PostsListType.cs" />
     <Compile Include="Models\Post\PostsExplorerModel.cs" />
     <Compile Include="Models\Products\ProductCardViewModel.cs" />
-    <Compile Include="Models\Products\ProductDownloadPurchaseButtonModel.cs" />
+    <Compile Include="Models\Products\ProductDownloadModel.cs" />
     <Compile Include="Models\Products\ProductModel.cs" />
     <Compile Include="Models\Products\ProductsExplorerModel.cs" />
     <Compile Include="Models\Products\ProductsListModel.cs" />
@@ -1821,7 +1826,7 @@
     <Content Include="Views\Post\Partials\_PostNormalCardView.cshtml" />
     <Content Include="Views\Post\Partials\_PostSmallCardView.cshtml" />
     <Content Include="Views\Purchase\PurchaseProductWizard.cshtml" />
-    <Content Include="Views\Product\Partials\_ProductDownloadPurchaseButton.cshtml" />
+    <Content Include="Views\Product\Partials\_ProductDownloadView.cshtml" />
     <Content Include="Views\Blog\Index.cshtml" />
     <Content Include="Views\Search\Partials\_MoreLikeThis.cshtml" />
     <Content Include="Content\SmartWizard-master\.npmignore" />
@@ -1861,6 +1866,8 @@
     <Content Include="Scripts\tinymce-5.0.15\js\tinymce\langs\readme.md" />
     <Content Include="Scripts\tinymce-5.0.15\js\tinymce\skins\ui\oxide-dark\fonts\tinymce-mobile.woff" />
     <Content Include="Scripts\tinymce-5.0.15\js\tinymce\skins\ui\oxide\fonts\tinymce-mobile.woff" />
+    <Content Include="Views\Product\Partials\_ProductNormalCardDownloadView.cshtml" />
+    <Content Include="Views\Product\Partials\_ProductLargeCardDownloadView.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

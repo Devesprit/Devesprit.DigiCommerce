@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq;
 using Autofac;
+using Autofac.Extras.DynamicProxy;
+using Castle.DynamicProxy;
 using Devesprit.Core;
 using Devesprit.Core.Localization;
 using Devesprit.Core.Plugin;
@@ -46,59 +49,60 @@ namespace Devesprit.WebFramework
     {
         public virtual void Register(ContainerBuilder builder, ITypeFinder typeFinder)
         {
-            builder.RegisterType<AppDbContext>().AsSelf().InstancePerLifetimeScope();
-            builder.RegisterType<DbInitializer>().As<IApplicationDbInitializer>().InstancePerLifetimeScope();
-            builder.RegisterType<RoutePublisher>().As<IRoutePublisher>().InstancePerLifetimeScope();
-            builder.RegisterType<WebHelper>().As<IWebHelper>().InstancePerLifetimeScope();
-            builder.RegisterType<WorkContext>().As<IWorkContext>().InstancePerLifetimeScope();
-            builder.RegisterType<NavBarService>().As<INavBarService>().InstancePerLifetimeScope();
-            builder.RegisterType<PostCategoriesService>().As<IPostCategoriesService>().InstancePerLifetimeScope();
-            builder.RegisterType<PostTagsService>().As<IPostTagsService>().InstancePerLifetimeScope();
-            builder.RegisterType<ProductService>().As<IProductService>().InstancePerLifetimeScope();
-            builder.RegisterType<LanguagesService>().As<ILanguagesService>().InstancePerLifetimeScope();
-            builder.RegisterType<CurrencyService>().As<ICurrencyService>().InstancePerLifetimeScope(); 
-            builder.RegisterType<InvoiceService>().As<IInvoiceService>().InstancePerLifetimeScope(); 
-            builder.RegisterType<PagesService>().As<IPagesService>().InstancePerLifetimeScope(); 
-            builder.RegisterType<PostAttributesService>().As<IPostAttributesService>().InstancePerLifetimeScope(); 
-            builder.RegisterType<ProductCheckoutAttributesService>().As<IProductCheckoutAttributesService>().InstancePerLifetimeScope(); 
-            builder.RegisterType<PostAttributesMappingService>().As<IPostAttributesMappingService>().InstancePerLifetimeScope(); 
-            builder.RegisterType<PostImagesService>().As<IPostImagesService>().InstancePerLifetimeScope(); 
-            builder.RegisterType<ProductDiscountsForUserGroupsService>().As<IProductDiscountsForUserGroupsService>().InstancePerLifetimeScope(); 
-            builder.RegisterType<PostDescriptionsService>().As<IPostDescriptionsService>().InstancePerLifetimeScope(); 
-            builder.RegisterType<ProductDownloadsLogService>().As<IProductDownloadsLogService>().InstancePerLifetimeScope(); 
-            builder.RegisterType<UserLikesService>().As<IUserLikesService>().InstancePerLifetimeScope(); 
-            builder.RegisterType<UserWishlistService>().As<IUserWishlistService>().InstancePerLifetimeScope(); 
-            builder.RegisterType<SettingService>().As<ISettingService>().InstancePerLifetimeScope();
-            builder.RegisterType<LocalizedEntityService>().As<ILocalizedEntityService>().InstancePerLifetimeScope();
-            builder.RegisterType<LocalizationService>().As<ILocalizationService>().InstancePerLifetimeScope();
-            builder.RegisterType<CountriesService>().As<ICountriesService>().InstancePerLifetimeScope(); 
-            builder.RegisterType<SocialAccountsService>().As<ISocialAccountsService>().InstancePerLifetimeScope(); 
-            builder.RegisterType<UsersService>().As<IUsersService>().InstancePerLifetimeScope(); 
-            builder.RegisterType<UserMessagingService>().As<IUserMessagingService>().InstancePerLifetimeScope(); 
-            builder.RegisterType<UserGroupsService>().As<IUserGroupsService>().InstancePerLifetimeScope(); 
-            builder.RegisterType<RedirectsService>().As<IRedirectsService>().InstancePerLifetimeScope(); 
-            builder.RegisterType<EmailService>().As<IEmailService>().InstancePerLifetimeScope();
-            builder.RegisterType<TemplateEngine>().As<ITemplateEngine>().InstancePerLifetimeScope();
-            builder.RegisterType<PaymentGatewayManager>().As<IPaymentGatewayManager>().InstancePerLifetimeScope();
-            builder.RegisterType<Services.LicenseManager.LicenseManager>().As<Services.LicenseManager.ILicenseManager>().InstancePerLifetimeScope();
-            builder.RegisterType<FileServersService>().As<IFileServersService>().InstancePerLifetimeScope();
-            builder.RegisterType<TaxesService>().As<ITaxesService>().InstancePerLifetimeScope();
-            builder.RegisterType<LuceneSearchEngine>().As<ISearchEngine>().InstancePerLifetimeScope();
-            builder.RegisterType<CommentsService>().As<ICommentsService>().InstancePerLifetimeScope();
-            builder.RegisterType<NotificationsService>().As<INotificationsService>().InstancePerLifetimeScope();
-            builder.RegisterType<SitemapGenerator>().As<ISitemapGenerator>().InstancePerLifetimeScope();
-            builder.RegisterType<SitemapItem>().As<ISitemapItem>().InstancePerLifetimeScope();
-            builder.RegisterType<ThemeProvider>().As<IThemeProvider>().InstancePerLifetimeScope();
-            builder.RegisterType<PluginFinder>().As<IPluginFinder>().InstancePerLifetimeScope();
-            builder.RegisterType<WidgetService>().As<IWidgetService>().InstancePerLifetimeScope();
-            builder.RegisterType<AdminAreaMenuManager>().As<IAdminAreaMenuManager>().InstancePerLifetimeScope();
-            builder.RegisterType<ResourceBundler.ResourceBundler>().As<IResourceBundler>().InstancePerLifetimeScope();
-            builder.RegisterType<ExternalLoginProviderManager>().As<IExternalLoginProviderManager>().InstancePerLifetimeScope();
-            builder.RegisterType<Services.StartupTask>().As<IStartupTask>().InstancePerLifetimeScope();
-            builder.RegisterType<BlogPostService>().As<IBlogPostService>().InstancePerLifetimeScope();
-            builder.RegisterType<PostService<TblPosts>>().As<PostService<TblPosts>>().InstancePerLifetimeScope();
-            builder.RegisterGeneric(typeof(PostService<>)).As(typeof(IPostService<>)).InstancePerLifetimeScope();
+            builder.Register(c => new MethodCache());
             builder.RegisterType<MemoryCache>().As<IMemoryCache>().SingleInstance();
+            builder.RegisterType<AppDbContext>().AsSelf().InstancePerLifetimeScope();
+            builder.RegisterType<DbInitializer>().As<IApplicationDbInitializer>().EnableInterfaceInterceptors().InstancePerLifetimeScope();
+            builder.RegisterType<RoutePublisher>().As<IRoutePublisher>().EnableInterfaceInterceptors().InstancePerLifetimeScope();
+            builder.RegisterType<WebHelper>().As<IWebHelper>().EnableInterfaceInterceptors().InstancePerLifetimeScope();
+            builder.RegisterType<WorkContext>().As<IWorkContext>().EnableInterfaceInterceptors().InstancePerLifetimeScope();
+            builder.RegisterType<ProductService>().As<IProductService>().EnableInterfaceInterceptors().InstancePerLifetimeScope();
+            builder.RegisterType<NavBarService>().As<INavBarService>().EnableInterfaceInterceptors().InstancePerLifetimeScope();
+            builder.RegisterType<PostCategoriesService>().As<IPostCategoriesService>().EnableInterfaceInterceptors().InstancePerLifetimeScope();
+            builder.RegisterType<PostTagsService>().As<IPostTagsService>().EnableInterfaceInterceptors().InstancePerLifetimeScope();
+            builder.RegisterType<LanguagesService>().As<ILanguagesService>().EnableInterfaceInterceptors().InstancePerLifetimeScope();
+            builder.RegisterType<CurrencyService>().As<ICurrencyService>().EnableInterfaceInterceptors().InstancePerLifetimeScope(); 
+            builder.RegisterType<InvoiceService>().As<IInvoiceService>().EnableInterfaceInterceptors().InstancePerLifetimeScope(); 
+            builder.RegisterType<PagesService>().As<IPagesService>().EnableInterfaceInterceptors().InstancePerLifetimeScope(); 
+            builder.RegisterType<PostAttributesService>().As<IPostAttributesService>().EnableInterfaceInterceptors().InstancePerLifetimeScope(); 
+            builder.RegisterType<ProductCheckoutAttributesService>().As<IProductCheckoutAttributesService>().EnableInterfaceInterceptors().InstancePerLifetimeScope(); 
+            builder.RegisterType<PostAttributesMappingService>().As<IPostAttributesMappingService>().EnableInterfaceInterceptors().InstancePerLifetimeScope(); 
+            builder.RegisterType<PostImagesService>().As<IPostImagesService>().EnableInterfaceInterceptors().InstancePerLifetimeScope(); 
+            builder.RegisterType<ProductDiscountsForUserGroupsService>().As<IProductDiscountsForUserGroupsService>().EnableInterfaceInterceptors().InstancePerLifetimeScope(); 
+            builder.RegisterType<PostDescriptionsService>().As<IPostDescriptionsService>().EnableInterfaceInterceptors().InstancePerLifetimeScope(); 
+            builder.RegisterType<ProductDownloadsLogService>().As<IProductDownloadsLogService>().EnableInterfaceInterceptors().InstancePerLifetimeScope(); 
+            builder.RegisterType<UserLikesService>().As<IUserLikesService>().EnableInterfaceInterceptors().InstancePerLifetimeScope(); 
+            builder.RegisterType<UserWishlistService>().As<IUserWishlistService>().EnableInterfaceInterceptors().InstancePerLifetimeScope(); 
+            builder.RegisterType<SettingService>().As<ISettingService>().EnableInterfaceInterceptors().InstancePerLifetimeScope();
+            builder.RegisterType<LocalizedEntityService>().As<ILocalizedEntityService>().EnableInterfaceInterceptors().InstancePerLifetimeScope();
+            builder.RegisterType<LocalizationService>().As<ILocalizationService>().EnableInterfaceInterceptors().InstancePerLifetimeScope();
+            builder.RegisterType<CountriesService>().As<ICountriesService>().EnableInterfaceInterceptors().InstancePerLifetimeScope(); 
+            builder.RegisterType<SocialAccountsService>().As<ISocialAccountsService>().EnableInterfaceInterceptors().InstancePerLifetimeScope(); 
+            builder.RegisterType<UsersService>().As<IUsersService>().EnableInterfaceInterceptors().InstancePerLifetimeScope(); 
+            builder.RegisterType<UserMessagingService>().As<IUserMessagingService>().EnableInterfaceInterceptors().InstancePerLifetimeScope(); 
+            builder.RegisterType<UserGroupsService>().As<IUserGroupsService>().EnableInterfaceInterceptors().InstancePerLifetimeScope(); 
+            builder.RegisterType<RedirectsService>().As<IRedirectsService>().EnableInterfaceInterceptors().InstancePerLifetimeScope(); 
+            builder.RegisterType<EmailService>().As<IEmailService>().EnableInterfaceInterceptors().InstancePerLifetimeScope();
+            builder.RegisterType<TemplateEngine>().As<ITemplateEngine>().EnableInterfaceInterceptors().InstancePerLifetimeScope();
+            builder.RegisterType<PaymentGatewayManager>().As<IPaymentGatewayManager>().EnableInterfaceInterceptors().InstancePerLifetimeScope();
+            builder.RegisterType<Services.LicenseManager.LicenseManager>().As<Services.LicenseManager.ILicenseManager>().EnableInterfaceInterceptors().InstancePerLifetimeScope();
+            builder.RegisterType<FileServersService>().As<IFileServersService>().EnableInterfaceInterceptors().InstancePerLifetimeScope();
+            builder.RegisterType<TaxesService>().As<ITaxesService>().EnableInterfaceInterceptors().InstancePerLifetimeScope();
+            builder.RegisterType<LuceneSearchEngine>().As<ISearchEngine>().EnableInterfaceInterceptors().InstancePerLifetimeScope();
+            builder.RegisterType<CommentsService>().As<ICommentsService>().EnableInterfaceInterceptors().InstancePerLifetimeScope();
+            builder.RegisterType<NotificationsService>().As<INotificationsService>().EnableInterfaceInterceptors().InstancePerLifetimeScope();
+            builder.RegisterType<SitemapGenerator>().As<ISitemapGenerator>().EnableInterfaceInterceptors().InstancePerLifetimeScope();
+            builder.RegisterType<SitemapItem>().As<ISitemapItem>().EnableInterfaceInterceptors().InstancePerLifetimeScope();
+            builder.RegisterType<ThemeProvider>().As<IThemeProvider>().EnableInterfaceInterceptors().InstancePerLifetimeScope();
+            builder.RegisterType<PluginFinder>().As<IPluginFinder>().EnableInterfaceInterceptors().InstancePerLifetimeScope();
+            builder.RegisterType<WidgetService>().As<IWidgetService>().EnableInterfaceInterceptors().InstancePerLifetimeScope();
+            builder.RegisterType<AdminAreaMenuManager>().As<IAdminAreaMenuManager>().EnableInterfaceInterceptors().InstancePerLifetimeScope();
+            builder.RegisterType<ResourceBundler.ResourceBundler>().As<IResourceBundler>().EnableInterfaceInterceptors().InstancePerLifetimeScope();
+            builder.RegisterType<ExternalLoginProviderManager>().As<IExternalLoginProviderManager>().EnableInterfaceInterceptors().InstancePerLifetimeScope();
+            builder.RegisterType<Services.StartupTask>().As<IStartupTask>().EnableInterfaceInterceptors().InstancePerLifetimeScope();
+            builder.RegisterType<BlogPostService>().As<IBlogPostService>().EnableInterfaceInterceptors().InstancePerLifetimeScope();
+            builder.RegisterType<PostService<TblPosts>>().As<PostService<TblPosts>>().EnableInterfaceInterceptors().InstancePerLifetimeScope();
+            builder.RegisterGeneric(typeof(PostService<>)).As(typeof(IPostService<>)).EnableInterfaceInterceptors().InstancePerLifetimeScope();
 
 
             //Register event consumers
@@ -112,10 +116,10 @@ namespace Devesprit.WebFramework
                     return isMatch;
                 }, typeof(IConsumer<>));
 
-                builder.RegisterType(consumer).As(interfaceType).InstancePerLifetimeScope();
+                builder.RegisterType(consumer).As(interfaceType).EnableInterfaceInterceptors().InstancePerLifetimeScope();
             }
-            builder.RegisterType<EventPublisher>().As<IEventPublisher>().InstancePerLifetimeScope();
-            builder.RegisterType<SubscriptionService>().As<ISubscriptionService>().InstancePerLifetimeScope();
+            builder.RegisterType<EventPublisher>().As<IEventPublisher>().EnableInterfaceInterceptors().InstancePerLifetimeScope();
+            builder.RegisterType<SubscriptionService>().As<ISubscriptionService>().EnableInterfaceInterceptors().InstancePerLifetimeScope();
         }
 
         public int Order => 0;

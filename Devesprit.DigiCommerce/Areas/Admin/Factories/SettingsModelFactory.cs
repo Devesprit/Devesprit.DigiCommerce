@@ -38,6 +38,10 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Factories
 
             result.CacheLocalizedEntities =
                 objAppSettings.Settings["CacheLocalizedEntities"].Value.ToBooleanOrDefault(true);
+            result.DisableMemoryCache =
+                objAppSettings.Settings["DisableMemoryCache"].Value.ToBooleanOrDefault(false);
+            result.DisableSqlQueryCache =
+                objAppSettings.Settings["DisableSqlQueryCache"].Value.ToBooleanOrDefault(false);
 
             return result;
         }

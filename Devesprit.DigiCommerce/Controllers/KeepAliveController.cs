@@ -1,11 +1,12 @@
 ﻿using System.Web.Mvc;
 using System.Web.UI;
+using Autofac.Extras.DynamicProxy;
+using Devesprit.Services.MemoryCache;
 
 namespace Devesprit.DigiCommerce.Controllers
 {
     public partial class KeepAliveController : Controller
     {
-        [OutputCache(Duration = 60 * 60, Location = OutputCacheLocation.Server, VaryByParam = "none")]
         public virtual ActionResult Index()
         {
             Response.AddHeader("Cache-Control", "no-cache");

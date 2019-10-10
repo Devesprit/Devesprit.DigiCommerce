@@ -32,7 +32,7 @@ namespace Devesprit.Services.Users
         {
             return await _dbContext.UserWishlist
                 .DeferredFirstOrDefault(p => p.Id == id)
-                .FromCacheAsync(QueryCacheTag.UserWishlist);
+                .FromCacheAsync(CacheTags.UserWishlist);
         }
 
         public virtual async Task DeleteAsync(int id)
@@ -40,7 +40,7 @@ namespace Devesprit.Services.Users
             var record = await FindByIdAsync(id);
             await _dbContext.UserWishlist.Where(p => p.Id == id).DeleteAsync();
 
-            QueryCacheManager.ExpireTag(QueryCacheTag.UserWishlist);
+            QueryCacheManager.ExpireTag(CacheTags.UserWishlist);
 
             _eventPublisher.EntityDeleted(record);
         }
@@ -48,13 +48,13 @@ namespace Devesprit.Services.Users
         public virtual async Task DeletePostFromWishlistAsync(int postId)
         {
             var records = (await _dbContext.UserWishlist.Where(p => p.PostId == postId)
-                .FromCacheAsync(QueryCacheTag.UserWishlist)).ToList();
+                .FromCacheAsync(CacheTags.UserWishlist)).ToList();
             if (records.Any())
             {
                 var recordIds = records.Select(x => x.Id).ToList();
                 await _dbContext.UserWishlist.Where(p => recordIds.Contains(p.Id)).DeleteAsync();
 
-                QueryCacheManager.ExpireTag(QueryCacheTag.UserWishlist);
+                QueryCacheManager.ExpireTag(CacheTags.UserWishlist);
 
                 records.ForEach(p => _eventPublisher.EntityDeleted(p));
             }
@@ -65,7 +65,7 @@ namespace Devesprit.Services.Users
             _dbContext.UserWishlist.Add(record);
             await _dbContext.SaveChangesAsync();
 
-            QueryCacheManager.ExpireTag(QueryCacheTag.UserWishlist);
+            QueryCacheManager.ExpireTag(CacheTags.UserWishlist);
 
             _eventPublisher.EntityInserted(record);
         }
@@ -73,11 +73,11 @@ namespace Devesprit.Services.Users
         public virtual async Task<bool> AddPostToUserWishlistAsync(int postId, string userId, PostType? postType)
         {
             var alreadyLiked = (await _dbContext.UserWishlist.Where(p => p.PostId == postId && p.UserId == userId)
-                .FromCacheAsync(QueryCacheTag.UserWishlist)).ToList();
+                .FromCacheAsync(CacheTags.UserWishlist)).ToList();
             if (alreadyLiked.Any())
             {
                 await _dbContext.UserWishlist.Where(p => p.PostId == postId && p.UserId == userId).DeleteAsync();
-                QueryCacheManager.ExpireTag(QueryCacheTag.UserWishlist);
+                QueryCacheManager.ExpireTag(CacheTags.UserWishlist);
 
                 alreadyLiked.ForEach(x => _eventPublisher.EntityDeleted(x));
 
@@ -95,8 +95,23 @@ namespace Devesprit.Services.Users
                 return false;
             }
 
-            return _dbContext.UserWishlist.Where(p => p.UserId == userId).FromCache(QueryCacheTag.UserWishlist)
+            return _dbContext.UserWishlist.Where(p => p.UserId == userId).FromCache(CacheTags.UserWishlist)
                 .Any(p => p.PostId == postId);
+        }
+
+        public virtual Dictionary<int, bool> UserAddedThisPostToWishlist(int[] postIds, string userId)
+        {
+            if (string.IsNullOrWhiteSpace(userId))
+            {
+                return postIds.ToDictionary(p => p, p => false);
+            }
+
+            var records = _dbContext.UserWishlist
+                .Where(p => postIds.Contains(p.PostId) && p.UserId == userId)
+                .FromCache(CacheTags.UserWishlist)
+                .ToList();
+
+            return postIds.ToDictionary(postId => postId, postId => records.Any(p => p.PostId == postId));
         }
     }
 }

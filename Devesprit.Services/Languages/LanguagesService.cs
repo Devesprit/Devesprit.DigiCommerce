@@ -37,14 +37,14 @@ namespace Devesprit.Services.Languages
                        .DeferredFirstOrDefault(p => p.IsDefault && p.Published)
                        .FromCache(new []
                        {
-                           QueryCacheTag.Language, QueryCacheTag.Currency
+                           CacheTags.Language, CacheTags.Currency
                        }) ??
                    _dbContext.Languages
                        .Include(p => p.DefaultCurrency)
                        .DeferredFirstOrDefault(p => p.Published)
                        .FromCache(new []
                        {
-                           QueryCacheTag.Language, QueryCacheTag.Currency
+                           CacheTags.Language, CacheTags.Currency
                        });
         }
         
@@ -59,10 +59,10 @@ namespace Devesprit.Services.Languages
         {
             var result = await _dbContext.Languages
                              .DeferredFirstOrDefault(p => p.IsDefault && p.Published)
-                             .FromCacheAsync(QueryCacheTag.Language) ??
+                             .FromCacheAsync(CacheTags.Language) ??
                          await _dbContext.Languages
                              .DeferredFirstOrDefault(p => p.Published)
-                             .FromCacheAsync(QueryCacheTag.Language);
+                             .FromCacheAsync(CacheTags.Language);
             return result;
         }
 
@@ -71,14 +71,14 @@ namespace Devesprit.Services.Languages
             return _dbContext.Languages
                     .Include(p => p.DefaultCurrency)
                     .DeferredFirstOrDefault(p => p.IsoCode.Trim().ToLower() == iso.Trim().ToLower())
-                    .FromCache(new[] { QueryCacheTag.Language, QueryCacheTag.Currency });
+                    .FromCache(new[] { CacheTags.Language, CacheTags.Currency });
         }
 
         public virtual async Task<TblLanguages> FindByIsoAsync(string iso)
         {
             var result = await _dbContext.Languages
                 .DeferredFirstOrDefault(p => p.IsoCode.Trim().ToLower() == iso.Trim().ToLower())
-                .FromCacheAsync(QueryCacheTag.Language);
+                .FromCacheAsync(CacheTags.Language);
             return result;
         }
 
@@ -86,20 +86,20 @@ namespace Devesprit.Services.Languages
         {
             return _dbContext.Languages.Include(p=> p.DefaultCurrency)
                 .DeferredFirstOrDefault(p => p.Id == id)
-                .FromCache(QueryCacheTag.Language);
+                .FromCache(CacheTags.Language);
         }
 
         public virtual List<string> GetAllLanguagesIsoList()
         {
             return _dbContext.Languages.Where(p => p.Published)
                 .Select(p => p.IsoCode)
-                .FromCache(QueryCacheTag.Language).Select(p => p.ToLower().Trim()).ToList();
+                .FromCache(CacheTags.Language).Select(p => p.ToLower().Trim()).ToList();
         }
 
         public virtual IEnumerable<TblLanguages> GetAsEnumerable()
         {
             return _dbContext.Languages.Where(p => p.Published).OrderBy(p => p.DisplayOrder)
-                .FromCache(QueryCacheTag.Language);
+                .FromCache(CacheTags.Language);
         }
 
         public virtual IQueryable<TblLanguages> GetAsQueryable()
@@ -111,21 +111,21 @@ namespace Devesprit.Services.Languages
         {
             var result = await _dbContext.Languages
                 .DeferredFirstOrDefault(p => p.Id == id)
-                .FromCacheAsync(QueryCacheTag.Language);
+                .FromCacheAsync(CacheTags.Language);
             return result;
         }
 
         public virtual async Task<List<string>> GetAllLanguagesIsoListAsync()
         {
             var result = await _dbContext.Languages.Where(p => p.Published).Select(p => p.IsoCode.ToLower().Trim())
-                .FromCacheAsync(QueryCacheTag.Language);
+                .FromCacheAsync(CacheTags.Language);
             return result.ToList();
         }
 
         public virtual async Task<IEnumerable<TblLanguages>> GetAsEnumerableAsync()
         {
             var result = await _dbContext.Languages.Where(p => p.Published).OrderBy(p => p.DisplayOrder)
-                .FromCacheAsync(QueryCacheTag.Language);
+                .FromCacheAsync(CacheTags.Language);
             return result;
         }
         
@@ -139,7 +139,7 @@ namespace Devesprit.Services.Languages
 
             await _dbContext.Languages.Where(p=> p.Id == id).DeleteAsync();
             await _localizedEntityService.DeleteEntityAllLocalizedStringsAsync(record);
-            QueryCacheManager.ExpireTag(QueryCacheTag.Language);
+            QueryCacheManager.ExpireTag(CacheTags.Language);
 
             _eventPublisher.EntityDeleted(record);
         }
@@ -148,7 +148,7 @@ namespace Devesprit.Services.Languages
         {
             if (await _dbContext.Languages
                 .DeferredAny(p => p.IsoCode.Trim() == record.IsoCode.Trim() && p.Id != record.Id)
-                .FromCacheAsync(QueryCacheTag.Language))
+                .FromCacheAsync(CacheTags.Language))
             {
                 throw new Exception($"The \"{record.IsoCode}\" ISO code already exist.");
             }
@@ -169,7 +169,7 @@ namespace Devesprit.Services.Languages
                 _dbContext.Languages.AddOrUpdate(record);
                 await _dbContext.SaveChangesAsync();
 
-                QueryCacheManager.ExpireTag(QueryCacheTag.Language);
+                QueryCacheManager.ExpireTag(CacheTags.Language);
 
                 _eventPublisher.EntityUpdated(record, oldRecord);
             }
@@ -178,7 +178,7 @@ namespace Devesprit.Services.Languages
         public virtual async Task<int> AddAsync(TblLanguages record)
         {
             if (await _dbContext.Languages.DeferredAny(p => p.IsoCode.Trim() == record.IsoCode.Trim())
-                .FromCacheAsync(QueryCacheTag.Language))
+                .FromCacheAsync(CacheTags.Language))
             {
                 throw new Exception($"The \"{record.IsoCode}\" ISO code already exist.");
             }
@@ -186,7 +186,7 @@ namespace Devesprit.Services.Languages
             _dbContext.Languages.Add(record);
             await _dbContext.SaveChangesAsync();
             
-            QueryCacheManager.ExpireTag(QueryCacheTag.Language);
+            QueryCacheManager.ExpireTag(CacheTags.Language);
 
             _eventPublisher.EntityInserted(record);
 
@@ -210,7 +210,7 @@ namespace Devesprit.Services.Languages
             await _dbContext.Languages.Where(p => p.Id == id)
                 .UpdateAsync(p => new TblLanguages() {IsDefault = true});
 
-            QueryCacheManager.ExpireTag(QueryCacheTag.Language);
+            QueryCacheManager.ExpireTag(CacheTags.Language);
 
             _eventPublisher.Publish(new DefaultLanguageChangeEvent(record));
         }

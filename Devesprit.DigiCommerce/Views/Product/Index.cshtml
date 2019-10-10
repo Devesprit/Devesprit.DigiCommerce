@@ -41,7 +41,7 @@
                 </div>
             }
         }
-        @{Html.RenderPartial("Partials/_ProductDownloadPurchaseButton", Model.DownloadPurchaseButtonModel);}
+        @{Html.RenderPartial("Partials/_ProductDownloadView", Model.DownloadModel);}
         @{Html.RenderPartial("Partials/_ProductAttributesSection", Model);}
         @{Html.RenderPartial("Partials/_ProductTagsSection", Model.TagsList);}
         @if (Model.ShowSimilarCases)

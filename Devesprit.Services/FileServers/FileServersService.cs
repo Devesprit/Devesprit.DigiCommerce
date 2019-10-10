@@ -30,7 +30,7 @@ namespace Devesprit.Services.FileServers
         public virtual async Task<IEnumerable<TblFileServers>> GetAsEnumerableAsync()
         {
             var result = await GetAsQueryable()
-                .FromCacheAsync(QueryCacheTag.FileServer);
+                .FromCacheAsync(CacheTags.FileServer);
             return result;
         }
 
@@ -44,7 +44,7 @@ namespace Devesprit.Services.FileServers
         public virtual List<SelectListItem> GetAsSelectList()
         {
             var result = GetAsQueryable()
-                .FromCache(QueryCacheTag.FileServer);
+                .FromCache(CacheTags.FileServer);
 
             return result
                 .Select(p => new SelectListItem() {Value = p.Id.ToString(), Text = p.FileServerName})
@@ -60,7 +60,7 @@ namespace Devesprit.Services.FileServers
         {
             var record = await FindByIdAsync(id);
             await _dbContext.FileServers.Where(p=> p.Id == id).DeleteAsync();
-            QueryCacheManager.ExpireTag(QueryCacheTag.FileServer);
+            QueryCacheManager.ExpireTag(CacheTags.FileServer);
 
             _eventPublisher.EntityDeleted(record);
         }
@@ -69,7 +69,7 @@ namespace Devesprit.Services.FileServers
         {
             var result = await _dbContext.FileServers
                 .DeferredFirstOrDefault(p => p.Id == id)
-                .FromCacheAsync(QueryCacheTag.FileServer);
+                .FromCacheAsync(CacheTags.FileServer);
             return result;
         }
 
@@ -77,7 +77,7 @@ namespace Devesprit.Services.FileServers
         {
             _dbContext.FileServers.Add(record);
             await _dbContext.SaveChangesAsync();
-            QueryCacheManager.ExpireTag(QueryCacheTag.FileServer);
+            QueryCacheManager.ExpireTag(CacheTags.FileServer);
 
             _eventPublisher.EntityInserted(record);
 
@@ -89,7 +89,7 @@ namespace Devesprit.Services.FileServers
             var oldRecord = await FindByIdAsync(record.Id);
             _dbContext.FileServers.AddOrUpdate(record);
             await _dbContext.SaveChangesAsync();
-            QueryCacheManager.ExpireTag(QueryCacheTag.FileServer);
+            QueryCacheManager.ExpireTag(CacheTags.FileServer);
 
             _eventPublisher.EntityUpdated(record, oldRecord);
         }

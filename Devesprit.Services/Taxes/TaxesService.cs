@@ -28,7 +28,7 @@ namespace Devesprit.Services.Taxes
         public virtual async Task<IEnumerable<TblTaxes>> GetAsEnumerableAsync()
         {
             var result = await GetAsQueryable()
-                .FromCacheAsync(QueryCacheTag.Tax);
+                .FromCacheAsync(CacheTags.Tax);
             return result;
         }
 
@@ -42,7 +42,7 @@ namespace Devesprit.Services.Taxes
             var record = await FindByIdAsync(id);
             await _dbContext.Taxes.Where(p=> p.Id == id).DeleteAsync();
             await _localizedEntityService.DeleteEntityAllLocalizedStringsAsync(typeof(TblCountries).Name, id);
-            QueryCacheManager.ExpireTag(QueryCacheTag.Tax);
+            QueryCacheManager.ExpireTag(CacheTags.Tax);
 
             _eventPublisher.EntityDeleted(record);
         }
@@ -51,7 +51,7 @@ namespace Devesprit.Services.Taxes
         {
             var result = await _dbContext.Taxes
                 .DeferredFirstOrDefault(p => p.Id == id)
-                .FromCacheAsync(QueryCacheTag.Tax);
+                .FromCacheAsync(CacheTags.Tax);
             return result;
         }
 
@@ -59,7 +59,7 @@ namespace Devesprit.Services.Taxes
         {
             _dbContext.Taxes.Add(record);
             await _dbContext.SaveChangesAsync();
-            QueryCacheManager.ExpireTag(QueryCacheTag.Tax);
+            QueryCacheManager.ExpireTag(CacheTags.Tax);
 
             _eventPublisher.EntityInserted(record);
 
@@ -71,7 +71,7 @@ namespace Devesprit.Services.Taxes
             var oldRecord = await FindByIdAsync(record.Id);
             _dbContext.Taxes.AddOrUpdate(record);
             await _dbContext.SaveChangesAsync();
-            QueryCacheManager.ExpireTag(QueryCacheTag.Tax);
+            QueryCacheManager.ExpireTag(CacheTags.Tax);
 
             _eventPublisher.EntityUpdated(record, oldRecord);
         }

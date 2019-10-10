@@ -33,7 +33,7 @@ namespace Devesprit.Services.Notifications
         {
             var record = await FindByIdAsync(id);
             await _dbContext.Notifications.Where(p=> p.Id == id).DeleteAsync();
-            QueryCacheManager.ExpireTag(QueryCacheTag.Notification);
+            QueryCacheManager.ExpireTag(CacheTags.Notification);
 
             _eventPublisher.EntityDeleted(record);
         }
@@ -42,7 +42,7 @@ namespace Devesprit.Services.Notifications
         {
             var result = await _dbContext.Notifications
                 .DeferredFirstOrDefault(p => p.Id == id)
-                .FromCacheAsync(QueryCacheTag.Notification);
+                .FromCacheAsync(CacheTags.Notification);
             return result;
         }
 
@@ -51,7 +51,7 @@ namespace Devesprit.Services.Notifications
             var argumentStr = argument.ObjectToJson();
             var result = await _dbContext.Notifications
                 .DeferredFirstOrDefault(p => p.MessageArguments == argumentStr)
-                .FromCacheAsync(QueryCacheTag.Notification);
+                .FromCacheAsync(CacheTags.Notification);
             return result;
         }
 
@@ -60,7 +60,7 @@ namespace Devesprit.Services.Notifications
             _dbContext.Notifications.Add(record);
             await _dbContext.SaveChangesAsync();
 
-            QueryCacheManager.ExpireTag(QueryCacheTag.Notification);
+            QueryCacheManager.ExpireTag(CacheTags.Notification);
 
             _eventPublisher.EntityInserted(record);
 
@@ -74,7 +74,7 @@ namespace Devesprit.Services.Notifications
                 _dbContext.Notifications.AddRange(records);
                 await _dbContext.SaveChangesAsync();
 
-                QueryCacheManager.ExpireTag(QueryCacheTag.Notification);
+                QueryCacheManager.ExpireTag(CacheTags.Notification);
 
                 records.ForEach(r => _eventPublisher.EntityInserted(r));
             }
@@ -112,7 +112,7 @@ namespace Devesprit.Services.Notifications
             _dbContext.Notifications.AddOrUpdate(record);
             await _dbContext.SaveChangesAsync();
 
-            QueryCacheManager.ExpireTag(QueryCacheTag.Notification);
+            QueryCacheManager.ExpireTag(CacheTags.Notification);
 
             _eventPublisher.EntityUpdated(record, oldRecord);
         }
@@ -121,7 +121,7 @@ namespace Devesprit.Services.Notifications
         {
             return _dbContext.Notifications
                 .DeferredCount(p => p.UserId == userId && !p.Readed)
-                .FromCache(QueryCacheTag.Notification);
+                .FromCache(CacheTags.Notification);
         }
 
         public virtual async Task<IPagedList<TblNotifications>> GetUserNotificationsAsPagedListAsync(string userId, bool setAsReaded, int pageIndex = 1, int pageSize = int.MaxValue)
@@ -134,19 +134,19 @@ namespace Devesprit.Services.Notifications
                     .OrderByDescending(p => p.NotificationDate)
                     .Skip(pageSize * (pageIndex - 1))
                     .Take(pageSize)
-                    .FromCacheAsync(QueryCacheTag.Notification),
+                    .FromCacheAsync(CacheTags.Notification),
                 pageIndex,
                 pageSize,
                 await query
                     .DeferredCount()
-                    .FromCacheAsync(QueryCacheTag.Notification));
+                    .FromCacheAsync(CacheTags.Notification));
 
             if (setAsReaded)
             {
                 var selectedIds = result.Select(p => p.Id).ToList();
                 await _dbContext.Notifications.Where(p => selectedIds.Contains(p.Id))
                     .UpdateAsync(p => new TblNotifications() { Readed = true });
-                QueryCacheManager.ExpireTag(QueryCacheTag.Notification);
+                QueryCacheManager.ExpireTag(CacheTags.Notification);
             }
 
             return result;

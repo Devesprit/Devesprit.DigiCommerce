@@ -37,7 +37,7 @@ namespace Devesprit.Services.Posts
         {
             var result = await _dbContext.PostCategories
                 .DeferredFirstOrDefault(p => p.Id == id)
-                .FromCacheAsync(QueryCacheTag.PostCategory);
+                .FromCacheAsync(CacheTags.PostCategory);
             return result;
         }
 
@@ -45,7 +45,7 @@ namespace Devesprit.Services.Posts
         {
             var result = await _dbContext.PostCategories
                 .DeferredFirstOrDefault(p => p.Slug == slug)
-                .FromCacheAsync(QueryCacheTag.PostCategory);
+                .FromCacheAsync(CacheTags.PostCategory);
             return result;
         }
 
@@ -54,7 +54,7 @@ namespace Devesprit.Services.Posts
             var record = await FindByIdAsync(id);
             await _dbContext.PostCategories.Where(p => p.Id == id).DeleteAsync();
             await _localizedEntityService.DeleteEntityAllLocalizedStringsAsync(typeof(TblPostCategories).Name, id);
-            QueryCacheManager.ExpireTag(QueryCacheTag.PostCategory);
+            QueryCacheManager.ExpireTag(CacheTags.PostCategory);
 
             _eventPublisher.EntityDeleted(record);
         }
@@ -70,7 +70,7 @@ namespace Devesprit.Services.Posts
 
             _dbContext.PostCategories.AddOrUpdate(record);
             await _dbContext.SaveChangesAsync();
-            QueryCacheManager.ExpireTag(QueryCacheTag.PostCategory);
+            QueryCacheManager.ExpireTag(CacheTags.PostCategory);
 
             _eventPublisher.EntityUpdated(record, oldRecord);
         }
@@ -79,7 +79,7 @@ namespace Devesprit.Services.Posts
         {
             _dbContext.PostCategories.Add(record);
             await _dbContext.SaveChangesAsync();
-            QueryCacheManager.ExpireTag(QueryCacheTag.PostCategory);
+            QueryCacheManager.ExpireTag(CacheTags.PostCategory);
 
             _eventPublisher.EntityInserted(record);
 
@@ -104,19 +104,19 @@ namespace Devesprit.Services.Posts
 
         public virtual async Task<IEnumerable<TblPostCategories>> GetAsEnumerableAsync()
         {
-            return await GetAsQueryable().FromCacheAsync(QueryCacheTag.PostCategory);
+            return await GetAsQueryable().FromCacheAsync(CacheTags.PostCategory);
         }
 
         public virtual IEnumerable<TblPostCategories> GetAsEnumerable()
         {
-            return GetAsQueryable().FromCache(QueryCacheTag.PostCategory);
+            return GetAsQueryable().FromCache(CacheTags.PostCategory);
         }
 
         public virtual IEnumerable<TblPostCategories> GetCategoriesMustShowInFooter()
         {
             return GetAsQueryable().Where(p => p.ShowInFooter)
                 .OrderBy(p => p.CategoryName)
-                .FromCache(QueryCacheTag.PostCategory);
+                .FromCache(CacheTags.PostCategory);
         }
 
         public virtual List<int> GetSubCategories(int categoryId, List<int> result = null)

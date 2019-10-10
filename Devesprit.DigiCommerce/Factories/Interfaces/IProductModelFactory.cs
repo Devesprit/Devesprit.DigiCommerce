@@ -7,9 +7,8 @@ namespace Devesprit.DigiCommerce.Factories.Interfaces
 {
     public partial interface IProductModelFactory
     {
-        ProductCardViewModel PrepareProductCardViewModel(TblProducts product, TblUsers currentUser, UrlHelper url);
         IPagedList<ProductCardViewModel> PrepareProductCardViewModel(IPagedList<TblProducts> product, TblUsers currentUser, UrlHelper url);
         ProductModel PrepareProductModel(TblProducts product, TblUsers currentUser, UrlHelper url);
-        ProductDownloadPurchaseButtonModel PrepareProductDownloadPurchaseButtonModel(TblProducts product, TblUsers currentUser);
+        ProductDownloadModel PrepareProductDownloadPurchaseButtonModel(TblProducts product, TblUsers currentUser);
     }
 }

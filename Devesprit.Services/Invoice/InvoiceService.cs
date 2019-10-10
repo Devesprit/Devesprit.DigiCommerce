@@ -77,7 +77,7 @@ namespace Devesprit.Services.Invoice
 
         #region CURD
 
-        public virtual async Task<TblInvoices> FindByIdAsync(Guid id)
+        public virtual async Task<TblInvoices> FindByIdAsync(Guid id, bool checkUserAccess = true)
         {
             var result = await _dbContext.Invoices
                 .Include(p => p.InvoiceDetails)
@@ -86,11 +86,12 @@ namespace Devesprit.Services.Invoice
                 .Include(p => p.BillingAddress)
                 .AsNoTracking()
                 .DeferredFirstOrDefault(p => p.Id == id)
-                .FromCacheAsync(QueryCacheTag.Invoice);
+                .FromCacheAsync(CacheTags.Invoice);
 
             //Check User
-            if (!await UserHasAccessToInvoiceAsync(result, _workContext.CurrentUser?.Id))
-                return null;
+            if (checkUserAccess)
+                if (!await UserHasAccessToInvoiceAsync(result, _workContext.CurrentUser?.Id))
+                    return null;
 
             return result;
         }
@@ -99,7 +100,7 @@ namespace Devesprit.Services.Invoice
         {
             _dbContext.Invoices.Add(record);
             await _dbContext.SaveChangesAsync();
-            QueryCacheManager.ExpireTag(QueryCacheTag.Invoice);
+            QueryCacheManager.ExpireTag(CacheTags.Invoice);
 
             _eventPublisher.EntityInserted(record);
 
@@ -110,7 +111,7 @@ namespace Devesprit.Services.Invoice
         {
             var record = await FindByIdAsync(id);
             await _dbContext.Invoices.Where(p => p.Id == id).DeleteAsync();
-            QueryCacheManager.ExpireTag(QueryCacheTag.Invoice);
+            QueryCacheManager.ExpireTag(CacheTags.Invoice);
 
             _eventPublisher.EntityDeleted(record);
         }
@@ -129,7 +130,7 @@ namespace Devesprit.Services.Invoice
         {
             var item = await _dbContext.InvoiceDetails
                 .DeferredFirstOrDefault(p => p.Id == id)
-                .FromCacheAsync(QueryCacheTag.Invoice);
+                .FromCacheAsync(CacheTags.Invoice);
 
             var result = await FindByIdAsync(item.InvoiceId);
 
@@ -139,7 +140,7 @@ namespace Devesprit.Services.Invoice
         public async Task<TblInvoiceDetails> FindInvoiceItemByIdAsync(int id)
         {
             return await _dbContext.InvoiceDetails.DeferredFirstOrDefault(p => p.Id == id)
-                .FromCacheAsync(QueryCacheTag.Invoice);
+                .FromCacheAsync(CacheTags.Invoice);
         }
 
         public virtual async Task AddItemToInvoiceAsync(InvoiceDetailsItemType itemType, string itemName, string itemHomePage, int itemId, double priceInMainCurrency, int qty, Guid? invoiceId = null)
@@ -154,7 +155,7 @@ namespace Devesprit.Services.Invoice
                 var records = (await _dbContext.InvoiceDetails.Where(p =>
                         p.ItemType == InvoiceDetailsItemType.SubscriptionPlan
                         && p.InvoiceId == invoice.Id)
-                    .FromCacheAsync(QueryCacheTag.Invoice)).ToList();
+                    .FromCacheAsync(CacheTags.Invoice)).ToList();
                 await _dbContext.InvoiceDetails.Where(p => p.ItemType == InvoiceDetailsItemType.SubscriptionPlan
                                                               && p.InvoiceId == invoice.Id).DeleteAsync();
                 records.ForEach(x => _eventPublisher.EntityDeleted(x));
@@ -195,7 +196,7 @@ namespace Devesprit.Services.Invoice
                 _eventPublisher.EntityInserted(item);
             }
 
-            QueryCacheManager.ExpireTag(QueryCacheTag.Invoice);
+            QueryCacheManager.ExpireTag(CacheTags.Invoice);
 
             await ApplyInvoiceDiscountsAsync(invoice);
             await ApplyInvoiceTaxesAsync(invoice);
@@ -211,7 +212,7 @@ namespace Devesprit.Services.Invoice
                 var records = (await _dbContext.InvoiceDetails.Where(p => p.Id == itemId &&
                                                                              (p.Invoice.UserId == null ||
                                                                               p.Invoice.UserId == currentUserId))
-                    .FromCacheAsync(QueryCacheTag.Invoice)).ToList();
+                    .FromCacheAsync(CacheTags.Invoice)).ToList();
                 await _dbContext.InvoiceDetails
                     .Where(p => p.Id == itemId &&
                                 (p.Invoice.UserId == null || p.Invoice.UserId == currentUserId))
@@ -221,13 +222,13 @@ namespace Devesprit.Services.Invoice
             else
             {
                 var records = (await _dbContext.InvoiceDetails.Where(p => p.Id == itemId)
-                    .FromCacheAsync(QueryCacheTag.Invoice)).ToList();
+                    .FromCacheAsync(CacheTags.Invoice)).ToList();
                 await _dbContext.InvoiceDetails.Where(p => p.Id == itemId)
                     .DeleteAsync();
                 records.ForEach(x => _eventPublisher.EntityDeleted(x));
             }
 
-            QueryCacheManager.ExpireTag(QueryCacheTag.Invoice);
+            QueryCacheManager.ExpireTag(CacheTags.Invoice);
 
             await ApplyInvoiceDiscountsAsync(invoice);
             await ApplyInvoiceTaxesAsync(invoice);
@@ -239,7 +240,7 @@ namespace Devesprit.Services.Invoice
             await _dbContext.InvoiceDetails.Where(p => p.Id == itemId)
                     .UpdateAsync(p => new TblInvoiceDetails() { ItemLicenseCode = license });
 
-            QueryCacheManager.ExpireTag(QueryCacheTag.Invoice);
+            QueryCacheManager.ExpireTag(CacheTags.Invoice);
 
             var newRecord = oldRecord.Adapt<TblInvoiceDetails>();
             newRecord.ItemLicenseCode = license;
@@ -255,7 +256,7 @@ namespace Devesprit.Services.Invoice
                     PurchaseExpiration = expiration
                 });
 
-            QueryCacheManager.ExpireTag(QueryCacheTag.Invoice);
+            QueryCacheManager.ExpireTag(CacheTags.Invoice);
 
             var newRecord = oldRecord.Adapt<TblInvoiceDetails>();
             newRecord.PurchaseExpiration = expiration;
@@ -288,7 +289,7 @@ namespace Devesprit.Services.Invoice
                     .UpdateAsync(p => new TblInvoiceDetails() { Qty = p.Qty + qty });
             }
 
-            QueryCacheManager.ExpireTag(QueryCacheTag.Invoice);
+            QueryCacheManager.ExpireTag(CacheTags.Invoice);
 
             var newRecord = oldRecord.Adapt<TblInvoiceDetails>();
             newRecord.Qty += qty;
@@ -324,7 +325,7 @@ namespace Devesprit.Services.Invoice
                     .UpdateAsync(p => new TblInvoiceDetails() { Qty = p.Qty > qty ? p.Qty - qty : 1 });
             }
 
-            QueryCacheManager.ExpireTag(QueryCacheTag.Invoice);
+            QueryCacheManager.ExpireTag(CacheTags.Invoice);
 
             var newRecord = oldRecord.Adapt<TblInvoiceDetails>();
             newRecord.Qty = newRecord.Qty > qty ? newRecord.Qty - qty : 1;
@@ -341,7 +342,7 @@ namespace Devesprit.Services.Invoice
                 .Where(p => p.Id == itemId)
                 .UpdateAsync(p => new TblInvoiceDetails() { UnitPrice = price });
 
-            QueryCacheManager.ExpireTag(QueryCacheTag.Invoice);
+            QueryCacheManager.ExpireTag(CacheTags.Invoice);
 
             var newRecord = oldRecord.Adapt<TblInvoiceDetails>();
             newRecord.UnitPrice = price;
@@ -384,7 +385,7 @@ namespace Devesprit.Services.Invoice
                     });
             }
 
-            QueryCacheManager.ExpireTag(QueryCacheTag.Invoice);
+            QueryCacheManager.ExpireTag(CacheTags.Invoice);
 
             _eventPublisher.Publish(new InvoiceCheckoutEvent(invoice, transactionId, paidAmount,
                 paidAmount.ExchangeCurrencyStr(), invoice.PaymentGatewayName, invoice.Currency.IsoCode));
@@ -539,7 +540,7 @@ namespace Devesprit.Services.Invoice
                     .OrderByDescending(p => p.CreateDate)
                     .AsNoTracking()
                     .DeferredFirstOrDefault(p => p.UserId == currentUser.Id && p.Status == InvoiceStatus.Pending)
-                    .FromCacheAsync(QueryCacheTag.Invoice);
+                    .FromCacheAsync(CacheTags.Invoice);
             }
 
             if (invoice == null && createNewIfNull)
@@ -602,7 +603,7 @@ namespace Devesprit.Services.Invoice
                 newRecord.InvoiceNote = note;
             }
 
-            QueryCacheManager.ExpireTag(QueryCacheTag.Invoice);
+            QueryCacheManager.ExpireTag(CacheTags.Invoice);
 
             _eventPublisher.EntityUpdated(newRecord, oldRecord);
         }
@@ -615,7 +616,7 @@ namespace Devesprit.Services.Invoice
                 if (invoice.BillingAddress.Any())
                 {
                     var records = (await _dbContext.InvoiceBillingAddress.Where(p => p.InvoiceId == invoiceId)
-                        .FromCacheAsync(QueryCacheTag.Invoice)).ToList();
+                        .FromCacheAsync(CacheTags.Invoice)).ToList();
                     await _dbContext.InvoiceBillingAddress.Where(p => p.InvoiceId == invoiceId)
                         .DeleteAsync();
 
@@ -626,7 +627,7 @@ namespace Devesprit.Services.Invoice
                 _dbContext.InvoiceBillingAddress.Add(address);
                 await _dbContext.SaveChangesAsync();
 
-                QueryCacheManager.ExpireTag(QueryCacheTag.Invoice);
+                QueryCacheManager.ExpireTag(CacheTags.Invoice);
 
                 _eventPublisher.EntityInserted(address);
             }
@@ -636,7 +637,7 @@ namespace Devesprit.Services.Invoice
         {
             var result = await _dbContext.Invoices.OrderByDescending(p => p.CreateDate)
                 .DeferredFirstOrDefault(p => p.UserId == userid && p.BillingAddress.Any())
-                .FromCacheAsync(QueryCacheTag.Invoice);
+                .FromCacheAsync(CacheTags.Invoice);
 
             return result?.BillingAddress?.FirstOrDefault();
         }
@@ -653,7 +654,7 @@ namespace Devesprit.Services.Invoice
                     CurrencyId = currencyId
                 });
 
-            QueryCacheManager.ExpireTag(QueryCacheTag.Invoice);
+            QueryCacheManager.ExpireTag(CacheTags.Invoice);
 
             var newRecord = oldRecord.Adapt<TblInvoices>();
             newRecord.PaymentGatewayToken = token;
@@ -672,7 +673,7 @@ namespace Devesprit.Services.Invoice
                     Status = status
                 });
 
-            QueryCacheManager.ExpireTag(QueryCacheTag.Invoice);
+            QueryCacheManager.ExpireTag(CacheTags.Invoice);
 
             var newRecord = oldRecord.Adapt<TblInvoices>();
             newRecord.Status = status;
@@ -688,7 +689,7 @@ namespace Devesprit.Services.Invoice
                     PaymentDate = paymentDate
                 });
 
-            QueryCacheManager.ExpireTag(QueryCacheTag.Invoice);
+            QueryCacheManager.ExpireTag(CacheTags.Invoice);
 
             var newRecord = oldRecord.Adapt<TblInvoices>();
             newRecord.PaymentDate = paymentDate;
@@ -704,7 +705,7 @@ namespace Devesprit.Services.Invoice
                     UserId = userId
                 });
 
-            QueryCacheManager.ExpireTag(QueryCacheTag.Invoice);
+            QueryCacheManager.ExpireTag(CacheTags.Invoice);
 
             var newRecord = oldRecord.Adapt<TblInvoices>();
             newRecord.UserId = userId;
@@ -719,7 +720,7 @@ namespace Devesprit.Services.Invoice
                 .UpdateAsync(p => new TblInvoices()
                 { TotalTaxAmount = taxAmount, TaxDescription = taxDescription });
 
-            QueryCacheManager.ExpireTag(QueryCacheTag.Invoice);
+            QueryCacheManager.ExpireTag(CacheTags.Invoice);
 
             var newRecord = oldRecord.Adapt<TblInvoices>();
             newRecord.TotalTaxAmount = taxAmount;
@@ -735,7 +736,7 @@ namespace Devesprit.Services.Invoice
                 .UpdateAsync(p => new TblInvoices()
                 { DiscountAmount = discountAmount, DiscountDescription = discountDescription });
 
-            QueryCacheManager.ExpireTag(QueryCacheTag.Invoice);
+            QueryCacheManager.ExpireTag(CacheTags.Invoice);
 
             var newRecord = oldRecord.Adapt<TblInvoices>();
             newRecord.DiscountAmount = discountAmount;
@@ -818,7 +819,7 @@ namespace Devesprit.Services.Invoice
                         .DeleteAsync();
                 }
 
-                QueryCacheManager.ExpireTag(QueryCacheTag.Invoice);
+                QueryCacheManager.ExpireTag(CacheTags.Invoice);
             }
         }
 
@@ -837,7 +838,7 @@ namespace Devesprit.Services.Invoice
             }
 
             var invoices = await query.OrderBy(p => p.CreateDate)
-                .Select(p => new { p.CreateDate }).FromCacheAsync(QueryCacheTag.Invoice);
+                .Select(p => new { p.CreateDate }).FromCacheAsync(CacheTags.Invoice);
 
             var report = new Dictionary<DateTime, int>();
             var datetimeToStringFormat = "g";
@@ -907,7 +908,7 @@ namespace Devesprit.Services.Invoice
             var query = _dbContext.Invoices.Where(p => p.CreateDate >= fromDate && p.CreateDate <= toDate && p.Status == InvoiceStatus.Paid && p.PaymentDate != null);
 
             var invoices = await query.OrderBy(p => p.PaymentDate).Select(p => new { p.PaymentDate, p.PaidAmount })
-                .FromCacheAsync(QueryCacheTag.Invoice);
+                .FromCacheAsync(CacheTags.Invoice);
 
             var report = new Dictionary<DateTime, double>();
             var datetimeToStringFormat = "g";

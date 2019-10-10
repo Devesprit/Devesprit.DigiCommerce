@@ -5,10 +5,12 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 using System.Web.UI;
+using Autofac.Extras.DynamicProxy;
 using Devesprit.Data.Domain;
 using Devesprit.Data.Enums;
 using Devesprit.Services.Languages;
 using Devesprit.Services.Localization;
+using Devesprit.Services.MemoryCache;
 using Devesprit.Services.Pages;
 using Devesprit.Services.Posts;
 using Devesprit.Services.SearchEngine;
@@ -17,6 +19,7 @@ using Devesprit.Utilities.Extensions;
 
 namespace Devesprit.DigiCommerce.Controllers
 {
+    [Intercept(typeof(MethodCache))]
     public partial class SiteMapController : Controller
     {
         private readonly ISitemapGenerator _sitemapGenerator;
@@ -42,7 +45,7 @@ namespace Devesprit.DigiCommerce.Controllers
         }
 
         // GET: SiteMap
-        [OutputCache(Duration = 60 * 60, Location = OutputCacheLocation.Server, VaryByParam = "*")]
+        [MethodCache(Tags = new[] { nameof(TblBlogPosts), nameof(TblProducts) })]
         public virtual async Task<ActionResult> Index()
         {
             var items = new List<SitemapItem>();

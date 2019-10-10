@@ -33,7 +33,7 @@ namespace Devesprit.Services.Posts
                 _dbContext.PostTags.Add(record);
                 await _dbContext.SaveChangesAsync();
 
-                QueryCacheManager.ExpireTag(QueryCacheTag.PostTag);
+                QueryCacheManager.ExpireTag(CacheTags.PostTag);
 
                 _eventPublisher.EntityInserted(record);
             }
@@ -46,7 +46,7 @@ namespace Devesprit.Services.Posts
             await _dbContext.PostTags.Where(p => p.Id == id).DeleteAsync();
             await _localizedEntityService.DeleteEntityAllLocalizedStringsAsync(typeof(TblPostTags).Name, id);
 
-            QueryCacheManager.ExpireTag(QueryCacheTag.PostTag);
+            QueryCacheManager.ExpireTag(CacheTags.PostTag);
 
             _eventPublisher.EntityDeleted(record);
         }
@@ -61,7 +61,7 @@ namespace Devesprit.Services.Posts
             var result = await GetAsQueryable()
                 .Where(p => p.Tag.Contains(query))
                 .Take(10)
-                .FromCacheAsync(QueryCacheTag.PostTag);
+                .FromCacheAsync(CacheTags.PostTag);
             return result.ToList();
         }
 
@@ -72,14 +72,14 @@ namespace Devesprit.Services.Posts
 
         public virtual async Task<IEnumerable<TblPostTags>> GetAsEnumerableAsync()
         {
-            return await GetAsQueryable().FromCacheAsync(QueryCacheTag.PostTag);
+            return await GetAsQueryable().FromCacheAsync(CacheTags.PostTag);
         }
 
         public virtual async Task<TblPostTags> FindByIdAsync(int id)
         {
             var result = await _dbContext.PostTags
                 .DeferredFirstOrDefault(p => p.Id == id)
-                .FromCacheAsync(QueryCacheTag.PostTag);
+                .FromCacheAsync(CacheTags.PostTag);
             return result;
         }
 
@@ -89,7 +89,7 @@ namespace Devesprit.Services.Posts
             _dbContext.PostTags.AddOrUpdate(record);
             await _dbContext.SaveChangesAsync();
 
-            QueryCacheManager.ExpireTag(QueryCacheTag.PostTag);
+            QueryCacheManager.ExpireTag(CacheTags.PostTag);
 
             _eventPublisher.EntityUpdated(record, oldRecord);
         }

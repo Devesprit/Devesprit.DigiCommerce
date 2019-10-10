@@ -3,7 +3,7 @@ using Devesprit.Data;
 
 namespace Plugin.DiscountCode.DB
 {
-    public class SliderDbContextCustomizer : IDbContextCustomizer
+    public class DiscountCodeDbContextCustomizer : IDbContextCustomizer
     {
         public void OnModelCreating(DbModelBuilder modelBuilder)
         {

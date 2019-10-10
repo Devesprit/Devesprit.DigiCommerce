@@ -32,7 +32,7 @@ namespace Devesprit.Services.Users
         {
             var result = await _dbContext.UserGroups.OrderByDescending(p => p.GroupPriority)
                 .DeferredFirstOrDefault()
-                .FromCacheAsync(QueryCacheTag.UserGroup);
+                .FromCacheAsync(CacheTags.UserGroup);
             return result;
         }
 
@@ -44,7 +44,7 @@ namespace Devesprit.Services.Users
                 result = result.Where(p => p.GroupPriority > fromPriority.Value);
             }
 
-            return await result.FromCacheAsync(QueryCacheTag.UserGroup);
+            return await result.FromCacheAsync(CacheTags.UserGroup);
         }
 
         public virtual IEnumerable<TblUserGroups> GetAsEnumerable(int? fromPriority = null)
@@ -55,7 +55,7 @@ namespace Devesprit.Services.Users
                 result = result.Where(p => p.GroupPriority > fromPriority.Value);
             }
 
-            return result.FromCache(QueryCacheTag.UserGroup);
+            return result.FromCache(CacheTags.UserGroup);
         }
 
         public virtual async Task<List<SelectListItem>> GetAsSelectListAsync()
@@ -67,7 +67,7 @@ namespace Devesprit.Services.Users
 
         public virtual List<SelectListItem> GetAsSelectList()
         {
-            var result = GetAsQueryable().FromCache(QueryCacheTag.UserGroup);
+            var result = GetAsQueryable().FromCache(CacheTags.UserGroup);
 
             return result.Select(p =>
                     new SelectListItem() {Value = p.Id.ToString(), Text = p.GetLocalized(x => x.GroupName)})
@@ -77,7 +77,7 @@ namespace Devesprit.Services.Users
         public virtual async Task<TblUserGroups> FindByIdAsync(int id)
         {
             var result = await _dbContext.UserGroups.DeferredFirstOrDefault(p => p.Id == id)
-                .FromCacheAsync(QueryCacheTag.UserGroup);
+                .FromCacheAsync(CacheTags.UserGroup);
             return result;
         }
 
@@ -91,7 +91,7 @@ namespace Devesprit.Services.Users
             var record = await FindByIdAsync(id);
             await _dbContext.UserGroups.Where(p=> p.Id == id).DeleteAsync();
             await _localizedEntityService.DeleteEntityAllLocalizedStringsAsync(typeof(TblUserGroups).Name, id);
-            QueryCacheManager.ExpireTag(QueryCacheTag.UserGroup);
+            QueryCacheManager.ExpireTag(CacheTags.UserGroup);
 
             _eventPublisher.EntityDeleted(record);
         }
@@ -102,7 +102,7 @@ namespace Devesprit.Services.Users
             _dbContext.UserGroups.AddOrUpdate(record);
             await _dbContext.SaveChangesAsync();
 
-            QueryCacheManager.ExpireTag(QueryCacheTag.UserGroup);
+            QueryCacheManager.ExpireTag(CacheTags.UserGroup);
 
             _eventPublisher.EntityUpdated(record, oldRecord);
         }
@@ -112,7 +112,7 @@ namespace Devesprit.Services.Users
             _dbContext.UserGroups.Add(record);
             await _dbContext.SaveChangesAsync();
 
-            QueryCacheManager.ExpireTag(QueryCacheTag.UserGroup);
+            QueryCacheManager.ExpireTag(CacheTags.UserGroup);
 
             _eventPublisher.EntityInserted(record);
 
