@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Web;
 using Castle.DynamicProxy;
+using Devesprit.Utilities.Extensions;
 using Microsoft.AspNet.Identity;
 
 namespace Devesprit.Services.MemoryCache
@@ -43,12 +44,17 @@ namespace Devesprit.Services.MemoryCache
             Cache.RemoveAllObjectsContainKey(tag + ";");
         }
 
-        public static void ExpireTags(string[] tags)
+        public static void ExpireTag(string[] tags)
         {
             foreach (var tag in tags)
             {
                 Cache.RemoveAllObjectsContainKey(tag + ";");
             }
+        }
+
+        public static void ExpireAll()
+        {
+            Cache.RemoveAllObjects();
         }
 
         private static string GenerateCacheKey(MethodInfo method, string[] tags)
@@ -78,7 +84,7 @@ namespace Devesprit.Services.MemoryCache
                 {
                     foreach (var argument in argumentValues)
                     {
-                        key += argument.IsNotNull() ? $"{argument}--" : "null--";
+                        key += argument.IsNotNull() ? $"{argument.ObjectToJson()}--" : "null--";
                     }
                 }
                 else
@@ -88,7 +94,7 @@ namespace Devesprit.Services.MemoryCache
                     {
                         if (paramList.Contains(arguments[i].Name, StringComparer.InvariantCultureIgnoreCase))
                         {
-                            key += argumentValues[i].IsNotNull() ? $"{argumentValues[i]}--" : "null--";
+                            key += argumentValues[i].IsNotNull() ? $"{argumentValues[i].ObjectToJson()}--" : "null--";
                         }
                     }
                 }

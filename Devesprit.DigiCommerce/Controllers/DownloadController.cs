@@ -8,6 +8,7 @@ using Devesprit.Core.Localization;
 using Devesprit.Data.Domain;
 using Devesprit.Data.Enums;
 using Devesprit.DigiCommerce.Models.Download;
+using Devesprit.Services.Currency;
 using Devesprit.Services.FileManagerServiceReference;
 using Devesprit.Services.FileServers;
 using Devesprit.Services.Localization;
@@ -23,6 +24,7 @@ namespace Devesprit.DigiCommerce.Controllers
         private readonly IFileServersService _fileServersService;
         private readonly ILocalizationService _localizationService;
         private readonly IProductCheckoutAttributesService _productCheckoutAttributesService;
+        private readonly IProductDiscountsForUserGroupsService _productDiscountsForUserGroupsService;
         private readonly IProductDownloadsLogService _downloadsLogService;
 
         public DownloadController(
@@ -30,12 +32,14 @@ namespace Devesprit.DigiCommerce.Controllers
             IFileServersService fileServersService,
             ILocalizationService localizationService,
             IProductCheckoutAttributesService productCheckoutAttributesService,
+            IProductDiscountsForUserGroupsService productDiscountsForUserGroupsService,
             IProductDownloadsLogService downloadsLogService)
         {
             _productService = productService;
             _fileServersService = fileServersService;
             _localizationService = localizationService;
             _productCheckoutAttributesService = productCheckoutAttributesService;
+            _productDiscountsForUserGroupsService = productDiscountsForUserGroupsService;
             _downloadsLogService = downloadsLogService;
         }
 
@@ -68,7 +72,7 @@ namespace Devesprit.DigiCommerce.Controllers
                     p.Options.Any(x => !string.IsNullOrWhiteSpace(x.FilesPath)))))
             {
                 model.UserHasAccessToFiles = userHasAccessToFiles;
-                model.DiscountsForUserGroups = _productService.GenerateUserGroupDiscountsDescription(product, user);
+                model.DiscountsForUserGroups = GenerateUserGroupDiscountsDescription(product, user);
             }
             //---------------------------
 
@@ -258,6 +262,74 @@ namespace Devesprit.DigiCommerce.Controllers
                 result += $"<li data-jstree='{{\"icon\":\"/Content/img/FileExtIcons/download.png\"}}'><a target='_blank' href='{downloadLink}'><img src='{GetFileImage(file)}'/><span class='{(file.Name.IsRtlLanguage() ? "rtl-dir" : "ltr-dir")}'>{file.Name.Replace("_", " ")}     <small class='text-muted'>({_localizationService.GetResource("Size")}: {file.DisplaySize} - {_localizationService.GetResource("Date")}: {file.ModifiedDateUtc:G})</small></span></a></li>";
             }
             result += "</ul>";
+            return result;
+        }
+
+        protected virtual string GenerateUserGroupDiscountsDescription(TblProducts product, TblUsers user)
+        {
+            string result = "";
+
+            var fromGroup = user?.UserGroupId != null ? user.UserGroup.GroupPriority : int.MinValue;
+            var discounts = _productDiscountsForUserGroupsService.FindProductDiscounts(product.Id);
+
+            foreach (var discount in discounts.Where(p => p.UserGroup.GroupPriority >= fromGroup))
+            {
+                var price = product.Price - (discount.DiscountPercent * product.Price) / 100;
+                var groupName = discount.UserGroup.GetLocalized(p => p.GroupName);
+
+                if (price <= 0)
+                {
+                    //Free
+                    if (discount.ApplyDiscountToHigherUserGroups)
+                    {
+                        result += string.Format(
+                                      _localizationService.GetResource("FreeForUserGroupsOrHigher"),
+                                      groupName,
+                                      discount.UserGroup.Id,
+                                      discount.UserGroup.GroupPriority,
+                                      product.Id,
+                                      product.Slug) + "<br/>";
+                    }
+                    else
+                    {
+                        result += string.Format(
+                                      _localizationService.GetResource("FreeForUserGroups"),
+                                      groupName,
+                                      discount.UserGroup.Id,
+                                      discount.UserGroup.GroupPriority,
+                                      product.Id,
+                                      product.Slug) + "<br/>";
+                    }
+                }
+                else
+                {
+                    if (discount.ApplyDiscountToHigherUserGroups)
+                    {
+                        result += string.Format(
+                                      _localizationService.GetResource("DiscountForUserGroupsOrHigher"),
+                                      discount.DiscountPercent,
+                                      groupName,
+                                      price.ExchangeCurrencyStr(),
+                                      discount.UserGroup.Id,
+                                      discount.UserGroup.GroupPriority,
+                                      product.Id,
+                                      product.Slug) + "<br/>";
+                    }
+                    else
+                    {
+                        result += string.Format(
+                                      _localizationService.GetResource("DiscountForUserGroups"),
+                                      discount.DiscountPercent,
+                                      groupName,
+                                      price.ExchangeCurrencyStr(),
+                                      discount.UserGroup.Id,
+                                      discount.UserGroup.GroupPriority,
+                                      product.Id,
+                                      product.Slug) + "<br/>";
+                    }
+                }
+            }
+
             return result;
         }
 

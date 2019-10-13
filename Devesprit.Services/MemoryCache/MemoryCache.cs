@@ -77,6 +77,14 @@ namespace Devesprit.Services.MemoryCache
                 Cache.Remove(cachetKey);
             }
         }
+        
+        public virtual void RemoveAllObjects()
+        {
+            foreach (var cachetKey in Cache.GetAllKeys())
+            {
+                Cache.Remove(cachetKey);
+            }
+        }
 
         public virtual void RemoveAllObjectsContainKey(string key)
         {

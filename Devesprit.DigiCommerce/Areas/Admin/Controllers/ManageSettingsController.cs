@@ -9,9 +9,12 @@ using Devesprit.DigiCommerce.Areas.Admin.Factories.Interfaces;
 using Devesprit.DigiCommerce.Areas.Admin.Models;
 using Devesprit.DigiCommerce.Controllers;
 using Devesprit.Services;
+using Devesprit.Services.MemoryCache;
 using Devesprit.Services.SearchEngine;
 using Elmah;
 using Hangfire;
+using WebGrease;
+using Z.EntityFramework.Plus;
 
 namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
 {
@@ -117,6 +120,22 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
             try
             {
                 BackgroundJob.Enqueue<ISearchEngine>(searchEngine => searchEngine.CreateIndex());
+                SuccessNotification(_localizationService.GetResource("OperationCompletedSuccessfully"));
+            }
+            catch (Exception e)
+            {
+                ErrorNotification(e);
+            }
+
+            return RedirectToAction("Index", "Administration");
+        }
+
+        public virtual ActionResult PurgeCache()
+        {
+            try
+            {
+                MethodCache.ExpireAll();
+                QueryCacheManager.ExpireAll();
                 SuccessNotification(_localizationService.GetResource("OperationCompletedSuccessfully"));
             }
             catch (Exception e)

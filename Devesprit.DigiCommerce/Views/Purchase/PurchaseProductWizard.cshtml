@@ -88,7 +88,7 @@
                                 </div>
                             }
 
-                            @if (!string.IsNullOrWhiteSpace(Model.DownloadModel.DiscountForUserGroupsDescription))
+                            @if (Model.DownloadModel.DiscountForUserGroupsDescription != null && Model.DownloadModel.DiscountForUserGroupsDescription.Any())
                             {
                                 <div class="alert alert-warning pad-10">
                                     <h6 class="alert-heading my-0">
@@ -96,9 +96,16 @@
                                         @Html.Raw(T("SpecialDiscountsForVIPUsers"))
                                     </h6>
                                     <hr class="my-1" />
-                                    <small class="my-0">
-                                        @Html.Raw(Model.DownloadModel.DiscountForUserGroupsDescription)
-                                    </small>
+                                    @foreach (var discount in Model.DownloadModel.DiscountForUserGroupsDescription.Where(p=> p.Item1 != null && !string.IsNullOrWhiteSpace(p.Item2)))
+                                    {
+                                        <a href="@Url.Action("UpgradeAccount", "Purchase")"
+                                           target="_blank"
+                                           class="d-block white-space-initial fs-14 b-mar-10">
+                                            <img src="@discount.Item1.GetLocalized(p => p.GroupSmallIcon)" class="btn btn-xs mar-h-5 pad-5" 
+                                                 style="background-color: @discount.Item1.GetLocalized(p => p.GroupBackgroundColor); max-height: 30px; max-width: 30px;" />
+                                            @Html.Raw(discount.Item2)
+                                        </a>
+                                    }
                                 </div>
                             }
                         </div>

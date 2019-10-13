@@ -101,8 +101,8 @@ namespace Devesprit.WebFramework
             builder.RegisterType<ExternalLoginProviderManager>().As<IExternalLoginProviderManager>().EnableInterfaceInterceptors().InstancePerLifetimeScope();
             builder.RegisterType<Services.StartupTask>().As<IStartupTask>().EnableInterfaceInterceptors().InstancePerLifetimeScope();
             builder.RegisterType<BlogPostService>().As<IBlogPostService>().EnableInterfaceInterceptors().InstancePerLifetimeScope();
-            builder.RegisterType<PostService<TblPosts>>().As<PostService<TblPosts>>().EnableInterfaceInterceptors().InstancePerLifetimeScope();
-            builder.RegisterGeneric(typeof(PostService<>)).As(typeof(IPostService<>)).EnableInterfaceInterceptors().InstancePerLifetimeScope();
+            builder.RegisterType<PostService<TblPosts>>().As<PostService<TblPosts>>().InstancePerLifetimeScope();
+            builder.RegisterGeneric(typeof(PostService<>)).As(typeof(IPostService<>)).InstancePerLifetimeScope();
 
 
             //Register event consumers

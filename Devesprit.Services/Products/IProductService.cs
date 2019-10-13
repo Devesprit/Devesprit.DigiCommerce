@@ -44,7 +44,6 @@ namespace Devesprit.Services.Products
 
         Dictionary<int, int> GetNumberOfDownloads(int[] productIds);
 
-        string GenerateUserGroupDiscountsDescription(TblProducts product, TblUsers user);
         double CalculateProductPriceForUser(TblProducts product, TblUsers user);
         ProductService.UserCanDownloadProductResult UserCanDownloadProduct(TblProducts product, TblUsers user, bool demoFiles);
         Task<List<TblProductCheckoutAttributeOptions>> GetUserDownloadableAttributesAsync(TblProducts product,

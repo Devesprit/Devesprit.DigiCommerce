@@ -407,6 +407,10 @@
     <Reference Include="Yahoo.Yui.Compressor, Version=3.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\YUICompressor.NET.3.0.0\lib\net452\Yahoo.Yui.Compressor.dll</HintPath>
     </Reference>
+    <Reference Include="Z.EntityFramework.Plus.EF6, Version=1.10.3.0, Culture=neutral, PublicKeyToken=59b66d028979105b, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Bin\Z.EntityFramework.Plus.EF6.dll</HintPath>
+    </Reference>
     <Reference Include="Z.ExtensionMethods, Version=2.1.1.0, Culture=neutral, PublicKeyToken=59b66d028979105b, processorArchitecture=MSIL">
       <HintPath>..\packages\Z.ExtensionMethods.2.1.1\lib\net45\Z.ExtensionMethods.dll</HintPath>
     </Reference>
@@ -1936,7 +1940,7 @@
           <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
         </WebProjectProperties>
       </FlavorProperties>
-      <UserProperties BuildVersion_StartDate="2018/10/14" BuildVersion_UpdateAssemblyVersion="True" BuildVersion_UpdateFileVersion="True" BuildVersion_AssemblyInfoFilename="Properties\AssemblyInfo.cs" BuildVersion_UseGlobalSettings="True" BuildVersion_BuildVersioningStyle="YearStamp.MonthStamp.DayStamp.Increment" />
+      <UserProperties BuildVersion_BuildVersioningStyle="YearStamp.MonthStamp.DayStamp.Increment" BuildVersion_UseGlobalSettings="True" BuildVersion_AssemblyInfoFilename="Properties\AssemblyInfo.cs" BuildVersion_UpdateFileVersion="True" BuildVersion_UpdateAssemblyVersion="True" BuildVersion_StartDate="2018/10/14" />
     </VisualStudio>
   </ProjectExtensions>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

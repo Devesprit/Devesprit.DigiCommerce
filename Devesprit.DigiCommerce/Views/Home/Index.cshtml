@@ -84,21 +84,22 @@
     </div>
     @if (settings.EnableBlog)
     {
-        <div class="col-12 b-mar-70">
-            <hr class="b-mar-70" />
-            <div class="text-center mb-3">
-                <h4 class="mb-0">@T("LatestBlogPosts")</h4>
-                <a class="text-warning fs-12" href="@Url.Action("BlogExplorer", "Blog", new {listType = PostsListType.Newest})">@T("SeeMore")</a>
-            </div>
-            @{Html.RenderAction("GetBlogPostsList", "Blog", new
-                {
-                    listType = PostsListType.Newest,
-                    pageSize = 4,
-                    showPager = false,
-                    numberOfCol = NumberOfCol.Four,
-                    style = ViewStyles.Small
-                });}
-        </div>
+<div class="col-12 b-mar-70">
+    <hr class="b-mar-70" />
+    <div class="text-center mb-3">
+        <h4 class="mb-0">@T("LatestBlogPosts")</h4>
+        <a class="text-warning fs-12" href="@Url.Action("Index", "Blog")">@T("SeeMore")</a>
+    </div>
+    @{Html.RenderAction("GetBlogPostsList", "Blog", new
+        {
+            listType = PostsListType.Newest,
+            pageSize = 4,
+            showPager = false,
+            numberOfCol = NumberOfCol.Four,
+            style = ViewStyles.Small
+        }); }
+    <a class="btn btn-sm btn-secondary btn-block mt-2" href="@Url.Action("Index", "Blog")"><i class="fa fa-list"></i> @T("SeeMore")</a>
+</div>
     }
 </div>
 <script type="application/ld+json">

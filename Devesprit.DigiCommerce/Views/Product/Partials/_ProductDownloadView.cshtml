@@ -10,7 +10,6 @@
 
 @helper PurchaseBtnInnerHtml()
 {
-    var discounts = Model.DiscountForUserGroupsDescription;
     if (Model.CurrentUserHasAlreadyPurchasedThisProduct)
     {
         <small>@Html.Raw(T("BuyAgainUpgrade"))</small>
@@ -20,12 +19,25 @@
         <small>@Html.Raw(T("PurchaseNow"))</small>
         <br />
         <b>@Model.PriceForCurrentUser.ExchangeCurrencyStr()</b>
-        if (!string.IsNullOrWhiteSpace(discounts))
+    }
+}
+
+@helper UserGroupDiscountsBtnInnerHtml()
+{
+    var discounts = Model.DiscountForUserGroupsDescription;
+    if (discounts != null && discounts.Any())
+    {
+        foreach (var discount in discounts.Where(p => p.Item1 != null && !string.IsNullOrWhiteSpace(p.Item2)))
         {
-            <hr />
-            <p class="fs-14 line-height-1-3">
-                @Html.Raw(discounts)
-            </p>
+            <hr class="mar-v-10" />
+            <a href="@Url.Action("UpgradeAccount", "Purchase")"
+               target="_blank"
+               class="text-light fs-14 d-block white-space-initial">
+                <img src="@discount.Item1.GetLocalized(p => p.GroupSmallIcon)" 
+                     class="btn btn-xs mar-v-5 m-auto d-block"
+                     style="background-color: @discount.Item1.GetLocalized(p => p.GroupBackgroundColor);"/>
+                @Html.Raw(discount.Item2)
+            </a>
         }
     }
 }
@@ -36,8 +48,8 @@
     {
         <img src="@Model.DownloadLimitedToUserGroup.GetLocalized(p => p.GroupLargeIcon)" class="d-block mx-auto b-mar-5 mw-100" />
         @Html.Raw(T("SubscribeToPlan",
-            "<span style='color: "+Model.DownloadLimitedToUserGroup.GetLocalized(p => p.GroupTextColor)+" !important;'> "+
-            Model.DownloadLimitedToUserGroup.GetLocalized(p => p.GroupName)+ "</span>"))
+            "<span style='color: " + Model.DownloadLimitedToUserGroup.GetLocalized(p => p.GroupTextColor) + " !important;'> " +
+            Model.DownloadLimitedToUserGroup.GetLocalized(p => p.GroupName) + "</span>"))
         <hr class="my-1" />
         <small>
             @Html.Raw(string.Format(Model.HigherUserGroupsCanDownload ?
@@ -64,14 +76,18 @@
     //Purchase button
     if (Model.ShowPurchaseBtn)
     {
-        @Ajax.HtmlActionLink(PurchaseBtnInnerHtml().ToHtmlString(), "PurchaseProductWizard", "Purchase", new {productId = Model.ProductId}, new AjaxOptions()
-        {
-            InsertionMode = InsertionMode.Replace,
-            UpdateTargetId = "dlgProductPurchaseWizard",
-            LoadingElementId = "LoadingPanel",
-            LoadingElementDuration = 10,
-            OnFailure = "ErrorAlert('" + T("Error") + "', '" + T("ServerConnectionError") + "');"
-        }, new {@class = "btn btn-success btn-lg text-light fs-25 d-block white-space-initial b-mar-20"})
+        <div class="btn btn-lg bg-success b-mar-20">
+            @Ajax.HtmlActionLink(PurchaseBtnInnerHtml().ToHtmlString(), "PurchaseProductWizard", "Purchase", new { productId = Model.ProductId }, new AjaxOptions()
+            {
+                InsertionMode = InsertionMode.Replace,
+                UpdateTargetId = "dlgProductPurchaseWizard",
+                LoadingElementId = "LoadingPanel",
+                LoadingElementDuration = 10,
+                OnFailure = "ErrorAlert('" + T("Error") + "', '" + T("ServerConnectionError") + "');"
+            }, new { @class = "btn text-light fs-25 d-block white-space-initial" })
+
+            @UserGroupDiscountsBtnInnerHtml()
+        </div>
     }
 
     //Full version download button

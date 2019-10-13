@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using Devesprit.Core.Localization;
 using Devesprit.Data.Domain;
 using Devesprit.Data.Enums;
 using Devesprit.DigiCommerce.Factories.Interfaces;
 using Devesprit.DigiCommerce.Models.Post;
 using Devesprit.DigiCommerce.Models.Products;
+using Devesprit.Services.Currency;
 using Devesprit.Services.Localization;
 using Devesprit.Services.Products;
 using Devesprit.Services.Users;
@@ -25,6 +27,8 @@ namespace Devesprit.DigiCommerce.Factories
         private readonly IUserWishlistService _userWishlistService;
         private readonly IUsersService _usersService;
         private readonly IUserGroupsService _userGroupsService;
+        private readonly IProductDiscountsForUserGroupsService _productDiscountsForUserGroupsService;
+        private readonly ILocalizationService _localizationService;
         private readonly IProductCheckoutAttributesService _checkoutAttributesService;
         private readonly HttpContextBase _httpContext;
 
@@ -33,6 +37,8 @@ namespace Devesprit.DigiCommerce.Factories
             IUserWishlistService userWishlistService,
             IUsersService usersService,
             IUserGroupsService userGroupsService,
+            IProductDiscountsForUserGroupsService productDiscountsForUserGroupsService,
+            ILocalizationService localizationService,
             IProductCheckoutAttributesService checkoutAttributesService,
             HttpContextBase httpContext)
         {
@@ -41,6 +47,8 @@ namespace Devesprit.DigiCommerce.Factories
             _userWishlistService = userWishlistService;
             _usersService = usersService;
             _userGroupsService = userGroupsService;
+            _productDiscountsForUserGroupsService = productDiscountsForUserGroupsService;
+            _localizationService = localizationService;
             _checkoutAttributesService = checkoutAttributesService;
             _httpContext = httpContext;
         }
@@ -240,7 +248,7 @@ namespace Devesprit.DigiCommerce.Factories
                                       productCheckoutAttributes.Any(p =>
                                           p.Options.Any(x => !string.IsNullOrWhiteSpace(x.FilesPath))),
                 PriceForCurrentUser = _productService.CalculateProductPriceForUser(product, currentUser),
-                DiscountForUserGroupsDescription = _productService.GenerateUserGroupDiscountsDescription(product, currentUser),
+                DiscountForUserGroupsDescription = GenerateUserGroupDiscountsDescription(product, currentUser),
                 DownloadBlockingReason = _productService.UserCanDownloadProduct(product, currentUser, false)
             };
 
@@ -315,6 +323,79 @@ namespace Devesprit.DigiCommerce.Factories
 
             //ShowDownloadDemoVersionBtn
             result.ShowDownloadDemoVersionBtn = result.HasDemoVersion;
+
+            return result;
+        }
+
+        protected virtual List<Tuple<TblUserGroups, string>> GenerateUserGroupDiscountsDescription(TblProducts product, TblUsers user)
+        {
+            if (product == null)
+            {
+                throw new ArgumentNullException(nameof(product));
+            }
+
+            var result = new List<Tuple<TblUserGroups, string>>();
+
+            var fromGroup = user?.UserGroupId != null ? user.UserGroup.GroupPriority : int.MinValue;
+            var discounts = _productDiscountsForUserGroupsService.FindProductDiscounts(product.Id);
+
+            foreach (var discount in discounts.Where(p => p.UserGroup.GroupPriority >= fromGroup))
+            {
+                var price = product.Price - (discount.DiscountPercent * product.Price) / 100;
+                var groupName = discount.UserGroup.GetLocalized(p => p.GroupName);
+
+                if (price <= 0)
+                {
+                    //Free
+                    if (discount.ApplyDiscountToHigherUserGroups)
+                    {
+                        result.Add(new Tuple<TblUserGroups, string>(discount.UserGroup, string.Format(
+                            _localizationService.GetResource("FreeForUserGroupsOrHigher"),
+                            groupName,
+                            discount.UserGroup.Id,
+                            discount.UserGroup.GroupPriority,
+                            product.Id,
+                            product.Slug))); 
+                    }
+                    else
+                    {
+                        result.Add(new Tuple<TblUserGroups, string>(discount.UserGroup, string.Format(
+                            _localizationService.GetResource("FreeForUserGroups"),
+                            groupName,
+                            discount.UserGroup.Id,
+                            discount.UserGroup.GroupPriority,
+                            product.Id,
+                            product.Slug)));
+                    }
+                }
+                else
+                {
+                    if (discount.ApplyDiscountToHigherUserGroups)
+                    {
+                        result.Add(new Tuple<TblUserGroups, string>(discount.UserGroup, string.Format(
+                            _localizationService.GetResource("DiscountForUserGroupsOrHigher"),
+                            discount.DiscountPercent,
+                            groupName,
+                            price.ExchangeCurrencyStr(),
+                            discount.UserGroup.Id,
+                            discount.UserGroup.GroupPriority,
+                            product.Id,
+                            product.Slug)));
+                    }
+                    else
+                    {
+                        result.Add(new Tuple<TblUserGroups, string>(discount.UserGroup, string.Format(
+                            _localizationService.GetResource("DiscountForUserGroups"),
+                            discount.DiscountPercent,
+                            groupName,
+                            price.ExchangeCurrencyStr(),
+                            discount.UserGroup.Id,
+                            discount.UserGroup.GroupPriority,
+                            product.Id,
+                            product.Slug)));
+                    }
+                }
+            }
 
             return result;
         }
