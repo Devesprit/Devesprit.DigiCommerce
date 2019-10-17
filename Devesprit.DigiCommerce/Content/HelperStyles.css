@@ -1052,6 +1052,12 @@
 .no-max-width {
     max-width: inherit !important;
 }
+.mh-100 {
+    max-height: 100% !important;
+}
+.mw-100{
+    max-width: 100% !important;
+}
 
 /* Directions */
 .rtl-dir {

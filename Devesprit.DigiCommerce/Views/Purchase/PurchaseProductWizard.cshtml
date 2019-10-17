@@ -53,18 +53,18 @@
                                     <br />
                                     <b>@T("PriceForYou"): <span class="text-success fs-18">@Model.PriceForCurrentUser.ExchangeCurrencyStr()</span></b>
                                 }
-                                
+
                                 @if (Model.CurrentUserHasAlreadyPurchasedThisProduct && Model.CheckoutAttributes.Any())
                                 {
                                     <div class="text-center my-2">
                                         <h5 class="text-danger">@T("YouAlreadyPurchasedThisProductWantUpgrade")</h5>
                                         <div class="btn-group btn-group-toggle" data-toggle="buttons">
-                                          <label class="btn btn-success active">
-                                            <input type="radio" name="upgradeAttributes" value="false" id="optIWantToBuyAgain" autocomplete="off" checked> <i class="fa fa-shopping-cart"></i> @T("IWantToBuyAgain")
-                                          </label>
-                                          <label class="btn btn-success">
-                                            <input type="radio" name="upgradeAttributes" value="true" id="optIWantToUpgrade" autocomplete="off"> <i class="fa fa-arrow-circle-o-up"></i> @T("IWantToUpgrade")
-                                          </label>
+                                            <label class="btn btn-success active">
+                                                <input type="radio" name="upgradeAttributes" value="false" id="optIWantToBuyAgain" autocomplete="off" checked> <i class="fa fa-shopping-cart"></i> @T("IWantToBuyAgain")
+                                            </label>
+                                            <label class="btn btn-success">
+                                                <input type="radio" name="upgradeAttributes" value="true" id="optIWantToUpgrade" autocomplete="off"> <i class="fa fa-arrow-circle-o-up"></i> @T("IWantToUpgrade")
+                                            </label>
                                         </div>
                                     </div>
                                 }
@@ -95,17 +95,22 @@
                                         <img src="~/Content/img/Discount_25px.png" width="25" style="margin-top: -6px;" />
                                         @Html.Raw(T("SpecialDiscountsForVIPUsers"))
                                     </h6>
-                                    <hr class="my-1" />
-                                    @foreach (var discount in Model.DownloadModel.DiscountForUserGroupsDescription.Where(p=> p.Item1 != null && !string.IsNullOrWhiteSpace(p.Item2)))
-                                    {
-                                        <a href="@Url.Action("UpgradeAccount", "Purchase")"
-                                           target="_blank"
-                                           class="d-block white-space-initial fs-14 b-mar-10">
-                                            <img src="@discount.Item1.GetLocalized(p => p.GroupSmallIcon)" class="btn btn-xs mar-h-5 pad-5" 
-                                                 style="background-color: @discount.Item1.GetLocalized(p => p.GroupBackgroundColor); max-height: 30px; max-width: 30px;" />
-                                            @Html.Raw(discount.Item2)
-                                        </a>
-                                    }
+                                    <br />
+                                    <ul class="list-group">
+                                        @foreach (var discount in Model.DownloadModel.DiscountForUserGroupsDescription.Where(p => p.Item1 != null && !string.IsNullOrWhiteSpace(p.Item2)))
+                                        {
+                                            <li class="list-group-item py-2">
+                                                <span class="badge badge-pill" style="background-color: @discount.Item1.GetLocalized(p => p.GroupBackgroundColor);">
+                                                    <img src="@discount.Item1.GetLocalized(p => p.GroupSmallIcon)"
+                                                         class="pad-5" style="max-height: 25px" />
+                                                </span>
+                                                &nbsp;
+                                                <a href="@Url.Action("UpgradeAccount", "Purchase")" target="_blank">
+                                                    @Html.Raw(discount.Item2)
+                                                </a>
+                                            </li>
+                                        }
+                                    </ul>
                                 </div>
                             }
                         </div>
@@ -123,7 +128,7 @@
                                                         @Html.Raw(attribute.Name) :
                                                     </Label>
                                                     <span class="field-validation-valid form-text text-danger fs-12" data-valmsg-for="attr-@attribute.Id" data-valmsg-replace="true"></span>
-                                                    
+
                                                     @switch (attribute.AttributeType)
                                                     {
                                                         case ProductCheckoutAttributeType.DropDownList:
@@ -141,10 +146,10 @@
                                                                             <small>
                                                                                 <b>
                                                                                     [@Html.Raw(string.Format(option.HigherUserGroupsCanDownload ?
-                                                                                     T("DownloadLimitedToAUserGroupOrHigher").ToString()
-                                                                                     : T("DownloadLimitedToAUserGroup").ToString(),
-                                                                                     Url.Action("UpgradeAccount", "Purchase"),
-                                                                                     option.DownloadLimitedToUserGroup.GetLocalized(p => p.GroupName)))]
+                                                                                 T("DownloadLimitedToAUserGroupOrHigher").ToString()
+                                                                                 : T("DownloadLimitedToAUserGroup").ToString(),
+                                                                                 Url.Action("UpgradeAccount", "Purchase"),
+                                                                                 option.DownloadLimitedToUserGroup.GetLocalized(p => p.GroupName)))]
                                                                                 </b>
                                                                             </small>
                                                                         }
@@ -168,10 +173,10 @@
                                                                             <small>
                                                                                 <b>
                                                                                     [@Html.Raw(string.Format(option.HigherUserGroupsCanDownload ?
-                                                                                  T("DownloadLimitedToAUserGroupOrHigher").ToString()
-                                                                                  : T("DownloadLimitedToAUserGroup").ToString(),
-                                                                                  Url.Action("UpgradeAccount", "Purchase"),
-                                                                                  option.DownloadLimitedToUserGroup.GetLocalized(p => p.GroupName)))]
+                                                                              T("DownloadLimitedToAUserGroupOrHigher").ToString()
+                                                                              : T("DownloadLimitedToAUserGroup").ToString(),
+                                                                              Url.Action("UpgradeAccount", "Purchase"),
+                                                                              option.DownloadLimitedToUserGroup.GetLocalized(p => p.GroupName)))]
                                                                                 </b>
                                                                             </small>
                                                                         }
@@ -195,10 +200,10 @@
                                                                             <small>
                                                                                 <b>
                                                                                     [@Html.Raw(string.Format(option.HigherUserGroupsCanDownload ?
-                                                                                  T("DownloadLimitedToAUserGroupOrHigher").ToString()
-                                                                                  : T("DownloadLimitedToAUserGroup").ToString(),
-                                                                                  Url.Action("UpgradeAccount", "Purchase"),
-                                                                                  option.DownloadLimitedToUserGroup.GetLocalized(p => p.GroupName)))]
+                                                                              T("DownloadLimitedToAUserGroupOrHigher").ToString()
+                                                                              : T("DownloadLimitedToAUserGroup").ToString(),
+                                                                              Url.Action("UpgradeAccount", "Purchase"),
+                                                                              option.DownloadLimitedToUserGroup.GetLocalized(p => p.GroupName)))]
                                                                                 </b>
                                                                             </small>
                                                                         }
@@ -208,13 +213,12 @@
                                                             @Html.Raw(attribute.Description)
                                                             break;
                                                         case ProductCheckoutAttributeType.NumberBox:
-                                                        
+
                                                             <input type="number" name="attr-@attribute.Id" id="attr-@attribute.Id" class="form-control form-control-sm" data-val-number="@T("EnterValidNumber")"
                                                                    @Html.Raw(attribute.Required || attribute.MaxRange != null || attribute.MinRange != null ? " data-val='true'" : "")
                                                                    @Html.Raw(attribute.Required ? $" data-val-required='{T("FieldRequired", attribute.Name)}'" : "")
                                                                    @Html.Raw(attribute.MaxRange != null ? $" data-rule-maxValue='{attribute.MaxRange.Value}'" : "")
-                                                                   @Html.Raw(attribute.MinRange != null ? $" data-rule-minValue='{attribute.MinRange.Value}'" : "")
-                                                                   />
+                                                                   @Html.Raw(attribute.MinRange != null ? $" data-rule-minValue='{attribute.MinRange.Value}'" : "") />
                                                             @Html.Raw(attribute.Description)
                                                             break;
                                                         case ProductCheckoutAttributeType.TextBox:
@@ -222,18 +226,15 @@
                                                                    @Html.Raw(attribute.Required || attribute.MaxRange != null || attribute.MinRange != null ? " data-val='true'" : "")
                                                                    @Html.Raw(attribute.Required ? $" data-val-required='{T("FieldRequired", attribute.Name)}'" : "")
                                                                    @Html.Raw(attribute.MaxRange != null ? $" data-val-maxlength-maxallowedlength='{attribute.MaxRange.Value}' data-val-maxlength='{T("FieldMaxLength", "", attribute.MaxRange.Value)}' maxlength='{attribute.MaxRange.Value}'" : "")
-                                                                   @Html.Raw(attribute.MinRange != null ? $" data-val-minlength-min='{attribute.MinRange.Value}' data-val-minlength='{T("FieldMinLength", "", attribute.MinRange.Value)}'" : "")
-                                                                   />
+                                                                   @Html.Raw(attribute.MinRange != null ? $" data-val-minlength-min='{attribute.MinRange.Value}' data-val-minlength='{T("FieldMinLength", "", attribute.MinRange.Value)}'" : "") />
                                                             @Html.Raw(attribute.Description)
                                                             break;
                                                         case ProductCheckoutAttributeType.TextArea:
                                                             <textarea name="attr-@attribute.Id" id="attr-@attribute.Id" rows="5" class="form-control form-control-sm"
-                                                                   @Html.Raw(attribute.Required || attribute.MaxRange != null || attribute.MinRange != null ? " data-val='true'" : "")
-                                                                   @Html.Raw(attribute.Required ? $" data-val-required='{T("FieldRequired", attribute.Name)}'" : "")
-                                                                   @Html.Raw(attribute.MaxRange != null ? $" data-val-maxlength-maxallowedlength='{attribute.MaxRange.Value}' data-val-maxlength='{T("FieldMaxLength", "", attribute.MaxRange.Value)}' maxlength='{attribute.MaxRange.Value}'" : "")
-                                                                   @Html.Raw(attribute.MinRange != null ? $" data-val-minlength-min='{attribute.MinRange.Value}' data-val-minlength='{T("FieldMinLength", "", attribute.MinRange.Value)}'" : "")
-                                                                   
-                                                                   ></textarea>
+                                                                      @Html.Raw(attribute.Required || attribute.MaxRange != null || attribute.MinRange != null ? " data-val='true'" : "")
+                                                                      @Html.Raw(attribute.Required ? $" data-val-required='{T("FieldRequired", attribute.Name)}'" : "")
+                                                                      @Html.Raw(attribute.MaxRange != null ? $" data-val-maxlength-maxallowedlength='{attribute.MaxRange.Value}' data-val-maxlength='{T("FieldMaxLength", "", attribute.MaxRange.Value)}' maxlength='{attribute.MaxRange.Value}'" : "")
+                                                                      @Html.Raw(attribute.MinRange != null ? $" data-val-minlength-min='{attribute.MinRange.Value}' data-val-minlength='{T("FieldMinLength", "", attribute.MinRange.Value)}'" : "")></textarea>
                                                             @Html.Raw(attribute.Description)
                                                             break;
                                                     }

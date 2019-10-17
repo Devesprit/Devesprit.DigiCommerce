@@ -215,5 +215,37 @@ namespace Devesprit.DigiCommerce
 
             TypeAdapterConfig.GlobalSettings.Compile();
         }
+        
+        public override string GetVaryByCustomString(HttpContext context, string value)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+                return base.GetVaryByCustomString(context, value);
+
+            var paramsList = value.Split(new[] { ";" }, StringSplitOptions.RemoveEmptyEntries)
+                .Select(p => p.Trim().ToLower()).ToList();
+            var result = string.Empty;
+            if (paramsList.Contains("lang"))
+            {
+                result += Thread.CurrentThread.CurrentUICulture.Name + ";";
+            }
+            if (paramsList.Contains("user"))
+            {
+                if (context.User?.Identity?.IsAuthenticated == true)
+                {
+                    result += context.User.Identity.GetUserId() + ";";
+                }
+                else
+                {
+                    result += "none;";
+                }
+            }
+
+            if (!string.IsNullOrEmpty(result))
+            {
+                return result;
+            }
+
+            return base.GetVaryByCustomString(context, value);
+        }
     }
 }

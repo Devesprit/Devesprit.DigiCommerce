@@ -29,14 +29,21 @@
     {
         foreach (var discount in discounts.Where(p => p.Item1 != null && !string.IsNullOrWhiteSpace(p.Item2)))
         {
-            <hr class="mar-v-10" />
             <a href="@Url.Action("UpgradeAccount", "Purchase")"
                target="_blank"
-               class="text-light fs-14 d-block white-space-initial">
-                <img src="@discount.Item1.GetLocalized(p => p.GroupSmallIcon)" 
-                     class="btn btn-xs mar-v-5 m-auto d-block"
-                     style="background-color: @discount.Item1.GetLocalized(p => p.GroupBackgroundColor);"/>
-                @Html.Raw(discount.Item2)
+               class="btn btn-sm btn-secondary fs-12 p-0">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-3 py-2">
+                            <img src="@discount.Item1.GetLocalized(p => p.GroupSmallIcon)"
+                                 class="m-auto rounded d-block p-2 mw-100 mh-100"
+                                 style="background-color: @discount.Item1.GetLocalized(p => p.GroupBackgroundColor);"/>
+                        </div>
+                        <div class="col py-2 text-align-initial">
+                            @Html.Raw(discount.Item2)
+                        </div>
+                    </div>
+                </div>
             </a>
         }
     }
@@ -76,7 +83,7 @@
     //Purchase button
     if (Model.ShowPurchaseBtn)
     {
-        <div class="btn btn-lg bg-success b-mar-20">
+        <div class="btn-group-vertical d-block b-mar-20">
             @Ajax.HtmlActionLink(PurchaseBtnInnerHtml().ToHtmlString(), "PurchaseProductWizard", "Purchase", new { productId = Model.ProductId }, new AjaxOptions()
             {
                 InsertionMode = InsertionMode.Replace,
@@ -84,7 +91,7 @@
                 LoadingElementId = "LoadingPanel",
                 LoadingElementDuration = 10,
                 OnFailure = "ErrorAlert('" + T("Error") + "', '" + T("ServerConnectionError") + "');"
-            }, new { @class = "btn text-light fs-25 d-block white-space-initial" })
+            }, new { @class = "btn btn-success shadow text-light fs-25 d-block white-space-initial" })
 
             @UserGroupDiscountsBtnInnerHtml()
         </div>
