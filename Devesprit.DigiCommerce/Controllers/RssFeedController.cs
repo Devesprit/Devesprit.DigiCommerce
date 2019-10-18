@@ -83,9 +83,9 @@ namespace Devesprit.DigiCommerce.Controllers
                 }
 
                 var item = new SyndicationItem(
-                    post.GetLocalized(p => p.Title), post.Descriptions?.OrderBy(p => p.DisplayOrder)
+                    post.GetLocalized(p => p.Title).EscapeXml(), (post.Descriptions?.OrderBy(p => p.DisplayOrder)
                                                          ?.FirstOrDefault()
-                                                         ?.GetLocalized(p => p.HtmlDescription) ?? " - ",
+                                                         ?.GetLocalized(p => p.HtmlDescription) ?? " - ").EscapeXml(),
                     url,
                     post.Id.ToString(), post.LastUpDate ?? post.PublishDate);
                 items.Add(item);
@@ -127,9 +127,9 @@ namespace Devesprit.DigiCommerce.Controllers
                 new Uri(Url.Action("Index", "Home", null, Request.Url.Scheme)));
 
             var items = Enumerable.Select(products, product => new SyndicationItem(
-                    product.GetLocalized(p => p.Title), product.Descriptions?.OrderBy(p => p.DisplayOrder)
+                    product.GetLocalized(p => p.Title).EscapeXml(), (product.Descriptions?.OrderBy(p => p.DisplayOrder)
                                                                    ?.FirstOrDefault()
-                                                                   ?.GetLocalized(p => p.HtmlDescription) ?? " - ",
+                                                                   ?.GetLocalized(p => p.HtmlDescription) ?? " - ").EscapeXml(),
                     new Uri(Url.Action("Index", "Product", new {slug = product.Slug}, Request.Url.Scheme)),
                     product.Id.ToString(), product.LastUpDate ?? product.PublishDate))
                 .ToList();
@@ -163,9 +163,9 @@ namespace Devesprit.DigiCommerce.Controllers
                 new Uri(Url.Action("Index", "Home", null, Request.Url.Scheme)));
 
             var items = Enumerable.Select(posts, post => new SyndicationItem(
-                    post.GetLocalized(p => p.Title), post.Descriptions?.OrderBy(p => p.DisplayOrder)
+                    post.GetLocalized(p => p.Title).EscapeXml(), (post.Descriptions?.OrderBy(p => p.DisplayOrder)
                                                                    ?.FirstOrDefault()
-                                                                   ?.GetLocalized(p => p.HtmlDescription) ?? " - ",
+                                                                   ?.GetLocalized(p => p.HtmlDescription) ?? " - ").EscapeXml(),
                     new Uri(Url.Action("Post", "Blog", new {slug = post.Slug}, Request.Url.Scheme)),
                     post.Id.ToString(), post.LastUpDate ?? post.PublishDate))
                 .ToList();

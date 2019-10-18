@@ -391,12 +391,12 @@ namespace Devesprit.Services.SearchEngine
         public virtual async Task<SearchResult> AutoCompleteAsync(string prefix, int languageId = -1, int maxResult = 10, SearchResultSortType orderBy = SearchResultSortType.LastUpDate)
         {
             var result = new SearchResult();
-            prefix = prefix.Trim();
-
             if (string.IsNullOrWhiteSpace(prefix))
             {
                 return result;
             }
+
+            prefix = prefix.Trim();
 
             //replace multiple spaces with a single space
             RegexOptions options = RegexOptions.None;

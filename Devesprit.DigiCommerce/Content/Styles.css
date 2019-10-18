@@ -304,7 +304,7 @@ button {
     color: #fff;
     font-size: x-small;
     text-align: center;
-    z-index: 1000;
+    z-index: 999;
 }
 
     .post-card-ribbon:before {
