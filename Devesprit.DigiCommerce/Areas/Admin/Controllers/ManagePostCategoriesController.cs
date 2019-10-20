@@ -150,7 +150,8 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
             {
                 p.Id,
                 p.ParentCategoryId,
-                p.CategoryName,
+                p.CategoryName, 
+                p.Slug
             });
             return Json(result);
         }

@@ -25,6 +25,8 @@
                         <button type="button" onclick="DeleteSelectedItem()" class="btn btn-xs btn-warning float-end mar-h-2">@T("Delete")</button>
                         <button type="button" onclick="EditSelectedItem()" class="btn btn-xs btn-success float-end mar-h-2">@T("Edit")</button>
                         <button type="button" onclick="AddNewItem()" class="btn btn-xs btn-info float-end mar-h-2">@T("Add")</button>
+                        <button type="button" onclick="openCategory(true)" class="btn btn-xs btn-outline-secondary float-end mar-h-2">@T("ShowBlogCategory")</button>
+                        <button type="button" onclick="openCategory(false)" class="btn btn-xs btn-outline-secondary float-end mar-h-2">@T("ShowProductsCategory")</button>
                     </div>
                     <div class="card-body fs-14">
                         @(Html.EJ().TreeView("PostCategoriesTreeView")
@@ -47,10 +49,12 @@
                     <div class="card-footer">
                         <button type="button" onclick="refreshPostCategoriesTreeView()" class="btn btn-xs btn-outline-secondary float-end mar-h-2"><i class="fa fa-refresh"></i></button>
                         <button type="button" onclick="DeleteSelectedItem()" class="btn btn-xs btn-warning float-end mar-h-2">@T("Delete")</button>
-                        <button type="button" onclick="EditSelectedItem()" class="btn btn-xs btn-success float-end mar-h-2">@T("Edit")</button>
-                        <button type="button" onclick="AddNewItem()" class="btn btn-xs btn-info float-end mar-h-2">@T("Add")</button>
+                        <button type="button" onclick="EditSelectedItem()" class="btn btn-xs btn-info float-end mar-h-2">@T("Edit")</button>
+                        <button type="button" onclick="AddNewItem()" class="btn btn-xs btn-success float-end mar-h-2">@T("Add")</button>
+                        <button type="button" onclick="openCategory(true)" class="btn btn-xs btn-outline-secondary float-end mar-h-2">@T("ShowBlogCategory")</button>
+                        <button type="button" onclick="openCategory(false)" class="btn btn-xs btn-outline-secondary float-end mar-h-2">@T("ShowProductsCategory")</button>
 
-                        <a href="@Url.Action("GenerateNavbar")" class="btn btn-xs btn-info float-start mar-h-2">@T("GenerateNavBar")</a>
+                        <a href="@Url.Action("GenerateNavbar")" class="btn btn-xs btn-warning float-start mar-h-2">@T("GenerateNavBar")</a>
                     </div>
                 </div>
             </div>
@@ -60,14 +64,6 @@
         </div>
     </div>
 </div>
-
-<script id="ActionTemplate" type="text/template">
-    <button type="button" class="btn btn-xs btn-block btn-success text-light m-1" onclick="openCategory('{{:Slug}}', false)">@T("ShowProductsCategory")</button>
-    <button type="button" class="btn btn-xs btn-block btn-info text-light m-1" onclick="openCategory('{{:Slug}}', true)">@T("ShowBlogCategory")</button>
-</script>
-<script id="PostCategoriesGridRefresh" type="text/x-jsrender">
-    <a onclick="refreshPostCategoriesGrid();" class="e-toolbaricons e-icon"><i class="fa fa-refresh"></i></a>
-</script>
 @{
     Html.AddInlineScript(ResourceLocation.Footer,
 @<script>
@@ -195,47 +191,22 @@
             $("#treeview-place-holder").removeClass('col-lg-6');
             $("#treeview-place-holder").addClass('col-lg-12');
         }
-</script>);
+
+        function openCategory(blog) {
+            var treeview = $("#PostCategoriesTreeView").data("ejTreeView");
+            var node = treeview.getSelectedNode();
+            if (node.length === 1) {
+                var objects = treeview.getTreeData();
+                var pageUrl = $.grep(objects, function(e){ return e.Id.toString() === node[0].id; });
+
+                if (blog) {
+                    window.open('/BlogCategories/' + pageUrl[0].Slug, '_blank');
+                } else {
+                    window.open('/Categories/' + pageUrl[0].Slug, '_blank');
+                }
+            } else {
+                ErrorAlert('@T("Error")', '@T("YouHaveNotSelectedAnything")');
+            }
+        }
+ </script>);
 }
-
-
-
-@*@{
-    Html.AddInlineScript(ResourceLocation.Footer,
-@<script>
-             function onPostCategoriesGridAction(args) {
-                 if (args.requestType === "delete") {
-                     //Delete record
-                     args.cancel = true;
-                     DeleteEntity(args.data.map(function(item){return item.Id;}), "@Url.Action("Delete")", refreshPostCategoriesGrid);
-                 } else if (args.requestType === "beginedit") {
-                     //Edit record
-                     args.cancel = true;
-                     PopupWindows('@Url.Action("Editor")',
-                         'PostCategoryEditor',
-                         1200,
-                         600,
-                         { id: args.rowData.Id },
-                         'get');
-                 } else if (args.requestType === "add") {
-                     //Add new record
-                     args.cancel = true;
-                     PopupWindows('@Url.Action("Editor")', 'PostCategoryEditor', 600, 450, {}, 'get');
-                 }
-             }
-
-             function refreshPostCategoriesGrid() {
-                 $("#PostCategoriesGrid").ejGrid("refreshContent");
-             }
-
-             function openCategory(pageUrl, blog) {
-                 if (blog) {
-                     window.open('/BlogCategories/' + pageUrl, '_blank');
-                 } else {
-                     window.open('/Categories/' + pageUrl, '_blank');
-                 }
-
-
-             }
-</script>);
-}*@
