@@ -86,17 +86,6 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Models
         [DisplayNameLocalized("MetaKeyword")]
         public LocalizedString MetaKeyWords { get; set; }
 
-        public List<SelectListItem> PostCategoriesList
-        {
-            get
-            {
-                var postCategoriesService = DependencyResolver.Current.GetService<IPostCategoriesService>();
-                return postCategoriesService.GetAsEnumerable().Select(p => new SelectListItem()
-                {
-                    Value = p.Id.ToString(),
-                    Text = p.CategoryName
-                }).ToList();
-            }
-        }
+        public List<SelectListItem> PostCategoriesList => DependencyResolver.Current.GetService<IPostCategoriesService>().GetAsSelectList();
     }
 }

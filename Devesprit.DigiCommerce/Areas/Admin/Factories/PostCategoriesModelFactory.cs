@@ -10,13 +10,6 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Factories
 {
     public partial class PostCategoriesModelFactory : IPostCategoriesModelFactory
     {
-        private readonly IPostCategoriesService _postCategoriesService;
-
-        public PostCategoriesModelFactory(IPostCategoriesService postCategoriesService)
-        {
-            _postCategoriesService = postCategoriesService;
-        }
-
         public virtual async Task<PostCategoryModel> PreparePostCategoryModelAsync(TblPostCategories category)
         {
             PostCategoryModel result;
@@ -29,7 +22,6 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Factories
                 result = category.Adapt<PostCategoryModel>();
                 await category.LoadAllLocalizedStringsToModelAsync(result);
             }
-            result.CategoriesList = await _postCategoriesService.GetAsSelectListAsync();
             return result;
         }
 

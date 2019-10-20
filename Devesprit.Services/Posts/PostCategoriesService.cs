@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Data.Entity.Migrations;
 using System.Linq;
 using System.Threading.Tasks;
@@ -8,6 +9,7 @@ using Devesprit.Core.Localization;
 using Devesprit.Data;
 using Devesprit.Data.Domain;
 using Devesprit.Services.Events;
+using Devesprit.Services.Languages;
 using Devesprit.Services.Localization;
 using Z.EntityFramework.Plus;
 
@@ -30,7 +32,7 @@ namespace Devesprit.Services.Posts
 
         public virtual IQueryable<TblPostCategories> GetAsQueryable()
         {
-            return _dbContext.PostCategories.OrderBy(p => p.CategoryName);
+            return _dbContext.PostCategories.OrderBy(p => p.DisplayOrder);
         }
 
         public virtual async Task<TblPostCategories> FindByIdAsync(int id)
@@ -88,18 +90,12 @@ namespace Devesprit.Services.Posts
 
         public virtual async Task<List<SelectListItem>> GetAsSelectListAsync()
         {
-            return (await GetAsEnumerableAsync())
-                .Select(p => new SelectListItem() { Value = p.Id.ToString(), Text = p.GetLocalized(x => x.CategoryName) })
-                .OrderBy(p => p.Text)
-                .ToList();
+            return GenerateCategoriesList((await GetAsEnumerableAsync()).ToList(), null);
         }
 
         public virtual List<SelectListItem> GetAsSelectList()
         {
-            return GetAsEnumerable()
-                .Select(p => new SelectListItem() { Value = p.Id.ToString(), Text = p.GetLocalized(x => x.CategoryName) })
-                .OrderBy(p => p.Text)
-                .ToList();
+            return GenerateCategoriesList(GetAsEnumerable().ToList(), null);
         }
 
         public virtual async Task<IEnumerable<TblPostCategories>> GetAsEnumerableAsync()
@@ -115,8 +111,28 @@ namespace Devesprit.Services.Posts
         public virtual IEnumerable<TblPostCategories> GetCategoriesMustShowInFooter()
         {
             return GetAsQueryable().Where(p => p.ShowInFooter)
-                .OrderBy(p => p.CategoryName)
+                .OrderBy(p => p.DisplayOrder)
                 .FromCache(CacheTags.PostCategory);
+        }
+
+        public virtual async Task SetCategoryOrderAsync(int[] itemsOrder, int id, int? newParentId)
+        {
+            var nodeList = await _dbContext.PostCategories.ToListAsync();
+            for (int i = 0; i < itemsOrder.Length; i++)
+            {
+                nodeList.First(p => p.Id == itemsOrder[i]).DisplayOrder = i;
+            }
+
+            await _dbContext.SaveChangesAsync();
+
+            await _dbContext.PostCategories.Where(p => p.Id == id).UpdateAsync(p => new TblPostCategories()
+            {
+                ParentCategoryId = newParentId
+            });
+
+            QueryCacheManager.ExpireTag(CacheTags.PostCategory);
+
+            _eventPublisher.Publish(new PostCategoriesOrderChangeEvent(itemsOrder, id, newParentId));
         }
 
         public virtual List<int> GetSubCategories(int categoryId, List<int> result = null)
@@ -159,6 +175,45 @@ namespace Devesprit.Services.Posts
             }
 
             return false;
+        }
+
+        protected virtual string GetCategoryName(List<TblPostCategories> allCategories, string categoryName, TblPostCategories currentCategory)
+        {
+            if (currentCategory.ParentCategoryId == null)
+            {
+                return categoryName;
+            }
+            
+            return GetCategoryName(allCategories, "——" + categoryName,
+                allCategories.FirstOrDefault(p => p.Id == currentCategory.ParentCategoryId.Value));
+        }
+
+        protected virtual List<SelectListItem> GenerateCategoriesList(List<TblPostCategories> allCategories, int? currentParentId)
+        {
+            var result = new List<SelectListItem>();
+            foreach (var category in allCategories.Where(p => p.ParentCategoryId == currentParentId).OrderBy(p => p.DisplayOrder))
+            {
+                if (allCategories.Any(p => p.ParentCategoryId == category.Id))
+                {
+                    result.Add(new SelectListItem()
+                    {
+                        Value = category.Id.ToString(),
+                        Text = GetCategoryName(allCategories, category.GetLocalized(p=> p.CategoryName), category)
+                    });
+
+                    result.AddRange(GenerateCategoriesList(allCategories, category.Id));
+                }
+                else
+                {
+                    result.Add(new SelectListItem()
+                    {
+                        Value = category.Id.ToString(),
+                        Text = GetCategoryName(allCategories, category.GetLocalized(p => p.CategoryName), category)
+                    });
+                }
+            }
+
+            return result;
         }
     }
 }

@@ -45,7 +45,7 @@ namespace Devesprit.Services.Localization
             return result;
         }
 
-        protected virtual async Task DeleteLocalizedPropertyAsync(TblLocalizedProperty localizedProperty)
+        public virtual async Task DeleteAsync(TblLocalizedProperty localizedProperty)
         {
             if (localizedProperty == null)
                 throw new ArgumentNullException(nameof(localizedProperty));
@@ -57,7 +57,7 @@ namespace Devesprit.Services.Localization
             ClearCache();
         }
 
-        protected virtual void DeleteLocalizedProperty(TblLocalizedProperty localizedProperty)
+        public virtual void Delete(TblLocalizedProperty localizedProperty)
         {
             if (localizedProperty == null)
                 throw new ArgumentNullException(nameof(localizedProperty));
@@ -102,7 +102,7 @@ namespace Devesprit.Services.Localization
             return string.Empty;
         }
 
-        protected virtual async Task InsertLocalizedPropertyAsync(TblLocalizedProperty localizedProperty)
+        public virtual async Task AddAsync(TblLocalizedProperty localizedProperty)
         {
             if (localizedProperty == null)
                 throw new ArgumentNullException(nameof(localizedProperty));
@@ -115,7 +115,7 @@ namespace Devesprit.Services.Localization
             ClearCache();
         }
 
-        protected virtual async Task UpdateLocalizedPropertyAsync(TblLocalizedProperty localizedProperty)
+        public virtual async Task UpdateAsync(TblLocalizedProperty localizedProperty)
         {
             if (localizedProperty == null)
                 throw new ArgumentNullException(nameof(localizedProperty));
@@ -142,7 +142,7 @@ namespace Devesprit.Services.Localization
             await DeleteEntityAllLocalizedStringsAsync(typeof(T).Name, entity.Id, languageId);
         }
 
-        protected virtual void InsertLocalizedProperty(TblLocalizedProperty localizedProperty)
+        public virtual void Add(TblLocalizedProperty localizedProperty)
         {
             if (localizedProperty == null)
                 throw new ArgumentNullException(nameof(localizedProperty));
@@ -152,7 +152,7 @@ namespace Devesprit.Services.Localization
             ClearCache();
         }
 
-        protected virtual void UpdateLocalizedProperty(TblLocalizedProperty localizedProperty)
+        public virtual void Update(TblLocalizedProperty localizedProperty)
         {
             if (localizedProperty == null)
                 throw new ArgumentNullException(nameof(localizedProperty));
@@ -286,13 +286,13 @@ namespace Devesprit.Services.Localization
                 if (string.IsNullOrWhiteSpace(localeValueStr))
                 {
                     //delete
-                    await DeleteLocalizedPropertyAsync(prop);
+                    await DeleteAsync(prop);
                 }
                 else
                 {
                     //update
                     prop.LocaleValue = localeValueStr;
-                    await UpdateLocalizedPropertyAsync(prop);
+                    await UpdateAsync(prop);
                 }
             }
             else
@@ -308,7 +308,7 @@ namespace Devesprit.Services.Localization
                         LocaleKeyGroup = localeKeyGroup,
                         LocaleValue = localeValueStr
                     };
-                    await InsertLocalizedPropertyAsync(prop);
+                    await AddAsync(prop);
                 }
             }
         }
@@ -331,13 +331,13 @@ namespace Devesprit.Services.Localization
                     if (string.IsNullOrWhiteSpace(localeValueStr))
                     {
                         //delete
-                        await DeleteLocalizedPropertyAsync(prop);
+                        await DeleteAsync(prop);
                     }
                     else
                     {
                         //update
                         prop.LocaleValue = localeValueStr;
-                        await UpdateLocalizedPropertyAsync(prop);
+                        await UpdateAsync(prop);
                     }
                 }
                 else
@@ -353,7 +353,7 @@ namespace Devesprit.Services.Localization
                             LocaleKeyGroup = localeKeyGroup,
                             LocaleValue = localeValueStr
                         };
-                        await InsertLocalizedPropertyAsync(prop);
+                        await AddAsync(prop);
                     }
                 }
             }
@@ -377,13 +377,13 @@ namespace Devesprit.Services.Localization
                     if (string.IsNullOrWhiteSpace(localeValueStr))
                     {
                         //delete
-                        DeleteLocalizedProperty(prop);
+                        Delete(prop);
                     }
                     else
                     {
                         //update
                         prop.LocaleValue = localeValueStr;
-                        UpdateLocalizedProperty(prop);
+                        Update(prop);
                     }
                 }
                 else
@@ -399,7 +399,7 @@ namespace Devesprit.Services.Localization
                             LocaleKeyGroup = localeKeyGroup,
                             LocaleValue = localeValueStr
                         };
-                        InsertLocalizedProperty(prop);
+                        Add(prop);
                     }
                 }
             }

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Web.Mvc;
 using Devesprit.Core.Localization;
+using Devesprit.Services.Posts;
 using Devesprit.WebFramework.Attributes;
 
 
@@ -15,7 +16,6 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Models
         [DisplayNameLocalized("CategoryName")]
         public LocalizedString CategoryName { get; set; } = new LocalizedString();
 
-        [DisplayNameLocalized("ParentCategory")]
         public int? ParentCategoryId { get; set; }
 
         [RequiredLocalized()]
@@ -29,7 +29,5 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Models
         [DisplayNameLocalized("DisplayOrder")]
         [RequiredLocalized(AllowEmptyStrings = false)]
         public int DisplayOrder { get; set; }
-
-        public List<SelectListItem> CategoriesList { get; set; }
     }
 }

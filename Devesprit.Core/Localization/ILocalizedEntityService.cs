@@ -49,5 +49,12 @@ namespace Devesprit.Core.Localization
 
         Task<IList<TblLocalizedProperty>> GetLocalizedPropertiesAsync(int entityId, string localeKeyGroup,
             string localKey);
+
+        Task DeleteAsync(TblLocalizedProperty localizedProperty);
+        void Delete(TblLocalizedProperty localizedProperty);
+        Task AddAsync(TblLocalizedProperty localizedProperty);
+        void Add(TblLocalizedProperty localizedProperty);
+        Task UpdateAsync(TblLocalizedProperty localizedProperty);
+        void Update(TblLocalizedProperty localizedProperty);
     }
 }

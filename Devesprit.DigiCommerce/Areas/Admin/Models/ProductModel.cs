@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
 using Devesprit.Core.Localization;
+using Devesprit.Data.Domain;
 using Devesprit.Data.Enums;
 using Devesprit.Services.FileServers;
 using Devesprit.Services.LicenseManager;
@@ -170,17 +171,6 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Models
             }
         }
 
-        public List<SelectListItem> ProductCategoriesList
-        {
-            get
-            {
-                var postCategoriesService = DependencyResolver.Current.GetService<IPostCategoriesService>();
-                return postCategoriesService.GetAsEnumerable().Select(p=> new SelectListItem()
-                {
-                    Value = p.Id.ToString(),
-                    Text = p.CategoryName
-                }).ToList();
-            }
-        }
+        public List<SelectListItem> ProductCategoriesList => DependencyResolver.Current.GetService<IPostCategoriesService>().GetAsSelectList();
     }
 }

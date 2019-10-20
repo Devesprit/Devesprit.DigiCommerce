@@ -73,7 +73,7 @@ namespace Devesprit.Services.NavBar
             _eventPublisher.EntityUpdated(record, oldRecord);
         }
 
-        public virtual async Task AddAsync(TblNavBarItems record)
+        public virtual async Task<int> AddAsync(TblNavBarItems record)
         {
             if (record.Index == -1)
             {
@@ -94,6 +94,7 @@ namespace Devesprit.Services.NavBar
             QueryCacheManager.ExpireTag(CacheTags.NavbarItem);
 
             _eventPublisher.EntityInserted(record);
+            return record.Id;
         }
 
         public virtual async Task<IEnumerable<TblNavBarItems>> GetAsEnumerableAsync()

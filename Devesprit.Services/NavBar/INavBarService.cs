@@ -11,7 +11,7 @@ namespace Devesprit.Services.NavBar
         Task<TblNavBarItems> FindByIdAsync(int id);
         Task DeleteAsync(int id);
         Task UpdateAsync(TblNavBarItems record);
-        Task AddAsync(TblNavBarItems record);
+        Task<int> AddAsync(TblNavBarItems record);
         Task<IEnumerable<TblNavBarItems>> GetAsEnumerableAsync();
         IEnumerable<TblNavBarItems> GetAsEnumerable();
         Task SetNavbarItemsIndexAsync(int[] itemsOrder, int id, int? newParentId);

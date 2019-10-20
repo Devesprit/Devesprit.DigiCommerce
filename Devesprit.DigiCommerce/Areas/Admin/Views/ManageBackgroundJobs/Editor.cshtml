@@ -2,9 +2,6 @@
 @model Devesprit.DigiCommerce.Areas.Admin.Models.BackgroundJobModel
 @{
     Layout = Html.GetCurrentThemeAdminAreaLayoutAddress(true);
-    Html.AppendScriptParts(ResourceLocation.Footer, "~/Scripts/jqCron.en.js");
-    Html.AppendScriptParts(ResourceLocation.Footer, "~/Scripts/jqCron.js");
-    Html.AppendCssFileParts(ResourceLocation.Header, "~/Content/jqCron.css");
 }
 
 <div class="container">
@@ -54,21 +51,12 @@
                     <div class="input-group ltr-dir text-left">
                         @Html.TextBoxFor(p => p.Cron, null, new { @class = "form-control form-control-sm" })
                         <div class="input-group-append">
-                            <button class="btn btn-outline-secondary btn-sm" type="button" data-toggle="collapse" data-target="#collapseCronEditor">
-                                <i class="fa fa-pencil-square-o"></i>
-                            </button>
                             <button type="button" class="btn btn-outline-success btn-sm" onclick="GotoCronTab()">
                                 <i class="fa fa-external-link"></i>
                             </button>
                         </div>
                     </div>
                     @Html.ValidationMessageFor(p => p.Cron, "", new { @class = "form-text text-danger fs-12" })
-                    <div class="collapse my-3 ltr-dir text-left" id="collapseCronEditor">
-                        <div class="card card-body">
-                            <div id="cronEditor"></div>
-                            <iv id="cronEditorResult" class="mt-2"></iv>
-                        </div>
-                    </div>
                 </div>
                 <div class="col-12">
                     <div class="form-group">
@@ -93,24 +81,6 @@
 @{
     Html.AddInlineScript(ResourceLocation.FooterAfterOther,
 @<script>
-             $('#cronEditor').jqCron({
-                 enabled_minute: true,
-                 multiple_dom: true,
-                 multiple_month: true,
-                 multiple_mins: true,
-                 multiple_dow: true,
-                 multiple_time_hours: true,
-                 multiple_time_minutes: true,
-                 default_period: 'week',
-                 no_reset_button: false,
-                 lang: 'en',
-                 bind_to: $('#cronEditorResult'),
-                 bind_method: {
-                     set: function($element, value) {
-                         $element.text(value);
-                     }
-                 }
-             });
 
              $('#TimeZoneId').select2({
                  tags: true,
