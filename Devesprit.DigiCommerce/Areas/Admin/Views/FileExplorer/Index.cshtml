@@ -37,35 +37,35 @@
 @{
     Html.AddInlineScript(ResourceLocation.Footer,
         @<script>
-        var selectedFile = "";
-        var hostUrl = "@hostUrl";
+             var selectedFile = "";
+             var hostUrl = "@hostUrl";
 
-        function fileExplorerOnSelect(args) {
-            if (args.nodeType === "File" && args.type === "select") {
-                for (var i = 0; i < args.selectedItems.length; i++) {
-                    if (args.selectedItems[i].type === "File") {
-                        selectedFile = hostUrl + args.path + args.selectedItems[i].name;
-                        $("#selectedPath").text(selectedFile);
-                        return;
-                    }
-                }
-            }
-            selectedFile = "";
-            $("#selectedPath").text("n/a");
-        }
+             function fileExplorerOnSelect(args) {
+                 if (args.nodeType === "File" && args.type === "select") {
+                     for (var i = 0; i < args.selectedItems.length; i++) {
+                         if (args.selectedItems[i].type === "File") {
+                             selectedFile = hostUrl + args.path + args.selectedItems[i].name;
+                             $("#selectedPath").text(selectedFile);
+                             return;
+                         }
+                     }
+                 }
+                 selectedFile = "";
+                 $("#selectedPath").text("n/a");
+             }
 
-        function fileExplorerOnUnSelect(args) {
-            selectedFile = "";
-            $("#selectedPath").text("n/a");
-        }
+             function fileExplorerOnUnSelect(args) {
+                 selectedFile = "";
+                 $("#selectedPath").text("n/a");
+             }
 
-        function btnSelectClick() {
-            if (isBlank(selectedFile)) {
-                WarningAlert("@T("Error")", "@T("YouHaveNotSelectedAnything")");
-                return;
-            }
-            $("#@ViewBag.TextboxId", opener.document).val(selectedFile);
-            window.close();
-        }
-</script>);
+             function btnSelectClick() {
+                 if (isBlank(selectedFile)) {
+                     WarningAlert("@T("Error")", "@T("YouHaveNotSelectedAnything")");
+                     return;
+                 }
+                 $("#@ViewBag.TextboxId", opener.document).val(selectedFile);
+                 window.close();
+             }
+         </script>);
 }

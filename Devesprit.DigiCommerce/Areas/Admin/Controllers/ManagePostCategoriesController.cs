@@ -166,8 +166,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
                     Index = category.DisplayOrder,
                     InnerHtml = category.CategoryName,
                     Name = category.CategoryName,
-                    Target = "_blank", 
-                    Url = Url.Action("FilterByCategory", "Product", new{ slug = category.Slug })
+                    Url = "/Categories/" + category.Slug
                 });
 
                 var catLocals = await _localizedEntityService.GetLocalizedPropertiesAsync(category.Id, "TblPostCategories", "CategoryName");
