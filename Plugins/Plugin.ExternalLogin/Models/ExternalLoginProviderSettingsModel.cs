@@ -43,5 +43,15 @@ namespace Plugin.ExternalLogin.Models
         [DisplayNameLocalized("DisplayOrder")]
         public int TwitterDisplayOrder { get; set; }
 
+
+        [DisplayNameLocalized("Plugin.ExternalLogin.UseProxy")]
+        public bool UseProxy { get; set; }
+        [DisplayNameLocalized("Plugin.ExternalLogin.ProxyServerAddress")]
+        public string ProxyServerAddress { get; set; }
+        [DisplayNameLocalized("Plugin.ExternalLogin.ProxyServerUserName")]
+        public string ProxyServerUserName { get; set; }
+        [DisplayNameLocalized("Plugin.ExternalLogin.ProxyServerPassword")]
+        public string ProxyServerPassword { get; set; }
+
     }
 }

@@ -38,6 +38,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Factories
         public virtual TblUsers PrepareTblUsers(UserModel user)
         {
             var result = user.Adapt<TblUsers>();
+            result.UserName = user.Email;
             return result;
         }
     }

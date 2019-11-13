@@ -3,15 +3,19 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web;
 using System.Web.Routing;
 using Devesprit.Core.Plugin;
 using Devesprit.Core.Settings;
 using Devesprit.Services.ExternalLoginProvider;
 using Devesprit.Services.Localization;
+using Devesprit.Utilities.Extensions;
+using Elmah;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security.Facebook;
@@ -61,6 +65,10 @@ namespace Plugin.ExternalLogin
             this.AddOrUpdatePluginLocaleResource("Plugin.ExternalLogin.Google", "Google", "en");
             this.AddOrUpdatePluginLocaleResource("Plugin.ExternalLogin.Facebook", "Facebook", "en");
             this.AddOrUpdatePluginLocaleResource("Plugin.ExternalLogin.AuthorizedRedirectURL", "<i class=\"fa fa-exclamation-triangle\"></i> Authorized redirect URL : ", "en");
+            this.AddOrUpdatePluginLocaleResource("Plugin.ExternalLogin.UseProxy", "Use Proxy", "en");
+            this.AddOrUpdatePluginLocaleResource("Plugin.ExternalLogin.ProxyServerAddress", "Proxy Server Address", "en");
+            this.AddOrUpdatePluginLocaleResource("Plugin.ExternalLogin.ProxyServerUserName", "Proxy Server UserName", "en");
+            this.AddOrUpdatePluginLocaleResource("Plugin.ExternalLogin.ProxyServerPassword", "Proxy Server Password", "en");
 
             this.AddOrUpdatePluginLocaleResource("Plugin.ExternalLogin.EnableLoginWithFacebook", "فعال سازی ورود توسط حساب کاربری فیسبوک", "fa");
             this.AddOrUpdatePluginLocaleResource("Plugin.ExternalLogin.EnableLoginWithTwitter", "فعال سازی ورود توسط حساب کاربری توئیتر", "fa");
@@ -76,6 +84,10 @@ namespace Plugin.ExternalLogin
             this.AddOrUpdatePluginLocaleResource("Plugin.ExternalLogin.Google", "گوگل", "fa");
             this.AddOrUpdatePluginLocaleResource("Plugin.ExternalLogin.Facebook", "فیسبوک", "fa");
             this.AddOrUpdatePluginLocaleResource("Plugin.ExternalLogin.AuthorizedRedirectURL", "<i class=\"fa fa-exclamation-triangle\"></i> Authorized redirect URL : ", "fa");
+            this.AddOrUpdatePluginLocaleResource("Plugin.ExternalLogin.UseProxy", "Use Proxy", "fa");
+            this.AddOrUpdatePluginLocaleResource("Plugin.ExternalLogin.ProxyServerAddress", "Proxy Server Address", "fa");
+            this.AddOrUpdatePluginLocaleResource("Plugin.ExternalLogin.ProxyServerUserName", "Proxy Server UserName", "fa");
+            this.AddOrUpdatePluginLocaleResource("Plugin.ExternalLogin.ProxyServerPassword", "Proxy Server Password", "fa");
 
             base.Install();
         }
@@ -98,18 +110,37 @@ namespace Plugin.ExternalLogin
             this.DeletePluginLocaleResource("Plugin.ExternalLogin.Google");
             this.DeletePluginLocaleResource("Plugin.ExternalLogin.Facebook");
             this.DeletePluginLocaleResource("Plugin.ExternalLogin.AuthorizedRedirectURL");
+            this.DeletePluginLocaleResource("Plugin.ExternalLogin.UseProxy");
+            this.DeletePluginLocaleResource("Plugin.ExternalLogin.ProxyServerAddress");
+            this.DeletePluginLocaleResource("Plugin.ExternalLogin.ProxyServerUserName");
+            this.DeletePluginLocaleResource("Plugin.ExternalLogin.ProxyServerPassword");
             base.Uninstall();
         }
 
         public void UseCustomLoginProvider(IAppBuilder app)
         {
             var setting = _settingService.LoadSetting<ExternalLoginProviderSettingsModel>();
+
+            var backchannelHttpHandler = new HttpClientHandler();
+            if (setting.UseProxy)
+            {
+                backchannelHttpHandler.UseProxy = true;
+                backchannelHttpHandler.Proxy = new WebProxy(setting.ProxyServerAddress)
+                {
+                    BypassProxyOnLocal = false,
+                    UseDefaultCredentials = false,
+                    Credentials = new NetworkCredential(setting.ProxyServerUserName, setting.ProxyServerPassword)
+                };
+            }
+
+
             if (setting.LoginWithGoogle)
             {
-                var googleOptions = new GoogleOAuth2AuthenticationOptions()
+                var googleOptions = new GoogleOAuth2AuthenticationOptions() 
                 {
                     ClientId = setting.GoogleLoginClientId,
                     ClientSecret = setting.GoogleLoginClientSecret,
+                    BackchannelHttpHandler = backchannelHttpHandler,
                     Provider = new GoogleOAuth2AuthenticationProvider()
                     {
                         OnAuthenticated = (context) =>
@@ -131,24 +162,32 @@ namespace Plugin.ExternalLogin
 
             if (setting.LoginWithFacebook)
             {
+                //Facebook login not work on Iranian servers because Facebook.com is filter in Iran
                 var facebookOptions = new FacebookAuthenticationOptions()
                 {
                     AppId = setting.FacebookLoginAppId,
                     AppSecret = setting.FacebookLoginAppSecret,
-                    Scope = { "email" },
-                    UserInformationEndpoint = "https://graph.facebook.com/v2.4/me?fields=id,email,first_name,last_name",
+                    BackchannelHttpHandler = backchannelHttpHandler,
+                    UserInformationEndpoint = "https://graph.facebook.com/me?fields=id,email,first_name,last_name",
                     Provider = new FacebookAuthenticationProvider()
                     {
                         OnAuthenticated = (context) =>
                         {
-                            //This following line is need to retrieve the profile image
-                            context.Identity.AddClaim(new Claim("accesstoken",
-                                context.AccessToken, ClaimValueTypes.String, "Facebook"));
+                            context.Identity.AddClaim(new System.Security.Claims.Claim("FacebookAccessToken", context.AccessToken));
+                            foreach (var claim in context.User)
+                            {
+                                var claimType = string.Format("urn:facebook:{0}", claim.Key);
+                                string claimValue = claim.Value.ToString();
+                                if (!context.Identity.HasClaim(claimType, claimValue))
+                                    context.Identity.AddClaim(new System.Security.Claims.Claim(claimType, claimValue, "XmlSchemaString", "Facebook"));
 
-                            return Task.FromResult(0);
+                            }
+                            return System.Threading.Tasks.Task.FromResult(0);
                         }
                     }
                 };
+                facebookOptions.SignInAsAuthenticationType = DefaultAuthenticationTypes.ExternalCookie;
+                facebookOptions.Scope.Add("email");
                 app.UseFacebookAuthentication(facebookOptions);
             }
 
@@ -158,6 +197,7 @@ namespace Plugin.ExternalLogin
                 {
                     ConsumerKey = setting.TwitterLoginConsumerKey,
                     ConsumerSecret = setting.TwitterLoginConsumerSecret,
+                    BackchannelHttpHandler = backchannelHttpHandler,
                     Provider = new TwitterAuthenticationProvider()
                     {
                         OnAuthenticated = (context) =>
@@ -179,6 +219,19 @@ namespace Plugin.ExternalLogin
         public ExternalLoginUserInformation GetUserInformation(ExternalLoginInfo loginInfo)
         {
             var result = new ExternalLoginUserInformation();
+
+            var setting = _settingService.LoadSetting<ExternalLoginProviderSettingsModel>();
+            WebProxy proxy = null;
+            if (setting.UseProxy)
+            {
+                proxy = new WebProxy(setting.ProxyServerAddress)
+                {
+                    BypassProxyOnLocal = false,
+                    UseDefaultCredentials = false,
+                    Credentials = new NetworkCredential(setting.ProxyServerUserName, setting.ProxyServerPassword)
+                };
+            }
+
             if (loginInfo.Login.LoginProvider == "Google")
             {
                 var externalIdentity = loginInfo.ExternalIdentity;
@@ -190,27 +243,30 @@ namespace Plugin.ExternalLogin
                 result.UserLastName = lastNameClaim?.Value;
                 try
                 {
-                    Uri apiRequestUri = new Uri("https://www.googleapis.com/oauth2/v2/userinfo?access_token=" + accessToken);
+                    Uri apiRequestUri =
+                        new Uri("https://www.googleapis.com/oauth2/v2/userinfo?access_token=" + accessToken);
                     //request profile image
-                    using (var webClient = new WebClient())
+                    using (var webClient = new WebClient(){Proxy = proxy })
                     {
                         var json = webClient.DownloadString(apiRequestUri);
                         dynamic jsonObject = JsonConvert.DeserializeObject(json);
                         result.UserAvatarUrl = jsonObject.picture;
                     }
                 }
-                catch
-                { }
+                catch (Exception ex)
+                {
+                    Elmah.ErrorLog.GetDefault(HttpContext.Current).Log(new Error(ex, HttpContext.Current));
+                }
             }
 
             if (loginInfo.Login.LoginProvider == "Facebook")
             {
-                var accessToken = loginInfo.ExternalIdentity.Claims.Where(c => c.Type.Equals("accesstoken")).Select(c => c.Value).FirstOrDefault();
+                var accessToken = loginInfo.ExternalIdentity.Claims.Where(c => c.Type.Equals("FacebookAccessToken")).Select(c => c.Value).FirstOrDefault();
                 try
                 {
-                    Uri apiRequestUri = new Uri("https://graph.facebook.com/v2.4/me?fields=id,email,first_name,last_name&access_token=" + accessToken);
+                    Uri apiRequestUri = new Uri("https://graph.facebook.com/me?fields=id,email,first_name,last_name&access_token=" + accessToken);
                     //request profile image
-                    using (var webClient = new WebClient())
+                    using (var webClient = new WebClient() { Proxy = proxy })
                     {
                         var json = webClient.DownloadString(apiRequestUri);
                         dynamic jsonObject = JsonConvert.DeserializeObject(json);
@@ -219,8 +275,10 @@ namespace Plugin.ExternalLogin
                         result.UserLastName = jsonObject.last_name;
                     }
                 }
-                catch
-                { }
+                catch (Exception ex)
+                {
+                    Elmah.ErrorLog.GetDefault(HttpContext.Current).Log(new Error(ex, HttpContext.Current));
+                }
             }
 
             if (loginInfo.Login.LoginProvider == "Twitter")
@@ -327,11 +385,25 @@ namespace Plugin.ExternalLogin
             );
 
 
+            //set proxy server
+            var setting = _settingService.LoadSetting<ExternalLoginProviderSettingsModel>();
+            WebProxy proxy = null;
+            if (setting.UseProxy)
+            {
+                proxy = new WebProxy(setting.ProxyServerAddress)
+                {
+                    BypassProxyOnLocal = false,
+                    UseDefaultCredentials = false,
+                    Credentials = new NetworkCredential(setting.ProxyServerUserName, setting.ProxyServerPassword)
+                };
+            }
+
             // make the request
 
             ServicePointManager.Expect100Continue = false;
             resourceUrl += "?include_email=true";
             var request = (HttpWebRequest)WebRequest.Create(resourceUrl);
+            request.Proxy = proxy;
             request.Headers.Add("Authorization", authHeader);
             request.Method = "GET";
 

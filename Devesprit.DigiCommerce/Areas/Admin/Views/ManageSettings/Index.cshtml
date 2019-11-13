@@ -92,7 +92,7 @@
         <div class="form-group">
             @Html.LabelFor(p => p.SiteLogoEmailHeader)
             @Html.LocalizedTextBoxFor(p => p.SiteLogoEmailHeader, null, new { @class = "form-control form-control-sm ltr-dir" })
-            <button type="button" onclick="ShowFileExplorerForLocalizedEntity('SiteLogoHeader');" class="btn btn-outline-success btn-xs float-end t-mar-5"><i class="fa fa-folder-open"></i> ...</button>
+            <button type="button" onclick="ShowFileExplorerForLocalizedEntity('SiteLogoEmailHeader');" class="btn btn-outline-success btn-xs float-end t-mar-5"><i class="fa fa-folder-open"></i> ...</button>
             <span class="form-text text-muted fs-11">@T("DesiredImageUrl")</span>
             @Html.ValidationMessageFor(p => p.SiteLogoEmailHeader, "", new { @class = "form-text text-danger fs-12" })
         </div>

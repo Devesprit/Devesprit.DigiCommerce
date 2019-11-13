@@ -31,7 +31,7 @@ namespace Devesprit.DigiCommerce
         protected void Application_Start()
         {
 #if DEBUG
-            HibernatingRhinos.Profiler.Appender.EntityFramework.EntityFrameworkProfiler.Initialize();
+            //HibernatingRhinos.Profiler.Appender.EntityFramework.EntityFrameworkProfiler.Initialize();
 #endif
 
             if (!Directory.Exists(Server.MapPath("App_Data")))

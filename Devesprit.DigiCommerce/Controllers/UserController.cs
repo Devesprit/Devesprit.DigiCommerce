@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Drawing;
+using System.Linq;
 using System.Net;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
@@ -14,6 +16,7 @@ using Devesprit.Services.Users;
 using Devesprit.Services.Users.Events;
 using Devesprit.WebFramework;
 using Devesprit.WebFramework.ActionFilters;
+using Elmah;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
@@ -317,7 +320,7 @@ namespace Devesprit.DigiCommerce.Controllers
 
             if (ModelState.IsValid)
             {
-                var user = await UserManager.FindByNameAsync(model.Email);
+                var user = await UserManager.FindByEmailAsync(model.Email);
                 if (user == null)
                 {
                     // Don't reveal that the user does not exist or is not confirmed
@@ -428,10 +431,10 @@ namespace Devesprit.DigiCommerce.Controllers
         }
 
         [HttpPost]
-        [AllowAnonymous]
+        [AllowAnonymous] 
         [ValidateAntiForgeryToken]
         [RedirectAuthenticatedRequests(Action = "Index", Controller = "Profile")]
-        public virtual ActionResult ExternalLogin(string provider, string returnUrl)
+        public virtual ActionResult ExternalLogin(string provider, string returnUrl) 
         {
             // Request a redirect to the external login provider
             return new ChallengeResult(provider, Url.Action("ExternalLoginCallback", "User", new { ReturnUrl = returnUrl }));
@@ -443,12 +446,12 @@ namespace Devesprit.DigiCommerce.Controllers
         {
             var loginInfo = await AuthenticationManager.GetExternalLoginInfoAsync();
             if (loginInfo == null)
-            {
+            { 
                 return RedirectToAction("Login");
-            }
+            } 
 
             // Sign in the user with this external login provider if the user already has a login
-            var user = await UserManager.FindByNameAsync(loginInfo.Email);
+            var user = await UserManager.FindByEmailAsync(loginInfo.Email);
             if (user != null)
             {
                 await UserManager.AddLoginAsync(user.Id, loginInfo.Login);
@@ -598,6 +601,10 @@ namespace Devesprit.DigiCommerce.Controllers
             AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
             AuthenticationManager.SignOut(DefaultAuthenticationTypes.ExternalCookie);
             AuthenticationManager.SignOut();
+            Request.GetOwinContext().Authentication.SignOut(HttpContext.GetOwinContext()
+                .Authentication.GetAuthenticationTypes()
+                .Select(o => o.AuthenticationType).ToArray());
+            Response.Cookies.Remove(".AspNet.ApplicationCookie");
             Session["NotificationsAlert"] = null;
             EventPublisher.Publish(new UserLoggedOutEvent(user));
             return RedirectToAction("Index", "Home");
@@ -685,6 +692,7 @@ namespace Devesprit.DigiCommerce.Controllers
 
             public override void ExecuteResult(ControllerContext context)
             {
+                context.RequestContext.HttpContext.Response.SuppressFormsAuthenticationRedirect = true;
                 var properties = new AuthenticationProperties { RedirectUri = RedirectUri };
                 context.HttpContext.GetOwinContext().Authentication.Challenge(properties, LoginProvider);
             }
