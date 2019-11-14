@@ -444,6 +444,7 @@ namespace Devesprit.DigiCommerce.Controllers
         [RedirectAuthenticatedRequests(Action = "Index", Controller = "Profile")]
         public virtual async Task<ActionResult> ExternalLoginCallback(string returnUrl)
         {
+            var req = HttpContext.Request;
             var loginInfo = await AuthenticationManager.GetExternalLoginInfoAsync();
             if (loginInfo == null)
             { 

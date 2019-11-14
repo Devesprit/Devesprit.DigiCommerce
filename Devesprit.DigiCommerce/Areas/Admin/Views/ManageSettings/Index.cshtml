@@ -11,8 +11,8 @@
 
 <div id="waitingPopup"></div>
 
-<div id="panel" class="panel no-hide-overflow">
-    <div class="panel-title pad-10">
+<div id="panel">
+    <div class="panel-title pad-10 rounded">
         <h5 class="no-mar">
             @T("ManageSettings")
         </h5>
@@ -22,326 +22,379 @@
     {
         @Html.AntiForgeryToken()
 
-        <div class="pad-10 fs-14">
-            @{Html.EJ().Tab("settingTabs")
-                            .EnableTabScroll(true)
-                            .HeaderPosition(HeaderPosition.Top)
-                            .EnableRTL(currentLang.IsRtl)
-                            .Items(data =>
-                            {
-                                data.Add().ID("General").Text(T("General").ToString()).ContentTemplate(content => GeneralSettings());
-                                data.Add().ID("Security").Text(T("Security").ToString()).ContentTemplate(content => SecuritySettings());
-                                data.Add().ID("SocialNetworks").Text(T("SocialNetworks").ToString()).ContentTemplate(content => SocialNetworksSettings());
-                                data.Add().ID("Email").Text(T("EMail").ToString()).ContentTemplate(content => EmailSettings());
-                                data.Add().ID("Other").Text(T("Others").ToString()).ContentTemplate(content => OtherSettings());
-                                data.Add().ID("TinyMCE").Text(T("TinyMCESettings").ToString()).ContentTemplate(content => TinyMCESettings());
-                                data.Add().ID("Theme").Text(T("Themes").ToString()).ContentTemplate(content => ThemeSettings());
-                                data.Add().ID("LoadedAssemblies").Text(T("LoadedAssemblies").ToString()).ContentTemplate(content => LoadedAssemblies());
-                            })
-                            .Render();
-            }
-        </div>
+        <div class="t-pad-10">
 
-        @Html.ValidationSummary(true, "", new { @class = "text-danger" }).ToMvcHtmlString()
+            <div class="row">
+                <div class="col-12 col-md-4 col-lg-2">
+                    <ul class="nav flex-column nav-pills position-sticky" style="top: 60px; z-index: 10;" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+                        <li class="nav-item">
+                            <a class="nav-link btn-outline-secondary mar-v-5 active" id="v-pills-general-tab" data-toggle="pill" href="#v-pills-general" role="tab" aria-controls="v-pills-general" aria-selected="true">@T("General")</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link btn-outline-secondary mar-v-5" id="v-pills-email-tab" data-toggle="pill" href="#v-pills-email" role="tab" aria-controls="v-pills-email" aria-selected="false">@T("EMail")</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link btn-outline-secondary mar-v-5" id="v-pills-security-tab" data-toggle="pill" href="#v-pills-security" role="tab" aria-controls="v-pills-security" aria-selected="false">@T("Security")</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link btn-outline-secondary mar-v-5" id="v-pills-socialNetworks-tab" data-toggle="pill" href="#v-pills-socialNetworks" role="tab" aria-controls="v-pills-socialNetworks" aria-selected="false">@T("SocialNetworks")</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link btn-outline-secondary mar-v-5" id="v-pills-theme-tab" data-toggle="pill" href="#v-pills-theme" role="tab" aria-controls="v-pills-theme" aria-selected="false">@T("Themes")</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link btn-outline-secondary mar-v-5" id="v-pills-other-tab" data-toggle="pill" href="#v-pills-other" role="tab" aria-controls="v-pills-other" aria-selected="false">@T("Others")</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link btn-outline-secondary mar-v-5" id="v-pills-loadedAssemblies-tab" data-toggle="pill" href="#v-pills-loadedAssemblies" role="tab" aria-controls="v-pills-loadedAssemblies" aria-selected="false">@T("LoadedAssemblies")</a>
+                        </li>
+                        <li class="nav-item">
+                            <button type="button" class="btn btn-sm btn-warning btn-block mar-v-5" onclick='SaveSettings()'>@T("Save")</button>
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-12 col-md-8 col-lg-10">
+                    @Html.ValidationSummary(true, "", new { @class = "text-danger fw-bold" }).ToMvcHtmlString()
+                    <div class="tab-content border shadow-sm rounded pad-20 bg-white" id="v-pills-tabContent">
+                        <div class="tab-pane fade show active" id="v-pills-general" role="tabpanel" aria-labelledby="v-pills-general-tab">@GeneralSettings()</div>
+                        <div class="tab-pane fade" id="v-pills-email" role="tabpanel" aria-labelledby="v-pills-email-tab">@EmailSettings()</div>
+                        <div class="tab-pane fade" id="v-pills-security" role="tabpanel" aria-labelledby="v-pills-security-tab">@SecuritySettings()</div>
+                        <div class="tab-pane fade" id="v-pills-socialNetworks" role="tabpanel" aria-labelledby="v-pills-socialNetworks-tab">@SocialNetworksSettings()</div>
+                        <div class="tab-pane fade" id="v-pills-theme" role="tabpanel" aria-labelledby="v-pills-theme-tab">@ThemeSettings()</div>
+                        <div class="tab-pane fade" id="v-pills-other" role="tabpanel" aria-labelledby="v-pills-other-tab">@OtherSettings()</div>
+                        <div class="tab-pane fade" id="v-pills-loadedAssemblies" role="tabpanel" aria-labelledby="v-pills-loadedAssemblies-tab">@LoadedAssemblies()</div>
+                    </div>
+                </div>
+            </div>
 
-        <div class="text-center pad-v-20">
-            <button type="button" class="btn btn-sm btn-warning" onclick='SaveSettings()'>@T("Save")</button>
         </div>
     }
 </div>
 
 @helper GeneralSettings()
 {
-
-<div class="row">
-    <div class="col-12">
-        <h2 class="text-center b-mar-20"><img src="~/Content/img/Settings.png" /><br />@T("General")</h2>
-    </div>
-    <div class="col-12">
-        <div class="form-group">
-            @Html.LabelFor(p => p.SiteName)
-            @Html.LocalizedTextBoxFor(p => p.SiteName, null, new { @class = "form-control form-control-sm" })
-            @Html.ValidationMessageFor(p => p.SiteName, "", new { @class = "form-text text-danger fs-12" })
+    <ul class="nav nav-pills mb-5" role="tablist">
+        <li class="nav-item">
+            <a class="nav-link btn-outline-secondary mar-h-5 active" id="general-tab" data-toggle="pill" href="#general-tabpanel" role="tab" aria-controls="general-tabpanel" aria-selected="true">@T("General")</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link btn-outline-secondary mar-h-5" id="logos-tab" data-toggle="pill" href="#logos-tabpanel" role="tab" aria-controls="logos-tabpanel" aria-selected="false">@T("Logo")</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link btn-outline-secondary mar-h-5" id="contactUsDescription-tab" data-toggle="pill" href="#contactUsDescription-tabpanel" role="tab" aria-controls="contactUsDescription-tabpanel" aria-selected="false">@T("ContactUsDescription")</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link btn-outline-secondary mar-h-5" id="termsAndConditions-tab" data-toggle="pill" href="#termsAndConditions-tabpanel" role="tab" aria-controls="termsAndConditions-tabpanel" aria-selected="false">@T("TermsAndConditionsDescription")</a>
+        </li>
+    </ul>
+    <div class="tab-content">
+        <div class="tab-pane fade show active" id="general-tabpanel" role="tabpanel" aria-labelledby="general-tab">
+            <div class="row">
+                <div class="col-12">
+                    <div class="form-group">
+                        @Html.LabelFor(p => p.SiteName)
+                        @Html.LocalizedTextBoxFor(p => p.SiteName, null, new { @class = "form-control form-control-sm" })
+                        @Html.ValidationMessageFor(p => p.SiteName, "", new { @class = "form-text text-danger fs-12" })
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="form-group">
+                        @Html.LabelFor(p => p.SiteUrl)
+                        @Html.TextBoxFor(p => p.SiteUrl, null, new { @class = "form-control form-control-sm ltr-dir" })
+                        @Html.ValidationMessageFor(p => p.SiteUrl, "", new { @class = "form-text text-danger fs-12" })
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="form-group">
+                        @Html.LabelFor(p => p.SiteDescription)
+                        @Html.LocalizedTextAreaFor(p => p.SiteDescription, new { @class = "form-control form-control-sm" })
+                        @Html.ValidationMessageFor(p => p.SiteDescription, "", new { @class = "form-text text-danger fs-12" })
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="form-group">
+                        @Html.LabelFor(p => p.MetaKeyWords)
+                        @Html.LocalizedTextBoxFor(p => p.MetaKeyWords, null, new { @class = "form-control form-control-sm" })
+                        @Html.ValidationMessageFor(p => p.MetaKeyWords, "", new { @class = "form-text text-danger fs-12" })
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="form-group">
+                        @Html.LabelFor(p => p.InvoicePrintPageCompanyInfo)
+                        @Html.LocalizedTextAreaFor(p => p.InvoicePrintPageCompanyInfo, new { @class = "html-editor" })
+                        @Html.ValidationMessageFor(p => p.InvoicePrintPageCompanyInfo, "", new { @class = "form-text text-danger fs-12" })
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="form-group">
+                        @Html.LabelFor(p => p.FooterDescription)
+                        @Html.LocalizedTextAreaFor(p => p.FooterDescription, new { @class = "html-editor" })
+                        @Html.ValidationMessageFor(p => p.FooterDescription, "", new { @class = "form-text text-danger fs-12" })
+                    </div>
+                </div>
+            </div>
         </div>
-    </div>
-    <div class="col-12">
-        <div class="form-group">
-            @Html.LabelFor(p => p.SiteUrl)
-            @Html.TextBoxFor(p => p.SiteUrl, null, new { @class = "form-control form-control-sm ltr-dir" })
-            @Html.ValidationMessageFor(p => p.SiteUrl, "", new { @class = "form-text text-danger fs-12" })
+        <div class="tab-pane fade" id="logos-tabpanel" role="tabpanel" aria-labelledby="logos-tab">
+            <div class="row">
+                <div class="col-12">
+                    <div class="form-group">
+                        @Html.LabelFor(p => p.SiteLogoHeader)
+                        @Html.LocalizedTextBoxFor(p => p.SiteLogoHeader, null, new { @class = "form-control form-control-sm ltr-dir" })
+                        <button type="button" onclick="ShowFileExplorerForLocalizedEntity('SiteLogoHeader');" class="btn btn-outline-success btn-xs float-end t-mar-5"><i class="fa fa-folder-open"></i> ...</button>
+                        <span class="form-text text-muted fs-11">@T("DesiredImageUrl")</span>
+                        @Html.ValidationMessageFor(p => p.SiteLogoHeader, "", new { @class = "form-text text-danger fs-12" })
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="form-group">
+                        @Html.LabelFor(p => p.SiteLogoNavigationBar)
+                        @Html.LocalizedTextBoxFor(p => p.SiteLogoNavigationBar, null, new { @class = "form-control form-control-sm ltr-dir" })
+                        <button type="button" onclick="ShowFileExplorerForLocalizedEntity('SiteLogoNavigationBar');" class="btn btn-outline-success btn-xs float-end t-mar-5"><i class="fa fa-folder-open"></i> ...</button>
+                        <span class="form-text text-muted fs-11">@T("DesiredImageUrl")</span>
+                        @Html.ValidationMessageFor(p => p.SiteLogoNavigationBar, "", new { @class = "form-text text-danger fs-12" })
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="form-group">
+                        @Html.LabelFor(p => p.SiteLogoEmailHeader)
+                        @Html.LocalizedTextBoxFor(p => p.SiteLogoEmailHeader, null, new { @class = "form-control form-control-sm ltr-dir" })
+                        <button type="button" onclick="ShowFileExplorerForLocalizedEntity('SiteLogoEmailHeader');" class="btn btn-outline-success btn-xs float-end t-mar-5"><i class="fa fa-folder-open"></i> ...</button>
+                        <span class="form-text text-muted fs-11">@T("DesiredImageUrl")</span>
+                        @Html.ValidationMessageFor(p => p.SiteLogoEmailHeader, "", new { @class = "form-text text-danger fs-12" })
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="form-group">
+                        @Html.LabelFor(p => p.SiteLogoInvoicePrint)
+                        @Html.LocalizedTextBoxFor(p => p.SiteLogoInvoicePrint, null, new { @class = "form-control form-control-sm ltr-dir" })
+                        <button type="button" onclick="ShowFileExplorerForLocalizedEntity('SiteLogoInvoicePrint');" class="btn btn-outline-success btn-xs float-end t-mar-5"><i class="fa fa-folder-open"></i> ...</button>
+                        <span class="form-text text-muted fs-11">@T("DesiredImageUrl")</span>
+                        @Html.ValidationMessageFor(p => p.SiteLogoInvoicePrint, "", new { @class = "form-text text-danger fs-12" })
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="form-group">
+                        @Html.LabelFor(p => p.FavIcon)
+                        @Html.LocalizedTextBoxFor(p => p.FavIcon, null, new { @class = "form-control form-control-sm ltr-dir" })
+                        <button type="button" onclick="ShowFileExplorerForLocalizedEntity('FavIcon');" class="btn btn-outline-success btn-xs float-end t-mar-5"><i class="fa fa-folder-open"></i> ...</button>
+                        <span class="form-text text-muted fs-11">@T("DesiredImageUrl")</span>
+                        @Html.ValidationMessageFor(p => p.FavIcon, "", new { @class = "form-text text-danger fs-12" })
+                    </div>
+                </div>
+            </div>
         </div>
-    </div>
-    <div class="col-12">
-        <div class="form-group">
-            @Html.LabelFor(p => p.SiteLogoHeader)
-            @Html.LocalizedTextBoxFor(p => p.SiteLogoHeader, null, new { @class = "form-control form-control-sm ltr-dir" })
-            <button type="button" onclick="ShowFileExplorerForLocalizedEntity('SiteLogoHeader');" class="btn btn-outline-success btn-xs float-end t-mar-5"><i class="fa fa-folder-open"></i> ...</button>
-            <span class="form-text text-muted fs-11">@T("DesiredImageUrl")</span>
-            @Html.ValidationMessageFor(p => p.SiteLogoHeader, "", new { @class = "form-text text-danger fs-12" })
+        <div class="tab-pane fade" id="contactUsDescription-tabpanel" role="tabpanel" aria-labelledby="contactUsDescription-tab">
+            <div class="row">
+                <div class="col-12">
+                    <div class="form-group">
+                        @Html.LocalizedTextAreaFor(p => p.ContactUsDescription, new { @class = "html-editor" })
+                        @Html.ValidationMessageFor(p => p.ContactUsDescription, "", new { @class = "form-text text-danger fs-12" })
+                    </div>
+                </div>
+            </div>
         </div>
-    </div>
-    <div class="col-12">
-        <div class="form-group">
-            @Html.LabelFor(p => p.SiteLogoNavigationBar)
-            @Html.LocalizedTextBoxFor(p => p.SiteLogoNavigationBar, null, new { @class = "form-control form-control-sm ltr-dir" })
-            <button type="button" onclick="ShowFileExplorerForLocalizedEntity('SiteLogoNavigationBar');" class="btn btn-outline-success btn-xs float-end t-mar-5"><i class="fa fa-folder-open"></i> ...</button>
-            @Html.ValidationMessageFor(p => p.SiteLogoNavigationBar, "", new { @class = "form-text text-danger fs-12" })
-        </div>
-    </div>
-    <div class="col-12">
-        <div class="form-group">
-            @Html.LabelFor(p => p.SiteLogoEmailHeader)
-            @Html.LocalizedTextBoxFor(p => p.SiteLogoEmailHeader, null, new { @class = "form-control form-control-sm ltr-dir" })
-            <button type="button" onclick="ShowFileExplorerForLocalizedEntity('SiteLogoEmailHeader');" class="btn btn-outline-success btn-xs float-end t-mar-5"><i class="fa fa-folder-open"></i> ...</button>
-            <span class="form-text text-muted fs-11">@T("DesiredImageUrl")</span>
-            @Html.ValidationMessageFor(p => p.SiteLogoEmailHeader, "", new { @class = "form-text text-danger fs-12" })
-        </div>
-    </div>
-    <div class="col-12">
-        <div class="form-group">
-            @Html.LabelFor(p => p.SiteLogoInvoicePrint)
-            @Html.LocalizedTextBoxFor(p => p.SiteLogoInvoicePrint, null, new { @class = "form-control form-control-sm ltr-dir" })
-            <button type="button" onclick="ShowFileExplorerForLocalizedEntity('SiteLogoInvoicePrint');" class="btn btn-outline-success btn-xs float-end t-mar-5"><i class="fa fa-folder-open"></i> ...</button>
-            @Html.ValidationMessageFor(p => p.SiteLogoInvoicePrint, "", new { @class = "form-text text-danger fs-12" })
-        </div>
-    </div>
-    <div class="col-12">
-        <div class="form-group">
-            @Html.LabelFor(p => p.FavIcon)
-            @Html.LocalizedTextBoxFor(p => p.FavIcon, null, new { @class = "form-control form-control-sm ltr-dir" })
-            <button type="button" onclick="ShowFileExplorerForLocalizedEntity('FavIcon');" class="btn btn-outline-success btn-xs float-end t-mar-5"><i class="fa fa-folder-open"></i> ...</button>
-            @Html.ValidationMessageFor(p => p.FavIcon, "", new { @class = "form-text text-danger fs-12" })
-        </div>
-    </div>
-    <div class="col-12">
-        <div class="form-group">
-            @Html.LabelFor(p => p.SiteDescription)
-            @Html.LocalizedTextAreaFor(p => p.SiteDescription, new { @class = "form-control form-control-sm" })
-            @Html.ValidationMessageFor(p => p.SiteDescription, "", new { @class = "form-text text-danger fs-12" })
-        </div>
-    </div>
-    <div class="col-12">
-        <div class="form-group">
-            @Html.LabelFor(p => p.InvoicePrintPageCompanyInfo)
-            @Html.LocalizedTextAreaFor(p => p.InvoicePrintPageCompanyInfo, new { @class = "html-editor" })
-            @Html.ValidationMessageFor(p => p.InvoicePrintPageCompanyInfo, "", new { @class = "form-text text-danger fs-12" })
-        </div>
-    </div>
-    <div class="col-12">
-        <div class="form-group">
-            @Html.LabelFor(p => p.MetaKeyWords)
-            @Html.LocalizedTextBoxFor(p => p.MetaKeyWords, null, new { @class = "form-control form-control-sm" })
-            @Html.ValidationMessageFor(p => p.MetaKeyWords, "", new { @class = "form-text text-danger fs-12" })
-        </div>
-    </div>
-    <div class="col-12">
-        <div class="form-group">
-            @Html.LabelFor(p => p.FooterDescription)
-            @Html.LocalizedTextAreaFor(p => p.FooterDescription, new { @class = "html-editor" })
-            @Html.ValidationMessageFor(p => p.FooterDescription, "", new { @class = "form-text text-danger fs-12" })
-        </div>
-    </div>
-    <div class="col-12">
-        <div class="form-group">
-            @Html.LabelFor(p => p.ContactUsDescription)
-            @Html.LocalizedTextAreaFor(p => p.ContactUsDescription, new { @class = "html-editor" })
-            @Html.ValidationMessageFor(p => p.ContactUsDescription, "", new { @class = "form-text text-danger fs-12" })
-        </div>
-    </div>
-    <div class="col-12">
-        <div class="form-group">
-            @Html.LabelFor(p => p.TermsAndConditions)
-            @Html.LocalizedTextAreaFor(p => p.TermsAndConditions, new { @class = "html-editor" })
-            @Html.ValidationMessageFor(p => p.TermsAndConditions, "", new { @class = "form-text text-danger fs-12" })
-        </div>
-    </div>
-    <div class="col-12">
-        <div class="form-group">
-            <div class="custom-control custom-checkbox">
-                @Html.CheckBoxFor(p => p.ShowAcceptTermsSignUp, new { @class = "custom-control-input" })
-                @Html.LabelFor(p => p.ShowAcceptTermsSignUp, new { @class = "custom-control-label" })
+        <div class="tab-pane fade" id="termsAndConditions-tabpanel" role="tabpanel" aria-labelledby="termsAndConditions-tab">
+            <div class="row">
+                <div class="col-12">
+                    <div class="form-group">
+                        @Html.LocalizedTextAreaFor(p => p.TermsAndConditions, new { @class = "html-editor" })
+                        @Html.ValidationMessageFor(p => p.TermsAndConditions, "", new { @class = "form-text text-danger fs-12" })
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="form-group">
+                        <div class="custom-control custom-checkbox">
+                            @Html.CheckBoxFor(p => p.ShowAcceptTermsSignUp, new { @class = "custom-control-input" })
+                            @Html.LabelFor(p => p.ShowAcceptTermsSignUp, new { @class = "custom-control-label" })
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-</div>
-
 }
 
 @helper SecuritySettings()
 {
-
-    <div class="row">
-        <div class="col-12">
-            <h2 class="text-center b-mar-20"><img src="~/Content/img/RecaptchaLogo.png" /><br />@T("GoogleRecaptcha")</h2>
-        </div>
-        <div class="col-12">
-            <div class="form-group">
-                @Html.LabelFor(p => p.GoogleRecaptchaSecretKey)
-                @Html.TextBoxFor(p => p.GoogleRecaptchaSecretKey, new { @class = "form-control form-control-sm ltr-dir" })
-                @Html.ValidationMessageFor(p => p.GoogleRecaptchaSecretKey, "", new { @class = "form-text text-danger fs-12" })
-            </div>
-        </div>
-        <div class="col-12">
-            <div class="form-group">
-                @Html.LabelFor(p => p.GoogleRecaptchaSiteKey)
-                @Html.TextBoxFor(p => p.GoogleRecaptchaSiteKey, new { @class = "form-control form-control-sm ltr-dir" })
-                @Html.ValidationMessageFor(p => p.GoogleRecaptchaSiteKey, "", new { @class = "form-text text-danger fs-12" })
-            </div>
-        </div>
-        <div class="col-12">
-            <div class="form-group">
-                @Html.LabelFor(p => p.ShowRecaptchaAfterNFailedAttempt)
-                @Html.TextBoxFor(p => p.ShowRecaptchaAfterNFailedAttempt, new { @class = "form-control form-control-sm ltr-dir", type = "number" })
-                @Html.ValidationMessageFor(p => p.ShowRecaptchaAfterNFailedAttempt, "", new { @class = "form-text text-danger fs-12" })
-            </div>
-        </div>
-        <div class="col-12">
-            <div class="form-group">
-                <div class="custom-control custom-checkbox">
-                    @Html.CheckBoxFor(p => p.UseGoogleRecaptchaForLogin, new { @class = "custom-control-input" })
-                    @Html.LabelFor(p => p.UseGoogleRecaptchaForLogin, new { @class = "custom-control-label" })
-                </div>
-            </div>
-        </div>
-        <div class="col-12">
-            <div class="form-group">
-                <div class="custom-control custom-checkbox">
-                    @Html.CheckBoxFor(p => p.UseGoogleRecaptchaForSignup, new { @class = "custom-control-input" })
-                    @Html.LabelFor(p => p.UseGoogleRecaptchaForSignup, new { @class = "custom-control-label" })
-                </div>
-            </div>
-        </div>
-        <div class="col-12">
-            <div class="form-group">
-                <div class="custom-control custom-checkbox">
-                    @Html.CheckBoxFor(p => p.UseGoogleRecaptchaForResetPassword, new { @class = "custom-control-input" })
-                    @Html.LabelFor(p => p.UseGoogleRecaptchaForResetPassword, new { @class = "custom-control-label" })
-                </div>
-            </div>
-        </div>
-        <div class="col-12">
-            <div class="form-group">
-                <div class="custom-control custom-checkbox">
-                    @Html.CheckBoxFor(p => p.UseGoogleRecaptchaForComment, new { @class = "custom-control-input" })
-                    @Html.LabelFor(p => p.UseGoogleRecaptchaForComment, new { @class = "custom-control-label" })
-                </div>
-            </div>
-        </div>
-        <div class="col-12">
-            <div class="form-group">
-                <div class="custom-control custom-checkbox">
-                    @Html.CheckBoxFor(p => p.UseGoogleRecaptchaForContactUs, new { @class = "custom-control-input" })
-                    @Html.LabelFor(p => p.UseGoogleRecaptchaForContactUs, new { @class = "custom-control-label" })
-                </div>
-            </div>
-        </div>
-    </div>
-    <hr>
-    <div class="row">
-        <div class="col-12">
-            <h2 class="text-center b-mar-20"><img src="~/Content/img/Password.png" /><br />@T("Password")</h2>
-        </div>
-        <div class="col-12">
-            <div class="form-group">
-                @Html.LabelFor(p => p.PasswordRequiredLength)
-                @Html.TextBoxFor(p => p.PasswordRequiredLength, new { @class = "form-control form-control-sm ltr-dir", type = "number" })
-                @Html.ValidationMessageFor(p => p.PasswordRequiredLength, "", new { @class = "form-text text-danger fs-12" })
-            </div>
-        </div>
-        <div class="col-12">
-            <div class="form-group">
-                <div class="custom-control custom-checkbox">
-                    @Html.CheckBoxFor(p => p.PasswordRequireDigit, new { @class = "custom-control-input" })
-                    @Html.LabelFor(p => p.PasswordRequireDigit, new { @class = "custom-control-label" })
-                </div>
-            </div>
-        </div>
-        <div class="col-12">
-            <div class="form-group">
-                <div class="custom-control custom-checkbox">
-                    @Html.CheckBoxFor(p => p.PasswordRequireLowercase, new { @class = "custom-control-input" })
-                    @Html.LabelFor(p => p.PasswordRequireLowercase, new { @class = "custom-control-label" })
-                </div>
-            </div>
-        </div>
-        <div class="col-12">
-            <div class="form-group">
-                <div class="custom-control custom-checkbox">
-                    @Html.CheckBoxFor(p => p.PasswordRequireUppercase, new { @class = "custom-control-input" })
-                    @Html.LabelFor(p => p.PasswordRequireUppercase, new { @class = "custom-control-label" })
-                </div>
-            </div>
-        </div>
-        <div class="col-12">
-            <div class="form-group">
-                <div class="custom-control custom-checkbox">
-                    @Html.CheckBoxFor(p => p.PasswordRequireNonLetterOrDigit, new { @class = "custom-control-input" })
-                    @Html.LabelFor(p => p.PasswordRequireNonLetterOrDigit, new { @class = "custom-control-label" })
-                </div>
-            </div>
-        </div>
-    </div>
-    <hr>
-    <div class="row">
-        <div class="col-12">
-            <h2 class="text-center b-mar-20"><img src="~/Content/img/UserSecurity.png" /><br />@T("Others")</h2>
-        </div>
-        <div class="col-12">
-            <div class="form-group">
-                <div class="custom-control custom-checkbox">
-                    @Html.CheckBoxFor(p => p.ConfirmUserEmailAddress, new { @class = "custom-control-input" })
-                    @Html.LabelFor(p => p.ConfirmUserEmailAddress, new { @class = "custom-control-label" })
-                </div>
-            </div>
-        </div>
-        <div class="col-12">
-            <div class="form-group">
-                <div class="custom-control custom-checkbox">
-                    @Html.CheckBoxFor(p => p.UserLockoutEnabled, new { @class = "custom-control-input" })
-                    @Html.LabelFor(p => p.UserLockoutEnabled, new { @class = "custom-control-label" })
-                </div>
-            </div>
-        </div>
-        <div class="col-12 col-md-6">
-            <div class="form-group">
-                @Html.LabelFor(p => p.AccountLockoutTime)
-                @Html.TextBoxFor(p => p.AccountLockoutTime, new { @class = "form-control form-control-sm ltr-dir", type = "number" })
-                @Html.ValidationMessageFor(p => p.AccountLockoutTime, "", new { @class = "form-text text-danger fs-12" })
-            </div>
-        </div>
-        <div class="col-12 col-md-6">
-            <div class="form-group">
-                @Html.LabelFor(p => p.MaxFailedAccessAttemptsBeforeLockout)
-                @Html.TextBoxFor(p => p.MaxFailedAccessAttemptsBeforeLockout, new { @class = "form-control form-control-sm ltr-dir", type = "number" })
-                @Html.ValidationMessageFor(p => p.MaxFailedAccessAttemptsBeforeLockout, "", new { @class = "form-text text-danger fs-12" })
-            </div>
-        </div>
-        <div class="col-12 col-md-6">
-            <div class="form-group">
-                @Html.LabelFor(p => p.EncryptionKey)
-                <div class="input-group">
-                    @Html.TextBoxFor(p => p.EncryptionKey, new { @class = "form-control form-control-sm ltr-dir" })
-                    <div class="input-group-append">
-                        <button class="btn btn-sm btn-outline-secondary" onclick="$('#EncryptionKey').val(randomPassword(20))" type="button">@T("RandomGeneration")</button>
+    <ul class="nav nav-pills mb-5" role="tablist">
+        <li class="nav-item">
+            <a class="nav-link btn-outline-secondary mar-h-5 active" id="googleRecaptcha-tab" data-toggle="pill" href="#googleRecaptcha-tabpanel" role="tab" aria-controls="googleRecaptcha-tabpanel" aria-selected="true">@T("GoogleRecaptcha")</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link btn-outline-secondary mar-h-5" id="password-tab" data-toggle="pill" href="#password-tabpanel" role="tab" aria-controls="password-tabpanel" aria-selected="false">@T("Password")</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link btn-outline-secondary mar-h-5" id="securityOthers-tab" data-toggle="pill" href="#securityOthers-tabpanel" role="tab" aria-controls="securityOthers-tabpanel" aria-selected="false">@T("Others")</a>
+        </li>
+    </ul>
+    <div class="tab-content">
+        <div class="tab-pane fade show active" id="googleRecaptcha-tabpanel" role="tabpanel" aria-labelledby="googleRecaptcha-tab">
+            <div class="row">
+                <div class="col-12">
+                    <div class="form-group">
+                        @Html.LabelFor(p => p.GoogleRecaptchaSecretKey)
+                        @Html.TextBoxFor(p => p.GoogleRecaptchaSecretKey, new { @class = "form-control form-control-sm ltr-dir" })
+                        @Html.ValidationMessageFor(p => p.GoogleRecaptchaSecretKey, "", new { @class = "form-text text-danger fs-12" })
                     </div>
                 </div>
-                @Html.ValidationMessageFor(p => p.EncryptionKey, "", new { @class = "form-text text-danger fs-12" })
-            </div>
-        </div>
-        <div class="col-12 col-md-6">
-            <div class="form-group">
-                @Html.LabelFor(p => p.EncryptionSalt)
-                <div class="input-group">
-                    @Html.TextBoxFor(p => p.EncryptionSalt, new { @class = "form-control form-control-sm ltr-dir" })
-                    <div class="input-group-append">
-                        <button class="btn btn-sm btn-outline-secondary" onclick="$('#EncryptionSalt').val(randomPassword(20))" type="button">@T("RandomGeneration")</button>
+                <div class="col-12">
+                    <div class="form-group">
+                        @Html.LabelFor(p => p.GoogleRecaptchaSiteKey)
+                        @Html.TextBoxFor(p => p.GoogleRecaptchaSiteKey, new { @class = "form-control form-control-sm ltr-dir" })
+                        @Html.ValidationMessageFor(p => p.GoogleRecaptchaSiteKey, "", new { @class = "form-text text-danger fs-12" })
                     </div>
                 </div>
-                @Html.ValidationMessageFor(p => p.EncryptionSalt, "", new { @class = "form-text text-danger fs-12" })
+                <div class="col-12">
+                    <div class="form-group">
+                        @Html.LabelFor(p => p.ShowRecaptchaAfterNFailedAttempt)
+                        @Html.TextBoxFor(p => p.ShowRecaptchaAfterNFailedAttempt, new { @class = "form-control form-control-sm ltr-dir", type = "number" })
+                        @Html.ValidationMessageFor(p => p.ShowRecaptchaAfterNFailedAttempt, "", new { @class = "form-text text-danger fs-12" })
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="form-group">
+                        <div class="custom-control custom-checkbox">
+                            @Html.CheckBoxFor(p => p.UseGoogleRecaptchaForLogin, new { @class = "custom-control-input" })
+                            @Html.LabelFor(p => p.UseGoogleRecaptchaForLogin, new { @class = "custom-control-label" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="form-group">
+                        <div class="custom-control custom-checkbox">
+                            @Html.CheckBoxFor(p => p.UseGoogleRecaptchaForSignup, new { @class = "custom-control-input" })
+                            @Html.LabelFor(p => p.UseGoogleRecaptchaForSignup, new { @class = "custom-control-label" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="form-group">
+                        <div class="custom-control custom-checkbox">
+                            @Html.CheckBoxFor(p => p.UseGoogleRecaptchaForResetPassword, new { @class = "custom-control-input" })
+                            @Html.LabelFor(p => p.UseGoogleRecaptchaForResetPassword, new { @class = "custom-control-label" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="form-group">
+                        <div class="custom-control custom-checkbox">
+                            @Html.CheckBoxFor(p => p.UseGoogleRecaptchaForComment, new { @class = "custom-control-input" })
+                            @Html.LabelFor(p => p.UseGoogleRecaptchaForComment, new { @class = "custom-control-label" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="form-group">
+                        <div class="custom-control custom-checkbox">
+                            @Html.CheckBoxFor(p => p.UseGoogleRecaptchaForContactUs, new { @class = "custom-control-input" })
+                            @Html.LabelFor(p => p.UseGoogleRecaptchaForContactUs, new { @class = "custom-control-label" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="tab-pane fade" id="password-tabpanel" role="tabpanel" aria-labelledby="password-tab">
+            <div class="row">
+                <div class="col-12">
+                    <div class="form-group">
+                        @Html.LabelFor(p => p.PasswordRequiredLength)
+                        @Html.TextBoxFor(p => p.PasswordRequiredLength, new { @class = "form-control form-control-sm ltr-dir", type = "number" })
+                        @Html.ValidationMessageFor(p => p.PasswordRequiredLength, "", new { @class = "form-text text-danger fs-12" })
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="form-group">
+                        <div class="custom-control custom-checkbox">
+                            @Html.CheckBoxFor(p => p.PasswordRequireDigit, new { @class = "custom-control-input" })
+                            @Html.LabelFor(p => p.PasswordRequireDigit, new { @class = "custom-control-label" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="form-group">
+                        <div class="custom-control custom-checkbox">
+                            @Html.CheckBoxFor(p => p.PasswordRequireLowercase, new { @class = "custom-control-input" })
+                            @Html.LabelFor(p => p.PasswordRequireLowercase, new { @class = "custom-control-label" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="form-group">
+                        <div class="custom-control custom-checkbox">
+                            @Html.CheckBoxFor(p => p.PasswordRequireUppercase, new { @class = "custom-control-input" })
+                            @Html.LabelFor(p => p.PasswordRequireUppercase, new { @class = "custom-control-label" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="form-group">
+                        <div class="custom-control custom-checkbox">
+                            @Html.CheckBoxFor(p => p.PasswordRequireNonLetterOrDigit, new { @class = "custom-control-input" })
+                            @Html.LabelFor(p => p.PasswordRequireNonLetterOrDigit, new { @class = "custom-control-label" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="tab-pane fade" id="securityOthers-tabpanel" role="tabpanel" aria-labelledby="securityOthers-tab">
+            <div class="row">
+                <div class="col-12">
+                    <div class="form-group">
+                        <div class="custom-control custom-checkbox">
+                            @Html.CheckBoxFor(p => p.ConfirmUserEmailAddress, new { @class = "custom-control-input" })
+                            @Html.LabelFor(p => p.ConfirmUserEmailAddress, new { @class = "custom-control-label" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="form-group">
+                        <div class="custom-control custom-checkbox">
+                            @Html.CheckBoxFor(p => p.UserLockoutEnabled, new { @class = "custom-control-input" })
+                            @Html.LabelFor(p => p.UserLockoutEnabled, new { @class = "custom-control-label" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-lg-6">
+                    <div class="form-group">
+                        @Html.LabelFor(p => p.AccountLockoutTime)
+                        @Html.TextBoxFor(p => p.AccountLockoutTime, new { @class = "form-control form-control-sm ltr-dir", type = "number" })
+                        @Html.ValidationMessageFor(p => p.AccountLockoutTime, "", new { @class = "form-text text-danger fs-12" })
+                    </div>
+                </div>
+                <div class="col-12 col-lg-6">
+                    <div class="form-group">
+                        @Html.LabelFor(p => p.MaxFailedAccessAttemptsBeforeLockout)
+                        @Html.TextBoxFor(p => p.MaxFailedAccessAttemptsBeforeLockout, new { @class = "form-control form-control-sm ltr-dir", type = "number" })
+                        @Html.ValidationMessageFor(p => p.MaxFailedAccessAttemptsBeforeLockout, "", new { @class = "form-text text-danger fs-12" })
+                    </div>
+                </div>
+                <div class="col-12 col-lg-6">
+                    <div class="form-group">
+                        @Html.LabelFor(p => p.EncryptionKey)
+                        <div class="input-group">
+                            @Html.TextBoxFor(p => p.EncryptionKey, new { @class = "form-control form-control-sm ltr-dir" })
+                            <div class="input-group-append">
+                                <button class="btn btn-sm btn-outline-secondary" onclick="$('#EncryptionKey').val(randomPassword(20))" type="button">@T("RandomGeneration")</button>
+                            </div>
+                        </div>
+                        @Html.ValidationMessageFor(p => p.EncryptionKey, "", new { @class = "form-text text-danger fs-12" })
+                    </div>
+                </div>
+                <div class="col-12 col-lg-6">
+                    <div class="form-group">
+                        @Html.LabelFor(p => p.EncryptionSalt)
+                        <div class="input-group">
+                            @Html.TextBoxFor(p => p.EncryptionSalt, new { @class = "form-control form-control-sm ltr-dir" })
+                            <div class="input-group-append">
+                                <button class="btn btn-sm btn-outline-secondary" onclick="$('#EncryptionSalt').val(randomPassword(20))" type="button">@T("RandomGeneration")</button>
+                            </div>
+                        </div>
+                        @Html.ValidationMessageFor(p => p.EncryptionSalt, "", new { @class = "form-text text-danger fs-12" })
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-
 }
 
 @helper SocialNetworksSettings()
@@ -413,378 +466,386 @@
 
 @helper OtherSettings()
 {
+    <ul class="nav nav-pills mb-5" role="tablist">
+        <li class="nav-item">
+            <a class="nav-link btn-outline-secondary mar-h-5 active" id="invoice-tab" data-toggle="pill" href="#invoice-tabpanel" role="tab" aria-controls="invoice-tabpanel" aria-selected="true">@T("Invoice")</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link btn-outline-secondary mar-h-5" id="downloads-tab" data-toggle="pill" href="#downloads-tabpanel" role="tab" aria-controls="downloads-tabpanel" aria-selected="false">@T("Downloads")</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link btn-outline-secondary mar-h-5" id="comments-tab" data-toggle="pill" href="#comments-tabpanel" role="tab" aria-controls="comments-tabpanel" aria-selected="false">@T("Comments")</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link btn-outline-secondary mar-h-5" id="others-tab" data-toggle="pill" href="#others-tabpanel" role="tab" aria-controls="others-tabpanel" aria-selected="false">@T("Others")</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link btn-outline-secondary mar-h-5" id="tinyMCE-tab" data-toggle="pill" href="#tinyMCE-tabpanel" role="tab" aria-controls="tinyMCE-tabpanel" aria-selected="false">@T("TinyMCE")</a>
+        </li>
+    </ul>
+    <div class="tab-content">
+        <div class="tab-pane fade show active" id="invoice-tabpanel" role="tabpanel" aria-labelledby="invoice-tab">
+            <div class="row">
+                <div class="col-12 col-lg-6">
+                    <div class="form-group">
+                        <div class="custom-control custom-checkbox">
+                            @Html.CheckBoxFor(p => p.ShowQtyColInInvoice, new {@class = "custom-control-input"})
+                            @Html.LabelFor(p => p.ShowQtyColInInvoice, new {@class = "custom-control-label"})
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-lg-6">
+                    <div class="form-group">
+                        <div class="custom-control custom-checkbox">
+                            @Html.CheckBoxFor(p => p.UserMustRegisterBeforeCheckoutInvoice, new {@class = "custom-control-input"})
+                            @Html.LabelFor(p => p.UserMustRegisterBeforeCheckoutInvoice, new {@class = "custom-control-label"})
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-lg-6">
+                    <div class="form-group">
+                        <div class="custom-control custom-checkbox">
+                            @Html.CheckBoxFor(p => p.GetBillingAddressForInvoice, new {@class = "custom-control-input"})
+                            @Html.LabelFor(p => p.GetBillingAddressForInvoice, new {@class = "custom-control-label"})
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-lg-6">
+                    <div class="form-group">
+                        <div class="custom-control custom-checkbox">
+                            @Html.CheckBoxFor(p => p.DeleteEmptyInvoices, new {@class = "custom-control-input"})
+                            @Html.LabelFor(p => p.DeleteEmptyInvoices, new {@class = "custom-control-label"})
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-lg-6">
+                    <div class="form-group">
+                        <div class="custom-control custom-checkbox">
+                            @Html.CheckBoxFor(p => p.DeletePendingInvoices, new {@class = "custom-control-input"})
+                            @Html.LabelFor(p => p.DeletePendingInvoices, new {@class = "custom-control-label"})
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="form-group">
+                        @Html.LabelFor(p => p.DeleteEmptyInvoicesAfterDays)
+                        @Html.TextBoxFor(p => p.DeleteEmptyInvoicesAfterDays, null, new {@class = "form-control form-control-sm ltr-dir", type = "number"})
+                        @Html.ValidationMessageFor(p => p.DeleteEmptyInvoicesAfterDays, "", new {@class = "form-text text-danger fs-12"})
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="form-group">
+                        @Html.LabelFor(p => p.DeletePendingInvoicesAfterDays)
+                        @Html.TextBoxFor(p => p.DeletePendingInvoicesAfterDays, null, new {@class = "form-control form-control-sm ltr-dir", type = "number"})
+                        @Html.ValidationMessageFor(p => p.DeletePendingInvoicesAfterDays, "", new {@class = "form-text text-danger fs-12"})
+                    </div>
+                </div>
+            </div>
+            <hr />
+            <div class="row">
+                <div class="col-12">
+                    <h2 class="text-center b-mar-20"><img src="~/Content/img/ReminderSettings.png" /><br />@T("ReminderSettings")</h2>
+                </div>
+                <div class="col-12 col-lg-6">
+                    <div class="form-group">
+                        <div class="custom-control custom-checkbox">
+                            @Html.CheckBoxFor(p => p.SendExpNotificationsForProducts, new { @class = "custom-control-input" })
+                            @Html.LabelFor(p => p.SendExpNotificationsForProducts, new { @class = "custom-control-label" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-lg-6">
+                    <div class="form-group">
+                        <div class="custom-control custom-checkbox">
+                            @Html.CheckBoxFor(p => p.SendExpNotificationsForProductsJustOnce, new { @class = "custom-control-input" })
+                            @Html.LabelFor(p => p.SendExpNotificationsForProductsJustOnce, new { @class = "custom-control-label" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-lg-6">
+                    <div class="form-group">
+                        <div class="custom-control custom-checkbox">
+                            @Html.CheckBoxFor(p => p.SendExpNotificationsForProductAttributes, new { @class = "custom-control-input" })
+                            @Html.LabelFor(p => p.SendExpNotificationsForProductAttributes, new { @class = "custom-control-label" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-lg-6">
+                    <div class="form-group">
+                        <div class="custom-control custom-checkbox">
+                            @Html.CheckBoxFor(p => p.SendExpNotificationsForProductAttributesJustOnce, new { @class = "custom-control-input" })
+                            @Html.LabelFor(p => p.SendExpNotificationsForProductAttributesJustOnce, new { @class = "custom-control-label" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-lg-6">
+                    <div class="form-group">
+                        @Html.LabelFor(p => p.NotificationHourSpanBeforeExpForProducts)
+                        @Html.TextBoxFor(p => p.NotificationHourSpanBeforeExpForProducts, null, new { @class = "form-control form-control-sm ltr-dir", type = "number" })
+                        <small class="form-text text-align-initial text-muted">@Html.Raw(T("ToChangeReminderTextGoto", "Notification_ProductBeforeExpiration"))</small>
+                        @Html.ValidationMessageFor(p => p.NotificationHourSpanBeforeExpForProducts, "", new { @class = "form-text text-danger fs-12" })
+                    </div>
+                </div>
+                <div class="col-12 col-lg-6">
+                    <div class="form-group">
+                        @Html.LabelFor(p => p.NotificationHourSpanAfterExpForProducts)
+                        @Html.TextBoxFor(p => p.NotificationHourSpanAfterExpForProducts, null, new { @class = "form-control form-control-sm ltr-dir", type = "number" })
+                        <small class="form-text text-align-initial text-muted">@Html.Raw(T("ToChangeReminderTextGoto", "Notification_ProductAfterExpiration"))</small>
+                        @Html.ValidationMessageFor(p => p.NotificationHourSpanAfterExpForProducts, "", new { @class = "form-text text-danger fs-12" })
+                    </div>
+                </div>
 
-    <div class="row">
-        <div class="col-12">
-            <h2 class="text-center b-mar-20"><img src="~/Content/img/invoice_48px.png" /><br />@T("Invoice")</h2>
-        </div>
-        <div class="col-12">
-            <div class="form-group">
-                <div class="custom-control custom-checkbox">
-                    @Html.CheckBoxFor(p => p.ShowQtyColInInvoice, new { @class = "custom-control-input" })
-                    @Html.LabelFor(p => p.ShowQtyColInInvoice, new { @class = "custom-control-label" })
+                <div class="col-12 col-lg-6">
+                    <div class="form-group">
+                        <div class="custom-control custom-checkbox">
+                            @Html.CheckBoxFor(p => p.SendExpNotificationsForUserPlans, new { @class = "custom-control-input" })
+                            @Html.LabelFor(p => p.SendExpNotificationsForUserPlans, new { @class = "custom-control-label" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-lg-6">
+                    <div class="form-group">
+                        <div class="custom-control custom-checkbox">
+                            @Html.CheckBoxFor(p => p.SendExpNotificationsForUserPlansJustOnce, new { @class = "custom-control-input" })
+                            @Html.LabelFor(p => p.SendExpNotificationsForUserPlansJustOnce, new { @class = "custom-control-label" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-lg-6">
+                    <div class="form-group">
+                        @Html.LabelFor(p => p.NotificationHourSpanBeforeExpForUserPlans)
+                        @Html.TextBoxFor(p => p.NotificationHourSpanBeforeExpForUserPlans, null, new { @class = "form-control form-control-sm ltr-dir", type = "number" })
+                        <small class="form-text text-align-initial text-muted">@Html.Raw(T("ToChangeReminderTextGoto", "Notification_UserPlanBeforeExpiration"))</small>
+                        @Html.ValidationMessageFor(p => p.NotificationHourSpanBeforeExpForUserPlans, "", new { @class = "form-text text-danger fs-12" })
+                    </div>
+                </div>
+                <div class="col-12 col-lg-6">
+                    <div class="form-group">
+                        @Html.LabelFor(p => p.NotificationHourSpanAfterExpForUserPlans)
+                        @Html.TextBoxFor(p => p.NotificationHourSpanAfterExpForUserPlans, null, new { @class = "form-control form-control-sm ltr-dir", type = "number" })
+                        <small class="form-text text-align-initial text-muted">@Html.Raw(T("ToChangeReminderTextGoto", "Notification_UserPlanAfterExpiration"))</small>
+                        @Html.ValidationMessageFor(p => p.NotificationHourSpanAfterExpForUserPlans, "", new { @class = "form-text text-danger fs-12" })
+                    </div>
+                </div>
+
+                <div class="col-12 col-lg-6">
+                    <div class="form-group">
+                        <div class="custom-control custom-checkbox">
+                            @Html.CheckBoxFor(p => p.SendExpNotificationsForInvoiceManualItems, new { @class = "custom-control-input" })
+                            @Html.LabelFor(p => p.SendExpNotificationsForInvoiceManualItems, new { @class = "custom-control-label" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-lg-6">
+                    <div class="form-group">
+                        <div class="custom-control custom-checkbox">
+                            @Html.CheckBoxFor(p => p.SendExpNotificationsForInvoiceManualItemsJustOnce, new { @class = "custom-control-input" })
+                            @Html.LabelFor(p => p.SendExpNotificationsForInvoiceManualItemsJustOnce, new { @class = "custom-control-label" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-lg-6">
+                    <div class="form-group">
+                        @Html.LabelFor(p => p.NotificationHourSpanBeforeExpForInvoiceManualItems)
+                        @Html.TextBoxFor(p => p.NotificationHourSpanBeforeExpForInvoiceManualItems, null, new { @class = "form-control form-control-sm ltr-dir", type = "number" })
+                        <small class="form-text text-align-initial text-muted">@Html.Raw(T("ToChangeReminderTextGoto", "Notification_InvoiceManuallyBeforeExpiration"))</small>
+                        @Html.ValidationMessageFor(p => p.NotificationHourSpanBeforeExpForInvoiceManualItems, "", new { @class = "form-text text-danger fs-12" })
+                    </div>
+                </div>
+                <div class="col-12 col-lg-6">
+                    <div class="form-group">
+                        @Html.LabelFor(p => p.NotificationHourSpanAfterExpForInvoiceManualItems)
+                        @Html.TextBoxFor(p => p.NotificationHourSpanAfterExpForInvoiceManualItems, null, new { @class = "form-control form-control-sm ltr-dir", type = "number" })
+                        <small class="form-text text-align-initial text-muted">@Html.Raw(T("ToChangeReminderTextGoto", "Notification_InvoiceManuallyAfterExpiration"))</small>
+                        @Html.ValidationMessageFor(p => p.NotificationHourSpanAfterExpForInvoiceManualItems, "", new { @class = "form-text text-danger fs-12" })
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="col-12 col-md-6">
-            <div class="form-group">
-                <div class="custom-control custom-checkbox">
-                    @Html.CheckBoxFor(p => p.UserMustRegisterBeforeCheckoutInvoice, new { @class = "custom-control-input" })
-                    @Html.LabelFor(p => p.UserMustRegisterBeforeCheckoutInvoice, new { @class = "custom-control-label" })
+        <div class="tab-pane fade" id="downloads-tabpanel" role="tabpanel" aria-labelledby="downloads-tab">
+            <div class="row">
+                <div class="col-12">
+                    <div class="form-group">
+                        @Html.LabelFor(p => p.DownloadableFilesExtensions)
+                        @Html.TextBoxFor(p => p.DownloadableFilesExtensions, null, new { @class = "form-control form-control-sm ltr-dir" })
+                        @Html.ValidationMessageFor(p => p.DownloadableFilesExtensions, "", new { @class = "form-text text-danger fs-12" })
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="form-group">
+                        @Html.LabelFor(p => p.DownloadUrlsAgeByHour)
+                        @Html.TextBoxFor(p => p.DownloadUrlsAgeByHour, null, new { @class = "form-control form-control-sm ltr-dir", type = "number" })
+                        @Html.ValidationMessageFor(p => p.DownloadUrlsAgeByHour, "", new { @class = "form-text text-danger fs-12" })
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="form-group">
+                        @Html.LabelFor(p => p.NumberOfDownloadUrlsFireLimit)
+                        @Html.TextBoxFor(p => p.NumberOfDownloadUrlsFireLimit, null, new { @class = "form-control form-control-sm ltr-dir", type = "number" })
+                        @Html.ValidationMessageFor(p => p.NumberOfDownloadUrlsFireLimit, "", new { @class = "form-text text-danger fs-12" })
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="col-12 col-md-6">
-            <div class="form-group">
-                <div class="custom-control custom-checkbox">
-                    @Html.CheckBoxFor(p => p.GetBillingAddressForInvoice, new { @class = "custom-control-input" })
-                    @Html.LabelFor(p => p.GetBillingAddressForInvoice, new { @class = "custom-control-label" })
+        <div class="tab-pane fade" id="comments-tabpanel" role="tabpanel" aria-labelledby="comments-tab">
+            <div class="row">
+                <div class="col-12">
+                    <div class="form-group">
+                        <div class="custom-control custom-checkbox">
+                            @Html.CheckBoxFor(p => p.AllowUsersToWriteComment, new { @class = "custom-control-input" })
+                            @Html.LabelFor(p => p.AllowUsersToWriteComment, new { @class = "custom-control-label" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="form-group">
+                        <div class="custom-control custom-checkbox">
+                            @Html.CheckBoxFor(p => p.AllowGuestUsersToWriteComment, new { @class = "custom-control-input" })
+                            @Html.LabelFor(p => p.AllowGuestUsersToWriteComment, new { @class = "custom-control-label" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="form-group">
+                        <div class="custom-control custom-checkbox">
+                            @Html.CheckBoxFor(p => p.AutoPublishComments, new { @class = "custom-control-input" })
+                            @Html.LabelFor(p => p.AutoPublishComments, new { @class = "custom-control-label" })
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="col-12 col-md-6">
-            <div class="form-group">
-                <div class="custom-control custom-checkbox">
-                    @Html.CheckBoxFor(p => p.DeleteEmptyInvoices, new { @class = "custom-control-input" })
-                    @Html.LabelFor(p => p.DeleteEmptyInvoices, new { @class = "custom-control-label" })
+        <div class="tab-pane fade" id="others-tabpanel" role="tabpanel" aria-labelledby="others-tab">
+            <div class="row">
+                <div class="col-12 col-lg-6">
+                    <div class="form-group">
+                        <div class="custom-control custom-checkbox">
+                            @Html.CheckBoxFor(p => p.EnableBlog, new { @class = "custom-control-input" })
+                            @Html.LabelFor(p => p.EnableBlog, new { @class = "custom-control-label" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-lg-6">
+                    <div class="form-group">
+                        <div class="custom-control custom-checkbox">
+                            @Html.CheckBoxFor(p => p.AppendLanguageCodeToUrl, new { @class = "custom-control-input" })
+                            @Html.LabelFor(p => p.AppendLanguageCodeToUrl, new { @class = "custom-control-label" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-lg-6">
+                    <div class="form-group">
+                        <div class="custom-control custom-checkbox">
+                            @Html.CheckBoxFor(p => p.Wishlist, new { @class = "custom-control-input" })
+                            @Html.LabelFor(p => p.Wishlist, new { @class = "custom-control-label" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-lg-6">
+                    <div class="form-group">
+                        <div class="custom-control custom-checkbox">
+                            @Html.CheckBoxFor(p => p.LikePosts, new { @class = "custom-control-input" })
+                            @Html.LabelFor(p => p.LikePosts, new { @class = "custom-control-label" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <hr />
+            <div class="row">
+                <div class="col-12 col-lg-6">
+                    <div class="form-group">
+                        <div class="custom-control custom-checkbox">
+                            @Html.CheckBoxFor(p => p.DisableMemoryCache, new { @class = "custom-control-input" })
+                            @Html.LabelFor(p => p.DisableMemoryCache, new { @class = "custom-control-label" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-lg-6">
+                    <div class="form-group">
+                        <div class="custom-control custom-checkbox">
+                            @Html.CheckBoxFor(p => p.DisableSqlQueryCache, new { @class = "custom-control-input" })
+                            @Html.LabelFor(p => p.DisableSqlQueryCache, new { @class = "custom-control-label" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-lg-6">
+                    <div class="form-group">
+                        <div class="custom-control custom-checkbox">
+                            @Html.CheckBoxFor(p => p.CacheLocalizedEntities, new { @class = "custom-control-input" })
+                            @Html.LabelFor(p => p.CacheLocalizedEntities, new { @class = "custom-control-label" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-lg-6">
+                    <div class="form-group">
+                        <div class="custom-control custom-checkbox">
+                            @Html.CheckBoxFor(p => p.EnableResponseCompression, new { @class = "custom-control-input" })
+                            @Html.LabelFor(p => p.EnableResponseCompression, new { @class = "custom-control-label" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-lg-6">
+                    <div class="form-group">
+                        <div class="custom-control custom-checkbox">
+                            @Html.CheckBoxFor(p => p.EnableCssBundling, new { @class = "custom-control-input" })
+                            @Html.LabelFor(p => p.EnableCssBundling, new { @class = "custom-control-label" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-lg-6">
+                    <div class="form-group">
+                        <div class="custom-control custom-checkbox">
+                            @Html.CheckBoxFor(p => p.EnableJsBundling, new { @class = "custom-control-input" })
+                            @Html.LabelFor(p => p.EnableJsBundling, new { @class = "custom-control-label" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-lg-6">
+                    <div class="form-group">
+                        <div class="custom-control custom-checkbox">
+                            @Html.CheckBoxFor(p => p.EnableHtmlMinification, new { @class = "custom-control-input" })
+                            @Html.LabelFor(p => p.EnableHtmlMinification, new { @class = "custom-control-label" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-lg-6">
+                    <div class="form-group">
+                        <div class="custom-control custom-checkbox">
+                            @Html.CheckBoxFor(p => p.EnableInlineCssMinification, new { @class = "custom-control-input" })
+                            @Html.LabelFor(p => p.EnableInlineCssMinification, new { @class = "custom-control-label" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-lg-6">
+                    <div class="form-group">
+                        <div class="custom-control custom-checkbox">
+                            @Html.CheckBoxFor(p => p.EnableInlineJsMinification, new { @class = "custom-control-input" })
+                            @Html.LabelFor(p => p.EnableInlineJsMinification, new { @class = "custom-control-label" })
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="col-12 col-md-6">
-            <div class="form-group">
-                <div class="custom-control custom-checkbox">
-                    @Html.CheckBoxFor(p => p.DeletePendingInvoices, new { @class = "custom-control-input" })
-                    @Html.LabelFor(p => p.DeletePendingInvoices, new { @class = "custom-control-label" })
+        <div class="tab-pane fade" id="tinyMCE-tabpanel" role="tabpanel" aria-labelledby="tinyMCE-tab">
+            <div class="row">
+                <div class="col-12 text-center b-mar-20">
+                    <h2><a href="https://www.tiny.cloud/features" target="_blank"><img src="~/Content/img/tinymce.png" /><br />@T("TinyMCE")</a></h2>
+                    <button class="btn btn-success" onclick="ShowFileExplorer('/Scripts/tinymce-5.0.15/js/tinymce');" type="button">@T("ExplorerTinyMCEFolder")</button>
                 </div>
-            </div>
-        </div>
-        <div class="col-12 col-md-6">
-            <div class="form-group">
-                @Html.LabelFor(p => p.DeleteEmptyInvoicesAfterDays)
-                @Html.TextBoxFor(p => p.DeleteEmptyInvoicesAfterDays, null, new { @class = "form-control form-control-sm ltr-dir", type = "number" })
-                @Html.ValidationMessageFor(p => p.DeleteEmptyInvoicesAfterDays, "", new { @class = "form-text text-danger fs-12" })
-            </div>
-        </div>
-        <div class="col-12 col-md-6">
-            <div class="form-group">
-                @Html.LabelFor(p => p.DeletePendingInvoicesAfterDays)
-                @Html.TextBoxFor(p => p.DeletePendingInvoicesAfterDays, null, new { @class = "form-control form-control-sm ltr-dir", type = "number" })
-                @Html.ValidationMessageFor(p => p.DeletePendingInvoicesAfterDays, "", new { @class = "form-text text-danger fs-12" })
+                <div class="col-12">
+                    <div class="form-group">
+                        @Html.LabelFor(p => p.TinyMCESettings)
+                        @Html.TextAreaFor(p => p.TinyMCESettings, new { @class = "form-control form-control-sm ltr-dir", autocomplete = "off", autocorrect = "off", autocapitalize = "off", spellcheck = "false", rows = "25", style = "overflow-x: scroll;white-space: nowrap;font-family: monospace, 'dana';" })
+                        @Html.ValidationMessageFor(p => p.TinyMCESettings, "", new { @class = "form-text text-danger fs-12" })
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-    <hr />
-    <div class="row">
-        <div class="col-12">
-            <h2 class="text-center b-mar-20"><img src="~/Content/img/Downloads.png" /><br />@T("Downloads")</h2>
-        </div>
-        <div class="col-12">
-            <div class="form-group">
-                @Html.LabelFor(p => p.DownloadableFilesExtensions)
-                @Html.TextBoxFor(p => p.DownloadableFilesExtensions, null, new { @class = "form-control form-control-sm ltr-dir" })
-                @Html.ValidationMessageFor(p => p.DownloadableFilesExtensions, "", new { @class = "form-text text-danger fs-12" })
-            </div>
-        </div>
-        <div class="col-12">
-            <div class="form-group">
-                @Html.LabelFor(p => p.DownloadUrlsAgeByHour)
-                @Html.TextBoxFor(p => p.DownloadUrlsAgeByHour, null, new { @class = "form-control form-control-sm ltr-dir", type = "number" })
-                @Html.ValidationMessageFor(p => p.DownloadUrlsAgeByHour, "", new { @class = "form-text text-danger fs-12" })
-            </div>
-        </div>
-        <div class="col-12">
-            <div class="form-group">
-                @Html.LabelFor(p => p.NumberOfDownloadUrlsFireLimit)
-                @Html.TextBoxFor(p => p.NumberOfDownloadUrlsFireLimit, null, new { @class = "form-control form-control-sm ltr-dir", type = "number" })
-                @Html.ValidationMessageFor(p => p.NumberOfDownloadUrlsFireLimit, "", new { @class = "form-text text-danger fs-12" })
-            </div>
-        </div>
-    </div>
-    <hr />
-    <div class="row">
-        <div class="col-12">
-            <h2 class="text-center b-mar-20"><img src="~/Content/img/comment_48px.png" /><br />@T("Comments")</h2>
-        </div>
-        <div class="col-12">
-            <div class="form-group">
-                <div class="custom-control custom-checkbox">
-                    @Html.CheckBoxFor(p => p.AllowUsersToWriteComment, new { @class = "custom-control-input" })
-                    @Html.LabelFor(p => p.AllowUsersToWriteComment, new { @class = "custom-control-label" })
-                </div>
-            </div>
-        </div>
-        <div class="col-12">
-            <div class="form-group">
-                <div class="custom-control custom-checkbox">
-                    @Html.CheckBoxFor(p => p.AllowGuestUsersToWriteComment, new { @class = "custom-control-input" })
-                    @Html.LabelFor(p => p.AllowGuestUsersToWriteComment, new { @class = "custom-control-label" })
-                </div>
-            </div>
-        </div>
-        <div class="col-12">
-            <div class="form-group">
-                <div class="custom-control custom-checkbox">
-                    @Html.CheckBoxFor(p => p.AutoPublishComments, new { @class = "custom-control-input" })
-                    @Html.LabelFor(p => p.AutoPublishComments, new { @class = "custom-control-label" })
-                </div>
-            </div>
-        </div>
-    </div>
-    <hr />
-    <div class="row">
-        <div class="col-12">
-            <h2 class="text-center b-mar-20"><img src="~/Content/img/OtherSettings.png" /><br />@T("Others")</h2>
-        </div>
-        <div class="col-12">
-            <div class="form-group">
-                <div class="custom-control custom-checkbox">
-                    @Html.CheckBoxFor(p => p.Wishlist, new { @class = "custom-control-input" })
-                    @Html.LabelFor(p => p.Wishlist, new { @class = "custom-control-label" })
-                </div>
-            </div>
-        </div>
-        <div class="col-12">
-            <div class="form-group">
-                <div class="custom-control custom-checkbox">
-                    @Html.CheckBoxFor(p => p.LikePosts, new { @class = "custom-control-input" })
-                    @Html.LabelFor(p => p.LikePosts, new { @class = "custom-control-label" })
-                </div>
-            </div>
-        </div>
-        <div class="col-12">
-            <div class="form-group">
-                <div class="custom-control custom-checkbox">
-                    @Html.CheckBoxFor(p => p.AppendLanguageCodeToUrl, new { @class = "custom-control-input" })
-                    @Html.LabelFor(p => p.AppendLanguageCodeToUrl, new { @class = "custom-control-label" })
-                </div>
-            </div>
-        </div>
-        <div class="col-12">
-            <div class="form-group">
-                <div class="custom-control custom-checkbox">
-                    @Html.CheckBoxFor(p => p.CacheLocalizedEntities, new { @class = "custom-control-input" })
-                    @Html.LabelFor(p => p.CacheLocalizedEntities, new { @class = "custom-control-label" })
-                </div>
-            </div>
-        </div>
-        <div class="col-12">
-            <div class="form-group">
-                <div class="custom-control custom-checkbox">
-                    @Html.CheckBoxFor(p => p.DisableMemoryCache, new { @class = "custom-control-input" })
-                    @Html.LabelFor(p => p.DisableMemoryCache, new { @class = "custom-control-label" })
-                </div>
-            </div>
-        </div>
-        <div class="col-12">
-            <div class="form-group">
-                <div class="custom-control custom-checkbox">
-                    @Html.CheckBoxFor(p => p.DisableSqlQueryCache, new { @class = "custom-control-input" })
-                    @Html.LabelFor(p => p.DisableSqlQueryCache, new { @class = "custom-control-label" })
-                </div>
-            </div>
-        </div>
-        <div class="col-12">
-            <div class="form-group">
-                <div class="custom-control custom-checkbox">
-                    @Html.CheckBoxFor(p => p.EnableCssBundling, new { @class = "custom-control-input" })
-                    @Html.LabelFor(p => p.EnableCssBundling, new { @class = "custom-control-label" })
-                </div>
-            </div>
-        </div>
-        <div class="col-12">
-            <div class="form-group">
-                <div class="custom-control custom-checkbox">
-                    @Html.CheckBoxFor(p => p.EnableResponseCompression, new { @class = "custom-control-input" })
-                    @Html.LabelFor(p => p.EnableResponseCompression, new { @class = "custom-control-label" })
-                </div>
-            </div>
-        </div>
-        <div class="col-12">
-            <div class="form-group">
-                <div class="custom-control custom-checkbox">
-                    @Html.CheckBoxFor(p => p.EnableHtmlMinification, new { @class = "custom-control-input" })
-                    @Html.LabelFor(p => p.EnableHtmlMinification, new { @class = "custom-control-label" })
-                </div>
-            </div>
-        </div>
-        <div class="col-12">
-            <div class="form-group">
-                <div class="custom-control custom-checkbox">
-                    @Html.CheckBoxFor(p => p.EnableJsBundling, new { @class = "custom-control-input" })
-                    @Html.LabelFor(p => p.EnableJsBundling, new { @class = "custom-control-label" })
-                </div>
-            </div>
-        </div>
-        <div class="col-12">
-            <div class="form-group">
-                <div class="custom-control custom-checkbox">
-                    @Html.CheckBoxFor(p => p.EnableInlineCssMinification, new { @class = "custom-control-input" })
-                    @Html.LabelFor(p => p.EnableInlineCssMinification, new { @class = "custom-control-label" })
-                </div>
-            </div>
-        </div>
-        <div class="col-12">
-            <div class="form-group">
-                <div class="custom-control custom-checkbox">
-                    @Html.CheckBoxFor(p => p.EnableInlineJsMinification, new { @class = "custom-control-input" })
-                    @Html.LabelFor(p => p.EnableInlineJsMinification, new { @class = "custom-control-label" })
-                </div>
-            </div>
-        </div>
-        <div class="col-12">
-            <div class="form-group">
-                <div class="custom-control custom-checkbox">
-                    @Html.CheckBoxFor(p => p.EnableBlog, new { @class = "custom-control-input" })
-                    @Html.LabelFor(p => p.EnableBlog, new { @class = "custom-control-label" })
-                </div>
-            </div>
-        </div>
-    </div>
-    <hr />
-    <div class="row">
-        <div class="col-12">
-            <h2 class="text-center b-mar-20"><img src="~/Content/img/ReminderSettings.png" /><br />@T("ReminderSettings")</h2>
-        </div>
-        <div class="col-12 col-md-6">
-            <div class="form-group">
-                <div class="custom-control custom-checkbox">
-                    @Html.CheckBoxFor(p => p.SendExpNotificationsForProducts, new { @class = "custom-control-input" })
-                    @Html.LabelFor(p => p.SendExpNotificationsForProducts, new { @class = "custom-control-label" })
-                </div>
-            </div>
-        </div>
-        <div class="col-12 col-md-6">
-            <div class="form-group">
-                <div class="custom-control custom-checkbox">
-                    @Html.CheckBoxFor(p => p.SendExpNotificationsForProductsJustOnce, new { @class = "custom-control-input" })
-                    @Html.LabelFor(p => p.SendExpNotificationsForProductsJustOnce, new { @class = "custom-control-label" })
-                </div>
-            </div>
-        </div>
-        <div class="col-12 col-md-6">
-            <div class="form-group">
-                <div class="custom-control custom-checkbox">
-                    @Html.CheckBoxFor(p => p.SendExpNotificationsForProductAttributes, new { @class = "custom-control-input" })
-                    @Html.LabelFor(p => p.SendExpNotificationsForProductAttributes, new { @class = "custom-control-label" })
-                </div>
-            </div>
-        </div>
-        <div class="col-12 col-md-6">
-            <div class="form-group">
-                <div class="custom-control custom-checkbox">
-                    @Html.CheckBoxFor(p => p.SendExpNotificationsForProductAttributesJustOnce, new { @class = "custom-control-input" })
-                    @Html.LabelFor(p => p.SendExpNotificationsForProductAttributesJustOnce, new { @class = "custom-control-label" })
-                </div>
-            </div>
-        </div>
-        <div class="col-12 col-md-6">
-            <div class="form-group">
-                @Html.LabelFor(p => p.NotificationHourSpanBeforeExpForProducts)
-                @Html.TextBoxFor(p => p.NotificationHourSpanBeforeExpForProducts, null, new { @class = "form-control form-control-sm ltr-dir", type = "number" })
-                <small class="form-text text-align-initial text-muted">@Html.Raw(T("ToChangeReminderTextGoto", "Notification_ProductBeforeExpiration"))</small>
-                @Html.ValidationMessageFor(p => p.NotificationHourSpanBeforeExpForProducts, "", new { @class = "form-text text-danger fs-12" })
-            </div>
-        </div>
-        <div class="col-12 col-md-6">
-            <div class="form-group">
-                @Html.LabelFor(p => p.NotificationHourSpanAfterExpForProducts)
-                @Html.TextBoxFor(p => p.NotificationHourSpanAfterExpForProducts, null, new { @class = "form-control form-control-sm ltr-dir", type = "number" })
-                <small class="form-text text-align-initial text-muted">@Html.Raw(T("ToChangeReminderTextGoto", "Notification_ProductAfterExpiration"))</small>
-                @Html.ValidationMessageFor(p => p.NotificationHourSpanAfterExpForProducts, "", new { @class = "form-text text-danger fs-12" })
-            </div>
-        </div>
-
-        <div class="col-12 col-md-6">
-            <div class="form-group">
-                <div class="custom-control custom-checkbox">
-                    @Html.CheckBoxFor(p => p.SendExpNotificationsForUserPlans, new { @class = "custom-control-input" })
-                    @Html.LabelFor(p => p.SendExpNotificationsForUserPlans, new { @class = "custom-control-label" })
-                </div>
-            </div>
-        </div>
-        <div class="col-12 col-md-6">
-            <div class="form-group">
-                <div class="custom-control custom-checkbox">
-                    @Html.CheckBoxFor(p => p.SendExpNotificationsForUserPlansJustOnce, new { @class = "custom-control-input" })
-                    @Html.LabelFor(p => p.SendExpNotificationsForUserPlansJustOnce, new { @class = "custom-control-label" })
-                </div>
-            </div>
-        </div>
-        <div class="col-12 col-md-6">
-            <div class="form-group">
-                @Html.LabelFor(p => p.NotificationHourSpanBeforeExpForUserPlans)
-                @Html.TextBoxFor(p => p.NotificationHourSpanBeforeExpForUserPlans, null, new { @class = "form-control form-control-sm ltr-dir", type = "number" })
-                <small class="form-text text-align-initial text-muted">@Html.Raw(T("ToChangeReminderTextGoto", "Notification_UserPlanBeforeExpiration"))</small>
-                @Html.ValidationMessageFor(p => p.NotificationHourSpanBeforeExpForUserPlans, "", new { @class = "form-text text-danger fs-12" })
-            </div>
-        </div>
-        <div class="col-12 col-md-6">
-            <div class="form-group">
-                @Html.LabelFor(p => p.NotificationHourSpanAfterExpForUserPlans)
-                @Html.TextBoxFor(p => p.NotificationHourSpanAfterExpForUserPlans, null, new { @class = "form-control form-control-sm ltr-dir", type = "number" })
-                <small class="form-text text-align-initial text-muted">@Html.Raw(T("ToChangeReminderTextGoto", "Notification_UserPlanAfterExpiration"))</small>
-                @Html.ValidationMessageFor(p => p.NotificationHourSpanAfterExpForUserPlans, "", new { @class = "form-text text-danger fs-12" })
-            </div>
-        </div>
-
-        <div class="col-12 col-md-6">
-            <div class="form-group">
-                <div class="custom-control custom-checkbox">
-                    @Html.CheckBoxFor(p => p.SendExpNotificationsForInvoiceManualItems, new { @class = "custom-control-input" })
-                    @Html.LabelFor(p => p.SendExpNotificationsForInvoiceManualItems, new { @class = "custom-control-label" })
-                </div>
-            </div>
-        </div>
-        <div class="col-12 col-md-6">
-            <div class="form-group">
-                <div class="custom-control custom-checkbox">
-                    @Html.CheckBoxFor(p => p.SendExpNotificationsForInvoiceManualItemsJustOnce, new { @class = "custom-control-input" })
-                    @Html.LabelFor(p => p.SendExpNotificationsForInvoiceManualItemsJustOnce, new { @class = "custom-control-label" })
-                </div>
-            </div>
-        </div>
-        <div class="col-12 col-md-6">
-            <div class="form-group">
-                @Html.LabelFor(p => p.NotificationHourSpanBeforeExpForInvoiceManualItems)
-                @Html.TextBoxFor(p => p.NotificationHourSpanBeforeExpForInvoiceManualItems, null, new { @class = "form-control form-control-sm ltr-dir", type = "number" })
-                <small class="form-text text-align-initial text-muted">@Html.Raw(T("ToChangeReminderTextGoto", "Notification_InvoiceManuallyBeforeExpiration"))</small>
-                @Html.ValidationMessageFor(p => p.NotificationHourSpanBeforeExpForInvoiceManualItems, "", new { @class = "form-text text-danger fs-12" })
-            </div>
-        </div>
-        <div class="col-12 col-md-6">
-            <div class="form-group">
-                @Html.LabelFor(p => p.NotificationHourSpanAfterExpForInvoiceManualItems)
-                @Html.TextBoxFor(p => p.NotificationHourSpanAfterExpForInvoiceManualItems, null, new { @class = "form-control form-control-sm ltr-dir", type = "number" })
-                <small class="form-text text-align-initial text-muted">@Html.Raw(T("ToChangeReminderTextGoto", "Notification_InvoiceManuallyAfterExpiration"))</small>
-                @Html.ValidationMessageFor(p => p.NotificationHourSpanAfterExpForInvoiceManualItems, "", new { @class = "form-text text-danger fs-12" })
-            </div>
-        </div>
-    </div>
-
-}
-
-@helper TinyMCESettings()
-{
-
-    <div class="row">
-        <div class="col-12 text-center b-mar-20">
-            <h2><a href="https://www.tiny.cloud/features" target="_blank"><img src="~/Content/img/tinymce.png" /><br />@T("TinyMCE")</a></h2>
-            <button class="btn btn-success" onclick="ShowFileExplorer('/Scripts/tinymce-5.0.15/js/tinymce');" type="button">@T("ExplorerTinyMCEFolder")</button>
-        </div>
-        <div class="col-12">
-            <div class="form-group">
-                @Html.LabelFor(p => p.TinyMCESettings)
-                @Html.TextAreaFor(p => p.TinyMCESettings, new { @class = "form-control form-control-sm ltr-dir", autocomplete = "off", autocorrect = "off", autocapitalize = "off", spellcheck = "false", rows = "25", style="overflow-x: scroll;white-space: nowrap;font-family: monospace, 'dana';" })
-                @Html.ValidationMessageFor(p => p.TinyMCESettings, "", new { @class = "form-text text-danger fs-12" })
-            </div>
-        </div>
-    </div>
-
 }
 
 @helper ThemeSettings()
 {
-
     <div class="row">
         <div class="col-12">
             <h2 class="text-center b-mar-20"><img src="~/Content/img/Color_Palette.png" /><br />@T("WebsiteTheme")</h2>
@@ -793,7 +854,7 @@
         @foreach (var theme in Model.ListOfInstalledThemes)
         {
             { counter++; }
-            <div class="col-12 col-md-6 col-lg-4">
+            <div class="col-12 col-lg-6 col-lg-4">
                 <div class="card text-center">
                     <img class="card-img-top" src="@theme.PreviewImageUrl.TrimStart('~')">
                     <div class="card-body">
@@ -822,22 +883,22 @@
     <div class="row">
         <div class="col-12">
             <ol>
-            @foreach (var asm in AppDomain.CurrentDomain.GetAssemblies().OrderBy(p=> p.GetName().Name))
-            {
-                <li>
-                    @asm.GetName().Name
-                    <br />
-                    <small class="text-muted">
-                        @asm.FullName
-                        @if (!asm.IsDynamic)
-                        {
-                            <br />
-                            @asm.Location
-                        }
-                    </small>
-                    <hr class="my-1"/>
-                </li>
-            }
+                @foreach (var asm in AppDomain.CurrentDomain.GetAssemblies().OrderBy(p => p.GetName().Name))
+                {
+                    <li>
+                        @asm.GetName().Name
+                        <br />
+                        <small class="text-muted">
+                            @asm.FullName
+                            @if (!asm.IsDynamic)
+                            {
+                                <br />
+                                @asm.Location
+                            }
+                        </small>
+                        <hr class="my-1" />
+                    </li>
+                }
             </ol>
         </div>
     </div>
@@ -846,11 +907,11 @@
 
 @{
     Html.AppendInlineScript(ResourceLocation.Footer,
-        @<script>
+@<script>
     var popupObj = $("#waitingPopup").data("ejWaitingPopup");
     if (popupObj !== 'undefined') {
         try {
-            popupObj.hide();   
+            popupObj.hide();
         }
         catch(error) {
         }
@@ -870,5 +931,5 @@
                      }
                  }
              }
-         </script>);
+</script>);
 }

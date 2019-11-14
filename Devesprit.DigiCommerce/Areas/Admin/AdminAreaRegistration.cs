@@ -6,14 +6,14 @@ namespace Devesprit.DigiCommerce.Areas.Admin
     {
         public override string AreaName 
         {
-            get 
+            get   
             {
                 return "Admin"; 
             }
-        }
+        }  
 
         public override void RegisterArea(AreaRegistrationContext context) 
-        {
+        {  
             context.MapRoute(
                 "Admin_defaultLocalized",
                 "{lang}/Admin/{controller}/{action}/{id}",

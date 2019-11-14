@@ -761,12 +761,10 @@
     <Content Include="Content\img\alert_24px.png" />
     <Content Include="Content\img\bookmark_24px.png" />
     <Content Include="Content\img\comment_24px.png" />
-    <Content Include="Content\img\comment_48px.png" />
     <Content Include="Content\img\download_24px.png" />
     <Content Include="Content\img\heart_24px.png" />
     <Content Include="Content\img\image-not-available.png" />
     <Content Include="Content\img\invoice_24px.png" />
-    <Content Include="Content\img\invoice_48px.png" />
     <Content Include="Content\img\loading.gif" />
     <Content Include="Content\img\Loading_Large.gif" />
     <Content Include="Content\img\rss_20px.png" />
@@ -790,7 +788,6 @@
     <Content Include="Content\img\Color_Palette.png" />
     <Content Include="Content\img\ConfirmEmail_200px.png" />
     <Content Include="Content\img\Discount_25px.png" />
-    <Content Include="Content\img\Downloads.png" />
     <Content Include="Content\img\Email.png" />
     <Content Include="Content\img\Error_250px.png" />
     <Content Include="Content\img\favicon.png" />
@@ -809,18 +806,13 @@
     <Content Include="Content\img\FileExtIcons\zip.png" />
     <Content Include="Content\img\LockOut_180px.png" />
     <Content Include="Content\img\NotFound_256px.png" />
-    <Content Include="Content\img\OtherSettings.png" />
-    <Content Include="Content\img\Password.png" />
     <Content Include="Content\img\PaymentError_125.png" />
-    <Content Include="Content\img\RecaptchaLogo.png" />
     <Content Include="Content\img\ResetPassword_200px.png" />
     <Content Include="Content\img\Server.png" />
-    <Content Include="Content\img\Settings.png" />
     <Content Include="Content\img\Signup_180px.png" />
     <Content Include="Content\img\site-logo-header-white.png" />
     <Content Include="Content\img\site-logo-navbar-black.png" />
     <Content Include="Content\img\Social_Error_180px.png" />
-    <Content Include="Content\img\UserSecurity.png" />
     <Content Include="Content\img\User_150px.png" />
     <Content Include="Content\iziToast.min.css" />
     <Content Include="Content\Styles.rtl.css" />
@@ -1936,7 +1928,7 @@
           <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
         </WebProjectProperties>
       </FlavorProperties>
-      <UserProperties BuildVersion_BuildVersioningStyle="YearStamp.MonthStamp.DayStamp.Increment" BuildVersion_UseGlobalSettings="True" BuildVersion_AssemblyInfoFilename="Properties\AssemblyInfo.cs" BuildVersion_UpdateFileVersion="True" BuildVersion_UpdateAssemblyVersion="True" BuildVersion_StartDate="2018/10/14" />
+      <UserProperties BuildVersion_StartDate="2018/10/14" BuildVersion_UpdateAssemblyVersion="True" BuildVersion_UpdateFileVersion="True" BuildVersion_AssemblyInfoFilename="Properties\AssemblyInfo.cs" BuildVersion_UseGlobalSettings="True" BuildVersion_BuildVersioningStyle="YearStamp.MonthStamp.DayStamp.Increment" />
     </VisualStudio>
   </ProjectExtensions>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
