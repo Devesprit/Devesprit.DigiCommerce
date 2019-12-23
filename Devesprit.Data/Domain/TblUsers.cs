@@ -28,6 +28,8 @@ namespace Devesprit.Data.Domain
         public string UserLatestIP { get; set; }
         public DateTime? UserLastLoginDate { get; set; }
         public TimePeriodType? MaxDownloadPeriodType { get; set; }
+        public int? RoleId { get; set; }
+        public virtual TblUserRoles Role { get; set; }
 
         public DateTime? SubscriptionDate { get; set; }
         public DateTime? SubscriptionExpireDate { get; set; }

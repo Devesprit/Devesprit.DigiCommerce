@@ -16,14 +16,17 @@ namespace Devesprit.WebFramework
 
         private readonly ILanguagesService _languagesService;
         private readonly ICurrencyService _currencyService;
+        private readonly IUserRolesService _userRolesService;
         private readonly IUsersService _usersService;
 
         public WorkContext(ILanguagesService languagesService, 
             ICurrencyService currencyService,
+            IUserRolesService userRolesService,
             IUsersService usersService)
         {
             _languagesService = languagesService;
             _currencyService = currencyService;
+            _userRolesService = userRolesService;
             _usersService = usersService;
         }
 
@@ -231,6 +234,28 @@ namespace Devesprit.WebFramework
 
                 return false;
             }
+        }
+
+        public virtual bool HasPermission(string areaName)
+        {
+            if (HttpContext?.User?.Identity?.IsAuthenticated == false)
+            {
+                return false;
+            }
+
+            if (CurrentUser?.RoleId == null)
+            {
+                return false;
+            }
+
+            var userRole = _userRolesService.FindById(CurrentUser.RoleId.Value);
+            var permission = userRole.Permissions.FirstOrDefault(p => p.AreaName.ToLower().Trim() == areaName.ToLower().Trim());
+            if (permission != null && permission.HaveAccess)
+            {
+                return true;
+            }
+
+            return false;
         }
     }
 }

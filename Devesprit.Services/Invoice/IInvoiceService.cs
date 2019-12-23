@@ -60,7 +60,7 @@ namespace Devesprit.Services.Invoice
         Task<Dictionary<DateTime, int>> InvoicesReportAsync(DateTime fromDate, DateTime toDate,
             TimePeriodType periodType, InvoiceStatus? status);
         Task<Dictionary<DateTime, double>> SellsReportAsync(DateTime fromDate, DateTime toDate,
-            TimePeriodType periodType);
+            TimePeriodType periodType, int currencyId);
 
         #endregion
     }

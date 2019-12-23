@@ -103,11 +103,14 @@
   <ItemGroup>
     <Compile Include="BaseEntity.cs" />
     <Compile Include="AppDbContext.cs" />
+    <Compile Include="Domain\TblUserAccessAreas.cs" />
+    <Compile Include="Domain\TblUserRolePermissions.cs" />
     <Compile Include="Domain\TblBlogPosts.cs" />
     <Compile Include="Domain\TblPostImages.cs" />
     <Compile Include="Domain\TblPosts.cs" />
     <Compile Include="Domain\TblSocialAccounts.cs" />
     <Compile Include="Domain\TblUserMessages.cs" />
+    <Compile Include="Domain\TblUserRoles.cs" />
     <Compile Include="Enums\PostType.cs" />
     <Compile Include="IDbContextCustomizer.cs" />
     <Compile Include="Enums\RedirectRuleGroup.cs" />
@@ -191,7 +194,7 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties BuildVersion_StartDate="2018/10/14" BuildVersion_UseGlobalSettings="True" BuildVersion_BuildVersioningStyle="YearStamp.MonthStamp.DayStamp.Increment" BuildVersion_UpdateAssemblyVersion="True" BuildVersion_UpdateFileVersion="True" BuildVersion_AssemblyInfoFilename="Properties\AssemblyInfo.cs" />
+      <UserProperties BuildVersion_AssemblyInfoFilename="Properties\AssemblyInfo.cs" BuildVersion_UpdateFileVersion="True" BuildVersion_UpdateAssemblyVersion="True" BuildVersion_BuildVersioningStyle="YearStamp.MonthStamp.DayStamp.Increment" BuildVersion_UseGlobalSettings="True" BuildVersion_StartDate="2018/10/14" />
     </VisualStudio>
   </ProjectExtensions>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

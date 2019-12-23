@@ -52,6 +52,8 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Models
 
         [DisplayNameLocalized("IsAdmin")]
         public bool IsAdmin { get; set; }
+        [DisplayNameLocalized("UserRole")]
+        public int? RoleId { get; set; }
 
 
         [DisplayNameLocalized("LockoutEndDate")]
@@ -65,7 +67,6 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Models
 
         [DisplayNameLocalized("UserGroup")]
         public int? UserGroupId { get; set; }
-
 
         [DisplayNameLocalized("NumberOfDownload")]
         public int? MaxDownloadCount { get; set; }
@@ -99,6 +100,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Models
 
         public List<SelectListItem> CountriesList { get; set; }
         public List<SelectListItem> UserGroupsList { get; set; }
+        public List<SelectListItem> UserRolesList { get; set; }
     }
     
 }

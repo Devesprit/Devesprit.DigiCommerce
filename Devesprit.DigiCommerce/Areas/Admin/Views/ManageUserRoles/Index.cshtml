@@ -1,0 +1,178 @@
+﻿
+@using Devesprit.Core
+@using Syncfusion.JavaScript
+@using Syncfusion.MVC.EJ
+@{
+    ViewBag.Title = T("ManageUserRoles");
+    var currentLang = DependencyResolver.Current.GetService<IWorkContext>().CurrentLanguage;
+}
+
+<div class="panel no-hide-overflow">
+    <div class="panel-title pad-10">
+        <h5 class="no-mar">
+            @T("ManageUserRoles")
+        </h5>
+    </div>
+
+    <div class="pad-10">
+        <div class="row">
+            <div class="col-12">
+                <label class="fw-bold" for="ddlRoles">@T("Role")</label>
+                @Html.DropDownList("ddlRoles", (List<SelectListItem>)ViewBag.UserRolesList, T("SelectAnItem").ToString(), new { @class = "form-control custom-select form-control-sm", onchange = "ddlRolesChange()" })
+            </div>
+            <div class="col-12 t-pad-10">
+                <button type="button" class="btn btn-success btn-sm" onclick="AddNewRole()">@T("Add")</button>
+                <button type="button" class="btn btn-secondary btn-sm" onclick="UpdateSelectedRole()">@T("Edit")</button>
+                <button type="button" class="btn btn-warning btn-sm" onclick="DeleteSelectedUserRole()">@T("Delete")</button>
+            </div>
+            <div id="rolePermissionsDiv" class="col-12 t-pad-20 d-none">
+                <hr />
+                <label class="fw-bold">@T("RolePermissions")</label>
+                @(Html.EJ().TreeView("RolePermissionsTreeView")
+                    .TreeViewFields(s => s.Datasource(ds => ds.URL(Url.Action("GridDataSource")).Adaptor(AdaptorType.UrlAdaptor))
+                        .Id("Id")
+                        .Text("AreaNameLocalized")
+                        .ParentId("ParentAreaId")
+                        .IsChecked("HaveAccess"))
+                    .AllowEditing(false)
+                    .AllowKeyboardNavigation(true)
+                    .AutoCheck(true)
+                    .AutoCheckParentNode(true)
+                    .ShowCheckbox(true)
+                    .EnableAnimation(true)
+                    .FullRowSelect(true)
+                    .EnableRTL(currentLang.IsRtl)
+                    .ClientSideEvents(evt => evt.NodeClick("OnNodeClick").NodeDropped("OnNodeDropped"))
+                    .Width("100%"))
+                <div class="text-center t-pad-20">
+                    <button type="button" class="btn btn-warning btn-sm" onclick="ApplyPermissions()">@T("ApplyPermissions")</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script id="CountriesGridRefresh" type="text/x-jsrender">
+    <a onclick="refreshCountriesGrid();" class="e-toolbaricons e-icon"><i class="fa fa-refresh"></i></a>
+</script>
+
+@{
+    Html.AddInlineScript(ResourceLocation.Footer,
+@<script>
+
+     function AddNewRole() {
+         PopupWindows('@Url.Action("Editor")', 'UserRoleEditor', 600, 250, {}, 'get');
+     }
+
+     function UpdateSelectedRole() {
+         var roleId = $("#ddlRoles").val();
+         if (roleId !== "") {
+             PopupWindows('@Url.Action("Editor")', 'UserRoleEditor', 600, 250, { id: roleId }, 'get');
+         } else {
+             ErrorAlert('@T("Error")', '@T("YouHaveNotSelectedAnything")');
+         }
+     }
+
+     function DeleteSelectedUserRole() {
+         var roleId = $("#ddlRoles").val();
+         if (roleId !== "") {
+             iziToast.warning({
+                 title: '@T("Warning")',
+                 titleColor: "white",
+                 messageColor: "white",
+                 iconColor: "white",
+                 icon: "fa fa-exclamation-triangle",
+                 rtl: RtlLanguage,
+                 position: 'center',
+                 message: '@T("ConfirmDelete")',
+                 titleSize: 17,
+                 color: '#d27d00',
+                 buttons: [
+                     [
+                         '<button class="text-light">@T("Yes")</button>', function(instance, toast) {
+                             DeleteEntity(roleId, "@Url.Action("Delete")", refreshRolesDropDownBox);
+                             iziToast.hide(toast);
+                         }, true
+                     ],
+                     [
+                         '<button class="text-light">@T("No")</button>', function(instance, toast) {
+                             iziToast.hide(toast);
+                         }, false
+                     ]
+                 ]
+             });
+         } else {
+             ErrorAlert('@T("Error")', '@T("YouHaveNotSelectedAnything")');
+         }
+     }
+
+     function refreshRolesDropDownBox() {
+         $.ajax({
+             type: "POST",
+             url: "@Url.Action("GetUserRolesList")",
+             data: {
+             },
+             error: function(xhr, status, error) {
+                 ErrorAlert('@T("Error")', '@T("ServerConnectionError")');
+             },
+             success: function(response) {
+                 $("#ddlRoles").html(response);
+                 ddlRolesChange();
+             },
+             complete: function() {
+                 $('#LoadingPanel').hide();
+             }
+         });
+     }
+
+     function ddlRolesChange() {
+         var roleId = $("#ddlRoles").val();
+         if (roleId === "") {
+             $("#rolePermissionsDiv").addClass("d-none");
+             return;
+         } else {
+             $("#rolePermissionsDiv").removeClass("d-none");
+         }
+         var dataManager = ej.DataManager({
+             url: '@Url.Action("GridDataSource")?roleId=' + roleId,
+             adaptor: new ej.UrlAdaptor()
+         });
+         $("#RolePermissionsTreeView").ejTreeView({
+             fields: {
+                 dataSource: dataManager,
+                 id: "Id",
+                 text: "AreaNameLocalized",
+                 parentId: "ParentAreaId",
+                 isChecked: "HaveAccess"
+             }
+         });
+    }
+
+    function ApplyPermissions() {
+        var treeview = $("#RolePermissionsTreeView").data("ejTreeView");
+        var checkedAreas = treeview.getCheckedNodes();
+         $.ajax({
+             type: "POST",
+             url: "@Url.Action("ApplyPermissions")",
+             data: {
+                 roleId: $("#ddlRoles").val(),
+                 areas: checkedAreas.map(function(){return this.id;}).get()
+             },
+             error: function(xhr, status, error) {
+                 ErrorAlert('@T("Error")', '@T("ServerConnectionError")');
+             },
+             success: function(response) {
+                 if (response === 'OK') {
+                     ddlRolesChange();
+                     SuccessAlert('@T("Success")', '@T("OperationCompletedSuccessfully")');
+                 } else {
+                     ErrorAlert('@T("Error")', response);
+                 }
+             },
+             complete: function() {
+                 $('#LoadingPanel').hide();
+             }
+         });
+     }
+</script>);
+}

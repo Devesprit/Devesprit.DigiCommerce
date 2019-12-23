@@ -23,18 +23,21 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
         private readonly IUserModelFactory _userModelFactory;
         private readonly ILocalizationService _localizationService;
         private readonly ICountriesService _countriesService;
+        private readonly IUserRolesService _userRolesService;
 
         public ManageUsersController(IUsersService usersService, 
             IUserGroupsService userGroupsService, 
             IUserModelFactory userModelFactory,
             ILocalizationService localizationService,
-            ICountriesService countriesService)
+            ICountriesService countriesService,
+            IUserRolesService userRolesService)
         {
             _usersService = usersService;
             _userGroupsService = userGroupsService;
             _userModelFactory = userModelFactory;
             _localizationService = localizationService;
             _countriesService = countriesService;
+            _userRolesService = userRolesService;
         }
 
         public virtual ActionResult Index()
@@ -78,6 +81,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
         {
             model.CountriesList = await _countriesService.GetAsSelectListAsync();
             model.UserGroupsList = await _userGroupsService.GetAsSelectListAsync();
+            model.UserRolesList = await _userRolesService.GetAsSelectListAsync();
             
             if (!ModelState.IsValid)
             {

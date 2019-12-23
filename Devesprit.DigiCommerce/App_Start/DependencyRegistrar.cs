@@ -36,6 +36,7 @@ namespace Devesprit.DigiCommerce
             builder.RegisterType<RedirectModelFactory>().As<IRedirectModelFactory>().EnableInterfaceInterceptors().InstancePerLifetimeScope();
             builder.RegisterType<CurrencyModelFactory>().As<ICurrencyModelFactory>().EnableInterfaceInterceptors().InstancePerLifetimeScope();
             builder.RegisterType<CountryModelFactory>().As<ICountryModelFactory>().EnableInterfaceInterceptors().InstancePerLifetimeScope();
+            builder.RegisterType<UserRoleModelFactory>().As<IUserRoleModelFactory>().EnableInterfaceInterceptors().InstancePerLifetimeScope();
             builder.RegisterType<FileServerModelFactory>().As<IFileServerModelFactory>().EnableInterfaceInterceptors().InstancePerLifetimeScope();
             builder.RegisterType<UserGroupsModelFactory>().As<IUserGroupsModelFactory>().EnableInterfaceInterceptors().InstancePerLifetimeScope();
             builder.RegisterType<BackgroundJobModelFactory>().As<IBackgroundJobModelFactory>().EnableInterfaceInterceptors().InstancePerLifetimeScope();

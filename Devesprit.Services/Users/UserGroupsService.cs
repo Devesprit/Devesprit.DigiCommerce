@@ -67,9 +67,7 @@ namespace Devesprit.Services.Users
 
         public virtual List<SelectListItem> GetAsSelectList()
         {
-            var result = GetAsQueryable().FromCache(CacheTags.UserGroup);
-
-            return result.Select(p =>
+            return GetAsEnumerable().Select(p =>
                     new SelectListItem() {Value = p.Id.ToString(), Text = p.GetLocalized(x => x.GroupName)})
                 .ToList();
         }

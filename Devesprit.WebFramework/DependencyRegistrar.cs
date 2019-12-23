@@ -81,6 +81,7 @@ namespace Devesprit.WebFramework
             builder.RegisterType<UsersService>().As<IUsersService>().EnableInterfaceInterceptors().InstancePerLifetimeScope(); 
             builder.RegisterType<UserMessagingService>().As<IUserMessagingService>().EnableInterfaceInterceptors().InstancePerLifetimeScope(); 
             builder.RegisterType<UserGroupsService>().As<IUserGroupsService>().EnableInterfaceInterceptors().InstancePerLifetimeScope(); 
+            builder.RegisterType<UserRolesService>().As<IUserRolesService>().EnableInterfaceInterceptors().InstancePerLifetimeScope(); 
             builder.RegisterType<RedirectsService>().As<IRedirectsService>().EnableInterfaceInterceptors().InstancePerLifetimeScope(); 
             builder.RegisterType<EmailService>().As<IEmailService>().EnableInterfaceInterceptors().InstancePerLifetimeScope();
             builder.RegisterType<TemplateEngine>().As<ITemplateEngine>().EnableInterfaceInterceptors().InstancePerLifetimeScope();

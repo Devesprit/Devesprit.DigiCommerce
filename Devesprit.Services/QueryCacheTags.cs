@@ -32,5 +32,7 @@
         public const string Tax = "Tax";
         public const string Comment = "Comment";
         public const string Search = "Search";
+        public const string UserRoles = "UserRoles";
+        public const string UserRolesAccessAreas = "UserRolesAccessAreas";
     }
 }

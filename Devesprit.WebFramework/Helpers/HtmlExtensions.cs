@@ -4,12 +4,15 @@ using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
+using System.Web;
 using System.Web.Mvc;
 using System.Web.Mvc.Html;
+using Devesprit.Core;
 using Devesprit.Core.Localization;
 using Devesprit.Core.Settings;
 using Devesprit.Services;
 using Devesprit.Services.Languages;
+using Devesprit.Services.Users;
 using Devesprit.Utilities.Extensions;
 using Devesprit.WebFramework.ResourceBundler;
 using Yahoo.Yui.Compressor;
@@ -529,6 +532,13 @@ namespace Devesprit.WebFramework.Helpers
             var minifiedCss = minifier.Compress(notMinifiedCss);
 
             return new MvcHtmlString("<style>" + minifiedCss + "</style>");
+        }
+
+
+        public static bool HasPermission(this HtmlHelper html, string areaName)
+        {
+            return html?.ViewContext?.HttpContext?.User?.Identity?.IsAuthenticated != false &&
+                   DependencyResolver.Current.GetService<IWorkContext>().HasPermission(areaName);
         }
     }
 }

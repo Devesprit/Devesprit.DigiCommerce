@@ -163,12 +163,54 @@ namespace Devesprit.Data.Migrations
                 }
             }
 
+            //UserRoles
+            if (!db.UserRoles.Any())
+            {
+                var adminRole = new TblUserRoles()
+                {
+                    RoleName = "Administrator"
+                };
+                db.UserRoles.AddOrUpdate(adminRole);
+                db.SaveChanges();
+
+                foreach (var area in UserAccessAreas)
+                {
+                    db.UserRolePermissions.Add(new TblUserRolePermissions()
+                    {
+                        RoleId = adminRole.Id,
+                        AreaName = area.AreaName,
+                        HaveAccess = true
+                    });
+                }
+
+                var adminUser = db.Users.FirstOrDefault(p => p.Email == "admin@admin.com");
+                if (adminUser != null)
+                    adminUser.RoleId = adminRole.Id;
+
+                db.SaveChanges();
+            }
+
+            if (!db.UserAccessAreas.Any())
+            {
+                db.UserAccessAreas.AddRange(UserAccessAreas);
+            }
+
             db.SaveChanges();
 
             ImportLocalizedStrings(db);
         }
 
-        public virtual Dictionary<string, string> Countries { get; } = new Dictionary<string, string>()
+        List<TblUserAccessAreas> UserAccessAreas { get; } = new List<TblUserAccessAreas>()
+        {
+            new TblUserAccessAreas("", "ManageProducts", "ManageProducts"),
+            new TblUserAccessAreas("ManageProducts", "ManageProducts_Add", "Add"),
+            new TblUserAccessAreas("ManageProducts", "ManageProducts_Edit", "Edit"),
+            new TblUserAccessAreas("ManageProducts", "ManageProducts_Delete", "Delete"),
+            
+            new TblUserAccessAreas("", "ManageUserRoles", "ManageUserRoles"),
+        };
+
+        Dictionary<string, string> Countries { get; } = new Dictionary<string, string>()
         {
             {"Afghanistan", "افغانستان"},
             {"Albania", "آلبانی"},
@@ -367,7 +409,7 @@ namespace Devesprit.Data.Migrations
             {"Zimbabwe", "زیمبابوه"},
         };
 
-        public virtual void ImportLocalizedStrings(AppDbContext db)
+        void ImportLocalizedStrings(AppDbContext db)
         {
             var enLang = db.Languages.FirstOrDefault(p => p.IsoCode == "en");
             var faLang = db.Languages.FirstOrDefault(p => p.IsoCode == "fa");
@@ -386,7 +428,7 @@ namespace Devesprit.Data.Migrations
             }
         }
 
-        public virtual void ImportResourcesFromXmlAsync(TblLanguages language, string xml, AppDbContext db)
+        void ImportResourcesFromXmlAsync(TblLanguages language, string xml, AppDbContext db)
         {
             var xmlDoc = new XmlDocument();
             xmlDoc.LoadXml(xml);
@@ -410,12 +452,12 @@ namespace Devesprit.Data.Migrations
                         continue;
 
                     
-                        db.LocalizedStrings.Add(new TblLocalizedStrings()
-                        {
-                            LanguageId = language.Id,
-                            ResourceName = name,
-                            ResourceValue = value
-                        });
+                    db.LocalizedStrings.Add(new TblLocalizedStrings()
+                    {
+                        LanguageId = language.Id,
+                        ResourceName = name,
+                        ResourceValue = value
+                    });
                 }
             }
 

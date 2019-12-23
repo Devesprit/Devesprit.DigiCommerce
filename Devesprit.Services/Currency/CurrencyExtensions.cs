@@ -1,13 +1,14 @@
 ﻿using System.Web.Mvc;
 using Devesprit.Core;
 using Devesprit.Core.Localization;
+using Devesprit.Data.Domain;
 
 
 namespace Devesprit.Services.Currency
 {
     public static partial class CurrencyExtensions
     {
-        public static string ExchangeCurrencyStr(this double value, bool dontShowFree = false)
+        public static string ExchangeCurrencyStr(this double value, bool dontShowFree = false, TblCurrencies currency = null)
         {
             if (value <= 0)
             {
@@ -19,16 +20,22 @@ namespace Devesprit.Services.Currency
 
                 return "-";
             }
-            var currentCurrency = DependencyResolver.Current.GetService<IWorkContext>().CurrentCurrency;
-            return string.Format(currentCurrency.DisplayFormat, value.ExchangeCurrency());
+            if (currency == null)
+            {
+                currency = DependencyResolver.Current.GetService<IWorkContext>().CurrentCurrency;
+            }
+            return string.Format(currency.DisplayFormat, value.ExchangeCurrency(currency));
         }
 
-        public static double ExchangeCurrency(this double value)
+        public static double ExchangeCurrency(this double value, TblCurrencies currency = null)
         {
-            var currentCurrency = DependencyResolver.Current.GetService<IWorkContext>().CurrentCurrency;
-            if (currentCurrency.ExchangeRate != 0)
+            if (currency == null)
             {
-                value = currentCurrency.ExchangeRate * value;
+                currency = DependencyResolver.Current.GetService<IWorkContext>().CurrentCurrency;
+            }
+            if (currency.ExchangeRate != 0)
+            {
+                value = currency.ExchangeRate * value;
             }
             return value;
         }

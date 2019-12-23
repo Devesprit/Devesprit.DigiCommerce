@@ -121,23 +121,9 @@
                 </div>
                 <div class="col-12 col-md-6 ">
                     <div class="form-group">
-                        @Html.LabelFor(p => p.Avatar)
-                        @Html.TextBoxFor(p => p.Avatar, new { type = "file", @class = "form-control form-control-sm" })
-                        @Html.ValidationMessageFor(p => p.Avatar, "", new { @class = "form-text text-danger fs-12" })
-                    </div>
-                </div>
-                <div class="col-12 col-md-6 ">
-                    <div class="form-group">
                         @Html.LabelFor(p => p.Email)
                         @Html.TextBoxFor(p => p.Email, new { @class = "form-control form-control-sm ltr-dir" })
                         @Html.ValidationMessageFor(p => p.Email, "", new { @class = "form-text text-danger fs-12" })
-                    </div>
-                </div>
-                <div class="col-12 col-md-6 ">
-                    <div class="form-group">
-                        @Html.LabelFor(p => p.Password)
-                        @Html.PasswordFor(p => p.Password, new { @class = "form-control form-control-sm" })
-                        @Html.ValidationMessageFor(p => p.Password, "", new { @class = "form-text text-danger fs-12" })
                     </div>
                 </div>
                 <div class="col-12 col-md-6 ">
@@ -152,18 +138,7 @@
                         @Html.ValidationMessageFor(p => p.LockoutEndDateUtc, "", new { @class = "form-text text-danger fs-12" })
                     </div>
                 </div>
-            </div>
-            <div class="row">
-                <div class="col-12 col-md-3 ">
-                    <div class="form-group">
-                        <div class="custom-control custom-checkbox">
-                            @Html.CheckBoxFor(p => p.IsAdmin, new { @class = "custom-control-input" })
-                            @Html.LabelFor(p => p.IsAdmin, new { @class = "custom-control-label" })
-                        </div>
-                        @Html.ValidationMessageFor(p => p.IsAdmin, "", new { @class = "form-text text-danger fs-12" })
-                    </div>
-                </div>
-                <div class="col-12 col-md-3 ">
+                <div class="col-12 col-md-6 ">
                     <div class="form-group">
                         <div class="custom-control custom-checkbox">
                             @Html.CheckBoxFor(p => p.EmailConfirmed, new { @class = "custom-control-input" })
@@ -172,7 +147,7 @@
                         @Html.ValidationMessageFor(p => p.EmailConfirmed, "", new { @class = "form-text text-danger fs-12" })
                     </div>
                 </div>
-                <div class="col-12 col-md-3 ">
+                <div class="col-12 col-md-6">
                     <div class="form-group">
                         <div class="custom-control custom-checkbox">
                             @Html.CheckBoxFor(p => p.LockoutEnabled, new { @class = "custom-control-input" })
@@ -181,7 +156,30 @@
                         @Html.ValidationMessageFor(p => p.LockoutEnabled, "", new { @class = "form-text text-danger fs-12" })
                     </div>
                 </div>
-                <div class="col-12 col-md-3 ">
+                <div class="col-12 col-md-6">
+                    <div class="form-group">
+                        @Html.LabelFor(p => p.Avatar)
+                        @Html.TextBoxFor(p => p.Avatar, new { type = "file", @class = "form-control form-control-sm" })
+                        @Html.ValidationMessageFor(p => p.Avatar, "", new { @class = "form-text text-danger fs-12" })
+                    </div>
+                </div>
+                <div class="col-12 col-md-6 ">
+                    <div class="form-group">
+                        @Html.LabelFor(p => p.Password)
+                        @Html.PasswordFor(p => p.Password, new { @class = "form-control form-control-sm" })
+                        @Html.ValidationMessageFor(p => p.Password, "", new { @class = "form-text text-danger fs-12" })
+                    </div>
+                </div>
+                <div class="col-12 col-md-6 ">
+                    <div class="form-group">
+                        <div class="custom-control custom-checkbox">
+                            @Html.CheckBoxFor(p => p.IsAdmin, new { @class = "custom-control-input" })
+                            @Html.LabelFor(p => p.IsAdmin, new { @class = "custom-control-label" })
+                        </div>
+                        @Html.ValidationMessageFor(p => p.IsAdmin, "", new { @class = "form-text text-danger fs-12" })
+                    </div>
+                </div>
+                <div class="col-12 col-md-6 ">
                     <div class="form-group">
                         <div class="custom-control custom-checkbox">
                             @Html.CheckBoxFor(p => p.UserDisabled, new { @class = "custom-control-input" })
@@ -190,7 +188,14 @@
                         @Html.ValidationMessageFor(p => p.UserDisabled, "", new { @class = "form-text text-danger fs-12" })
                     </div>
                 </div>
-                <div class="col-12">
+                <div class="col-12 col-md-6 ">
+                    <div class="form-group">
+                        @Html.LabelFor(p => p.RoleId)
+                        @Html.DropDownListFor(p => p.RoleId, Model.UserRolesList, T("SelectAnItem").ToString(), new { @class = "form-control custom-select form-control-sm" })
+                        @Html.ValidationMessageFor(p => p.RoleId, "", new { @class = "form-text text-danger fs-12" })
+                    </div>
+                </div>
+                <div class="col-12 col-md-6 ">
                     <div class="form-group">
                         @Html.LabelFor(p => p.DisableReason)
                         @Html.TextAreaFor(p => p.DisableReason, new { @class = "form-control form-control-sm" })

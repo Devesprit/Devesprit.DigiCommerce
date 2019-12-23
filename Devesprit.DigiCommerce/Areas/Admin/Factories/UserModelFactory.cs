@@ -14,11 +14,13 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Factories
     {
         private readonly ICountriesService _countriesService;
         private readonly IUserGroupsService _userGroupsService;
+        private readonly IUserRolesService _userRolesService;
 
-        public UserModelFactory(ICountriesService countriesService, IUserGroupsService userGroupsService)
+        public UserModelFactory(ICountriesService countriesService, IUserGroupsService userGroupsService, IUserRolesService userRolesService)
         {
             _countriesService = countriesService;
             _userGroupsService = userGroupsService;
+            _userRolesService = userRolesService;
         }
 
         public virtual async Task<UserModel> PrepareUserModelAsync(TblUsers user)
@@ -32,6 +34,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Factories
             }
             result.CountriesList = await _countriesService.GetAsSelectListAsync(); 
             result.UserGroupsList = await _userGroupsService.GetAsSelectListAsync();
+            result.UserRolesList = await _userRolesService.GetAsSelectListAsync();
             return result;
         }
 

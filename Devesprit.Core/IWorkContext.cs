@@ -11,5 +11,7 @@ namespace Devesprit.Core
         TblUsers CurrentUser { get; }
 
         bool IsAdmin { get; }
+
+        bool HasPermission(string areaName);
     }
 }

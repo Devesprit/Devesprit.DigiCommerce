@@ -13,7 +13,7 @@ namespace Devesprit.DigiCommerce.Controllers
 {
     [Intercept(typeof(MethodCache))]
     public partial class ErrorController : BaseController
-    {
+    { 
         protected override void Execute(RequestContext requestContext)
         {
             Thread.CurrentThread.CurrentCulture = CultureInfo.GetCultureInfo(WorkContext.CurrentLanguage.IsoCode);
@@ -46,6 +46,12 @@ namespace Devesprit.DigiCommerce.Controllers
             EventPublisher.Publish(new ErrorEvent(HttpContext, errorCode));
 
             return View("Error");
+        }
+
+        [MethodCache(VaryByCustom = "lang")]
+        public virtual ActionResult AccessPermissionError()
+        {
+            return View("AccessPermissionError");
         }
     }
 }

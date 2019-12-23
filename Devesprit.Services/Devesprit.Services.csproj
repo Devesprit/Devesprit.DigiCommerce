@@ -337,10 +337,12 @@
     <Compile Include="SocialAccounts\ISocialAccountsService.cs" />
     <Compile Include="Taxes\TaxProcessorResult.cs" />
     <Compile Include="Taxes\ITaxProcessor.cs" />
+    <Compile Include="Users\UserRolesService.cs" />
     <Compile Include="Users\Events\CustomerUserGroupChangeEvent.cs" />
     <Compile Include="Users\Events\UserEmailConfirmedEvent.cs" />
     <Compile Include="Users\Events\UserResetPasswordEvent.cs" />
     <Compile Include="Users\Events\UserSignupEvent.cs" />
+    <Compile Include="Users\IUserRolesService.cs" />
     <Compile Include="Users\IUserLikesService.cs" />
     <Compile Include="Users\UserMessagingService.cs" />
     <Compile Include="Users\IUserMessagingService.cs" />

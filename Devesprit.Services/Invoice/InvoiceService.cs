@@ -903,9 +903,9 @@ namespace Devesprit.Services.Invoice
             return report.OrderBy(p => p.Key).ToDictionary(p => p.Key, p => p.Value);
         }
 
-        public virtual async Task<Dictionary<DateTime, double>> SellsReportAsync(DateTime fromDate, DateTime toDate, TimePeriodType periodType)
+        public virtual async Task<Dictionary<DateTime, double>> SellsReportAsync(DateTime fromDate, DateTime toDate, TimePeriodType periodType, int currencyId)
         {
-            var query = _dbContext.Invoices.Where(p => p.CreateDate >= fromDate && p.CreateDate <= toDate && p.Status == InvoiceStatus.Paid && p.PaymentDate != null);
+            var query = _dbContext.Invoices.Where(p => p.CreateDate >= fromDate && p.CreateDate <= toDate && p.Status == InvoiceStatus.Paid && p.PaymentDate != null && p.CurrencyId == currencyId);
 
             var invoices = await query.OrderBy(p => p.PaymentDate).Select(p => new { p.PaymentDate, p.PaidAmount })
                 .FromCacheAsync(CacheTags.Invoice);

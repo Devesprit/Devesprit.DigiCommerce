@@ -755,6 +755,7 @@
     <Content Include="Content\ej\web\responsive-css\ej.responsive.css" />
     <Content Include="Content\ej\web\responsive-css\ejgrid.responsive.css" />
     <Content Include="Content\ej\web\ribbon-css\ej.icons.css" />
+    <Content Include="Content\img\no_entry_250px.png" />
     <Content Include="Content\img\tinymce.png" />
     <Content Include="Content\select2.min.css" />
     <Content Include="Content\daterangepicker.css" />
@@ -1303,6 +1304,8 @@
     <Content Include="Content\ej\mobile\images\ejmmobilefonts.woff" />
     <Content Include="Content\ej\mobile\images\ejmmobilefonts.ttf" />
     <Content Include="Content\ej\mobile\images\ejmmobilefonts.eot" />
+    <Content Include="Areas\Admin\Views\ManageUserRoles\Editor.cshtml" />
+    <Content Include="Areas\Admin\Views\ManageUserRoles\Index.cshtml" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <Content Include="Scripts\bootstrap.bundle.js" />
     <Content Include="Scripts\bootstrap.bundle.min.js" />
@@ -1529,6 +1532,7 @@
     <Compile Include="Areas\Admin\Controllers\FileExplorerController.cs" />
     <Compile Include="Areas\Admin\Controllers\ManageCommentsController.cs" />
     <Compile Include="Areas\Admin\Controllers\ManageBackgroundJobsController.cs" />
+    <Compile Include="Areas\Admin\Controllers\ManageUserRolesController.cs" />
     <Compile Include="Areas\Admin\Controllers\ManageSocialAccountsController.cs" />
     <Compile Include="Areas\Admin\Controllers\ManageUserMessagesController.cs" />
     <Compile Include="Areas\Admin\Controllers\NotificationsController.cs" />
@@ -1562,6 +1566,7 @@
     <Compile Include="Areas\Admin\Factories\Interfaces\IBackgroundJobModelFactory.cs" />
     <Compile Include="Areas\Admin\Factories\Interfaces\ISocialAccountModelFactory.cs" />
     <Compile Include="Areas\Admin\Factories\Interfaces\IUserMessagesModelFactory.cs" />
+    <Compile Include="Areas\Admin\Factories\Interfaces\IUserRoleModelFactory.cs" />
     <Compile Include="Areas\Admin\Factories\SocialAccountModelFactory.cs" />
     <Compile Include="Areas\Admin\Factories\UserMessagesModelFactory.cs" />
     <Compile Include="Areas\Admin\Factories\Interfaces\IAdminBlogPostModelFactory.cs" />
@@ -1606,6 +1611,7 @@
     <Compile Include="Areas\Admin\Factories\RedirectModelFactory.cs" />
     <Compile Include="Areas\Admin\Factories\UserGroupsModelFactory.cs" />
     <Compile Include="Areas\Admin\Factories\UserModelFactory.cs" />
+    <Compile Include="Areas\Admin\Factories\UserRoleModelFactory.cs" />
     <Compile Include="Areas\Admin\Models\BackgroundJobModel.cs" />
     <Compile Include="Areas\Admin\Models\ReplyToUserMessageModel.cs" />
     <Compile Include="Areas\Admin\Models\ChartData.cs" />
@@ -1638,6 +1644,7 @@
     <Compile Include="Areas\Admin\Models\UserGroupModel.cs" />
     <Compile Include="Areas\Admin\Models\UserModel.cs" />
     <Compile Include="App_Start\CanBePausedAttribute.cs" />
+    <Compile Include="Areas\Admin\Models\UserRoleModel.cs" />
     <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Controllers\Event\ErrorEvent.cs" />
     <Compile Include="Controllers\Event\CurrentCurrencyChangeEvent.cs" />
@@ -1860,6 +1867,8 @@
     <Content Include="Scripts\tinymce-5.0.15\js\tinymce\skins\ui\oxide\fonts\tinymce-mobile.woff" />
     <Content Include="Views\Product\Partials\_ProductNormalCardDownloadView.cshtml" />
     <Content Include="Views\Product\Partials\_ProductLargeCardDownloadView.cshtml" />
+    <Content Include="Views\Shared\AccessPermissionError.cshtml" />
+    <Content Include="Views\Shared\Partials\_AccessPermissionError.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

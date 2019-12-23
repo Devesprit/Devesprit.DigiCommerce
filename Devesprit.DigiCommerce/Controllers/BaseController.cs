@@ -160,7 +160,7 @@ namespace Devesprit.DigiCommerce.Controllers
             filterContext.ExceptionHandled = true;
             var errCode = ErrorLog.GetDefault(System.Web.HttpContext.Current)
                 .Log(new Error(filterContext.Exception, System.Web.HttpContext.Current));
-            filterContext.Result = RedirectToAction("Index", "Error", new {errorCode = errCode});
+            filterContext.Result = RedirectToAction("Index", "Error", new {errorCode = errCode, area = ""});
         }
 
         protected virtual void SuccessNotification(string message, bool persistForTheNextRequest = true)

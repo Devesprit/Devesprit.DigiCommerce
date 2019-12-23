@@ -9,6 +9,7 @@ using Devesprit.Core.Localization;
 using Devesprit.Data.Enums;
 using Devesprit.DigiCommerce.Areas.Admin.Models;
 using Devesprit.DigiCommerce.Controllers;
+using Devesprit.Services.Currency;
 using Devesprit.Services.Invoice;
 using Devesprit.Services.Localization;
 using Devesprit.Services.MemoryCache;
@@ -131,17 +132,21 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
                     break;
             }
 
-            var sells = await _invoiceService.SellsReportAsync(FromDate.Value, ToDate.Value, PeriodType);
-            var defaultCurrency = CurrencyService.GetDefaultCurrency();
-            var chartDatas = new List<ChartData>
+            var currencyList = await CurrencyService.GetAsEnumerableAsync();
+            var chartDatas = new List<ChartData>();
+            var random = new Random();
+            foreach (var curr in currencyList.OrderBy(p=> p.DisplayOrder))
             {
-                new ChartData()
+                var sells = await _invoiceService.SellsReportAsync(FromDate.Value, ToDate.Value, PeriodType, curr.Id);
+                chartDatas.Add(new ChartData()
                 {
-                    ChartItems = sells.Select(p => new ChartPoint() {Y = p.Value, X = p.Key.ToString(datetimeToStringFormat)}).ToList(),
-                    Name = $"{_localizationService.GetResource("Total")} ({string.Format(defaultCurrency.DisplayFormat, sells.Sum(p=> p.Value))})",
-                    Color = "#bd30ab"
-                }
-            };
+                    ChartItems = sells.Select(p => new ChartPoint()
+                        {Y = p.Value.ExchangeCurrency(curr), X = p.Key.ToString(datetimeToStringFormat)}).ToList(),
+                    Name =
+                        $"{curr.GetLocalized(p=> p.CurrencyName)}: {string.Format(curr.DisplayFormat, sells.Sum(p => p.Value).ExchangeCurrency(curr))}",
+                    Color = $"#{random.Next(0x1000000):X6}"
+                });
+            }
 
             return View("Partials/_Chart", new ChartModel()
             {

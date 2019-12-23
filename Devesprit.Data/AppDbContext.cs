@@ -54,6 +54,10 @@ namespace Devesprit.Data
         public DbSet<TblCurrencies> Currencies { get; set; }
         public DbSet<TblCountries> Countries { get; set; }
 
+
+        public DbSet<TblUserRoles> UserRoles { get; set; }
+        public DbSet<TblUserRolePermissions> UserRolePermissions { get; set; }
+        public DbSet<TblUserAccessAreas> UserAccessAreas { get; set; }
         public DbSet<TblUserGroups> UserGroups { get; set; }
         public DbSet<TblUserLikes> UserLikes { get; set; }
         public DbSet<TblUserWishlist> UserWishlist { get; set; }
