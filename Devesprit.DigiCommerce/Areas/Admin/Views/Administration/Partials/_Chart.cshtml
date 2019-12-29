@@ -37,7 +37,7 @@
     </div>
 </div>
 
-@using (Ajax.BeginForm(Model.ControllerName, "Administration", new AjaxOptions()
+@using (Ajax.BeginForm(Model.ActionName, Model.ControllerName, null, new AjaxOptions()
 {
     HttpMethod = "POST",
     LoadingElementId = "LoadingPanel",

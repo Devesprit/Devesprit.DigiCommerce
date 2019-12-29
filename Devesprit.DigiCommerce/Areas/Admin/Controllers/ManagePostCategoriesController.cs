@@ -12,6 +12,7 @@ using Devesprit.Services.Localization;
 using Devesprit.Services.NavBar;
 using Devesprit.Services.Posts;
 using Devesprit.Utilities.Extensions;
+using Devesprit.WebFramework.ActionFilters;
 using Devesprit.WebFramework.Helpers;
 using Elmah;
 using Syncfusion.JavaScript;
@@ -19,6 +20,7 @@ using Syncfusion.JavaScript;
 namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
 {
     [Authorize(Roles = "Admin")]
+    [UserHasPermission("ManagePostCategories")]
     public partial class ManagePostCategoriesController : BaseController
     {
         private readonly IPostCategoriesService _postCategoriesService;
@@ -88,11 +90,23 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
             {
                 if (model.Id == null)
                 {
+                    if (!HttpContext.UserHasPermission("ManagePostCategories_Add"))
+                    {
+                        ModelState.AddModelError("", _localizationService.GetResource("AccessPermissionErrorDesc"));
+                        return PartialView("Editor", model);
+                    }
+
                     //Add new record
                     await _postCategoriesService.AddAsync(record);
                 }
                 else
                 {
+                    if (!HttpContext.UserHasPermission("ManagePostCategories_Edit"))
+                    {
+                        ModelState.AddModelError("", _localizationService.GetResource("AccessPermissionErrorDesc"));
+                        return PartialView("Editor", model);
+                    }
+
                     //Edit record
                     await _postCategoriesService.UpdateAsync(record);
                 }
@@ -113,6 +127,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
         }
 
         [HttpPost]
+        [UserHasPermission("ManagePostCategories_Delete")]
         public virtual async Task<ActionResult> Delete(int keys)
         {
             try
@@ -128,6 +143,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
         }
 
         [HttpPost]
+        [UserHasPermission("ManagePostCategories_ChangeOrder")]
         public virtual async Task<ActionResult> ChangeIndex(int[] nodesOrder, int id, int? newParentId)
         {
             try
@@ -156,6 +172,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
             return Json(result);
         }
 
+        [UserHasPermission("ManagePostCategories_GenerateNavbar")]
         public virtual async Task<ActionResult> GenerateNavbar()
         {
             var idMap = new Dictionary<int, int>();
@@ -166,7 +183,8 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
                     Index = category.DisplayOrder,
                     InnerHtml = category.CategoryName,
                     Name = category.CategoryName,
-                    Url = "/Categories/" + category.Slug
+                    Url = "/Categories/" + category.Slug,
+                    DisplayArea = category.DisplayArea
                 });
 
                 var catLocals = await _localizedEntityService.GetLocalizedPropertiesAsync(category.Id, "TblPostCategories", "CategoryName");

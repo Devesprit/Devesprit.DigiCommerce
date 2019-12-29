@@ -3,11 +3,13 @@ using System.Web.Mvc;
 using Devesprit.Core.Localization;
 using Devesprit.Core.Settings;
 using Devesprit.DigiCommerce.Controllers;
+using Devesprit.WebFramework.ActionFilters;
 using Elmah;
 using Plugin.PaymentMethod.PayPal.Models;
 
 namespace Plugin.PaymentMethod.PayPal.Controllers
 {
+    [UserHasPermission("PayPalGateWayConfig")]
     public partial class PayPalGateWayController : BaseController
     {
         private readonly ILocalizationService _localizationService;

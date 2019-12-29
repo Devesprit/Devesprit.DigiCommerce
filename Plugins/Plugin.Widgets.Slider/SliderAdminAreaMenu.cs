@@ -22,7 +22,8 @@ namespace Plugin.Widgets.Slider
                         {"pluginName", "Widgets.Slider"},
                         { "area", "Admin"}
                     }),
-                    Icon = "fa fa-picture-o"
+                    Icon = "fa fa-picture-o",
+                    NeedPermission = "DevespritImageSliderConfig"
                 }
             };
         }

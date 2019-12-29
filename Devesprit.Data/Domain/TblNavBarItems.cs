@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Devesprit.Data.Enums;
 
 namespace Devesprit.Data.Domain
 {
@@ -18,6 +19,7 @@ namespace Devesprit.Data.Domain
         public string Icon { get; set; }
         public int Index { get; set; }
         public int? ParentItemId { get; set; }
+        public DisplayArea DisplayArea { get; set; }
         public virtual TblNavBarItems ParentItem { get; set; }
         public virtual ICollection<TblNavBarItems> SubItems { get; set; }
     }

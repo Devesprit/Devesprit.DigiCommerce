@@ -56,6 +56,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
             return PartialView();
         } 
          
+        [UserHasAtLeastOnePermission("ManageProducts_Add", "ManageProducts_Edit")]
         public virtual async Task<ActionResult> Editor(int? id)
         {
             if (id != null)
@@ -72,6 +73,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [UserHasAtLeastOnePermission("ManageProducts_Add", "ManageProducts_Edit")]
         public virtual async Task<ActionResult> Editor(ProductModel model, bool? saveAndContinue)
         {
             if (!model.Slug.IsNormalizedUrl())
@@ -90,11 +92,21 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
             {
                 if (model.Id == null)
                 {
+                    if (!HttpContext.UserHasPermission("ManageProducts_Add"))
+                    {
+                        return View("AccessPermissionError");
+                    }
+
                     //Add new record
                     recordId = await _productService.AddAsync(record);
                 }
                 else
                 {
+                    if (!HttpContext.UserHasPermission("ManageProducts_Edit"))
+                    {
+                        return View("AccessPermissionError");
+                    }
+
                     //Edit record
                     await _productService.UpdateAsync(record);
                 }
@@ -120,6 +132,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
         }
 
         [HttpPost]
+        [UserHasPermission("ManageProducts_Delete")]
         public virtual async Task<ActionResult> Delete(int[] keys)
         {
             try

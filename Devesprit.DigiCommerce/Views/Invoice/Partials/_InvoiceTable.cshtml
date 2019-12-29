@@ -228,7 +228,7 @@
                     @Html.Hidden("invoiceId", Model.Id)
                     <span>@T("YourDiscount"):</span>
                     <div class="input-group input-group-sm">
-                        @Html.TextBox("discountAmount", Model.DiscountAmount, new { @class = "form-control form-control-sm" })
+                        @Html.TextBox("discountAmount", Model.DiscountAmount.ExchangeCurrency(), new { @class = "form-control form-control-sm" })
                         <div class="input-group-append">
                             <button class="btn btn-secondary btn-sm" type="submit">@T("Apply")</button>
                         </div>
@@ -270,7 +270,7 @@
                     @Html.Hidden("invoiceId", Model.Id)
                     <span>@T("Tax"):</span>
                     <div class="input-group input-group-sm">
-                        @Html.TextBox("taxAmount", Model.TotalTaxAmount, new { @class = "form-control form-control-sm" })
+                        @Html.TextBox("taxAmount", Model.TotalTaxAmount.ExchangeCurrency(), new { @class = "form-control form-control-sm" })
                         <div class="input-group-append">
                             <button class="btn btn-secondary btn-sm" type="submit">@T("Apply")</button>
                         </div>

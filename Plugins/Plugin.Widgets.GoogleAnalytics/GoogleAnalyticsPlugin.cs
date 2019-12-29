@@ -2,7 +2,9 @@
 using System.Web.Routing;
 using Devesprit.Core.Plugin;
 using Devesprit.Core.Settings;
+using Devesprit.Data.Domain;
 using Devesprit.Services.Localization;
+using Devesprit.Services.Users;
 using Devesprit.Services.Widget;
 using Plugin.Widgets.GoogleAnalytics.Models;
 
@@ -11,10 +13,12 @@ namespace Plugin.Widgets.GoogleAnalytics
     public partial class GoogleAnalyticsPlugin : BasePlugin, IWidgetPlugin
     {
         private readonly ISettingService _settingService;
+        private readonly IUserRolesService _userRolesService;
 
-        public GoogleAnalyticsPlugin(ISettingService settingsService)
+        public GoogleAnalyticsPlugin(ISettingService settingsService, IUserRolesService userRolesService)
         {
             _settingService = settingsService;
+            _userRolesService = userRolesService;
         }
 
         public virtual IList<string> GetWidgetZones()
@@ -61,6 +65,9 @@ namespace Plugin.Widgets.GoogleAnalytics
             this.AddOrUpdatePluginLocaleResource("Plugin.Widgets.GoogleAnalytics.WidgetZone", "ناحیه ویجت", "fa");
             this.AddOrUpdatePluginLocaleResource("Plugin.Widgets.GoogleAnalytics.Configuration", "تنظیمات Google Analytics", "fa");
 
+            _userRolesService.AddAccessAreas(new TblUserAccessAreas("Plugins", "GoogleAnalyticsConfig", "Plugin.Widgets.GoogleAnalytics.Configuration"));
+            _userRolesService.GrantAllPermissionsToAdministrator();
+
             base.Install();
         }
 
@@ -72,6 +79,10 @@ namespace Plugin.Widgets.GoogleAnalytics
             this.DeletePluginLocaleResource("Plugin.Widgets.GoogleAnalytics.TrackingScript");
             this.DeletePluginLocaleResource("Plugin.Widgets.GoogleAnalytics.WidgetZone");
             this.DeletePluginLocaleResource("Plugin.Widgets.GoogleAnalytics.Configuration");
+
+            _userRolesService.DeleteAccessAreas("GoogleAnalyticsConfig");
+            _userRolesService.GrantAllPermissionsToAdministrator();
+
             base.Uninstall();
         }
     }

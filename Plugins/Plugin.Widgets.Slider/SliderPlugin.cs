@@ -2,7 +2,9 @@
 using System.Linq;
 using System.Web.Routing;
 using Devesprit.Core.Plugin;
+using Devesprit.Data.Domain;
 using Devesprit.Services.Localization;
+using Devesprit.Services.Users;
 using Devesprit.Services.Widget;
 using Plugin.Widgets.Slider.DB;
 using Z.EntityFramework.Plus;
@@ -13,10 +15,12 @@ namespace Plugin.Widgets.Slider
     {
         internal const string CacheKey = "Plugin.Widgets.Slider";
         private readonly SliderDbContext _dbContext;
+        private readonly IUserRolesService _userRolesService;
 
-        public SliderPlugin(SliderDbContext dbContext)
+        public SliderPlugin(SliderDbContext dbContext, IUserRolesService userRolesService)
         {
             _dbContext = dbContext;
+            _userRolesService = userRolesService;
         }
 
         public virtual IList<string> GetWidgetZones()
@@ -64,6 +68,9 @@ namespace Plugin.Widgets.Slider
             this.AddOrUpdatePluginLocaleResource("Plugin.Widgets.Slider.OnClickJS", "OnClick Java Script", "fa");
             this.AddOrUpdatePluginLocaleResource("Plugin.Widgets.Slider.ManageImageSlider", "مدیریت اسلایدر تصاویر", "fa");
 
+            _userRolesService.AddAccessAreas(new TblUserAccessAreas("Plugins", "DevespritImageSliderConfig", "Plugin.Widgets.Slider.ManageImageSlider"));
+            _userRolesService.GrantAllPermissionsToAdministrator();
+
             base.Install();
         }
 
@@ -74,6 +81,10 @@ namespace Plugin.Widgets.Slider
             this.DeletePluginLocaleResource("Plugin.Widgets.Slider.LinkTarget");
             this.DeletePluginLocaleResource("Plugin.Widgets.Slider.OnClickJS");
             this.DeletePluginLocaleResource("Plugin.Widgets.Slider.ManageImageSlider");
+
+            _userRolesService.DeleteAccessAreas("DevespritImageSliderConfig");
+            _userRolesService.GrantAllPermissionsToAdministrator();
+
             base.Uninstall();
         }
     }

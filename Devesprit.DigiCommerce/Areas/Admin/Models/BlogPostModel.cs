@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
 using Devesprit.Core.Localization;
+using Devesprit.Data.Enums;
 using Devesprit.Services.Posts;
 using Devesprit.WebFramework.Attributes;
 
@@ -86,6 +87,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Models
         [DisplayNameLocalized("MetaKeyword")]
         public LocalizedString MetaKeyWords { get; set; }
 
-        public List<SelectListItem> PostCategoriesList => DependencyResolver.Current.GetService<IPostCategoriesService>().GetAsSelectList();
+        public List<SelectListItem> PostCategoriesList => DependencyResolver.Current
+            .GetService<IPostCategoriesService>().GetAsSelectList(p=> p.DisplayArea == DisplayArea.BlogSection || p.DisplayArea == DisplayArea.Both);
     }
 }

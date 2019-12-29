@@ -7,6 +7,7 @@ using Devesprit.DigiCommerce.Areas.Admin.Factories.Interfaces;
 using Devesprit.DigiCommerce.Areas.Admin.Models;
 using Devesprit.DigiCommerce.Controllers;
 using Devesprit.Services.Users;
+using Devesprit.WebFramework.ActionFilters;
 using Devesprit.WebFramework.Helpers;
 using Elmah;
 using Syncfusion.JavaScript;
@@ -14,6 +15,7 @@ using Syncfusion.JavaScript;
 namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
 {
     [Authorize(Roles = "Admin")]
+    [UserHasPermission("ManageUserGroups")]
     public partial class ManageUserGroupsController : BaseController
     {
         private readonly IUserGroupsService _userGroupsService;
@@ -43,6 +45,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
             return PartialView();
         }
 
+        [UserHasAtLeastOnePermission("ManageUserGroups_Add", "ManageUserGroups_Edit")]
         public virtual async Task<ActionResult> Editor(int? id)
         {
             if (id != null)
@@ -59,6 +62,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [UserHasAtLeastOnePermission("ManageUserGroups_Add", "ManageUserGroups_Edit")]
         public virtual async Task<ActionResult> Editor(UserGroupModel model, bool? saveAndContinue)
         {
             if (!ModelState.IsValid)
@@ -73,10 +77,20 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
 
                 if (model.Id == null)
                 {
+                    if (!HttpContext.UserHasPermission("ManageUserGroups_Add"))
+                    {
+                        return View("AccessPermissionError");
+                    }
+
                     recordId = await _userGroupsService.AddAsync(record);
                 }
                 else
                 {
+                    if (!HttpContext.UserHasPermission("ManageUserGroups_Edit"))
+                    {
+                        return View("AccessPermissionError");
+                    }
+
                     //Edit record
                     await _userGroupsService.UpdateAsync(record);
                 }
@@ -102,6 +116,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
         }
 
         [HttpPost]
+        [UserHasPermission("ManageUserGroups_Delete")]
         public virtual async Task<ActionResult> Delete(int[] keys)
         {
             try

@@ -516,6 +516,10 @@ namespace Devesprit.Services.SearchEngine
 
         protected virtual string GetHighlight(string fieldName, Highlighter highlighter, Analyzer analyzer, string fieldContent, bool truncateDefaultText)
         {
+            if (fieldContent == null)
+            {
+                return string.Empty;
+            }
             var stream = analyzer.TokenStream(fieldName, new StringReader(fieldContent));
             var result = highlighter.GetBestFragments(stream, fieldContent, 1, "...");
             if (string.IsNullOrWhiteSpace(result))

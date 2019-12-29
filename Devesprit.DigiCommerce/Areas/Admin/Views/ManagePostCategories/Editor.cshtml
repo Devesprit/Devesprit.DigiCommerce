@@ -39,6 +39,13 @@
                     </div>
                     <div class="col-12">
                         <div class="form-group">
+                            @Html.LabelFor(p => p.DisplayArea)
+                            @Html.LocalizedEnumDropDownListFor(p => p.DisplayArea, T("SelectAnItem").ToString(), new { @class = "form-control custom-select form-control-sm" })
+                            @Html.ValidationMessageFor(p => p.DisplayArea, "", new { @class = "form-text text-danger fs-12" })
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="form-group">
                             @Html.LabelFor(p => p.DisplayOrder)
                             @Html.TextBoxFor(p => p.DisplayOrder, new { @class = "form-control form-control-sm ltr-dir", type = "number" })
                             @Html.ValidationMessageFor(p => p.DisplayOrder, "", new { @class = "form-text text-danger fs-12" })

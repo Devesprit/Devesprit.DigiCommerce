@@ -13,6 +13,7 @@ using Devesprit.Data.Domain;
 using Devesprit.Services.Invoice;
 using Devesprit.Services.Localization;
 using Devesprit.Services.PaymentGateway;
+using Devesprit.Services.Users;
 using Plugin.PaymentMethod.Zarinpal.Models;
 using Plugin.PaymentMethod.Zarinpal.Properties;
 
@@ -22,11 +23,13 @@ namespace Plugin.PaymentMethod.Zarinpal
     {
         private readonly ILocalizationService _localizationService;
         private readonly ISettingService _settingService;
+        private readonly IUserRolesService _userRolesService;
 
-        public ZarinpalPaymentMethodPlugin(ILocalizationService localizationService, ISettingService settingService)
+        public ZarinpalPaymentMethodPlugin(ILocalizationService localizationService, ISettingService settingService, IUserRolesService userRolesService)
         {
             _localizationService = localizationService;
             _settingService = settingService;
+            _userRolesService = userRolesService;
         }
 
         public override void GetConfigurationRoute(out string actionName, out string controllerName, out RouteValueDictionary routeValues)
@@ -102,7 +105,8 @@ namespace Plugin.PaymentMethod.Zarinpal
             this.AddOrUpdatePluginLocaleResource("Plugin.PaymentMethod.Zarinpal.ZarinpalWebSite", "وب سایت Zarinpal", "fa");
             this.AddOrUpdatePluginLocaleResource("Plugin.PaymentMethod.Zarinpal.ZarinpalConfig", "تنظیمات درگاه پرداخت زرین پال", "fa");
 
-
+            _userRolesService.AddAccessAreas(new TblUserAccessAreas("Plugins", "ZarinpalGateWayConfig", "Plugin.PaymentMethod.Zarinpal.ZarinpalConfig"));
+            _userRolesService.GrantAllPermissionsToAdministrator();
 
             base.Install();
         }
@@ -139,6 +143,9 @@ namespace Plugin.PaymentMethod.Zarinpal
             this.DeletePluginLocaleResource("Plugin.PaymentMethod.Zarinpal.ZarinpalPaymentPageUrl");
             this.DeletePluginLocaleResource("Plugin.PaymentMethod.Zarinpal.ZarinpalWebSite");
             this.DeletePluginLocaleResource("Plugin.PaymentMethod.Zarinpal.ZarinpalConfig");
+
+            _userRolesService.DeleteAccessAreas("ZarinpalGateWayConfig");
+            _userRolesService.GrantAllPermissionsToAdministrator();
 
             base.Uninstall();
         }

@@ -7,6 +7,7 @@ using Devesprit.Data.Domain;
 using Devesprit.Data.Enums;
 using Devesprit.DigiCommerce.Controllers;
 using Devesprit.Services.Invoice;
+using Devesprit.WebFramework.ActionFilters;
 using Devesprit.WebFramework.Helpers;
 using Elmah;
 using Microsoft.AspNet.Identity;
@@ -15,6 +16,7 @@ using Syncfusion.JavaScript;
 namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
 {
     [Authorize(Roles = "Admin")]
+    [UserHasPermission("ManageInvoices")]
     public partial class ManageInvoicesController : BaseController
     {
         private readonly IInvoiceService _invoiceService;
@@ -48,6 +50,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
         }
 
         [HttpPost]
+        [UserHasPermission("ManageInvoices_Add")]
         public virtual async Task<ActionResult> CreateNew()
         {
             var id = await _invoiceService.AddAsync(new TblInvoices()
@@ -60,6 +63,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
         }
 
         [HttpPost]
+        [UserHasPermission("ManageInvoices_Delete")]
         public virtual async Task<ActionResult> Delete(Guid[] keys)
         {
             try

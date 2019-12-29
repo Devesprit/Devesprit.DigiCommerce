@@ -29,8 +29,12 @@ namespace Devesprit.Services.Users
         Task<TblUserAccessAreas> FindAccessAreasByNameAsync(string name);
         TblUserAccessAreas FindAccessAreasByName(string name);
         Task<int> AddAccessAreasAsync(TblUserAccessAreas record);
-        Task DeleteAccessAreasAsync(int id);
+        Task DeleteAccessAreasAsync(string areaName);
         Task UpdateAccessAreasAsync(TblUserAccessAreas record);
-        Task GrantAllPermissionsToAdministrator();
+        Task GrantAllPermissionsToAdministratorAsync();
+        int AddAccessAreas(TblUserAccessAreas record);
+        void DeleteAccessAreas(string areaName);
+        void UpdateAccessAreas(TblUserAccessAreas record);
+        void GrantAllPermissionsToAdministrator();
     }
 }

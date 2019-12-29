@@ -12,8 +12,10 @@ using System.Web;
 using System.Web.Routing;
 using Devesprit.Core.Plugin;
 using Devesprit.Core.Settings;
+using Devesprit.Data.Domain;
 using Devesprit.Services.ExternalLoginProvider;
 using Devesprit.Services.Localization;
+using Devesprit.Services.Users;
 using Devesprit.Utilities.Extensions;
 using Elmah;
 using Microsoft.AspNet.Identity;
@@ -30,10 +32,12 @@ namespace Plugin.ExternalLogin
     public class ExternalLoginPlugin : BasePlugin, IExternalLoginProvider
     {
         private readonly ISettingService _settingService;
+        private readonly IUserRolesService _userRolesService;
 
-        public ExternalLoginPlugin(ISettingService settingsService)
+        public ExternalLoginPlugin(ISettingService settingsService, IUserRolesService userRolesService)
         {
             _settingService = settingsService;
+            _userRolesService = userRolesService;
         }
 
         public override void GetConfigurationRoute(out string actionName, out string controllerName, out RouteValueDictionary routeValues)
@@ -89,6 +93,9 @@ namespace Plugin.ExternalLogin
             this.AddOrUpdatePluginLocaleResource("Plugin.ExternalLogin.ProxyServerUserName", "Proxy Server UserName", "fa");
             this.AddOrUpdatePluginLocaleResource("Plugin.ExternalLogin.ProxyServerPassword", "Proxy Server Password", "fa");
 
+            _userRolesService.AddAccessAreas(new TblUserAccessAreas("Plugins", "ExternalLoginConfig", "Plugin.ExternalLogin.Configuration"));
+            _userRolesService.GrantAllPermissionsToAdministrator();
+
             base.Install();
         }
 
@@ -114,6 +121,10 @@ namespace Plugin.ExternalLogin
             this.DeletePluginLocaleResource("Plugin.ExternalLogin.ProxyServerAddress");
             this.DeletePluginLocaleResource("Plugin.ExternalLogin.ProxyServerUserName");
             this.DeletePluginLocaleResource("Plugin.ExternalLogin.ProxyServerPassword");
+
+            _userRolesService.DeleteAccessAreas("ExternalLoginConfig");
+            _userRolesService.GrantAllPermissionsToAdministrator();
+
             base.Uninstall();
         }
 

@@ -8,6 +8,7 @@ using Devesprit.DigiCommerce.Areas.Admin.Models;
 using Devesprit.DigiCommerce.Controllers;
 using Devesprit.Services.Blog;
 using Devesprit.Utilities.Extensions;
+using Devesprit.WebFramework.ActionFilters;
 using Devesprit.WebFramework.Helpers;
 using Elmah;
 using Syncfusion.JavaScript;
@@ -15,6 +16,7 @@ using Syncfusion.JavaScript;
 namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
 {
     [Authorize(Roles = "Admin")]
+    [UserHasPermission("ManageBlogPosts")]
     public partial class ManageBlogPostsController : BaseController
     {
         private readonly IBlogPostService _blogPostService;
@@ -54,6 +56,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
             return PartialView();
         }
 
+        [UserHasAtLeastOnePermission("ManageBlogPosts_Add", "ManageBlogPosts_Edit")]
         public virtual async Task<ActionResult> Editor(int? id)
         {
             if (id != null)
@@ -70,6 +73,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [UserHasAtLeastOnePermission("ManageBlogPosts_Add", "ManageBlogPosts_Edit")]
         public virtual async Task<ActionResult> Editor(BlogPostModel model, bool? saveAndContinue)
         {
             if (!model.Slug.IsNormalizedUrl())
@@ -88,11 +92,21 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
             {
                 if (model.Id == null)
                 {
+                    if (!HttpContext.UserHasPermission("ManageBlogPosts_Add"))
+                    {
+                        return View("AccessPermissionError");
+                    }
+
                     //Add new record
                     recordId = await _blogPostService.AddAsync(record);
                 }
                 else
                 {
+                    if (!HttpContext.UserHasPermission("ManageBlogPosts_Edit"))
+                    {
+                        return View("AccessPermissionError");
+                    }
+
                     //Edit record
                     await _blogPostService.UpdateAsync(record);
                 }
@@ -118,6 +132,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
         }
 
         [HttpPost]
+        [UserHasPermission("ManageBlogPosts_Delete")]
         public virtual async Task<ActionResult> Delete(int[] keys)
         {
             try

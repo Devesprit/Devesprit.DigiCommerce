@@ -4,6 +4,7 @@ using System.Web.Mvc;
 using System.Web.UI;
 using Autofac.Extras.DynamicProxy;
 using Devesprit.Data.Domain;
+using Devesprit.Data.Enums;
 using Devesprit.DigiCommerce.Factories.Interfaces;
 using Devesprit.DigiCommerce.Models;
 using Devesprit.DigiCommerce.Models.Post;
@@ -134,7 +135,7 @@ namespace Devesprit.DigiCommerce.Controllers
                 category = await _categoriesService.FindByIdAsync(categoryId);
             }
 
-            if (category == null)
+            if (category == null || (category.DisplayArea != DisplayArea.ProductsSection && category.DisplayArea != DisplayArea.Both))
             {
                 return View("PageNotFound");
             }

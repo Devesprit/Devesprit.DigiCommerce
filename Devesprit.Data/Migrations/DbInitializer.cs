@@ -6,6 +6,7 @@ using System.Linq;
 using System.Xml;
 using Devesprit.Data.Domain;
 using Devesprit.Data.Properties;
+using Z.EntityFramework.Plus;
 
 namespace Devesprit.Data.Migrations
 {
@@ -164,38 +165,39 @@ namespace Devesprit.Data.Migrations
             }
 
             //UserRoles
-            if (!db.UserRoles.Any())
+            var adminRole = db.UserRoles.FirstOrDefault(p => p.RoleName == "Administrator");
+            if (adminRole == null)
             {
-                var adminRole = new TblUserRoles()
+                adminRole = new TblUserRoles()
                 {
                     RoleName = "Administrator"
                 };
-                db.UserRoles.AddOrUpdate(adminRole);
-                db.SaveChanges();
-
-                foreach (var area in UserAccessAreas)
-                {
-                    db.UserRolePermissions.Add(new TblUserRolePermissions()
-                    {
-                        RoleId = adminRole.Id,
-                        AreaName = area.AreaName,
-                        HaveAccess = true
-                    });
-                }
-
-                var adminUser = db.Users.FirstOrDefault(p => p.Email == "admin@admin.com");
-                if (adminUser != null)
-                    adminUser.RoleId = adminRole.Id;
-
+                db.UserRoles.Add(adminRole);
                 db.SaveChanges();
             }
 
-            if (!db.UserAccessAreas.Any())
+            var dbAreaList = db.UserAccessAreas.ToList();
+            foreach (var area in UserAccessAreas)
             {
-                db.UserAccessAreas.AddRange(UserAccessAreas);
+                if (!dbAreaList.Any(p=> p.AreaName == area.AreaName))
+                {
+                    db.UserAccessAreas.Add(area);
+                }
             }
-
             db.SaveChanges();
+
+            db.UserRolePermissions.Where(p=> p.RoleId == adminRole.Id).Delete();
+            db.UserRolePermissions.AddRange(db.UserAccessAreas.ToList().Select(p => new TblUserRolePermissions()
+            {
+                AreaName = p.AreaName,
+                HaveAccess = true,
+                RoleId = adminRole.Id
+            }));
+            db.SaveChanges();
+            
+            var adminUser = db.Users.FirstOrDefault(p => p.Email == "admin@admin.com");
+            if (adminUser != null && adminUser.RoleId == null)
+                adminUser.RoleId = adminRole.Id;
 
             ImportLocalizedStrings(db);
         }
@@ -206,8 +208,185 @@ namespace Devesprit.Data.Migrations
             new TblUserAccessAreas("ManageProducts", "ManageProducts_Add", "Add"),
             new TblUserAccessAreas("ManageProducts", "ManageProducts_Edit", "Edit"),
             new TblUserAccessAreas("ManageProducts", "ManageProducts_Delete", "Delete"),
+            new TblUserAccessAreas("ManageProducts", "ManageProductDiscountsForUserGroups", "ManageProductDiscountsForUserGroups"),
+            new TblUserAccessAreas("ManageProductDiscountsForUserGroups", "ManageProductDiscountsForUserGroups_Add", "Add"),
+            new TblUserAccessAreas("ManageProductDiscountsForUserGroups", "ManageProductDiscountsForUserGroups_Edit", "Edit"),
+            new TblUserAccessAreas("ManageProductDiscountsForUserGroups", "ManageProductDiscountsForUserGroups_Delete", "Delete"),
+            new TblUserAccessAreas("ManageProducts", "ProductCheckoutAttributes", "ProductCheckoutAttributes"),
+            new TblUserAccessAreas("ProductCheckoutAttributes", "ProductCheckoutAttributes_Add", "Add"),
+            new TblUserAccessAreas("ProductCheckoutAttributes", "ProductCheckoutAttributes_Edit", "Edit"),
+            new TblUserAccessAreas("ProductCheckoutAttributes", "ProductCheckoutAttributes_Delete", "Delete"),
+            new TblUserAccessAreas("ProductCheckoutAttributes", "ProductCheckoutAttributes_Options", "Options"),
+            new TblUserAccessAreas("ProductCheckoutAttributes_Options", "ProductCheckoutAttributes_Options_Add", "Add"),
+            new TblUserAccessAreas("ProductCheckoutAttributes_Options", "ProductCheckoutAttributes_Options_Edit", "Edit"),
+            new TblUserAccessAreas("ProductCheckoutAttributes_Options", "ProductCheckoutAttributes_Options_Delete", "Delete"),
             
             new TblUserAccessAreas("", "ManageUserRoles", "ManageUserRoles"),
+            new TblUserAccessAreas("ManageUserRoles", "ManageUserRoles_Add", "Add"),
+            new TblUserAccessAreas("ManageUserRoles", "ManageUserRoles_Edit", "Edit"),
+            new TblUserAccessAreas("ManageUserRoles", "ManageUserRoles_Delete", "Delete"),
+            new TblUserAccessAreas("ManageUserRoles", "ManageUserRoles_ApplyPermissions", "ApplyPermissions"),
+
+            new TblUserAccessAreas("", "Reports", "Reports"),
+            new TblUserAccessAreas("Reports", "Reports_InvoicesChart", "Invoices"),
+            new TblUserAccessAreas("Reports", "Reports_SellsChart", "Selling"),
+            new TblUserAccessAreas("Reports", "Reports_UsersChart", "Users"),
+            
+            new TblUserAccessAreas("", "FileManager", "FileManager"),
+
+            new TblUserAccessAreas("", "ManageBackgroundJobs", "BackgroundJobsManager"),
+            new TblUserAccessAreas("ManageBackgroundJobs", "ManageBackgroundJobs_Edit", "Edit"),
+            new TblUserAccessAreas("ManageBackgroundJobs", "ManageBackgroundJobs_Delete", "Delete"),
+            new TblUserAccessAreas("ManageBackgroundJobs", "ManageBackgroundJobs_PauseResumeJob", "PauseResumeJob"),
+            new TblUserAccessAreas("ManageBackgroundJobs", "ManageBackgroundJobs_ExecuteJob", "ExecuteJob"),
+            new TblUserAccessAreas("ManageBackgroundJobs", "ManageBackgroundJobs_BackgroundJobServer", "BackgroundJobServer"),
+
+            new TblUserAccessAreas("", "ManageBlogPosts", "ManageBlogPosts"),
+            new TblUserAccessAreas("ManageBlogPosts", "ManageBlogPosts_Add", "Add"),
+            new TblUserAccessAreas("ManageBlogPosts", "ManageBlogPosts_Edit", "Edit"),
+            new TblUserAccessAreas("ManageBlogPosts", "ManageBlogPosts_Delete", "Delete"),
+
+            new TblUserAccessAreas("", "ManageCountries", "ManageCountries"),
+            new TblUserAccessAreas("ManageCountries", "ManageCountries_Add", "Add"),
+            new TblUserAccessAreas("ManageCountries", "ManageCountries_Edit", "Edit"),
+            new TblUserAccessAreas("ManageCountries", "ManageCountries_Delete", "Delete"),
+
+            new TblUserAccessAreas("", "ManageComments", "ManageComments"),
+            new TblUserAccessAreas("ManageComments", "ManageComments_PublishUnPublish", "PublishUnPublish"),
+            new TblUserAccessAreas("ManageComments", "ManageComments_Edit", "Edit"),
+            new TblUserAccessAreas("ManageComments", "ManageComments_Delete", "Delete"),
+
+            new TblUserAccessAreas("", "ManageCurrencies", "ManageCurrencies"),
+            new TblUserAccessAreas("ManageCurrencies", "ManageCurrencies_Add", "Add"),
+            new TblUserAccessAreas("ManageCurrencies", "ManageCurrencies_Edit", "Edit"),
+            new TblUserAccessAreas("ManageCurrencies", "ManageCurrencies_Delete", "Delete"),
+            new TblUserAccessAreas("ManageCurrencies", "ManageCurrencies_SetCurrencyAsDefault", "SetAsDefault"),
+
+            new TblUserAccessAreas("", "ManageLanguages", "ManageLanguages"),
+            new TblUserAccessAreas("ManageLanguages", "ManageLanguages_Add", "Add"),
+            new TblUserAccessAreas("ManageLanguages", "ManageLanguages_Edit", "Edit"),
+            new TblUserAccessAreas("ManageLanguages", "ManageLanguages_Delete", "Delete"),
+            new TblUserAccessAreas("ManageLanguages", "ManageLanguages_SetLanguageAsDefault", "SetAsDefault"),
+            new TblUserAccessAreas("ManageLanguages", "ManageStringResources", "ManageStringResources"),
+            new TblUserAccessAreas("ManageStringResources", "ManageStringResources_ExportResources", "ExportStringResources"),
+            new TblUserAccessAreas("ManageStringResources", "ManageStringResources_ImportResources", "ImportStringResources"),
+            new TblUserAccessAreas("ManageStringResources", "ManageStringResources_Delete", "Delete"),
+            new TblUserAccessAreas("ManageStringResources", "ManageStringResources_Edit", "Edit"),
+            new TblUserAccessAreas("ManageStringResources", "ManageStringResources_Add", "Add"),
+
+            new TblUserAccessAreas("", "ManageFileServers", "ManageFileServers"),
+            new TblUserAccessAreas("ManageFileServers", "ManageFileServers_Add", "Add"),
+            new TblUserAccessAreas("ManageFileServers", "ManageFileServers_Edit", "Edit"),
+            new TblUserAccessAreas("ManageFileServers", "ManageFileServers_Delete", "Delete"),
+
+            new TblUserAccessAreas("", "SiteSettings", "ManageSettings"),
+            new TblUserAccessAreas("SiteSettings", "SiteSettings_ChangeSettings", "ChangeSettings"),
+            new TblUserAccessAreas("SiteSettings", "SiteSettings_RefreshSearchEngineIndexes", "RefreshSearchEngineIndexes"),
+            new TblUserAccessAreas("SiteSettings", "SiteSettings_PurgeCache", "PurgeCache"),
+            new TblUserAccessAreas("SiteSettings", "SiteSettings_ApplicationErrorsLog", "ShowApplicationErrorsLog"),
+            new TblUserAccessAreas("SiteSettings_ApplicationErrorsLog", "SiteSettings_ApplicationErrorsLog_Clear", "ClearErrorsLog"),
+
+            new TblUserAccessAreas("", "ManageInvoices", "ManageInvoices"),
+            new TblUserAccessAreas("ManageInvoices", "ManageInvoices_Add", "Add"),
+            new TblUserAccessAreas("ManageInvoices", "ManageInvoices_Delete", "Delete"),
+            new TblUserAccessAreas("ManageInvoices", "ManageInvoices_SetInvoiceStatus", "ChangeInvoiceStatus"),
+            new TblUserAccessAreas("ManageInvoices", "ManageInvoices_SetInvoicePaymentDate", "EditInvoicePaymentDate"),
+            new TblUserAccessAreas("ManageInvoices", "ManageInvoices_SetInvoiceItemExpirationDate", "EditInvoiceItemExpirationDate"),
+            new TblUserAccessAreas("ManageInvoices", "ManageInvoices_SetInvoiceItemLicenseCode", "EditInvoiceItemLicenseCode"),
+            new TblUserAccessAreas("ManageInvoices", "ManageInvoices_SetInvoiceUser", "ChangeInvoiceOwner"),
+            new TblUserAccessAreas("ManageInvoices", "ManageInvoices_SetInvoiceItemUnitPrice", "EditInvoiceItemUnitPrice"),
+            new TblUserAccessAreas("ManageInvoices", "ManageInvoices_SetInvoiceDiscount", "EditInvoiceDiscount"),
+            new TblUserAccessAreas("ManageInvoices", "ManageInvoices_SetInvoiceTax", "EditInvoiceTax"),
+            new TblUserAccessAreas("ManageInvoices", "ManageInvoices_AddNewItemToInvoiceManually", "AddNewItemToInvoiceManually"),
+            new TblUserAccessAreas("ManageInvoices", "ManageInvoices_UpdateInvoiceBillingAddress", "EditInvoiceBillingAddress"),
+            new TblUserAccessAreas("ManageInvoices", "ManageInvoices_SetInvoiceNote", "EditInvoiceNote"),
+            new TblUserAccessAreas("ManageInvoices", "ManageInvoices_CheckoutInvoice", "CheckoutInvoice"),
+
+            new TblUserAccessAreas("", "ManageNavBar", "ManageNavBar"),
+            new TblUserAccessAreas("ManageNavBar", "ManageNavBar_Add", "Add"),
+            new TblUserAccessAreas("ManageNavBar", "ManageNavBar_Edit", "Edit"),
+            new TblUserAccessAreas("ManageNavBar", "ManageNavBar_Delete", "Delete"),
+            new TblUserAccessAreas("ManageNavBar", "ManageNavBar_ChangeOrder", "ChangeOrder"),
+
+            new TblUserAccessAreas("", "ManagePages", "StaticPages"),
+            new TblUserAccessAreas("ManagePages", "ManagePages_Add", "Add"),
+            new TblUserAccessAreas("ManagePages", "ManagePages_Edit", "Edit"),
+            new TblUserAccessAreas("ManagePages", "ManagePages_Delete", "Delete"),
+
+            new TblUserAccessAreas("", "ManageTaxes", "ManageTaxes"),
+            new TblUserAccessAreas("ManageTaxes", "ManageTaxes_Add", "Add"),
+            new TblUserAccessAreas("ManageTaxes", "ManageTaxes_Edit", "Edit"),
+            new TblUserAccessAreas("ManageTaxes", "ManageTaxes_Delete", "Delete"),
+
+            new TblUserAccessAreas("", "ManageUserGroups", "ManageUserGroups"),
+            new TblUserAccessAreas("ManageUserGroups", "ManageUserGroups_Add", "Add"),
+            new TblUserAccessAreas("ManageUserGroups", "ManageUserGroups_Edit", "Edit"),
+            new TblUserAccessAreas("ManageUserGroups", "ManageUserGroups_Delete", "Delete"),
+
+            new TblUserAccessAreas("", "ManageUsers", "ManageUsers"),
+            new TblUserAccessAreas("ManageUsers", "ManageUsers_Add", "Add"),
+            new TblUserAccessAreas("ManageUsers", "ManageUsers_Edit", "Edit"),
+            new TblUserAccessAreas("ManageUsers", "ManageUsers_Delete", "Delete"),
+
+            new TblUserAccessAreas("", "ManagePostTags", "ManagePostTags"),
+            new TblUserAccessAreas("ManagePostTags", "ManagePostTags_Add", "Add"),
+            new TblUserAccessAreas("ManagePostTags", "ManagePostTags_Edit", "Edit"),
+            new TblUserAccessAreas("ManagePostTags", "ManagePostTags_Delete", "Delete"),
+
+            new TblUserAccessAreas("", "ManagePlugins", "ManagePlugins"),
+            new TblUserAccessAreas("ManagePlugins", "ManagePlugins_Install", "Install"),
+            new TblUserAccessAreas("ManagePlugins", "ManagePlugins_Uninstall", "Uninstall"),
+            new TblUserAccessAreas("ManagePlugins", "ManagePlugins_ConfigPlugin", "Configure"),
+            new TblUserAccessAreas("ManagePlugins", "ManagePlugins_ReloadList", "Refresh"),
+
+            new TblUserAccessAreas("", "ManagePostImages", "ManageProductsOrBlogPostsImages"),
+            new TblUserAccessAreas("ManagePostImages", "ManagePostImages_Add", "Add"),
+            new TblUserAccessAreas("ManagePostImages", "ManagePostImages_Edit", "Edit"),
+            new TblUserAccessAreas("ManagePostImages", "ManagePostImages_Delete", "Delete"),
+
+            new TblUserAccessAreas("", "ManagePostDescriptions", "ManageProductsOrBlogPostsDescriptions"),
+            new TblUserAccessAreas("ManagePostDescriptions", "ManagePostDescriptions_Add", "Add"),
+            new TblUserAccessAreas("ManagePostDescriptions", "ManagePostDescriptions_Edit", "Edit"),
+            new TblUserAccessAreas("ManagePostDescriptions", "ManagePostDescriptions_Delete", "Delete"),
+
+            new TblUserAccessAreas("", "ManagePostAttributes", "ManagePostAttributes"),
+            new TblUserAccessAreas("ManagePostAttributes", "ManagePostAttributes_Add", "Add"),
+            new TblUserAccessAreas("ManagePostAttributes", "ManagePostAttributes_Edit", "Edit"),
+            new TblUserAccessAreas("ManagePostAttributes", "ManagePostAttributes_Delete", "Delete"),
+            new TblUserAccessAreas("ManagePostAttributes", "ManagePostAttributes_Options", "Options"),
+            new TblUserAccessAreas("ManagePostAttributes_Options", "ManagePostAttributes_Options_Add", "Add"),
+            new TblUserAccessAreas("ManagePostAttributes_Options", "ManagePostAttributes_Options_Edit", "Edit"),
+            new TblUserAccessAreas("ManagePostAttributes_Options", "ManagePostAttributes_Options_Delete", "Delete"),
+            new TblUserAccessAreas("ManagePostAttributes", "ManagePostAttributes_Mapping", "PostAttributeMapping"),
+            new TblUserAccessAreas("ManagePostAttributes_Mapping", "ManagePostAttributes_Mapping_Add", "Add"),
+            new TblUserAccessAreas("ManagePostAttributes_Mapping", "ManagePostAttributes_Mapping_Edit", "Edit"),
+            new TblUserAccessAreas("ManagePostAttributes_Mapping", "ManagePostAttributes_Mapping_Delete", "Delete"),
+
+            new TblUserAccessAreas("", "ManagePostCategories", "ManagePostCategories"),
+            new TblUserAccessAreas("ManagePostCategories", "ManagePostCategories_Add", "Add"),
+            new TblUserAccessAreas("ManagePostCategories", "ManagePostCategories_Edit", "Edit"),
+            new TblUserAccessAreas("ManagePostCategories", "ManagePostCategories_Delete", "Delete"),
+            new TblUserAccessAreas("ManagePostCategories", "ManagePostCategories_ChangeOrder", "ChangeOrder"),
+            new TblUserAccessAreas("ManagePostCategories", "ManagePostCategories_GenerateNavbar", "GenerateNavbar"),
+
+            new TblUserAccessAreas("", "ManageRedirects", "ManageUrlRedirects"),
+            new TblUserAccessAreas("ManageRedirects", "ManageRedirects_Add", "Add"),
+            new TblUserAccessAreas("ManageRedirects", "ManageRedirects_Edit", "Edit"),
+            new TblUserAccessAreas("ManageRedirects", "ManageRedirects_Delete", "Delete"),
+            new TblUserAccessAreas("ManageRedirects", "ManageRedirects_Post_Add", "AddPostRedirects"),
+            new TblUserAccessAreas("ManageRedirects", "ManageRedirects_Post_Edit", "EditPostRedirects"),
+
+            new TblUserAccessAreas("", "ManageUserMessages", "ManageUserMessages"),
+            new TblUserAccessAreas("ManageUserMessages", "ManageUserMessages_ReplyToUserMessage", "Reply"),
+            new TblUserAccessAreas("ManageUserMessages", "ManageUserMessages_SetMessageStatus", "ReadUnRead"),
+            new TblUserAccessAreas("ManageUserMessages", "ManageUserMessages_Delete", "Delete"),
+
+            new TblUserAccessAreas("", "Notifications", "ManageNotifications"),
+            new TblUserAccessAreas("Notifications", "Notifications_SendMessageToUser", "SendMessage"),
+            new TblUserAccessAreas("Notifications", "Notifications_SetNotificationStatus", "ReadUnRead"),
+            new TblUserAccessAreas("Notifications", "Notifications_Delete", "Delete"),
+
+            new TblUserAccessAreas("", "Plugins", "Plugins"),
         };
 
         Dictionary<string, string> Countries { get; } = new Dictionary<string, string>()

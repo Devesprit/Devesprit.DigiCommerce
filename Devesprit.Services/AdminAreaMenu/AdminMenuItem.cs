@@ -11,6 +11,7 @@ namespace Devesprit.Services.AdminAreaMenu
         public string Tooltip { get; set; }
         public string Target { get; set; }
         public int DisplayOrder { get; set; }
+        public string NeedPermission { get; set; }
         public List<AdminMenuItem> SubMenus { get; set; }
     }
 }

@@ -269,7 +269,7 @@ namespace Devesprit.Services.Localization
             if (string.IsNullOrEmpty(result) && returnDefaultValue)
             {
                 var localizer = keySelector.Compile();
-                if (localizer(setting).ContainsKey(0))
+                if (localizer(setting)?.ContainsKey(0) ?? false)
                 {
                     result = localizer(setting)[0];
                 }

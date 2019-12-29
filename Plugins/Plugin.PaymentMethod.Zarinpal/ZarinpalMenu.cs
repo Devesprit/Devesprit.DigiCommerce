@@ -18,7 +18,8 @@ namespace Plugin.PaymentMethod.Zarinpal
                     MenuDisplayName = localizationService.GetResource("Plugin.PaymentMethod.Zarinpal.ZarinpalWebSite"),
                     DestUrl = "https://www.zarinpal.com/",
                     Target = "_blank",
-                    Icon = "fa fa-external-link"
+                    Icon = "fa fa-external-link",
+                    NeedPermission = "ZarinpalGateWayConfig"
                 }
             };
         }

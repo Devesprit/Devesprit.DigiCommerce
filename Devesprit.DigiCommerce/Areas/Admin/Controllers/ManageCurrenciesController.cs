@@ -6,6 +6,7 @@ using Devesprit.Core.Localization;
 using Devesprit.DigiCommerce.Areas.Admin.Factories.Interfaces;
 using Devesprit.DigiCommerce.Areas.Admin.Models;
 using Devesprit.DigiCommerce.Controllers;
+using Devesprit.WebFramework.ActionFilters;
 using Devesprit.WebFramework.Helpers;
 using Elmah;
 using Syncfusion.JavaScript;
@@ -13,6 +14,7 @@ using Syncfusion.JavaScript;
 namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
 {
     [Authorize(Roles = "Admin")]
+    [UserHasPermission("ManageCurrencies")]
     public partial class ManageCurrenciesController : BaseController
     {
         private readonly ICurrencyModelFactory _currencyModelFactory;
@@ -33,6 +35,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
             return View();
         }
 
+        [UserHasAtLeastOnePermission("ManageCurrencies_Add", "ManageCurrencies_Edit")]
         public virtual async Task<ActionResult> Editor(int? id)
         {
             if (id != null)
@@ -49,6 +52,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [UserHasAtLeastOnePermission("ManageCurrencies_Add", "ManageCurrencies_Edit")]
         public virtual async Task<ActionResult> Editor(CurrencyModel model, bool? saveAndContinue)
         {
             if (!ModelState.IsValid)
@@ -62,11 +66,21 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
             {
                 if (model.Id == null)
                 {
+                    if (!HttpContext.UserHasPermission("ManageCurrencies_Add"))
+                    {
+                        return View("AccessPermissionError");
+                    }
+
                     //Add new record
                     recordId = await CurrencyService.AddAsync(record);
                 }
                 else
                 {
+                    if (!HttpContext.UserHasPermission("ManageCurrencies_Edit"))
+                    {
+                        return View("AccessPermissionError");
+                    }
+
                     //Edit record
                     await CurrencyService.UpdateAsync(record);
                 }
@@ -92,6 +106,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
         }
 
         [HttpPost]
+        [UserHasPermission("ManageCurrencies_Delete")]
         public virtual async Task<ActionResult> Delete(int[] keys)
         {
             try
@@ -108,6 +123,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
         }
 
         [HttpPost]
+        [UserHasPermission("ManageCurrencies_SetCurrencyAsDefault")]
         public virtual async Task<ActionResult> SetCurrencyAsDefault(int id)
         {
             try

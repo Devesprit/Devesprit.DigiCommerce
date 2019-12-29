@@ -8,6 +8,7 @@ using Devesprit.DigiCommerce.Controllers;
 using Devesprit.Services.Notifications;
 using Devesprit.Services.TemplateEngine;
 using Devesprit.Utilities.Extensions;
+using Devesprit.WebFramework.ActionFilters;
 using Devesprit.WebFramework.Helpers;
 using Elmah;
 using Syncfusion.JavaScript;
@@ -31,12 +32,14 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
             _localizationService = localizationService;
         }
 
+        [UserHasPermission("Notifications")]
         public virtual ActionResult Index(bool? seeUsersNotifications)
         {
             ViewBag.SeeUsersNotifications = seeUsersNotifications == true;
             return View();
         }
 
+        [UserHasPermission("Notifications_SendMessageToUser")]
         public virtual ActionResult SendMessageToUser(string userEmail)
         {
             return View(new SendMessageModel(){Recipient = userEmail });
@@ -44,6 +47,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [UserHasPermission("Notifications_SendMessageToUser")]
         public virtual async Task<ActionResult> SendMessageToUser(SendMessageModel model)
         {
             if (!ModelState.IsValid)
@@ -78,6 +82,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
         }
 
         [HttpPost]
+        [UserHasPermission("Notifications_Delete")]
         public virtual async Task<ActionResult> Delete(int[] keys)
         {
             try
@@ -94,6 +99,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
         }
 
         [HttpPost]
+        [UserHasPermission("Notifications_SetNotificationStatus")]
         public virtual async Task<ActionResult> SetNotificationStatus(int id, bool readed)
         {
             try

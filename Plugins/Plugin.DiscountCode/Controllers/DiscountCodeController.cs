@@ -11,6 +11,7 @@ using Devesprit.DigiCommerce.Controllers;
 using Devesprit.DigiCommerce.Models.Invoice;
 using Devesprit.Services.Invoice;
 using Devesprit.Services.Localization;
+using Devesprit.WebFramework.ActionFilters;
 using Devesprit.WebFramework.Helpers;
 using Elmah;
 using Mapster;
@@ -40,12 +41,14 @@ namespace Plugin.DiscountCode.Controllers
         }
 
         [Authorize(Roles = "Admin")]
+        [UserHasPermission("DevespritDiscountCodeConfig")]
         public virtual ActionResult Configure()
         {
             return View("~/Plugins/Plugin.DiscountCode/Views/Configure.cshtml");
         }
 
         [Authorize(Roles = "Admin")]
+        [UserHasPermission("DevespritDiscountCodeConfig")]
         public virtual ActionResult InvoiceList(string code)
         {
             if (string.IsNullOrWhiteSpace(code))
@@ -62,6 +65,7 @@ namespace Plugin.DiscountCode.Controllers
         }
 
         [Authorize(Roles = "Admin")]
+        [UserHasPermission("DevespritDiscountCodeConfig")]
         public virtual async Task<ActionResult> Editor(int? id)
         {
             if (id != null)
@@ -81,6 +85,7 @@ namespace Plugin.DiscountCode.Controllers
         [HttpPost]
         [Authorize(Roles = "Admin")]
         [ValidateAntiForgeryToken]
+        [UserHasPermission("DevespritDiscountCodeConfig")]
         public virtual async Task<ActionResult> Editor(DiscountCodeViewModel model, bool? saveAndContinue)
         {
             if (model.Id == null && await _dbContext.DiscountCode.AnyAsync(p => p.DiscountCode == model.DiscountCode))
@@ -133,6 +138,7 @@ namespace Plugin.DiscountCode.Controllers
 
         [HttpPost]
         [Authorize(Roles = "Admin")]
+        [UserHasPermission("DevespritDiscountCodeConfig")]
         public virtual async Task<ActionResult> Delete(int[] keys)
         {
             try
@@ -152,6 +158,7 @@ namespace Plugin.DiscountCode.Controllers
         }
 
         [Authorize(Roles = "Admin")]
+        [UserHasPermission("DevespritDiscountCodeConfig")]
         public virtual ActionResult GridDataSource(DataManager dm)
         {
             var dataSource = _dbContext.DiscountCode;
@@ -171,6 +178,7 @@ namespace Plugin.DiscountCode.Controllers
         }
 
         [Authorize(Roles = "Admin")]
+        [UserHasPermission("DevespritDiscountCodeConfig")]
         public virtual ActionResult InvoiceGridDataSource(DataManager dm, string code)
         {
             var dataSource = _dbContext.InvoicesDiscountCode.Where(p=> p.DiscountCode == code).ApplyDataManager(dm, out var count).ToList();
@@ -225,7 +233,7 @@ namespace Plugin.DiscountCode.Controllers
             if (string.IsNullOrWhiteSpace(model.DiscountCode))
             {
                 await _dbContext.InvoicesDiscountCode.Where(p => p.InvoiceId == model.InvoiceId).DeleteAsync();
-                await _invoiceService.ApplyInvoiceDiscountsAsync(tblInvoice);
+                await _invoiceService.ApplyInvoiceDiscountsAsync(tblInvoice.Id);
                 return RedirectToAction("GetInvoiceTablePartial", "Invoice", new { invoiceId = model.InvoiceId });
             }
 
@@ -254,7 +262,7 @@ namespace Plugin.DiscountCode.Controllers
                 InvoiceId = model.InvoiceId
             });
             await _dbContext.SaveChangesAsync();
-            await _invoiceService.ApplyInvoiceDiscountsAsync(tblInvoice);
+            await _invoiceService.ApplyInvoiceDiscountsAsync(tblInvoice.Id);
             return RedirectToAction("GetInvoiceTablePartial", "Invoice", new { invoiceId = model.InvoiceId });
         }
     }

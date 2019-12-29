@@ -3,11 +3,13 @@ using System.Web.Mvc;
 using Devesprit.Core.Localization;
 using Devesprit.Core.Settings;
 using Devesprit.DigiCommerce.Controllers;
+using Devesprit.WebFramework.ActionFilters;
 using Elmah;
 using Plugin.Other.SMS.Models;
 
 namespace Plugin.Other.SMS.Controllers
 {
+    [UserHasPermission("DevespritSMSPluginConfig")]
     public partial class SmsNotifierController : BaseController
     {
         private readonly ILocalizationService _localizationService;

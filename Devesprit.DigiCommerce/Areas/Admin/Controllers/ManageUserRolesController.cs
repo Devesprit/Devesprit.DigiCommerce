@@ -40,6 +40,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
             return View();
         }
 
+        [UserHasAtLeastOnePermission("ManageUserRoles_Add", "ManageUserRoles_Edit")]
         public virtual async Task<ActionResult> Editor(int? id)
         {
             if (id != null)
@@ -56,6 +57,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [UserHasAtLeastOnePermission("ManageUserRoles_Add", "ManageUserRoles_Edit")]
         public virtual async Task<ActionResult> Editor(UserRoleModel model)
         {
             if (!ModelState.IsValid)
@@ -69,11 +71,21 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
             {
                 if (model.Id == null)
                 {
+                    if (!HttpContext.UserHasPermission("ManageUserRoles_Add"))
+                    {
+                        return View("AccessPermissionError");
+                    }
+
                     //Add new record
                     recordId = await _userRolesService.AddAsync(record);
                 }
                 else
                 {
+                    if (!HttpContext.UserHasPermission("ManageUserRoles_Edit"))
+                    {
+                        return View("AccessPermissionError");
+                    }
+
                     //Edit record
                     await _userRolesService.UpdateAsync(record);
                 }
@@ -92,6 +104,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
         }
 
         [HttpPost]
+        [UserHasPermission("ManageUserRoles_Delete")]
         public virtual async Task<ActionResult> Delete(int keys)
         {
             try
@@ -122,6 +135,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
         }
 
         [HttpPost]
+        [UserHasPermission("ManageUserRoles_ApplyPermissions")]
         public virtual async Task<ActionResult> ApplyPermissions(int roleId, int[] areas)
         {
             try

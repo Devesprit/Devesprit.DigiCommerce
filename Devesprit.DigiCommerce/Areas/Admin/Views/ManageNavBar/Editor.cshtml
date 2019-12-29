@@ -79,6 +79,15 @@
             <div class="row">
                 <div class="col-12">
                     <div class="form-group">
+                        @Html.LabelFor(p => p.DisplayArea)
+                        @Html.LocalizedEnumDropDownListFor(p => p.DisplayArea, T("SelectAnItem").ToString(), new { @class = "form-control custom-select form-control-sm" })
+                        @Html.ValidationMessageFor(p => p.DisplayArea, "", new { @class = "form-text text-danger fs-12" })
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <div class="form-group">
                         @Html.LabelFor(p => p.OnClickJs)
                         @Html.LocalizedTextAreaFor(p => p.OnClickJs, new { @class = "form-control form-control-sm ltr-dir" })
                         @Html.ValidationMessageFor(p => p.OnClickJs, "", new { @class = "form-text text-danger fs-12" })

@@ -4,6 +4,7 @@ using Devesprit.Core.Localization;
 using Devesprit.Core.Settings;
 using Devesprit.DigiCommerce.Controllers;
 using Devesprit.Services.Localization;
+using Devesprit.WebFramework.ActionFilters;
 using Elmah;
 using Plugin.Widgets.GoogleAnalytics.Models;
 
@@ -21,6 +22,7 @@ namespace Plugin.Widgets.GoogleAnalytics.Controllers
         }
 
         [Authorize(Roles = "Admin")]
+        [UserHasPermission("GoogleAnalyticsConfig")]
         public virtual ActionResult Configure()
         {
             var model = _settingService.LoadSetting<GoogleAnalyticsSettingsModel>();
@@ -30,6 +32,7 @@ namespace Plugin.Widgets.GoogleAnalytics.Controllers
         [HttpPost]
         [Authorize(Roles = "Admin")]
         [ValidateAntiForgeryToken]
+        [UserHasPermission("GoogleAnalyticsConfig")]
         public virtual ActionResult Configure(GoogleAnalyticsSettingsModel model)
         {
             if (!ModelState.IsValid)

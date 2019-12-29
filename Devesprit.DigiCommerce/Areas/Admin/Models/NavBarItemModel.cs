@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Web.Mvc;
 using Devesprit.Core.Localization;
+using Devesprit.Data.Enums;
 using Devesprit.WebFramework.Attributes;
 
 
@@ -31,6 +32,9 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Models
         [DisplayNameLocalized("Icon")]
         [AllowHtml]
         public LocalizedString Icon { get; set; }
+
+        [DisplayNameLocalized("DisplayArea")]
+        public DisplayArea DisplayArea { get; set; } = DisplayArea.Both;
 
         [DisplayNameLocalized("NavBarItemOnClickJs")]
         [AllowHtml]

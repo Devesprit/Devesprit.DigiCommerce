@@ -4,11 +4,13 @@ using Devesprit.Core;
 using Devesprit.Core.Localization;
 using Devesprit.Core.Settings;
 using Devesprit.DigiCommerce.Controllers;
+using Devesprit.WebFramework.ActionFilters;
 using Elmah;
 using Plugin.ExternalLogin.Models;
 
 namespace Plugin.ExternalLogin.Controllers
 {
+    [UserHasPermission("ExternalLoginConfig")]
     public partial class ExternalLoginProviderController : BaseController
     {
         private readonly ILocalizationService _localizationService;

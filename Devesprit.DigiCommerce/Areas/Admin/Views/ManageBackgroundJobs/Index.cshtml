@@ -63,9 +63,13 @@
                             col.HeaderText(T("Action").ToString()).TextAlign(TextAlign.Center).Template("#ActionTemplate").Add();
                         }))
 
-        <div class="text-center">
-            <a href="/hangfire" target="_blank" class="btn btn-primary mt-3 mb-2">@T("BackgroundJobServer")</a>
-        </div>
+
+        @if (User.HasPermission("ManageBackgroundJobs_BackgroundJobServer"))
+        {
+            <div class="text-center">
+                <a href="/hangfire" target="_blank" class="btn btn-primary mt-3 mb-2">@T("BackgroundJobServer")</a>
+            </div>
+        }
     </div>
 </div>
 

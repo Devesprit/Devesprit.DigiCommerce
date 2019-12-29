@@ -103,7 +103,7 @@ namespace Devesprit.WebFramework.Helpers
                     attributes["class"] = dir + attributes["class"];
                 else
                     attributes.Add("class", dir);
-                tagBuilder.MergeAttributes(attributes, false); 
+                tagBuilder.MergeAttributes(attributes, false);
                 tagBuilder.MergeAttribute("type", HtmlHelper.GetInputTypeString(InputType.Text));
                 tagBuilder.MergeAttribute("name", fullHtmlFieldName + "_" + language.Id, true);
                 tagBuilder.GenerateId(fullHtmlFieldName + "_" + language.Id);
@@ -339,7 +339,7 @@ namespace Devesprit.WebFramework.Helpers
             }
         }
 
-        
+
 
         public static void AddScriptParts(this HtmlHelper html, string part, bool excludeFromBundle = false, bool isAsync = false)
         {
@@ -535,10 +535,20 @@ namespace Devesprit.WebFramework.Helpers
         }
 
 
-        public static bool HasPermission(this HtmlHelper html, string areaName)
+        public static bool UserHasPermission(this HtmlHelper html, string areaName)
         {
-            return html?.ViewContext?.HttpContext?.User?.Identity?.IsAuthenticated != false &&
-                   DependencyResolver.Current.GetService<IWorkContext>().HasPermission(areaName);
+            return DependencyResolver.Current.GetService<IWorkContext>().UserHasPermission(areaName);
+
+        }
+
+        public static bool UserHasAllPermissions(this HtmlHelper html, params string[] areaNames)
+        {
+            return DependencyResolver.Current.GetService<IWorkContext>().UserHasAllPermissions(areaNames);
+        }
+
+        public static bool UserHasAtLeastOnePermission(this HtmlHelper html, params string[] areaNames)
+        {
+            return DependencyResolver.Current.GetService<IWorkContext>().UserHasAtLeastOnePermission(areaNames);
         }
     }
 }

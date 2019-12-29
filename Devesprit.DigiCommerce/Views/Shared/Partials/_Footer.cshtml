@@ -2,6 +2,8 @@
 @using Devesprit.Services.Localization
 @using Devesprit.Services.Pages
 @using Devesprit.Core.Settings
+@using Devesprit.Data.Domain
+@using Devesprit.Data.Enums
 @using Devesprit.DigiCommerce.Models.Post
 @using Devesprit.Services
 @using Devesprit.Services.Posts
@@ -17,6 +19,18 @@
     var productDownloadsLogService = DependencyResolver.Current.GetService<IProductDownloadsLogService>();
     var socialAccountsService = DependencyResolver.Current.GetService<ISocialAccountsService>();
     var categoriesService = DependencyResolver.Current.GetService<IPostCategoriesService>();
+    List<TblPostCategories> categories;
+    if (Request.RequestContext.RouteData.Values["controller"].ToString().ToLower().Trim().Contains("blog"))
+    {
+        categories = categoriesService.GetCategoriesMustShowInFooter().Where(p => p.DisplayArea == DisplayArea.Both ||
+                                                                                  p.DisplayArea == DisplayArea.BlogSection).ToList();
+    }
+    else
+    {
+        categories = categoriesService.GetCategoriesMustShowInFooter().Where(p => p.DisplayArea == DisplayArea.Both ||
+                                                                                  p.DisplayArea == DisplayArea.ProductsSection).ToList();
+    }
+
     var retUrl = string.IsNullOrWhiteSpace(Request.QueryString["returnUrl"]) ?
                  Request.Url.PathAndQuery : Request.QueryString["returnUrl"];
 }
@@ -58,7 +72,7 @@
             <div class="col-12 col-sm-6 col-lg-3">
                 <span class="title">@T("Categories")</span>
                 <ul class="footer-list">
-                    @foreach (var cat in categoriesService.GetCategoriesMustShowInFooter())
+                    @foreach (var cat in categories)
                     {
                         <li><a href="@Url.Action("FilterByCategory", "Product", new {slug=cat.Slug, area = ""})">@cat.GetLocalized(p => p.CategoryName)</a></li>
                     }

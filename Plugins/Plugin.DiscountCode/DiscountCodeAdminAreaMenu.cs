@@ -22,7 +22,8 @@ namespace Plugin.DiscountCode
                         {"pluginName", "DiscountProcessor.DiscountCode"},
                         { "area", "Admin"}
                     }),
-                    Icon = "fa fa-tags"
+                    Icon = "fa fa-tags",
+                    NeedPermission = "DevespritDiscountCodeConfig"
                 }
             };
         }

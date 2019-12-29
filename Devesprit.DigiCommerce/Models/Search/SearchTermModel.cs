@@ -22,7 +22,7 @@ namespace Devesprit.DigiCommerce.Models.Search
 
         [DisplayNameLocalized("FilterByCategory")]
         public int? FilterByCategory { get; set; }
-        public static IEnumerable<SelectListItem> CategoriesList => DependencyResolver.Current.GetService<IPostCategoriesService>().GetAsSelectList();
+        public static IEnumerable<SelectListItem> CategoriesList => DependencyResolver.Current.GetService<IPostCategoriesService>().GetAsSelectList(p=> true);
 
         [DisplayNameLocalized("SearchIn")]
         public SearchPlace SearchPlace { get; set; } = SearchPlace.Anywhere;

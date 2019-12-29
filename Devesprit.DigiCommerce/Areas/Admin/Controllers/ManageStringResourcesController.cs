@@ -8,6 +8,7 @@ using System.Web.Mvc;
 using Devesprit.Core.Localization;
 using Devesprit.Data.Domain;
 using Devesprit.DigiCommerce.Controllers;
+using Devesprit.WebFramework.ActionFilters;
 using Devesprit.WebFramework.Helpers;
 using Elmah;
 using Syncfusion.JavaScript;
@@ -15,6 +16,7 @@ using Syncfusion.JavaScript;
 namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
 {
     [Authorize(Roles = "Admin")]
+    [UserHasAllPermissions("ManageLanguages", "ManageStringResources")]
     public partial class ManageStringResourcesController : BaseController
     {
         private readonly ILocalizationService _localizationService;
@@ -45,6 +47,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
             return View();
         }
 
+        [UserHasPermission("ManageStringResources_ExportResources")]
         public virtual async Task<ActionResult> ExportResources(int langId)
         {
             var language = await LanguagesService.FindByIdAsync(langId);
@@ -65,6 +68,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [UserHasPermission("ManageStringResources_ImportResources")]
         public virtual async Task<ActionResult> ImportResources(int langId, HttpPostedFileBase xmlFile)
         {
             var language = await LanguagesService.FindByIdAsync(langId);
@@ -90,6 +94,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
         }
 
         [HttpPost]
+        [UserHasPermission("ManageStringResources_Delete")]
         public virtual ActionResult Delete(int[] keys)
         {
             try
@@ -105,12 +110,14 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
             }
         }
 
+        [UserHasPermission("ManageStringResources_Edit")]
         public virtual ActionResult Update(TblLocalizedStrings value)
         {
             _localizationService.Update(value);
             return Json(value, JsonRequestBehavior.AllowGet);
         }
 
+        [UserHasPermission("ManageStringResources_Add")]
         public virtual ActionResult Insert(TblLocalizedStrings value)
         {
             _localizationService.Add(value);

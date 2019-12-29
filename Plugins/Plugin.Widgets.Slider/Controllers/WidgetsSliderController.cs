@@ -7,6 +7,7 @@ using System.Web.Mvc;
 using Devesprit.Core.Localization;
 using Devesprit.DigiCommerce.Controllers;
 using Devesprit.Services.Localization;
+using Devesprit.WebFramework.ActionFilters;
 using Devesprit.WebFramework.Helpers;
 using Elmah;
 using Mapster;
@@ -33,12 +34,14 @@ namespace Plugin.Widgets.Slider.Controllers
         }
 
         [Authorize(Roles = "Admin")]
+        [UserHasPermission("DevespritImageSliderConfig")]
         public virtual ActionResult Configure()
         {
             return View("~/Plugins/Plugin.Widgets.Slider/Views/Configure.cshtml");
         }
 
         [Authorize(Roles = "Admin")]
+        [UserHasPermission("DevespritImageSliderConfig")]
         public virtual async Task<ActionResult> Editor(int? id)
         {
             if (id != null)
@@ -59,6 +62,7 @@ namespace Plugin.Widgets.Slider.Controllers
         [HttpPost]
         [Authorize(Roles = "Admin")]
         [ValidateAntiForgeryToken]
+        [UserHasPermission("DevespritImageSliderConfig")]
         public virtual async Task<ActionResult> Editor(SliderViewModel model, bool? saveAndContinue)
         {
             if (!ModelState.IsValid)
@@ -110,6 +114,7 @@ namespace Plugin.Widgets.Slider.Controllers
 
         [HttpPost]
         [Authorize(Roles = "Admin")]
+        [UserHasPermission("DevespritImageSliderConfig")]
         public virtual async Task<ActionResult> Delete(int[] keys)
         {
             try
@@ -133,6 +138,7 @@ namespace Plugin.Widgets.Slider.Controllers
         }
 
         [Authorize(Roles = "Admin")]
+        [UserHasPermission("DevespritImageSliderConfig")]
         public virtual ActionResult GridDataSource(DataManager dm)
         {
             var query = _dbContext.Slider;

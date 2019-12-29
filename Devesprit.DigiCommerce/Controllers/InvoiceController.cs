@@ -9,6 +9,7 @@ using Devesprit.DigiCommerce.Factories.Interfaces;
 using Devesprit.DigiCommerce.Models.Invoice;
 using Devesprit.Services.Invoice;
 using Devesprit.Services.PaymentGateway;
+using Devesprit.WebFramework.ActionFilters;
 using Devesprit.WebFramework.ActionResults;
 using Microsoft.AspNet.Identity;
 
@@ -186,7 +187,7 @@ namespace Devesprit.DigiCommerce.Controllers
                 var result = await paymentGateway.VerifyPayment(invoice);
                 if (result.IsSuccess)
                 {
-                    await _invoiceService.CheckoutInvoiceAsync(invoice, result.TransactionId);
+                    await _invoiceService.CheckoutInvoiceAsync(invoice.Id, result.TransactionId);
                 }
                 else
                 {
@@ -210,6 +211,7 @@ namespace Devesprit.DigiCommerce.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
+        [UserHasPermission( "ManageInvoices_SetInvoiceStatus")]
         public virtual async Task<ActionResult> SetInvoiceStatus(Guid invoiceId, InvoiceStatus Status)
         {
             await _invoiceService.SetStatusAsync(invoiceId, Status);
@@ -219,6 +221,7 @@ namespace Devesprit.DigiCommerce.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
+        [UserHasPermission( "ManageInvoices_SetInvoicePaymentDate")]
         public virtual async Task<ActionResult> SetInvoicePaymentDate(Guid invoiceId, string PaymentDate)
         {
             if (DateTime.TryParseExact(PaymentDate, "yyyy/MM/dd HH:mm:ss", CultureInfo.CurrentUICulture,
@@ -236,6 +239,7 @@ namespace Devesprit.DigiCommerce.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
+        [UserHasPermission( "ManageInvoices_SetInvoiceItemExpirationDate")]
         public virtual async Task<ActionResult> SetInvoiceItemExpirationDate(int itemId, string expDate)
         {
             if (DateTime.TryParseExact(expDate, "yyyy/MM/dd HH:mm:ss", CultureInfo.CurrentUICulture,
@@ -253,6 +257,7 @@ namespace Devesprit.DigiCommerce.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
+        [UserHasPermission( "ManageInvoices_SetInvoiceItemLicenseCode")]
         public virtual async Task<ActionResult> SetInvoiceItemLicenseCode(int itemId, string license)
         {
             await _invoiceService.SetItemLicenseAsync(itemId, license);
@@ -262,6 +267,7 @@ namespace Devesprit.DigiCommerce.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
+        [UserHasPermission( "ManageInvoices_SetInvoiceUser")]
         public virtual async Task<ActionResult> SetInvoiceUser(Guid invoiceId, string UserName)
         {
             var user = await UserManager.FindByNameAsync(UserName);
@@ -276,6 +282,7 @@ namespace Devesprit.DigiCommerce.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
+        [UserHasPermission( "ManageInvoices_SetInvoiceItemUnitPrice")]
         public virtual async Task<ActionResult> SetInvoiceItemUnitPrice(Guid invoiceId, int itemId, double? itemUnitPrice)
         {
             if (itemUnitPrice == null)
@@ -296,6 +303,7 @@ namespace Devesprit.DigiCommerce.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
+        [UserHasPermission( "ManageInvoices_SetInvoiceDiscount")]
         public virtual async Task<ActionResult> SetInvoiceDiscount(Guid invoiceId, double? discountAmount, string discountDescription)
         {
             if (discountAmount == null)
@@ -314,13 +322,14 @@ namespace Devesprit.DigiCommerce.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        [ValidateAntiForgeryToken]  
         [Authorize(Roles = "Admin")]
+        [UserHasPermission( "ManageInvoices_SetInvoiceTax")]
         public virtual async Task<ActionResult> SetInvoiceTax(Guid invoiceId, double? taxAmount, string taxDescription)
         {
             if (taxAmount == null)
             {
-                taxAmount = 0;
+                taxAmount = 0;  
             }
             var currentCurrency = WorkContext.CurrentCurrency;
             if (!currentCurrency.IsMainCurrency)
@@ -334,6 +343,7 @@ namespace Devesprit.DigiCommerce.Controllers
         }
 
         [Authorize(Roles = "Admin")]
+        [UserHasPermission( "ManageInvoices_AddNewItemToInvoiceManually")]
         public virtual ActionResult AddNewItemToInvoiceManually(Guid invoiceId)
         {
             return View("Partials/_AddNewItemToInvoiceManually", invoiceId);
@@ -342,6 +352,7 @@ namespace Devesprit.DigiCommerce.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
+        [UserHasPermission( "ManageInvoices_AddNewItemToInvoiceManually")]
         public virtual async Task<ActionResult> AddNewItemToInvoiceManually(Guid invoiceId, string itemName, string itemHomePage, int qty, double? unitPrice)
         {
             if (unitPrice == null)
@@ -368,6 +379,7 @@ namespace Devesprit.DigiCommerce.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
+        [UserHasPermission( "ManageInvoices_UpdateInvoiceBillingAddress")]
         public virtual async Task<ActionResult> UpdateInvoiceBillingAddress(Guid invoiceId, InvoiceBillingAddressModel model)
         {
             if (!ModelState.IsValid)
@@ -387,6 +399,7 @@ namespace Devesprit.DigiCommerce.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
+        [UserHasPermission( "ManageInvoices_SetInvoiceNote")]
         public virtual async Task<ActionResult> SetInvoiceNote(Guid invoiceId, string note, bool isForAdmin)
         {
             await _invoiceService.SetInvoiceNoteAsync(invoiceId, note, isForAdmin);
@@ -396,9 +409,10 @@ namespace Devesprit.DigiCommerce.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
+        [UserHasPermission( "ManageInvoices_CheckoutInvoice")]
         public virtual async Task<ActionResult> CheckoutInvoice(Guid invoiceId)
         {
-            await _invoiceService.CheckoutInvoiceAsync(await _invoiceService.FindByIdAsync(invoiceId), "");
+            await _invoiceService.CheckoutInvoiceAsync((await _invoiceService.FindByIdAsync(invoiceId)).Id, "");
             return RedirectToAction("Index", new { id = invoiceId });
         }
 

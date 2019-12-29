@@ -215,7 +215,7 @@ namespace Devesprit.WebFramework
         {
             get
             {
-                if (HttpContext?.User.Identity.IsAuthenticated == true)
+                if (HttpContext?.User?.Identity?.IsAuthenticated == true)
                 {
                     var currentUserId = HttpContext.User.Identity.GetUserId();
                     return _usersService.UserManager.FindById(currentUserId);
@@ -229,30 +229,74 @@ namespace Devesprit.WebFramework
         {
             get
             {
-                if (HttpContext?.User.Identity.IsAuthenticated == true)
+                if (HttpContext?.User?.Identity?.IsAuthenticated == true)
                     return HttpContext.User.IsInRole("Admin");
 
                 return false;
             }
         }
 
-        public virtual bool HasPermission(string areaName)
+        public virtual bool UserHasPermission(string areaName)
         {
-            if (HttpContext?.User?.Identity?.IsAuthenticated == false)
-            {
-                return false;
-            }
-
             if (CurrentUser?.RoleId == null)
             {
                 return false;
             }
 
             var userRole = _userRolesService.FindById(CurrentUser.RoleId.Value);
-            var permission = userRole.Permissions.FirstOrDefault(p => p.AreaName.ToLower().Trim() == areaName.ToLower().Trim());
+            var permission = userRole.Permissions.FirstOrDefault(p => p.AreaName.Trim().ToLower() == areaName.Trim().ToLower());
             if (permission != null && permission.HaveAccess)
             {
                 return true;
+            }
+
+            return false;
+        }
+
+        public bool UserHasAllPermissions(params string[] areaNames)
+        {
+            if (CurrentUser?.RoleId == null)
+            {
+                return false;
+            }
+
+            var userRole = _userRolesService.FindById(CurrentUser.RoleId.Value);
+            var permissions = userRole.Permissions.ToList();
+            if (permissions.Any())
+            {
+                foreach (var areaName in areaNames)
+                {
+                    var permission = permissions.FirstOrDefault(p => p.AreaName.Trim().ToLower() == areaName.Trim().ToLower());
+                    if (permission == null || !permission.HaveAccess)
+                    {
+                        return false;
+                    }
+                }
+                return true;
+            }
+
+            return false;
+        }
+
+        public bool UserHasAtLeastOnePermission(params string[] areaNames)
+        {
+            if (CurrentUser?.RoleId == null)
+            {
+                return false;
+            }
+
+            var userRole = _userRolesService.FindById(CurrentUser.RoleId.Value);
+            var permissions = userRole.Permissions.ToList();
+            if (permissions.Any())
+            {
+                foreach (var areaName in areaNames)
+                {
+                    var permission = permissions.FirstOrDefault(p => p.AreaName.Trim().ToLower() == areaName.Trim().ToLower());
+                    if (permission != null && permission.HaveAccess)
+                    {
+                        return true;
+                    }
+                }
             }
 
             return false;

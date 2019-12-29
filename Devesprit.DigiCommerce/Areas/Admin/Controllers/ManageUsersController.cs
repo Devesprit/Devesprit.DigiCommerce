@@ -9,6 +9,7 @@ using Devesprit.DigiCommerce.Controllers;
 using Devesprit.Services.Countries;
 using Devesprit.Services.Users;
 using Devesprit.WebFramework;
+using Devesprit.WebFramework.ActionFilters;
 using Devesprit.WebFramework.Helpers;
 using Elmah;
 using Syncfusion.JavaScript;
@@ -16,6 +17,7 @@ using Syncfusion.JavaScript;
 namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
 {
     [Authorize(Roles = "Admin")]
+    [UserHasPermission("ManageUsers")]
     public partial class ManageUsersController : BaseController
     {
         private readonly IUsersService _usersService;
@@ -61,6 +63,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
             return PartialView();
         }
 
+        [UserHasAtLeastOnePermission("ManageUsers_Add", "ManageUsers_Edit")]
         public virtual async Task<ActionResult> Editor(string id)
         {
             if (!string.IsNullOrEmpty(id))
@@ -77,6 +80,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [UserHasAtLeastOnePermission("ManageUsers_Add", "ManageUsers_Edit")]
         public virtual async Task<ActionResult> Editor(UserModel model, bool? saveAndContinue)
         {
             model.CountriesList = await _countriesService.GetAsSelectListAsync();
@@ -86,6 +90,21 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
             if (!ModelState.IsValid)
             {
                 return View(model);
+            }
+
+            if (model.Id == null)
+            {
+                if (!HttpContext.UserHasPermission("ManageUsers_Add"))
+                {
+                    return View("AccessPermissionError");
+                }
+            }
+            else
+            {
+                if (!HttpContext.UserHasPermission("ManageUsers_Edit"))
+                {
+                    return View("AccessPermissionError");
+                }
             }
 
             var record = _userModelFactory.PrepareTblUsers(model);
@@ -158,6 +177,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
         }
 
         [HttpPost]
+        [UserHasPermission("ManageUsers_Delete")]
         public virtual async Task<ActionResult> Delete(Guid[] keys)
         {
             try

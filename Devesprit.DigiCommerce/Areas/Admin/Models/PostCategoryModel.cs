@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Web.Mvc;
 using Devesprit.Core.Localization;
+using Devesprit.Data.Enums;
 using Devesprit.Services.Posts;
 using Devesprit.WebFramework.Attributes;
 
@@ -25,6 +26,9 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Models
 
         [DisplayNameLocalized("ShowInFooter")]
         public bool ShowInFooter { get; set; } = true;
+
+        [DisplayNameLocalized("DisplayArea")] 
+        public DisplayArea DisplayArea { get; set; } = DisplayArea.Both;
 
         [DisplayNameLocalized("DisplayOrder")]
         [RequiredLocalized(AllowEmptyStrings = false)]

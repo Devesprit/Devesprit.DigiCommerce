@@ -1,7 +1,9 @@
 ﻿using System.Web.Routing;
 using Devesprit.Core.Plugin;
 using Devesprit.Core.Settings;
+using Devesprit.Data.Domain;
 using Devesprit.Services.Localization;
+using Devesprit.Services.Users;
 using Plugin.Other.SMS.Models;
 
 namespace Plugin.Other.SMS
@@ -9,10 +11,12 @@ namespace Plugin.Other.SMS
     public partial class SmsNotifierPlugin : BasePlugin
     {
         private readonly ISettingService _settingService;
+        private readonly IUserRolesService _userRolesService;
 
-        public SmsNotifierPlugin(ISettingService settingsService)
+        public SmsNotifierPlugin(ISettingService settingsService, IUserRolesService userRolesService)
         {
             _settingService = settingsService;
+            _userRolesService = userRolesService;
         }
 
         public override void GetConfigurationRoute(out string actionName, out string controllerName, out RouteValueDictionary routeValues)
@@ -88,6 +92,9 @@ namespace Plugin.Other.SMS
             this.AddOrUpdatePluginLocaleResource("Plugin.Other.SMS.NewMessageRecipients", "شماره همراه گیرندگان پیام 'دریافت پیغام جدید'<br/><small class='text-muted'>(با کاما ',' جدا کنید)</small>", "fa");
             this.AddOrUpdatePluginLocaleResource("Plugin.Other.SMS.SearchIndexesFailedRecipients", "شماره همراه گیرندگان پیام 'بروز خطا در ایجاد شاخص های موتور جستجو'<br/><small class='text-muted'>(با کاما ',' جدا کنید)</small>", "fa");
 
+            _userRolesService.AddAccessAreas(new TblUserAccessAreas("Plugins", "DevespritSMSPluginConfig", "Plugin.Other.SMS.Configuration"));
+            _userRolesService.GrantAllPermissionsToAdministrator();
+
             base.Install();
         }
 
@@ -123,6 +130,9 @@ namespace Plugin.Other.SMS
             this.DeletePluginLocaleResource("Plugin.Other.SMS.NewCommentRecipients");
             this.DeletePluginLocaleResource("Plugin.Other.SMS.NewMessageRecipients");
             this.DeletePluginLocaleResource("Plugin.Other.SMS.SearchIndexesFailedRecipients");
+
+            _userRolesService.DeleteAccessAreas("DevespritSMSPluginConfig");
+            _userRolesService.GrantAllPermissionsToAdministrator();
 
             base.Uninstall();
         }

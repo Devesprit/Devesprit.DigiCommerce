@@ -14,6 +14,7 @@ using Devesprit.Data.Domain;
 using Devesprit.Services.Invoice;
 using Devesprit.Services.Localization;
 using Devesprit.Services.PaymentGateway;
+using Devesprit.Services.Users;
 using PayPal.PayPalAPIInterfaceService;
 using PayPal.PayPalAPIInterfaceService.Model;
 using Plugin.PaymentMethod.PayPal.Models;
@@ -25,11 +26,13 @@ namespace Plugin.PaymentMethod.PayPal
     {
         private readonly ILocalizationService _localizationService;
         private readonly ISettingService _settingService;
+        private readonly IUserRolesService _userRolesService;
 
-        public PayPalPaymentMethodPlugin(ILocalizationService localizationService, ISettingService settingService)
+        public PayPalPaymentMethodPlugin(ILocalizationService localizationService, ISettingService settingService, IUserRolesService userRolesService)
         {
             _localizationService = localizationService;
             _settingService = settingService;
+            _userRolesService = userRolesService;
         }
 
         public override void GetConfigurationRoute(out string actionName, out string controllerName, out RouteValueDictionary routeValues)
@@ -85,7 +88,8 @@ namespace Plugin.PaymentMethod.PayPal
             this.AddOrUpdatePluginLocaleResource("Plugin.PaymentMethod.PayPal.PayPalBrandName", "نام برند شما", "fa");
             this.AddOrUpdatePluginLocaleResource("Plugin.PaymentMethod.PayPal.ServiceUnavailable", "متاسفانه در حال حاضر سرویس پی پال خارج از دسترس است لطفا دقایقی بعد دوباره امتحان کنید.", "fa");
 
-
+            _userRolesService.AddAccessAreas(new TblUserAccessAreas("Plugins", "PayPalGateWayConfig", "Plugin.PaymentMethod.PayPal.PayPalConfig"));
+            _userRolesService.GrantAllPermissionsToAdministrator();
 
             base.Install();
         }
@@ -111,6 +115,9 @@ namespace Plugin.PaymentMethod.PayPal
             this.DeletePluginLocaleResource("Plugin.PaymentMethod.PayPal.PayPalConfig");
             this.DeletePluginLocaleResource("Plugin.PaymentMethod.PayPal.PayPalHeaderImageUrl");
             this.DeletePluginLocaleResource("Plugin.PaymentMethod.PayPal.PayPalBrandName");
+
+            _userRolesService.DeleteAccessAreas("PayPalGateWayConfig");
+            _userRolesService.GrantAllPermissionsToAdministrator();
 
             base.Uninstall();
         }

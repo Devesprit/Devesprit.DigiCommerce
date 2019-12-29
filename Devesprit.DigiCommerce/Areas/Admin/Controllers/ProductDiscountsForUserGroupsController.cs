@@ -7,6 +7,7 @@ using Devesprit.DigiCommerce.Areas.Admin.Factories.Interfaces;
 using Devesprit.DigiCommerce.Areas.Admin.Models;
 using Devesprit.DigiCommerce.Controllers;
 using Devesprit.Services.Products;
+using Devesprit.WebFramework.ActionFilters;
 using Devesprit.WebFramework.Helpers;
 using Elmah;
 using Syncfusion.JavaScript;
@@ -14,6 +15,7 @@ using Syncfusion.JavaScript;
 namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
 {
     [Authorize(Roles = "Admin")]
+    [UserHasPermission("ManageProductDiscountsForUserGroups")]
     public partial class ProductDiscountsForUserGroupsController : BaseController
     {
         private readonly IProductDiscountsForUserGroupsModelFactory _modelFactory;
@@ -38,6 +40,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
             return PartialView();
         }
 
+        [UserHasAtLeastOnePermission("ManageProductDiscountsForUserGroups_Add", "ManageProductDiscountsForUserGroups_Edit")]
         public virtual async Task<ActionResult> Editor(int? id, int productId)
         {
             if (id != null)
@@ -54,6 +57,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [UserHasAtLeastOnePermission("ManageProductDiscountsForUserGroups_Add", "ManageProductDiscountsForUserGroups_Edit")]
         public virtual async Task<ActionResult> Editor(ProductDiscountsForUserGroupsModel model, bool? saveAndContinue)
         {
             if (!ModelState.IsValid)
@@ -67,11 +71,21 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
             {
                 if (model.Id == null)
                 {
+                    if (!HttpContext.UserHasPermission("ManageProductDiscountsForUserGroups_Add"))
+                    {
+                        return View("AccessPermissionError");
+                    }
+
                     //Add new record
                     recordId = await _productDiscountsForUserGroupsService.AddAsync(record);
                 }
                 else
                 {
+                    if (!HttpContext.UserHasPermission("ManageProductDiscountsForUserGroups_Edit"))
+                    {
+                        return View("AccessPermissionError");
+                    }
+
                     //Edit record
                     await _productDiscountsForUserGroupsService.UpdateAsync(record);
                 }
@@ -95,6 +109,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
         }
 
         [HttpPost]
+        [UserHasPermission("ManageProductDiscountsForUserGroups_Delete")]
         public virtual async Task<ActionResult> Delete(int[] keys)
         {
             try

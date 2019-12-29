@@ -16,7 +16,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
     [Authorize(Roles = "Admin")]
     public partial class ManageSocialAccountsController : BaseController
     {
-        private readonly ISocialAccountsService _socialAccountsService;
+        private readonly ISocialAccountsService _socialAccountsService; 
         private readonly ISocialAccountModelFactory _socialAccountModelFactory;
         private readonly ILocalizationService _localizationService;
         private readonly ILocalizedEntityService _localizedEntityService;

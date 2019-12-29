@@ -6,6 +6,7 @@ using Devesprit.Core.Localization;
 using Devesprit.DigiCommerce.Areas.Admin.Factories.Interfaces;
 using Devesprit.DigiCommerce.Areas.Admin.Models;
 using Devesprit.DigiCommerce.Controllers;
+using Devesprit.WebFramework.ActionFilters;
 using Devesprit.WebFramework.Helpers;
 using Elmah;
 using Hangfire;
@@ -15,6 +16,7 @@ using Syncfusion.JavaScript;
 namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
 {
     [Authorize(Roles = "Admin")]
+    [UserHasPermission("ManageBackgroundJobs")]
     public partial class ManageBackgroundJobsController : BaseController
     {
         private readonly IBackgroundJobModelFactory _backgroundJobModelFactory;
@@ -32,6 +34,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
             return View();
         }
 
+        [UserHasPermission("ManageBackgroundJobs_Edit")]
         public virtual ActionResult Editor(string id)
         {
             if (id != null)
@@ -52,6 +55,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [UserHasPermission("ManageBackgroundJobs_Edit")]
         public virtual ActionResult Editor(BackgroundJobModel model, bool? saveAndContinue)
         {
             if (!ModelState.IsValid)
@@ -90,6 +94,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
         }
 
         [HttpPost]
+        [UserHasPermission("ManageBackgroundJobs_Delete")]
         public virtual ActionResult Delete(string[] keys)
         {
             try
@@ -106,6 +111,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
         }
 
         [HttpPost]
+        [UserHasPermission("ManageBackgroundJobs_PauseResumeJob")]
         public virtual ActionResult PauseResumeJob(string jobId, bool pause)
         {
             try
@@ -140,6 +146,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
         }
         
         [HttpPost]
+        [UserHasPermission("ManageBackgroundJobs_ExecuteJob")]
         public virtual ActionResult ExecuteJobNow(string jobId)
         {
             try

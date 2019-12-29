@@ -11,6 +11,7 @@ using Devesprit.Services.Blog;
 using Devesprit.Services.Pages;
 using Devesprit.Services.Products;
 using Devesprit.Services.Redirects;
+using Devesprit.WebFramework.ActionFilters;
 using Devesprit.WebFramework.Helpers;
 using Elmah;
 using Syncfusion.JavaScript;
@@ -18,6 +19,7 @@ using Syncfusion.JavaScript;
 namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
 {
     [Authorize(Roles = "Admin")]
+    [UserHasPermission("ManageRedirects")]
     public partial class ManageRedirectsController : BaseController
     {
         private readonly IRedirectsService _redirectsService;
@@ -62,6 +64,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
             return PartialView();
         }
 
+        [UserHasAtLeastOnePermission("ManageRedirects_Add", "ManageRedirects_Edit")]
         public virtual async Task<ActionResult> Editor(int? id)
         {
             if (id != null)
@@ -78,6 +81,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [UserHasAtLeastOnePermission("ManageRedirects_Add", "ManageRedirects_Edit")]
         public virtual async Task<ActionResult> Editor(RedirectModel model, bool? saveAndContinue)
         {
             if (!ModelState.IsValid)
@@ -91,11 +95,21 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
             {
                 if (model.Id == null)
                 {
+                    if (!HttpContext.UserHasPermission("ManageRedirects_Add"))
+                    {
+                        return View("AccessPermissionError");
+                    }
+
                     //Add new record
                     recordId = await _redirectsService.AddAsync(record);
                 }
                 else
                 {
+                    if (!HttpContext.UserHasPermission("ManageRedirects_Edit"))
+                    {
+                        return View("AccessPermissionError");
+                    }
+
                     //Edit record
                     await _redirectsService.UpdateAsync(record);
                 }
@@ -119,6 +133,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
         }
 
         [HttpPost]
+        [UserHasPermission("ManageRedirects_Delete")]
         public virtual async Task<ActionResult> Delete(int[] keys)
         {
             try
@@ -133,7 +148,8 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
                 return Content(string.Format(_localizationService.GetResource("ErrorOnOperation"), e.Message, errorCode));
             }
         }
-        
+
+        [UserHasAtLeastOnePermission("ManageRedirects_Post_Add", "ManageRedirects_Post_Edit")]
         public virtual async Task<ActionResult> EntitySlugEditor(int? ruleId, RedirectRuleGroup redirectGroup, int entityId)
         {
             RedirectModel model;
@@ -180,6 +196,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [UserHasAtLeastOnePermission("ManageRedirects_Post_Add", "ManageRedirects_Post_Edit")]
         public virtual async Task<ActionResult> EntitySlugEditor(RedirectModel model)
         {
             model.Active = true;
@@ -200,11 +217,21 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
             {
                 if (model.Id == null)
                 {
+                    if (!HttpContext.UserHasPermission("ManageRedirects_Post_Add"))
+                    {
+                        return View("AccessPermissionError");
+                    }
+
                     //Add new record
                     await _redirectsService.AddAsync(record);
                 }
                 else
                 {
+                    if (!HttpContext.UserHasPermission("ManageRedirects_Post_Edit"))
+                    {
+                        return View("AccessPermissionError");
+                    }
+
                     //Edit record
                     await _redirectsService.UpdateAsync(record);
                 }

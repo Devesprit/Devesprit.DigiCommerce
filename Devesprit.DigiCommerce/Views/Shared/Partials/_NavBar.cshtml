@@ -2,11 +2,22 @@
 @using Devesprit.Services.Localization
 @using Devesprit.Services.NavBar
 @using Devesprit.Core.Settings
+@using Devesprit.Data.Enums
 @using Devesprit.Services
 @{
     Layout = null;
     var settings = DependencyResolver.Current.GetService<ISettingService>().LoadSetting<SiteSettings>();
-    var navbarItems = DependencyResolver.Current.GetService<INavBarService>().GetAsEnumerable().ToList();
+    List<TblNavBarItems> navbarItems;
+    if (Request.RequestContext.RouteData.Values["controller"].ToString().ToLower().Trim().Contains("blog"))
+    {
+        navbarItems = DependencyResolver.Current.GetService<INavBarService>().GetAsEnumerable().Where(p=> p.DisplayArea == DisplayArea.Both ||
+                                                                                                          p.DisplayArea == DisplayArea.BlogSection).ToList();
+    }
+    else
+    {
+        navbarItems = DependencyResolver.Current.GetService<INavBarService>().GetAsEnumerable().Where(p => p.DisplayArea == DisplayArea.Both ||
+                                                                                                           p.DisplayArea == DisplayArea.ProductsSection).ToList();
+    }
 }
 
 @functions

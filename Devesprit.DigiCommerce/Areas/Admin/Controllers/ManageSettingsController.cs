@@ -11,6 +11,7 @@ using Devesprit.DigiCommerce.Controllers;
 using Devesprit.Services;
 using Devesprit.Services.MemoryCache;
 using Devesprit.Services.SearchEngine;
+using Devesprit.WebFramework.ActionFilters;
 using Elmah;
 using Hangfire;
 using WebGrease;
@@ -36,7 +37,8 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
             _localizationService = localizationService;
             _webHelper = webHelper;
         }
-        
+
+        [UserHasPermission("SiteSettings")]
         public virtual async Task<ActionResult> Index()
         {
             var record = await _settingService.LoadSettingAsync<SiteSettings>();
@@ -45,6 +47,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [UserHasAllPermissions("SiteSettings", "SiteSettings_ChangeSettings")]
         public virtual async Task<ActionResult> Index(SiteSettingModel model)
         {
             #region Validations
@@ -100,6 +103,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
             return RedirectToAction("Index");
         }
 
+        [UserHasPermission("SiteSettings_ApplicationErrorsLog_Clear")]
         public virtual ActionResult ClearApplicationErrorLog()
         {
             try
@@ -115,6 +119,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
             return RedirectToAction("Index", "Administration");
         }
 
+        [UserHasPermission("SiteSettings_RefreshSearchEngineIndexes")]
         public virtual ActionResult RefreshSearchEngineIndexes()
         {
             try
@@ -130,6 +135,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
             return RedirectToAction("Index", "Administration");
         }
 
+        [UserHasPermission("SiteSettings_PurgeCache")]
         public virtual ActionResult PurgeCache()
         {
             try

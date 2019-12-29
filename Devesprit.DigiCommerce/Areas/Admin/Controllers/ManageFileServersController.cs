@@ -7,6 +7,7 @@ using Devesprit.DigiCommerce.Areas.Admin.Factories.Interfaces;
 using Devesprit.DigiCommerce.Areas.Admin.Models;
 using Devesprit.DigiCommerce.Controllers;
 using Devesprit.Services.FileServers;
+using Devesprit.WebFramework.ActionFilters;
 using Devesprit.WebFramework.Helpers;
 using Elmah;
 using Syncfusion.JavaScript;
@@ -14,6 +15,7 @@ using Syncfusion.JavaScript;
 namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
 {
     [Authorize(Roles = "Admin")]
+    [UserHasPermission("ManageFileServers")]
     public partial class ManageFileServersController : BaseController
     {
         private readonly IFileServersService _fileServersService;
@@ -34,6 +36,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
             return View();
         }
 
+        [UserHasAtLeastOnePermission("ManageFileServers_Add", "ManageFileServers_Edit")]
         public virtual async Task<ActionResult> Editor(int? id)
         {
             if (id != null)
@@ -50,6 +53,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [UserHasAtLeastOnePermission("ManageFileServers_Add", "ManageFileServers_Edit")]
         public virtual async Task<ActionResult> Editor(FileServerModel model, bool? saveAndContinue)
         {
             if (!ModelState.IsValid)
@@ -76,11 +80,21 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
             {
                 if (model.Id == null)
                 {
+                    if (!HttpContext.UserHasPermission("ManageFileServers_Add"))
+                    {
+                        return View("AccessPermissionError");
+                    }
+
                     //Add new record
                     recordId = await _fileServersService.AddAsync(record);
                 }
                 else
                 {
+                    if (!HttpContext.UserHasPermission("ManageFileServers_Edit"))
+                    {
+                        return View("AccessPermissionError");
+                    }
+
                     //Edit record
                     await _fileServersService.UpdateAsync(record);
                 }
@@ -104,6 +118,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
         }
 
         [HttpPost]
+        [UserHasPermission("ManageFileServers_Delete")]
         public virtual async Task<ActionResult> Delete(int[] keys)
         {
             try

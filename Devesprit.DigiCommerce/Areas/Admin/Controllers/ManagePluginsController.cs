@@ -6,6 +6,7 @@ using Devesprit.Core.Localization;
 using Devesprit.Core.Plugin;
 using Devesprit.DigiCommerce.Areas.Admin.Models;
 using Devesprit.DigiCommerce.Controllers;
+using Devesprit.WebFramework.ActionFilters;
 using Devesprit.WebFramework.Helpers;
 using Elmah;
 using Syncfusion.JavaScript;
@@ -13,6 +14,7 @@ using Syncfusion.JavaScript;
 namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
 {
     [Authorize(Roles = "Admin")]
+    [UserHasPermission("ManagePlugins")]
     public partial class ManagePluginsController : BaseController
     {
         private readonly IPluginFinder _pluginFinder;
@@ -65,6 +67,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
             return Json(value, JsonRequestBehavior.AllowGet);
         }
 
+        [UserHasPermission("ManagePlugins_Install")]
         public virtual ActionResult Install(string pluginName)
         {
             try
@@ -92,6 +95,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
             return RedirectToAction("Index");
         }
 
+        [UserHasPermission("ManagePlugins_Uninstall")]
         public virtual ActionResult Uninstall(string pluginName)
         {
             try
@@ -121,6 +125,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
         }
 
         [HttpGet]
+        [UserHasPermission("ManagePlugins_ConfigPlugin")]
         public virtual ActionResult ConfigPlugin(string pluginName)
         {
             var descriptor = _pluginFinder.GetPluginDescriptorBySystemName(pluginName, LoadPluginsMode.InstalledOnly);
@@ -140,6 +145,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
             return View(model);
         }
 
+        [UserHasPermission("ManagePlugins_ReloadList")]
         public virtual ActionResult ReloadList()
         {
             _webHelper.RestartAppDomain();

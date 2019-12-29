@@ -10,6 +10,7 @@ using Devesprit.Services.Currency;
 using Devesprit.Services.Discounts;
 using Devesprit.Services.Invoice;
 using Devesprit.Services.Localization;
+using Devesprit.Services.Users;
 using Devesprit.Services.Widget;
 using Plugin.DiscountCode.DB;
 
@@ -19,11 +20,13 @@ namespace Plugin.DiscountCode
     {
         private readonly DiscountCodeDbContext _dbContext;
         private readonly ILocalizationService _localizationService;
+        private readonly IUserRolesService _userRolesService;
 
-        public DiscountCodePlugin(DiscountCodeDbContext dbContext, ILocalizationService localizationService)
+        public DiscountCodePlugin(DiscountCodeDbContext dbContext, ILocalizationService localizationService, IUserRolesService userRolesService)
         {
             _dbContext = dbContext;
             _localizationService = localizationService;
+            _userRolesService = userRolesService;
         }
 
         public virtual IList<string> GetWidgetZones()
@@ -76,6 +79,9 @@ namespace Plugin.DiscountCode
             this.AddOrUpdatePluginLocaleResource("Plugin.DiscountCode.NumberOfUsed", "تعداد استفاده شده", "fa");
             this.AddOrUpdatePluginLocaleResource("Plugin.DiscountCode.DiscountCodeDuplicateError", "کد تخفیف وارد شده تکراری می باشد، لطفا کد دیگری وارد کنید", "fa");
 
+            _userRolesService.AddAccessAreas(new TblUserAccessAreas("Plugins", "DevespritDiscountCodeConfig", "Plugin.DiscountCode.ManageDiscountCodes"));
+            _userRolesService.GrantAllPermissionsToAdministrator();
+
             base.Install();
         }
 
@@ -89,6 +95,10 @@ namespace Plugin.DiscountCode
             this.DeletePluginLocaleResource("Plugin.DiscountCode.DiscountCodeIsExpired");
             this.DeletePluginLocaleResource("Plugin.DiscountCode.NumberOfUsed");
             this.DeletePluginLocaleResource("Plugin.DiscountCode.DiscountCodeDuplicateError");
+
+            _userRolesService.DeleteAccessAreas("DevespritDiscountCodeConfig");
+            _userRolesService.GrantAllPermissionsToAdministrator();
+
             base.Uninstall();
         }
 

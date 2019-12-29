@@ -1,4 +1,5 @@
-﻿using Hangfire.Dashboard;
+﻿using Devesprit.WebFramework.Helpers;
+using Hangfire.Dashboard;
 using Microsoft.Owin;
 
 namespace Devesprit.DigiCommerce

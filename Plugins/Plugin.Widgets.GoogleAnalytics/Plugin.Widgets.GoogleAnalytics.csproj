@@ -89,6 +89,11 @@
       <Name>Devesprit.Core</Name>
       <Private>False</Private>
     </ProjectReference>
+    <ProjectReference Include="..\..\Devesprit.Data\Devesprit.Data.csproj">
+      <Project>{3EBAFB98-64F2-4731-A879-FAAB2D2BE8F0}</Project>
+      <Name>Devesprit.Data</Name>
+      <Private>False</Private>
+    </ProjectReference>
     <ProjectReference Include="..\..\Devesprit.DigiCommerce\Devesprit.DigiCommerce.csproj">
       <Project>{99B389F5-610D-45F7-BF19-10443B00D8C4}</Project>
       <Name>Devesprit.DigiCommerce</Name>
@@ -126,7 +131,7 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties BuildVersion_AssemblyInfoFilename="Properties\AssemblyInfo.cs" BuildVersion_StartDate="2000/1/1" BuildVersion_UseGlobalSettings="True" />
+      <UserProperties BuildVersion_UseGlobalSettings="True" BuildVersion_StartDate="2000/1/1" BuildVersion_AssemblyInfoFilename="Properties\AssemblyInfo.cs" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>

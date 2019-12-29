@@ -36,7 +36,7 @@ namespace Devesprit.Services.Invoice
 
         #region Other Actions
 
-        Task CheckoutInvoiceAsync(TblInvoices invoice, string transactionId);
+        Task CheckoutInvoiceAsync(Guid invoiceId, string transactionId);
         Task<bool> UserCanEditInvoiceAsync(Guid id, string userId);
         Task<TblInvoices> GetUserCurrentInvoiceAsync(bool createNewIfNull = true);
         Task SetInvoiceNoteAsync(Guid invoiceId, string note, bool isForAdmin);
@@ -48,8 +48,8 @@ namespace Devesprit.Services.Invoice
         Task SetUserIdAsync(Guid invoiceId, string userId);
         Task SetDiscountAsync(Guid invoiceId, double? discountAmount, string discountDescription);
         Task SetTaxAsync(Guid invoiceId, double? taxAmount, string taxDescription);
-        Task<TblInvoices> ApplyInvoiceTaxesAsync(TblInvoices invoice);
-        Task<TblInvoices> ApplyInvoiceDiscountsAsync(TblInvoices invoice);
+        Task<TblInvoices> ApplyInvoiceTaxesAsync(Guid invoiceId);
+        Task<TblInvoices> ApplyInvoiceDiscountsAsync(Guid invoiceId);
         Task DeletePendingInvoices();
 
         #endregion

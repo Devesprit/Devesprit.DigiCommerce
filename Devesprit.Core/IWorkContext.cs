@@ -12,6 +12,8 @@ namespace Devesprit.Core
 
         bool IsAdmin { get; }
 
-        bool HasPermission(string areaName);
+        bool UserHasPermission(string areaName);
+        bool UserHasAllPermissions(params string[] areaNames);
+        bool UserHasAtLeastOnePermission(params string[] areaNames);
     }
 }

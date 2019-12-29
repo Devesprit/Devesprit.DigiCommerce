@@ -19,6 +19,7 @@ using Devesprit.Core.Plugin;
 using Devesprit.DigiCommerce.Controllers;
 using Devesprit.Services.MemoryCache;
 using Devesprit.WebFramework;
+using Devesprit.WebFramework.Helpers;
 using Devesprit.WebFramework.ModelBinder;
 using Elmah;
 using Mapster;
@@ -30,10 +31,6 @@ namespace Devesprit.DigiCommerce
     {
         protected void Application_Start()
         {
-#if DEBUG
-            //HibernatingRhinos.Profiler.Appender.EntityFramework.EntityFrameworkProfiler.Initialize();
-#endif
-
             if (!Directory.Exists(Server.MapPath("App_Data")))
             {
                 Directory.CreateDirectory(Server.MapPath("App_Data"));
@@ -94,6 +91,27 @@ namespace Devesprit.DigiCommerce
             AntiForgeryConfig.RequireSsl = HttpContext.Current.Request.IsSecureConnection;
         }
 
+        protected void Application_AuthenticateRequest(object sender, EventArgs e)
+        {
+            if (Request.Url.AbsolutePath.ToLowerInvariant().StartsWith("/elmah.axd"))
+            {
+                if (!User.HasPermission("SiteSettings_ApplicationErrorsLog"))
+                {
+                    if (!Response.IsRequestBeingRedirected)
+                        Response.Redirect("~/Error/AccessPermissionError");
+                }
+            }
+
+            if (Request.Url.AbsolutePath.ToLowerInvariant().StartsWith("/hangfire"))
+            {
+                if (!User.HasPermission("ManageBackgroundJobs_BackgroundJobServer"))
+                {
+                    if (!Response.IsRequestBeingRedirected)
+                        Response.Redirect("~/Error/AccessPermissionError");
+                }
+            }
+        }
+
         protected void Application_AcquireRequestState(object sender, EventArgs e)
         {
             //Set Current Thread Culture
@@ -124,7 +142,8 @@ namespace Devesprit.DigiCommerce
             if (httpException == null)
             {
                 var errorCode = ErrorLog.GetDefault(HttpContext.Current).Log(new Error(exception, HttpContext.Current));
-                Response.Redirect("~/Error/Index?errorCode=" + errorCode);
+                if (!Response.IsRequestBeingRedirected)
+                    Response.Redirect("~/Error/Index?errorCode=" + errorCode);
             }
             else //It's an Http Exception, Let's handle it.
             {
@@ -132,11 +151,13 @@ namespace Devesprit.DigiCommerce
                 {
                     case 404:
                         // Page not found.
-                        Response.Redirect("~/Error/PageNotFound");
+                        if (!Response.IsRequestBeingRedirected)
+                            Response.Redirect("~/Error/PageNotFound");
                         break;
                     default:
                         var errorCode = ErrorLog.GetDefault(HttpContext.Current).Log(new Error(exception, HttpContext.Current));
-                        Response.Redirect("~/Error/Index?errorCode=" + errorCode);
+                        if (!Response.IsRequestBeingRedirected)
+                            Response.Redirect("~/Error/Index?errorCode=" + errorCode);
                         break;
                 }
             }

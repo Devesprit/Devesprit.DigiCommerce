@@ -7,6 +7,7 @@ using Devesprit.DigiCommerce.Areas.Admin.Factories.Interfaces;
 using Devesprit.DigiCommerce.Areas.Admin.Models;
 using Devesprit.DigiCommerce.Controllers;
 using Devesprit.Services.Users;
+using Devesprit.WebFramework.ActionFilters;
 using Devesprit.WebFramework.Helpers;
 using Elmah;
 using Syncfusion.JavaScript;
@@ -14,6 +15,7 @@ using Syncfusion.JavaScript;
 namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
 {
     [Authorize(Roles = "Admin")]
+    [UserHasPermission("ManageUserMessages")]
     public partial class ManageUserMessagesController : BaseController
     {
         private readonly IUserMessagingService _userMessagingService;
@@ -34,6 +36,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
             return View();
         }
 
+        [UserHasPermission("ManageUserMessages_ReplyToUserMessage")]
         public virtual async Task<ActionResult> ReplyToUserMessage(int id)
         {
             var record = await _userMessagingService.FindByIdAsync(id);
@@ -47,6 +50,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [UserHasPermission("ManageUserMessages_ReplyToUserMessage")]
         public virtual async Task<ActionResult> ReplyToUserMessage(ReplyToUserMessageModel model, bool? saveAndSendReply)
         {
             if (!ModelState.IsValid)
@@ -87,6 +91,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
         }
 
         [HttpPost]
+        [UserHasPermission("ManageUserMessages_Delete")]
         public virtual async Task<ActionResult> Delete(int[] keys)
         {
             try
@@ -103,6 +108,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
         }
 
         [HttpPost]
+        [UserHasPermission("ManageUserMessages_SetMessageStatus")]
         public virtual async Task<ActionResult> SetMessageStatus(int id, bool readed)
         {
             try

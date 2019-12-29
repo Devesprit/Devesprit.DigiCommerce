@@ -1,8 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 using Devesprit.Data.Domain;
+using Devesprit.Data.Enums;
 
 namespace Devesprit.Services.Posts
 {
@@ -14,8 +16,8 @@ namespace Devesprit.Services.Posts
         Task DeleteAsync(int id);
         Task UpdateAsync(TblPostCategories record);
         Task<int> AddAsync(TblPostCategories record);
-        Task<List<SelectListItem>> GetAsSelectListAsync();
-        List<SelectListItem> GetAsSelectList();
+        Task<List<SelectListItem>> GetAsSelectListAsync(Func<TblPostCategories, bool> filterFunc);
+        List<SelectListItem> GetAsSelectList(Func<TblPostCategories, bool> filterFunc);
         Task<IEnumerable<TblPostCategories>> GetAsEnumerableAsync();
         IEnumerable<TblPostCategories> GetAsEnumerable();
         IEnumerable<TblPostCategories> GetCategoriesMustShowInFooter();

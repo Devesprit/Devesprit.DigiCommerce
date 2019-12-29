@@ -7,6 +7,7 @@ using Devesprit.DigiCommerce.Areas.Admin.Factories.Interfaces;
 using Devesprit.DigiCommerce.Areas.Admin.Models;
 using Devesprit.DigiCommerce.Controllers;
 using Devesprit.Services.Products;
+using Devesprit.WebFramework.ActionFilters;
 using Devesprit.WebFramework.Helpers;
 using Elmah;
 using Syncfusion.JavaScript;
@@ -14,6 +15,7 @@ using Syncfusion.JavaScript;
 namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
 {
     [Authorize(Roles = "Admin")]
+    [UserHasPermission("ProductCheckoutAttributes_Options")]
     public partial class ProductCheckoutAttributeOptionsController : BaseController
     {
         private readonly IProductCheckoutAttributeModelFactory _productCheckoutAttributeModelFactory;
@@ -41,6 +43,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
             return PartialView();
         }
 
+        [UserHasAtLeastOnePermission("ProductCheckoutAttributes_Options_Add", "ProductCheckoutAttributes_Options_Edit")]
         public virtual async Task<ActionResult> Editor(int? id, int attributeId)
         {
             if (id != null)
@@ -57,6 +60,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [UserHasAtLeastOnePermission("ProductCheckoutAttributes_Options_Add", "ProductCheckoutAttributes_Options_Edit")]
         public virtual async Task<ActionResult> Editor(ProductCheckoutAttributeOptionModel model, bool? saveAndContinue)
         {
             if (!ModelState.IsValid)
@@ -70,11 +74,21 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
             {
                 if (model.Id == null)
                 {
+                    if (!HttpContext.UserHasPermission("ProductCheckoutAttributes_Options_Add"))
+                    {
+                        return View("AccessPermissionError");
+                    }
+
                     //Add new record
                     recordId = await _productCheckoutAttributesService.AddOptionAsync(record);
                 }
                 else
                 {
+                    if (!HttpContext.UserHasPermission("ProductCheckoutAttributes_Options_Edit"))
+                    {
+                        return View("AccessPermissionError");
+                    }
+
                     //Edit record
                     await _productCheckoutAttributesService.UpdateOptionAsync(record);
                 }
@@ -101,6 +115,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
         }
 
         [HttpPost]
+        [UserHasPermission("ProductCheckoutAttributes_Options_Delete")]
         public virtual async Task<ActionResult> Delete(int[] keys)
         {
             try

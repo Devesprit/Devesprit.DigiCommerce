@@ -25,8 +25,6 @@
                         <button type="button" onclick="DeleteSelectedItem()" class="btn btn-xs btn-warning float-end mar-h-2">@T("Delete")</button>
                         <button type="button" onclick="EditSelectedItem()" class="btn btn-xs btn-success float-end mar-h-2">@T("Edit")</button>
                         <button type="button" onclick="AddNewItem()" class="btn btn-xs btn-info float-end mar-h-2">@T("Add")</button>
-                        <button type="button" onclick="openCategory(true)" class="btn btn-xs btn-outline-secondary float-end mar-h-2">@T("ShowBlogCategory")</button>
-                        <button type="button" onclick="openCategory(false)" class="btn btn-xs btn-outline-secondary float-end mar-h-2">@T("ShowProductsCategory")</button>
                     </div>
                     <div class="card-body fs-14">
                         @(Html.EJ().TreeView("PostCategoriesTreeView")
@@ -47,13 +45,8 @@
                             .Width("100%"))
                     </div>
                     <div class="card-footer">
-                        <button type="button" onclick="refreshPostCategoriesTreeView()" class="btn btn-xs btn-outline-secondary float-end mar-h-2"><i class="fa fa-refresh"></i></button>
-                        <button type="button" onclick="DeleteSelectedItem()" class="btn btn-xs btn-warning float-end mar-h-2">@T("Delete")</button>
-                        <button type="button" onclick="EditSelectedItem()" class="btn btn-xs btn-info float-end mar-h-2">@T("Edit")</button>
-                        <button type="button" onclick="AddNewItem()" class="btn btn-xs btn-success float-end mar-h-2">@T("Add")</button>
                         <button type="button" onclick="openCategory(true)" class="btn btn-xs btn-outline-secondary float-end mar-h-2">@T("ShowBlogCategory")</button>
                         <button type="button" onclick="openCategory(false)" class="btn btn-xs btn-outline-secondary float-end mar-h-2">@T("ShowProductsCategory")</button>
-
                         <a href="@Url.Action("GenerateNavbar")" class="btn btn-xs btn-warning float-start mar-h-2">@T("GenerateNavBar")</a>
                     </div>
                 </div>

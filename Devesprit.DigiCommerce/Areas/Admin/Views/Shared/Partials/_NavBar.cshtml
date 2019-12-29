@@ -19,6 +19,14 @@
         var result = "";
         foreach (var navbarItem in navbarItems.OrderByDescending(p => p.DisplayOrder))
         {
+            if (!string.IsNullOrEmpty(navbarItem.NeedPermission))
+            {
+                if (!User.HasPermission(navbarItem.NeedPermission))
+                {
+                    continue;   
+                }
+            }
+
             var itemIcon = navbarItem.Icon;
             var itemOnClickJs = navbarItem.OnClickJs;
             var iconTag = string.IsNullOrWhiteSpace(itemIcon) ? "" : $"<i class=\'{itemIcon}\'></i> ";
@@ -84,12 +92,27 @@
                         @T("BasicDefinitions")
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                        <li><a href="@Url.Action("Index", "ManageCountries")" class="dropdown-item"><i class="fa fa-globe"></i> &nbsp;&nbsp;&nbsp;@T("Countries")</a></li>
-                        <li><a href="@Url.Action("Index", "ManageLanguages")" class="dropdown-item"><i class="fa fa-language"></i> &nbsp;&nbsp;&nbsp;@T("Languages")</a></li>
-                        <li><a href="@Url.Action("Index", "ManageCurrencies")" class="dropdown-item"><i class="fa fa-money"></i> &nbsp;&nbsp;&nbsp;@T("Currencies")</a></li>
+                        @if (User.HasPermission("ManageCountries"))
+                        {
+                            <li><a href="@Url.Action("Index", "ManageCountries")" class="dropdown-item"><i class="fa fa-globe"></i> &nbsp;&nbsp;&nbsp;@T("Countries")</a></li>
+                        }
+                        @if (User.HasPermission("ManageLanguages"))
+                        {
+                            <li><a href="@Url.Action("Index", "ManageLanguages")" class="dropdown-item"><i class="fa fa-language"></i> &nbsp;&nbsp;&nbsp;@T("Languages")</a></li>
+                        }
+                        @if (User.HasPermission("ManageCurrencies"))
+                        {
+                            <li><a href="@Url.Action("Index", "ManageCurrencies")" class="dropdown-item"><i class="fa fa-money"></i> &nbsp;&nbsp;&nbsp;@T("Currencies")</a></li>
+                        }
                         <li><hr /></li>
-                        <li><a href="@Url.Action("Index", "ManageNavBar")" class="dropdown-item"><i class="fa fa-bars"></i> &nbsp;&nbsp;&nbsp;@T("NavMenu")</a></li>
-                        <li><a href="@Url.Action("Index", "ManagePages")" class="dropdown-item"><i class="fa fa-html5"></i> &nbsp;&nbsp;&nbsp;@T("StaticPages")</a></li>
+                        @if (User.HasPermission("ManageNavBar"))
+                        {
+                            <li><a href="@Url.Action("Index", "ManageNavBar")" class="dropdown-item"><i class="fa fa-bars"></i> &nbsp;&nbsp;&nbsp;@T("NavMenu")</a></li>
+                        }
+                        @if (User.HasPermission("ManagePages"))
+                        {
+                            <li><a href="@Url.Action("Index", "ManagePages")" class="dropdown-item"><i class="fa fa-html5"></i> &nbsp;&nbsp;&nbsp;@T("StaticPages")</a></li>
+                        }
                     </ul>
                 </li>
 
@@ -98,15 +121,36 @@
                         @T("ManageProductsAndBlog")
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                        <li><a href="@Url.Action("Index", "ManageProducts")" class="dropdown-item"><i class="fa fa-archive"></i>&nbsp;&nbsp;&nbsp;@T("Products")</a></li>
-                        <li><a href="@Url.Action("Index", "ManageComments", new {filterByPostType = PostType.Product})" class="dropdown-item"><i class="fa fa-comments-o"></i>&nbsp;&nbsp;&nbsp;@T("ManageComments") - (@(PostType.Product.GetLocalized()))</a></li>
+                        @if (User.HasPermission("ManageProducts"))
+                        {
+                            <li><a href="@Url.Action("Index", "ManageProducts")" class="dropdown-item"><i class="fa fa-archive"></i>&nbsp;&nbsp;&nbsp;@T("Products")</a></li>
+                        }
+                        @if (User.HasPermission("ManageComments"))
+                        {
+                            <li><a href="@Url.Action("Index", "ManageComments", new {filterByPostType = PostType.Product})" class="dropdown-item"><i class="fa fa-comments-o"></i>&nbsp;&nbsp;&nbsp;@T("ManageComments") - (@(PostType.Product.GetLocalized()))</a></li>
+                        }
                         <li><hr /></li>
-                        <li><a href="@Url.Action("Index", "ManageBlogPosts")" class="dropdown-item"><i class="fa fa-newspaper-o"></i>&nbsp;&nbsp;&nbsp;@T("BlogPosts")</a></li>
-                        <li><a href="@Url.Action("Index", "ManageComments", new {filterByPostType = PostType.BlogPost})" class="dropdown-item"><i class="fa fa-comments-o"></i>&nbsp;&nbsp;&nbsp;@T("ManageComments") - (@(PostType.BlogPost.GetLocalized()))</a></li>
+                        @if (User.HasPermission("ManageBlogPosts"))
+                        {
+                            <li><a href="@Url.Action("Index", "ManageBlogPosts")" class="dropdown-item"><i class="fa fa-newspaper-o"></i>&nbsp;&nbsp;&nbsp;@T("BlogPosts")</a></li>
+                        }
+                        @if (User.HasPermission("ManageComments"))
+                        {
+                            <li><a href="@Url.Action("Index", "ManageComments", new {filterByPostType = PostType.BlogPost})" class="dropdown-item"><i class="fa fa-comments-o"></i>&nbsp;&nbsp;&nbsp;@T("ManageComments") - (@(PostType.BlogPost.GetLocalized()))</a></li>
+                        }
                         <li><hr /></li>
-                        <li><a href="@Url.Action("Index", "ManagePostCategories")" class="dropdown-item"><i class="fa fa-sitemap"></i>&nbsp;&nbsp;&nbsp;@T("PostCategories")</a></li>
-                        <li><a href="@Url.Action("Index", "ManagePostAttributes")" class="dropdown-item"><i class="fa fa-puzzle-piece"></i>&nbsp;&nbsp;&nbsp;@T("PostAttributes")</a></li>
-                        <li><a href="@Url.Action("Index", "ManagePostTags")" class="dropdown-item"><i class="fa fa-tags"></i>&nbsp;&nbsp;&nbsp;@T("PostTags")</a></li>
+                        @if (User.HasPermission("ManagePostCategories"))
+                        {
+                            <li><a href="@Url.Action("Index", "ManagePostCategories")" class="dropdown-item"><i class="fa fa-sitemap"></i>&nbsp;&nbsp;&nbsp;@T("PostCategories")</a></li>
+                        }
+                        @if (User.HasPermission("ManagePostAttributes"))
+                        {
+                            <li><a href="@Url.Action("Index", "ManagePostAttributes")" class="dropdown-item"><i class="fa fa-puzzle-piece"></i>&nbsp;&nbsp;&nbsp;@T("PostAttributes")</a></li>
+                        }
+                        @if (User.HasPermission("ManagePostTags"))
+                        {
+                            <li><a href="@Url.Action("Index", "ManagePostTags")" class="dropdown-item"><i class="fa fa-tags"></i>&nbsp;&nbsp;&nbsp;@T("PostTags")</a></li>
+                        }
                     </ul>
                 </li>
 
@@ -115,9 +159,15 @@
                         @T("Financial")
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                        <li><a href="@Url.Action("Index", "ManageInvoices")" class="dropdown-item"><i class="fa fa-list-alt"></i>&nbsp;&nbsp;&nbsp;@T("Invoices")</a></li>
+                        @if (User.HasPermission("ManageInvoices"))
+                        {
+                            <li><a href="@Url.Action("Index", "ManageInvoices")" class="dropdown-item"><i class="fa fa-list-alt"></i>&nbsp;&nbsp;&nbsp;@T("Invoices")</a></li>
+                        }
                         <li><hr /></li>
-                        <li><a href="@Url.Action("Index", "ManageTaxes")" class="dropdown-item"><i class="fa fa-money"></i>&nbsp;&nbsp;&nbsp;@T("Taxes")</a></li>
+                        @if (User.HasPermission("ManageTaxes"))
+                        {
+                            <li><a href="@Url.Action("Index", "ManageTaxes")" class="dropdown-item"><i class="fa fa-money"></i>&nbsp;&nbsp;&nbsp;@T("Taxes")</a></li>
+                        }
                     </ul>
                 </li>
 
@@ -126,11 +176,23 @@
                         @T("ManageUsers")
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                        <li><a href="@Url.Action("Index", "ManageUsers")" class="dropdown-item"><i class="fa fa-user"></i> &nbsp;&nbsp;&nbsp;@T("Users")</a></li>
-                        <li><a href="@Url.Action("Index", "ManageUserGroups")" class="dropdown-item"><i class="fa fa-users"></i>&nbsp;&nbsp;&nbsp;@T("UserGroups")</a></li>
-                        <li><a href="@Url.Action("Index", "ManageUserRoles")" class="dropdown-item"><i class="fa fa-universal-access"></i>&nbsp;&nbsp;&nbsp;@T("UserRoles")</a></li>
-                        <li><hr /></li>
-                        <li><a href="@Url.Action("Index", "ManageUserMessages")" class="dropdown-item"><i class="fa fa-envelope"></i>&nbsp;&nbsp;&nbsp;@T("ManageUserMessages")</a></li>
+                        @if (User.HasPermission("ManageUsers"))
+                        {
+                            <li><a href="@Url.Action("Index", "ManageUsers")" class="dropdown-item"><i class="fa fa-user"></i> &nbsp;&nbsp;&nbsp;@T("Users")</a></li>
+                        }
+                        @if (User.HasPermission("ManageUserGroups"))
+                        {
+                            <li><a href="@Url.Action("Index", "ManageUserGroups")" class="dropdown-item"><i class="fa fa-users"></i>&nbsp;&nbsp;&nbsp;@T("UserGroups")</a></li>
+                        }
+                        @if (User.HasPermission("ManageUserRoles"))
+                        {
+                            <li><a href="@Url.Action("Index", "ManageUserRoles")" class="dropdown-item"><i class="fa fa-universal-access"></i>&nbsp;&nbsp;&nbsp;@T("UserRoles")</a></li>
+                        }
+                        @if (User.HasPermission("ManageUserMessages"))
+                        {
+                            <li><hr /></li>
+                            <li><a href="@Url.Action("Index", "ManageUserMessages")" class="dropdown-item"><i class="fa fa-envelope"></i>&nbsp;&nbsp;&nbsp;@T("ManageUserMessages")</a></li>
+                        }
                     </ul>
                 </li>
 
@@ -140,34 +202,69 @@
                         @{ Html.RenderAction("GetAdminUnreadedNotificationsCount", "Notifications", new { area = "Admin" }); }
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                        <li>
-                            <a href="@Url.Action("Index", "Notifications")" class="dropdown-item">
-                                <i class="fa fa-envelope"></i>&nbsp;&nbsp;&nbsp;@T("AdminNotifications")
-                                @{ Html.RenderAction("GetAdminUnreadedNotificationsCount", "Notifications", new { area = "Admin" }); }
-                            </a>
-                        </li>
-                        <li><a href="@Url.Action("Index", "Notifications", new {seeUsersNotifications = true})" class="dropdown-item"><i class="fa fa-users"></i>&nbsp;&nbsp;&nbsp;@T("ManageUsersNotifications")</a></li>
-                        <li><hr /></li>
-                        <li><a href="@Url.Action("Index", "ManageSettings")" class="dropdown-item"><i class="fa fa-sliders"></i>&nbsp;&nbsp;&nbsp;@T("WebsiteSettings")</a></li>
-                        <li><a href="@Url.Action("Index", "ManagePlugins")" class="dropdown-item"><i class="fa fa-plug"></i>&nbsp;&nbsp;&nbsp;@T("ManagePlugins")</a></li>
-                        <li><a href="@Url.Action("Index", "ManageRedirects")" class="dropdown-item"><i class="fa fa-link"></i>&nbsp;&nbsp;&nbsp;@T("UrlRedirects")</a></li>
-                        <li><a href="@Url.Action("Index", "ManageFileServers")" class="dropdown-item"><i class="fa fa-server"></i>&nbsp;&nbsp;&nbsp;@T("FileServers")</a></li>
-                        <li><hr /></li>
-                        <li><a href="#" onclick="ShowFileExplorer();" class="dropdown-item"><i class="fa fa-folder-open"></i>&nbsp;&nbsp;&nbsp;@T("FileManager")</a></li>
-                        <li class="dropdown-submenu">
-                            <a class="dropdown-item dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" href="">
-                                <i class="fa fa-exclamation-triangle"></i>&nbsp;&nbsp;&nbsp;@T("ApplicationErrors")
-                            </a>
-                            <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                                <li><a href="/elmah.axd" target="_blank" class="dropdown-item"><i class="fa fa-exclamation-triangle"></i>&nbsp;&nbsp;&nbsp;@T("ShowApplicationErrorsLog")</a></li>
-                                <li><hr /></li>
-                                <li><a href="@Url.Action("ClearApplicationErrorLog", "ManageSettings")" class="dropdown-item"><i class="fa fa-trash-o"></i>&nbsp;&nbsp;&nbsp;@T("ClearErrorsLog")</a></li>
-                            </ul>
-                        </li>
-                        <li><a href="@Url.Action("Index", "ManageBackgroundJobs")" class="dropdown-item"><i class="fa fa-thumb-tack"></i>&nbsp;&nbsp;&nbsp;@T("BackgroundJobsManager")</a></li>
-                        <li><hr /></li>
-                        <li><a href="@Url.Action("RefreshSearchEngineIndexes", "ManageSettings")" class="dropdown-item"><i class="fa fa-refresh"></i>&nbsp;&nbsp;&nbsp;@T("RefreshSearchEngineIndexes")</a></li>
-                        <li><a href="@Url.Action("PurgeCache", "ManageSettings")" class="dropdown-item"><i class="fa fa-trash-o"></i>&nbsp;&nbsp;&nbsp;@T("PurgeCache")</a></li>
+                        @if (User.HasPermission("Notifications"))
+                        {
+                            <li>
+                                <a href="@Url.Action("Index", "Notifications")" class="dropdown-item">
+                                    <i class="fa fa-envelope"></i>&nbsp;&nbsp;&nbsp;@T("AdminNotifications")
+                                    @{ Html.RenderAction("GetAdminUnreadedNotificationsCount", "Notifications", new {area = "Admin"}); }
+                                </a>
+                            </li>
+                            <li><a href="@Url.Action("Index", "Notifications", new {seeUsersNotifications = true})" class="dropdown-item"><i class="fa fa-users"></i>&nbsp;&nbsp;&nbsp;@T("ManageUsersNotifications")</a></li>
+                            <li><hr/></li>
+                        }
+                        @if (User.HasPermission("SiteSettings"))
+                        {
+                            <li><a href="@Url.Action("Index", "ManageSettings")" class="dropdown-item"><i class="fa fa-sliders"></i>&nbsp;&nbsp;&nbsp;@T("WebsiteSettings")</a></li>
+                        }
+                        @if (User.HasPermission("ManagePlugins"))
+                        {
+                            <li><a href="@Url.Action("Index", "ManagePlugins")" class="dropdown-item"><i class="fa fa-plug"></i>&nbsp;&nbsp;&nbsp;@T("ManagePlugins")</a></li>
+                        }
+                        @if (User.HasPermission("ManageRedirects"))
+                        {
+                            <li><a href="@Url.Action("Index", "ManageRedirects")" class="dropdown-item"><i class="fa fa-link"></i>&nbsp;&nbsp;&nbsp;@T("UrlRedirects")</a></li>
+                        }
+                        @if (User.HasPermission("ManageFileServers"))
+                        {
+                            <li><a href="@Url.Action("Index", "ManageFileServers")" class="dropdown-item"><i class="fa fa-server"></i>&nbsp;&nbsp;&nbsp;@T("FileServers")</a></li>
+                        }
+                        <li><hr/></li>
+                        @if (User.HasPermission("FileManager"))
+                        {
+                            <li><a href="#" onclick="ShowFileExplorer();" class="dropdown-item"><i class="fa fa-folder-open"></i>&nbsp;&nbsp;&nbsp;@T("FileManager")</a></li>
+                        }
+                        @if (User.HasAtLeastOnePermission("SiteSettings_ApplicationErrorsLog", "SiteSettings_ApplicationErrorsLog_Clear"))
+                        {
+                            <li class="dropdown-submenu">
+                                <a class="dropdown-item dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" href="">
+                                    <i class="fa fa-exclamation-triangle"></i>&nbsp;&nbsp;&nbsp;@T("ApplicationErrors")
+                                </a>
+                                <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                                    @if (User.HasPermission("SiteSettings_ApplicationErrorsLog"))
+                                    {
+                                        <li><a href="/elmah.axd" target="_blank" class="dropdown-item"><i class="fa fa-exclamation-triangle"></i>&nbsp;&nbsp;&nbsp;@T("ShowApplicationErrorsLog")</a></li>
+                                    }
+                                    @if (User.HasPermission("SiteSettings_ApplicationErrorsLog_Clear"))
+                                    {
+                                        <li><a href="@Url.Action("ClearApplicationErrorLog", "ManageSettings")" class="dropdown-item"><i class="fa fa-trash-o"></i>&nbsp;&nbsp;&nbsp;@T("ClearErrorsLog")</a></li>
+                                    }
+                                </ul>
+                            </li>
+                        }
+                        @if (User.HasPermission("ManageBackgroundJobs"))
+                        {
+                            <li><a href="@Url.Action("Index", "ManageBackgroundJobs")" class="dropdown-item"><i class="fa fa-thumb-tack"></i>&nbsp;&nbsp;&nbsp;@T("BackgroundJobsManager")</a></li>
+                        }
+                        <li><hr/></li>
+                        @if (User.HasPermission("SiteSettings_RefreshSearchEngineIndexes"))
+                        {
+                            <li><a href="@Url.Action("RefreshSearchEngineIndexes", "ManageSettings")" class="dropdown-item"><i class="fa fa-refresh"></i>&nbsp;&nbsp;&nbsp;@T("RefreshSearchEngineIndexes")</a></li>
+                        }
+                        @if (User.HasPermission("SiteSettings_PurgeCache"))
+                        {
+                            <li><a href="@Url.Action("PurgeCache", "ManageSettings")" class="dropdown-item"><i class="fa fa-trash-o"></i>&nbsp;&nbsp;&nbsp;@T("PurgeCache")</a></li>
+                        }
                     </ul>
                 </li>
 

@@ -14,6 +14,7 @@ using Devesprit.Services.Invoice;
 using Devesprit.Services.Localization;
 using Devesprit.Services.MemoryCache;
 using Devesprit.Services.Users;
+using Devesprit.WebFramework.ActionFilters;
 
 namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
 {
@@ -43,6 +44,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
         }
 
         [MethodCache(VaryByCustom = "lang", DurationSec = 60 * 5)]
+        [UserHasPermission("Reports_InvoicesChart")]
         public virtual async Task<ActionResult> InvoicesChart(DateTime? FromDate, DateTime? ToDate, TimePeriodType PeriodType = TimePeriodType.Day)
         {
             if (FromDate == null || ToDate == null || FromDate >= ToDate)
@@ -99,12 +101,14 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
                 XAxisTitle = _localizationService.GetResource("Date"),
                 YAxisTitle = _localizationService.GetResource("NumberOfInvoices"),
                 ChartName = "NumberInvoicesChart",
-                ControllerName = "InvoicesChart",
+                ControllerName = "Administration",
+                ActionName = "InvoicesChart",
                 UpdateTargetId = "invoiceChartHolder"
             });
         }
 
         [MethodCache(VaryByCustom = "lang", DurationSec = 60 * 5)]
+        [UserHasPermission("Reports_SellsChart")]
         public virtual async Task<ActionResult> SellsChart(DateTime? FromDate, DateTime? ToDate, TimePeriodType PeriodType = TimePeriodType.Day)
         {
             if (FromDate == null || ToDate == null || FromDate >= ToDate)
@@ -157,12 +161,14 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
                 XAxisTitle = _localizationService.GetResource("Date"),
                 YAxisTitle = _localizationService.GetResource("Amount"),
                 ChartName = "SellsChart",
-                ControllerName = "SellsChart",
+                ControllerName = "Administration",
+                ActionName = "SellsChart",
                 UpdateTargetId = "sellsChartHolder"
             });
         }
 
         [MethodCache(VaryByCustom = "lang", DurationSec = 60 * 5)]
+        [UserHasPermission("Reports_UsersChart")]
         public virtual async Task<ActionResult> UsersChart(DateTime? FromDate, DateTime? ToDate, TimePeriodType PeriodType = TimePeriodType.Day)
         {
             if (FromDate == null || ToDate == null || FromDate >= ToDate)
@@ -232,7 +238,8 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
                 XAxisTitle = _localizationService.GetResource("Date"),
                 YAxisTitle = _localizationService.GetResource("NumberOfUsers"),
                 ChartName = "NumberUsersChart",
-                ControllerName = "UsersChart",
+                ControllerName = "Administration",
+                ActionName = "UsersChart",
                 UpdateTargetId = "usersChartHolder"
             });
         }

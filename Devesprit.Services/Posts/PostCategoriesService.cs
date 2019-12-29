@@ -8,6 +8,7 @@ using System.Web.Mvc;
 using Devesprit.Core.Localization;
 using Devesprit.Data;
 using Devesprit.Data.Domain;
+using Devesprit.Data.Enums;
 using Devesprit.Services.Events;
 using Devesprit.Services.Languages;
 using Devesprit.Services.Localization;
@@ -88,14 +89,14 @@ namespace Devesprit.Services.Posts
             return record.Id;
         }
 
-        public virtual async Task<List<SelectListItem>> GetAsSelectListAsync()
+        public virtual async Task<List<SelectListItem>> GetAsSelectListAsync(Func<TblPostCategories, bool> filterFunc)
         {
-            return GenerateCategoriesList((await GetAsEnumerableAsync()).ToList(), null);
+            return GenerateCategoriesList((await GetAsEnumerableAsync()).Where(filterFunc).ToList(), null);
         }
 
-        public virtual List<SelectListItem> GetAsSelectList()
+        public virtual List<SelectListItem> GetAsSelectList(Func<TblPostCategories, bool> filterFunc)
         {
-            return GenerateCategoriesList(GetAsEnumerable().ToList(), null);
+            return GenerateCategoriesList(GetAsEnumerable().Where(filterFunc).ToList(), null);
         }
 
         public virtual async Task<IEnumerable<TblPostCategories>> GetAsEnumerableAsync()

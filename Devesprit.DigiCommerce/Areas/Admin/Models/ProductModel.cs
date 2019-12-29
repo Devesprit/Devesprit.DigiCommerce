@@ -171,6 +171,8 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Models
             }
         }
 
-        public List<SelectListItem> ProductCategoriesList => DependencyResolver.Current.GetService<IPostCategoriesService>().GetAsSelectList();
+        public List<SelectListItem> ProductCategoriesList => DependencyResolver.Current
+            .GetService<IPostCategoriesService>().GetAsSelectList(p =>
+                p.DisplayArea == DisplayArea.ProductsSection || p.DisplayArea == DisplayArea.Both);
     }
 }

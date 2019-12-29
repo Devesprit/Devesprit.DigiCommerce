@@ -3,11 +3,13 @@ using System.IO;
 using System.Web.Mvc;
 using Devesprit.DigiCommerce.Areas.Admin.Controllers.Event;
 using Devesprit.DigiCommerce.Controllers;
+using Devesprit.WebFramework.ActionFilters;
 using Syncfusion.JavaScript;
 
 namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
 {
     [Authorize(Roles = "Admin")]
+    [UserHasPermission("FileManager")]
     public partial class FileExplorerController : BaseController
     {
         [HttpPost]

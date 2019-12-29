@@ -7,6 +7,7 @@ using Devesprit.Data.Domain;
 using Devesprit.Data.Enums;
 using Devesprit.DigiCommerce.Controllers;
 using Devesprit.Services.Comments;
+using Devesprit.WebFramework.ActionFilters;
 using Devesprit.WebFramework.Helpers;
 using Elmah;
 using Syncfusion.JavaScript;
@@ -14,6 +15,7 @@ using Syncfusion.JavaScript;
 namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
 {
     [Authorize(Roles = "Admin")]
+    [UserHasPermission("ManageComments")]
     public partial class ManageCommentsController : BaseController
     {
         private readonly ICommentsService _commentsService;
@@ -34,6 +36,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
         }
 
         [HttpPost]
+        [UserHasPermission("ManageComments_Delete")]
         public virtual async Task<ActionResult> Delete(int[] keys)
         {
             try
@@ -50,6 +53,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
         }
 
         [HttpPost]
+        [UserHasPermission("ManageComments_PublishUnPublish")]
         public virtual async Task<ActionResult> SetCommentStatus(int commentId, bool published)
         {
             try
@@ -66,6 +70,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
             }
         }
 
+        [UserHasPermission("ManageComments_Edit")]
         public virtual async Task<ActionResult> Update(TblPostComments value)
         {
             var comment = await _commentsService.FindByIdAsync(value.Id);

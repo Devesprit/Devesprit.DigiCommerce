@@ -84,7 +84,7 @@ namespace Devesprit.DigiCommerce.Models.Post
                     {
                         Url = Images != null && Images.Count > 0 ? new Uri(Images[0].ImageUrl.GetAbsoluteUrl()) : null
                     },
-                    Image = Images != null && Images.Count > 0 ? images : null,
+                    Image = images,
                     AggregateRating = new AggregateRating()
                     {
                         RatingValue = 5,

@@ -8,6 +8,7 @@ using Devesprit.Core.Localization;
 using Devesprit.Data;
 using Devesprit.Data.Domain;
 using Devesprit.Services.Events;
+using Devesprit.Utilities;
 using Z.EntityFramework.Plus;
 
 namespace Devesprit.Services.Users
@@ -196,10 +197,11 @@ namespace Devesprit.Services.Users
             return record.Id;
         }
 
-        public async Task DeleteAccessAreasAsync(int id)
+        public async Task DeleteAccessAreasAsync(string areaName)
         {
-            var record = await _dbContext.UserAccessAreas.FirstOrDefaultAsync(p => p.Id == id);
-            await _dbContext.UserAccessAreas.Where(p => p.Id == id).DeleteAsync();
+            var record = await _dbContext.UserAccessAreas.FirstOrDefaultAsync(p => p.AreaName == areaName);
+            await _dbContext.UserAccessAreas.Where(p => p.AreaName == areaName || p.ParentAreaName == areaName).DeleteAsync();
+            await _dbContext.UserRolePermissions.Where(p => p.AreaName == areaName).DeleteAsync();
             QueryCacheManager.ExpireTag(CacheTags.UserRolesAccessAreas);
 
             _eventPublisher.EntityDeleted(record);
@@ -216,7 +218,7 @@ namespace Devesprit.Services.Users
             _eventPublisher.EntityUpdated(record, oldRecord);
         }
 
-        public async Task GrantAllPermissionsToAdministrator()
+        public async Task GrantAllPermissionsToAdministratorAsync()
         {
             var adminRole = (await GetAsEnumerableAsync()).FirstOrDefault(p => p.RoleName == "Administrator");
             if (adminRole == null)
@@ -229,15 +231,71 @@ namespace Devesprit.Services.Users
             }
             await DeleteRolePermissionAsync(adminRole.Id);
             var accessAreas = GetUserAccessAreasAsEnumerable().ToList();
-            foreach (var area in accessAreas)
+            _dbContext.UserRolePermissions.AddRange(accessAreas.Select(p => new TblUserRolePermissions()
             {
-                await AddPermissionAsync(new TblUserRolePermissions()
+                AreaName = p.AreaName,
+                HaveAccess = true,
+                RoleId = adminRole.Id
+            }));
+            await _dbContext.SaveChangesAsync();
+            QueryCacheManager.ExpireTag(CacheTags.UserRoles);
+        }
+
+        public int AddAccessAreas(TblUserAccessAreas record)
+        {
+            _dbContext.UserAccessAreas.Add(record);
+            _dbContext.SaveChanges();
+
+            QueryCacheManager.ExpireTag(CacheTags.UserRolesAccessAreas);
+
+            _eventPublisher.EntityInserted(record);
+
+            return record.Id;
+        }
+
+        public void DeleteAccessAreas(string areaName)
+        {
+            var record = _dbContext.UserAccessAreas.FirstOrDefault(p => p.AreaName == areaName);
+            _dbContext.UserAccessAreas.Where(p => p.AreaName == areaName || p.ParentAreaName == areaName).Delete();
+            _dbContext.UserRolePermissions.Where(p => p.AreaName == areaName).Delete();
+            QueryCacheManager.ExpireTag(CacheTags.UserRolesAccessAreas);
+
+            _eventPublisher.EntityDeleted(record);
+        }
+
+        public void UpdateAccessAreas(TblUserAccessAreas record)
+        {
+            var oldRecord = _dbContext.UserAccessAreas.FirstOrDefault(p => p.Id == record.Id);
+            _dbContext.UserAccessAreas.AddOrUpdate(record);
+            _dbContext.SaveChanges();
+
+            QueryCacheManager.ExpireTag(CacheTags.UserRolesAccessAreas);
+
+            _eventPublisher.EntityUpdated(record, oldRecord);
+        }
+
+        public void GrantAllPermissionsToAdministrator()
+        {
+            var adminRole = GetAsEnumerable().FirstOrDefault(p => p.RoleName == "Administrator");
+            if (adminRole == null)
+            {
+                adminRole = new TblUserRoles()
                 {
-                    AreaName = area.AreaName,
-                    HaveAccess = true,
-                    RoleId = adminRole.Id
-                });
+                    RoleName = "Administrator"
+                };
+                AsyncHelper.RunSync(() => AddAsync(adminRole));
             }
+            AsyncHelper.RunSync(() => DeleteRolePermissionAsync(adminRole.Id));
+            var accessAreas = GetUserAccessAreasAsEnumerable().ToList();
+
+            _dbContext.UserRolePermissions.AddRange(accessAreas.Select(p=> new TblUserRolePermissions()
+            {
+                AreaName = p.AreaName,
+                HaveAccess = true,
+                RoleId = adminRole.Id
+            }));
+            _dbContext.SaveChanges();
+            QueryCacheManager.ExpireTag(CacheTags.UserRoles);
         }
     }
 }

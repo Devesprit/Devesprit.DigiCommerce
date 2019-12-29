@@ -198,8 +198,8 @@ namespace Devesprit.Services.Invoice
 
             QueryCacheManager.ExpireTag(CacheTags.Invoice);
 
-            await ApplyInvoiceDiscountsAsync(invoice);
-            await ApplyInvoiceTaxesAsync(invoice);
+            await ApplyInvoiceDiscountsAsync(invoice.Id);
+            await ApplyInvoiceTaxesAsync(invoice.Id);
         }
 
         public virtual async Task RemoveItemAsync(int itemId)
@@ -230,8 +230,8 @@ namespace Devesprit.Services.Invoice
 
             QueryCacheManager.ExpireTag(CacheTags.Invoice);
 
-            await ApplyInvoiceDiscountsAsync(invoice);
-            await ApplyInvoiceTaxesAsync(invoice);
+            await ApplyInvoiceDiscountsAsync(invoice.Id);
+            await ApplyInvoiceTaxesAsync(invoice.Id);
         }
 
         public virtual async Task SetItemLicenseAsync(int itemId, string license)
@@ -295,8 +295,9 @@ namespace Devesprit.Services.Invoice
             newRecord.Qty += qty;
             _eventPublisher.EntityUpdated(newRecord, oldRecord);
 
-            await ApplyInvoiceDiscountsAsync(await FindInvoiceByItemIdAsync(itemId));
-            await ApplyInvoiceTaxesAsync(await FindInvoiceByItemIdAsync(itemId));
+            var invoice = await FindInvoiceByItemIdAsync(itemId);
+            await ApplyInvoiceDiscountsAsync(invoice.Id);
+            await ApplyInvoiceTaxesAsync(invoice.Id);
         }
 
         public virtual async Task DecreaseItemQtyAsync(int itemId, int qty = 1)
@@ -331,8 +332,9 @@ namespace Devesprit.Services.Invoice
             newRecord.Qty = newRecord.Qty > qty ? newRecord.Qty - qty : 1;
             _eventPublisher.EntityUpdated(newRecord, oldRecord);
 
-            await ApplyInvoiceDiscountsAsync(await FindInvoiceByItemIdAsync(itemId));
-            await ApplyInvoiceTaxesAsync(await FindInvoiceByItemIdAsync(itemId));
+            var invoice = await FindInvoiceByItemIdAsync(itemId);
+            await ApplyInvoiceDiscountsAsync(invoice.Id);
+            await ApplyInvoiceTaxesAsync(invoice.Id);
         }
 
         public virtual async Task SetItemUnitPriceAsync(int itemId, double price)
@@ -348,8 +350,9 @@ namespace Devesprit.Services.Invoice
             newRecord.UnitPrice = price;
             _eventPublisher.EntityUpdated(newRecord, oldRecord);
 
-            await ApplyInvoiceDiscountsAsync(await FindInvoiceByItemIdAsync(itemId));
-            await ApplyInvoiceTaxesAsync(await FindInvoiceByItemIdAsync(itemId));
+            var invoice = await FindInvoiceByItemIdAsync(itemId);
+            await ApplyInvoiceDiscountsAsync(invoice.Id);
+            await ApplyInvoiceTaxesAsync(invoice.Id);
         }
 
         #endregion
@@ -357,8 +360,13 @@ namespace Devesprit.Services.Invoice
 
         #region Other Actions
 
-        public virtual async Task CheckoutInvoiceAsync(TblInvoices invoice, string transactionId)
+        public virtual async Task CheckoutInvoiceAsync(Guid invoiceId, string transactionId)
         {
+            var invoice = await FindByIdAsync(invoiceId, false);
+            if (invoice == null)
+            {
+                return;
+            }
             var paidAmount = invoice.ComputeInvoiceTotalAmount(false);
             await _dbContext.Invoices.Where(p => p.Id == invoice.Id)
                 .UpdateAsync(p => new TblInvoices()
@@ -744,8 +752,13 @@ namespace Devesprit.Services.Invoice
             _eventPublisher.EntityUpdated(newRecord, oldRecord);
         }
 
-        public virtual async Task<TblInvoices> ApplyInvoiceTaxesAsync(TblInvoices invoice)
+        public virtual async Task<TblInvoices> ApplyInvoiceTaxesAsync(Guid invoiceId)
         {
+            var invoice = await FindByIdAsync(invoiceId, false);
+            if (invoice == null)
+            {
+                return null;
+            }
             var invoiceTotalAmount = invoice.ComputeInvoiceTotalAmount(false, false);
             invoice.TotalTaxAmount = 0;
             invoice.TaxDescription = "";
@@ -777,8 +790,13 @@ namespace Devesprit.Services.Invoice
 
         }
 
-        public virtual async Task<TblInvoices> ApplyInvoiceDiscountsAsync(TblInvoices invoice)
+        public virtual async Task<TblInvoices> ApplyInvoiceDiscountsAsync(Guid invoiceId)
         {
+            var invoice = await FindByIdAsync(invoiceId, false);
+            if (invoice == null)
+            {
+                return null;
+            }
             invoice.DiscountAmount = 0;
             invoice.DiscountDescription = "";
             var discountProcessors = _pluginFinder.GetPlugins<IDiscountProcessor>();

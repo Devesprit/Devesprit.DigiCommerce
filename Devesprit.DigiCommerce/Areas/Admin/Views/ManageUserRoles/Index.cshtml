@@ -28,6 +28,9 @@
             <div id="rolePermissionsDiv" class="col-12 t-pad-20 d-none">
                 <hr />
                 <label class="fw-bold">@T("RolePermissions")</label>
+                <br/>
+                <button type="button" class="btn btn-xs btn-primary btn-sm" onclick="CheckAllNodes()">@T("CheckAll")</button>
+                <button type="button" class="btn btn-xs btn-primary btn-sm" onclick="UnCheckAllNodes()">@T("UnCheckAll")</button>
                 @(Html.EJ().TreeView("RolePermissionsTreeView")
                     .TreeViewFields(s => s.Datasource(ds => ds.URL(Url.Action("GridDataSource")).Adaptor(AdaptorType.UrlAdaptor))
                         .Id("Id")
@@ -36,8 +39,8 @@
                         .IsChecked("HaveAccess"))
                     .AllowEditing(false)
                     .AllowKeyboardNavigation(true)
-                    .AutoCheck(true)
-                    .AutoCheckParentNode(true)
+                    .AutoCheck(false)
+                    .AutoCheckParentNode(false)
                     .ShowCheckbox(true)
                     .EnableAnimation(true)
                     .FullRowSelect(true)
@@ -146,17 +149,17 @@
                  isChecked: "HaveAccess"
              }
          });
-    }
+     }
 
-    function ApplyPermissions() {
-        var treeview = $("#RolePermissionsTreeView").data("ejTreeView");
-        var checkedAreas = treeview.getCheckedNodes();
+     function ApplyPermissions() {
+         var treeview = $("#RolePermissionsTreeView").data("ejTreeView");
+         var checkedAreas = treeview.getCheckedNodes();
          $.ajax({
              type: "POST",
              url: "@Url.Action("ApplyPermissions")",
              data: {
                  roleId: $("#ddlRoles").val(),
-                 areas: checkedAreas.map(function(){return this.id;}).get()
+                 areas: checkedAreas.map(function() { return this.id; }).get()
              },
              error: function(xhr, status, error) {
                  ErrorAlert('@T("Error")', '@T("ServerConnectionError")');
@@ -173,6 +176,16 @@
                  $('#LoadingPanel').hide();
              }
          });
+    }
+
+     function CheckAllNodes() {
+         var treeview = $("#RolePermissionsTreeView").data("ejTreeView");
+         treeview.checkAll();
+     }
+
+     function UnCheckAllNodes() {
+         var treeview = $("#RolePermissionsTreeView").data("ejTreeView");
+         treeview.unCheckAll();
      }
 </script>);
 }

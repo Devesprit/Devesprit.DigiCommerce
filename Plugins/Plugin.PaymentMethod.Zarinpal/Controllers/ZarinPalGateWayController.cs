@@ -3,11 +3,13 @@ using System.Web.Mvc;
 using Devesprit.Core.Localization;
 using Devesprit.Core.Settings;
 using Devesprit.DigiCommerce.Controllers;
+using Devesprit.WebFramework.ActionFilters;
 using Elmah;
 using Plugin.PaymentMethod.Zarinpal.Models;
 
 namespace Plugin.PaymentMethod.Zarinpal.Controllers
 {
+    [UserHasPermission("ZarinpalGateWayConfig")]
     public partial class ZarinPalGateWayController : BaseController
     {
         private readonly ILocalizationService _localizationService;

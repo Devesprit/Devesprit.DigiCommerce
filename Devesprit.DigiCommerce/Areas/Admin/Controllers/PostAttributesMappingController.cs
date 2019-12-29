@@ -8,6 +8,7 @@ using Devesprit.DigiCommerce.Areas.Admin.Factories.Interfaces;
 using Devesprit.DigiCommerce.Areas.Admin.Models;
 using Devesprit.DigiCommerce.Controllers;
 using Devesprit.Services.Posts;
+using Devesprit.WebFramework.ActionFilters;
 using Devesprit.WebFramework.Helpers;
 using Elmah;
 using Syncfusion.JavaScript;
@@ -15,6 +16,7 @@ using Syncfusion.JavaScript;
 namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
 {
     [Authorize(Roles = "Admin")]
+    [UserHasPermission("ManagePostAttributes_Mapping")]
     public partial class PostAttributesMappingController : BaseController
     {
         private readonly IPostAttributeMappingModelFactory _postAttributeMappingModelFactory;
@@ -43,6 +45,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
             return PartialView();
         }
 
+        [UserHasAtLeastOnePermission("ManagePostAttributes_Mapping_Add", "ManagePostAttributes_Mapping_Edit")]
         public virtual async Task<ActionResult> Editor(int? id, int postId)
         {
             if (id != null)
@@ -59,6 +62,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [UserHasAtLeastOnePermission("ManagePostAttributes_Mapping_Add", "ManagePostAttributes_Mapping_Edit")]
         public virtual async Task<ActionResult> Editor(PostAttributeMappingModel model, bool? saveAndContinue)
         {
             if (model.AttributeOptionId == null && string.IsNullOrWhiteSpace(model.Value[0]))
@@ -78,11 +82,21 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
             {
                 if (model.Id == null)
                 {
+                    if (!HttpContext.UserHasPermission("ManagePostAttributes_Mapping_Add"))
+                    {
+                        return View("AccessPermissionError");
+                    }
+
                     //Add new record
                     recordId = await _postAttributesMappingService.AddAsync(record);
                 }
                 else
                 {
+                    if (!HttpContext.UserHasPermission("ManagePostAttributes_Mapping_Edit"))
+                    {
+                        return View("AccessPermissionError");
+                    }
+
                     //Edit record
                     await _postAttributesMappingService.UpdateAsync(record);
                 }
@@ -108,6 +122,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
         }
 
         [HttpPost]
+        [UserHasPermission("ManagePostAttributes_Mapping_Delete")]
         public virtual async Task<ActionResult> Delete(int[] keys)
         {
             try
