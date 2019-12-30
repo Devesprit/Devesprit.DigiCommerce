@@ -371,7 +371,8 @@ namespace Devesprit.Services.Invoice
             await _dbContext.Invoices.Where(p => p.Id == invoice.Id)
                 .UpdateAsync(p => new TblInvoices()
                 {
-                    PaidAmount = paidAmount,
+                    PaidAmount = paidAmount.ExchangeCurrency(invoice.Currency),
+                    PaidAmountInMainCurrency = paidAmount,
                     Status = InvoiceStatus.Paid
                 });
 

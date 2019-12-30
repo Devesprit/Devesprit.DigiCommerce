@@ -23,6 +23,7 @@ namespace Devesprit.Data.Domain
         public double? TotalTaxAmount { get; set; }
         public string TaxDescription { get; set; }
         public double PaidAmount { get; set; }
+        public double PaidAmountInMainCurrency { get; set; }
         public int? CurrencyId { get; set; }
         public virtual TblCurrencies Currency { get; set; }
         [Required]

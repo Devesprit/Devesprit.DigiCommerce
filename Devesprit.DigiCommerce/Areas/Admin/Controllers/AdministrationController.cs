@@ -145,9 +145,9 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
                 chartDatas.Add(new ChartData()
                 {
                     ChartItems = sells.Select(p => new ChartPoint()
-                        {Y = p.Value.ExchangeCurrency(curr), X = p.Key.ToString(datetimeToStringFormat)}).ToList(),
+                        {Y = p.Value, X = p.Key.ToString(datetimeToStringFormat)}).ToList(),
                     Name =
-                        $"{curr.GetLocalized(p=> p.CurrencyName)}: {string.Format(curr.DisplayFormat, sells.Sum(p => p.Value).ExchangeCurrency(curr))}",
+                        $"{curr.GetLocalized(p=> p.CurrencyName)}: {string.Format(curr.DisplayFormat, sells.Sum(p => p.Value))}",
                     Color = $"#{random.Next(0x1000000):X6}"
                 });
             }
