@@ -1,0 +1,243 @@
+﻿
+@using Devesprit.Core
+@using Syncfusion.JavaScript
+@using Syncfusion.MVC.EJ
+@{
+    ViewBag.Title = T("Reports").ToString() + " - " + T("DownloadLogs");
+    var currentLang = DependencyResolver.Current.GetService<IWorkContext>().CurrentLanguage;
+}
+
+<div class="panel no-hide-overflow">
+    <div class="panel-title pad-10">
+        <h5 class="no-mar">
+            @T("Reports") - @T("DownloadLogs")
+        </h5>
+    </div>
+
+    <div class="pad-10">
+        @(Html.EJ().Grid<object>("DownloadLogsGrid")
+            .Datasource(ds =>
+            {
+                ds.URL(Url.Action("DownloadLogsGridDataSource")).Adaptor(AdaptorType.UrlAdaptor);
+            })
+            .AllowSorting()
+            .AllowResizing()
+            .AllowReordering()
+            .AllowPaging()
+            .AllowFiltering()
+            .AllowTextWrap()
+            .AllowSelection()
+            .ShowColumnChooser()
+            .IsResponsive()
+            .SelectionType(SelectionType.Multiple)
+            .EnablePersistence(false)
+            .EnableResponsiveRow(true)
+            .EnableRTL(currentLang.IsRtl)
+            .MinWidth(990)
+            .Locale("localString")
+            .ClientSideEvents(evt => evt.ActionBegin("onDownloadLogsGridAction"))
+
+            .EditSettings(edt => edt.AllowDeleting().ShowDeleteConfirmDialog())
+            .PageSettings(p => { p.PageSize(25).PageSizeList(new List<int>() { 10, 25, 50, 100, 250, 500 }).PageCount(5).PrintMode(PrintMode.CurrentPage); })
+            .FilterSettings(f => { f.FilterType(FilterType.Menu); })
+            .TextWrapSettings(s => s.WrapMode(WrapMode.Both))
+            .ScrollSettings(s => s.EnableTouchScroll(true))
+            .ToolbarSettings(toolBar => toolBar.ShowToolbar()
+                .CustomToolbarItems(new List<object>() { new Syncfusion.JavaScript.Models.CustomToolbarItem() { TemplateID = "#DownloadLogsGridRefresh" } })
+                .ToolbarItems(items =>
+                {
+                    items.AddTool(ToolBarItems.Delete);
+                    items.AddTool(ToolBarItems.PrintGrid);
+                }))
+            .Columns(col =>
+            {
+                col.Field("Id").HeaderText(T("Id").ToString()).Width(100).IsPrimaryKey(true).Visible(false).Add();
+                col.Field("ProductTitle").HeaderText(T("Product").ToString()).Width(450).Template("#ProductTitleFieldTemplate").Add();
+                col.Field("Email").HeaderText(T("User").ToString()).Template("#EmailFieldTemplate").Add();
+                col.Field("DownloadDate").HeaderText(T("Date").ToString()).Format("{0:yyyy/MM/dd}").Add();
+                col.Field("UserIp").HeaderText(T("IPAddress").ToString()).Add();
+                col.Field("IsDemoVersion").HeaderText(T("DemoVersion").ToString()).Width(90).Add();
+                col.Field("DownloadLink").HeaderText(T("Url").ToString()).Add();
+            }))
+    </div>
+    <div class="card-footer">
+        <h4>@T("WhoHasDownloadedWhat")</h4>
+        <div class="form-inline ">
+            <label for="productIds">@T("Products")</label>
+            <div class="input-group mx-1">
+                @Html.TextBox("productIds", null, new { @class = "form-control form-control-sm ltr-dir" })
+                <div class="input-group-append">
+                    <button type='button' data-toggle="modal" data-target="#selectProductsModal" onclick="btnShowProductsListOnClick()" class='btn btn-outline-secondary btn-sm'><i class='fa fa-list'></i></button>
+                </div>
+            </div>
+
+            <label for="fromDate">@T("FromDate")</label>
+            <div class="input-group mx-1">
+                @Html.TextBox("fromDate", "", "{0:yyyy/MM/dd HH:mm:ss}", new { @class = "form-control form-control-sm ltr-dir datetimepicker" })
+                <div class="input-group-append">
+                    <button type='button' onclick="$(this).parent().prev('.datetimepicker').val(moment().format('YYYY/MM/DD HH:mm:ss'))" class='btn btn-outline-secondary btn-sm'><i class='fa fa-clock-o'></i></button>
+                </div>
+            </div>
+
+            <label for="toDate">@T("ToDate")</label>
+            <div class="input-group mx-1">
+                @Html.TextBox("toDate", "", "{0:yyyy/MM/dd HH:mm:ss}", new { @class = "form-control form-control-sm ltr-dir datetimepicker" })
+                <div class="input-group-append">
+                    <button type='button' onclick="$(this).parent().prev('.datetimepicker').val(moment().format('YYYY/MM/DD HH:mm:ss'))" class='btn btn-outline-secondary btn-sm'><i class='fa fa-clock-o'></i></button>
+                </div>
+            </div>
+        </div>
+        <br />
+        <button class="btn btn-sm btn-primary" onclick="WhoHasDownloadedThisProducts()">@T("WhoHasDownloadedTheSelectedProducts")</button>
+        <button class="btn btn-sm btn-primary" onclick="WhoHasDownloadedAllOfThisProducts()">@T("WhoHasDownloadedAllOfTheSelectedProducts")</button>
+    </div>
+</div>
+
+<script id="ProductTitleFieldTemplate" type="text/x-jsrender">
+    {{:ProductUrl}}
+</script>
+<script id="EmailFieldTemplate" type="text/x-jsrender">
+    {{:UserProfileUrl}}
+</script>
+<script id="DownloadLogsGridRefresh" type="text/x-jsrender">
+    <a onclick="refreshDownloadLogsGrid();" class="e-toolbaricons e-icon"><i class="fa fa-refresh"></i></a>
+</script>
+
+<div class="modal fade" id="selectProductsModal" tabindex="-1" role="dialog" aria-labelledby="selectProductsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="selectProductsModalLabel">
+                    @T("Products")
+                </h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-12" id="productsGridHolder">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-success btn-sm" onclick="btnSelectProductOnClick()">
+                    @T("Select")
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="UsersListModal" tabindex="-1" role="dialog" aria-labelledby="UsersListModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="UsersListModalLabel">
+                    @T("Users")
+                </h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-12" id="userList">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@{
+    Html.AddInlineScript(ResourceLocation.Footer,
+@<script>
+        function onDownloadLogsGridAction(args) {
+            if (args.requestType === "delete") {
+                //Delete record
+                args.cancel = true;
+                DeleteEntity(args.data.map(function(item){return item.Id;}), "@Url.Action("DeleteDownloadLogs")",
+                    refreshDownloadLogsGrid);
+            }
+        }
+
+        function refreshDownloadLogsGrid() {
+            $("#DownloadLogsGrid").ejGrid("refreshContent");
+        }
+
+        function btnShowProductsListOnClick() {
+
+            $("#productsGridHolder").html('@Html.Raw(T("LoadingPanelHtml"))').load(
+                '@Url.Action("Grid", "ManageProducts", new {area = "Admin"})',
+                function() { ej.widget.init(); });
+        }
+
+        function btnSelectProductOnClick() {
+
+            var productsGrid = $("#ProductsGrid").ejGrid("instance");
+            if (productsGrid.getSelectedRecords().length === 0) {
+                WarningAlert("@T("Note")", "@T("YouHaveNotSelectedAnything")");
+                return;
+            }
+            var productIds = $("#productIds").val();
+            if (!isBlank(productIds)) {
+                productIds += ',';
+            }
+            $.each(productsGrid.getSelectedRecords(), function( index, value ) {
+                productIds += value.Id + ',';
+            });
+
+            $("#productIds").val(productIds.replace(/,\s*$/, ''));
+            $('#selectProductsModal').modal('hide');
+    }
+
+        function WhoHasDownloadedThisProducts() {
+            $('#LoadingPanel').show();
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("WhoHasDownloadedThisProducts", "Reports")',
+                data: {
+                    productIds: $("#productIds").val().split(",").map(Number),
+                    fromDate: $("#fromDate").val(),
+                    toDate: $("#toDate").val()
+                },
+                error: function(xhr, status, error) {
+                    ErrorAlert('@T("Error")', '@T("ServerConnectionError")');
+                },
+                success: function (response) {
+                    $('#LoadingPanel').hide();
+                    $("#userList").html(response);
+                    $('#UsersListModal').modal('show');
+                },
+                complete: function() {
+                    $('#LoadingPanel').hide();
+                }
+            });
+    }
+
+        function WhoHasDownloadedAllOfThisProducts() {
+            $('#LoadingPanel').show();
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("WhoHasDownloadedAllOfThisProducts", "Reports")',
+                data: {
+                    productIds: $("#productIds").val().split(",").map(Number),
+                    fromDate: $("#fromDate").val(),
+                    toDate: $("#toDate").val()
+                },
+                error: function(xhr, status, error) {
+                    ErrorAlert('@T("Error")', '@T("ServerConnectionError")');
+                },
+                success: function (response) {
+                    $('#LoadingPanel').hide();
+                    $("#userList").html(response);
+                    $('#UsersListModal').modal('show');
+                },
+                complete: function() {
+                    $('#LoadingPanel').hide();
+                }
+            });
+        }
+</script>);
+}

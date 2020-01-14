@@ -196,6 +196,37 @@
                     </ul>
                 </li>
 
+                @if (User.HasPermission("Reports"))
+                {
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            @T("Reports")
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                            @if (User.HasPermission("Reports_InvoicesChart"))
+                            {
+                                <li><a href="@Url.Action("InvoicesChart", "Reports")" class="dropdown-item"><i class="fa fa-shopping-bag"></i> &nbsp;&nbsp;&nbsp;@T("Invoices")</a></li>
+                            }
+                            @if (User.HasPermission("Reports_SellsChart"))
+                            {
+                                <li><a href="@Url.Action("SellsChart", "Reports")" class="dropdown-item"><i class="fa fa-usd"></i>&nbsp;&nbsp;&nbsp;&nbsp;@T("Selling")</a></li>
+                            }
+                            @if (User.HasPermission("Reports_UsersChart"))
+                            {
+                                <li><a href="@Url.Action("UsersChart", "Reports")" class="dropdown-item"><i class="fa fa-users"></i>&nbsp;&nbsp;&nbsp;@T("Users")</a></li>
+                            }
+                            @if (User.HasPermission("Reports_DownloadsChart"))
+                            {
+                                <li><a href="@Url.Action("DownloadsChart", "Reports")" class="dropdown-item"><i class="fa fa-download"></i>&nbsp;&nbsp;&nbsp;@T("DownloadsChart")</a></li>
+                            }
+                            @if (User.HasPermission("Reports_DownloadLogs"))
+                            {
+                                <li><a href="@Url.Action("DownloadLogs", "Reports")" class="dropdown-item"><i class="fa fa-download"></i>&nbsp;&nbsp;&nbsp;@T("DownloadLogs")</a></li>
+                            }
+                        </ul>
+                    </li>
+                }
+
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         @T("Other")
@@ -207,11 +238,11 @@
                             <li>
                                 <a href="@Url.Action("Index", "Notifications")" class="dropdown-item">
                                     <i class="fa fa-envelope"></i>&nbsp;&nbsp;&nbsp;@T("AdminNotifications")
-                                    @{ Html.RenderAction("GetAdminUnreadedNotificationsCount", "Notifications", new {area = "Admin"}); }
+                                    @{ Html.RenderAction("GetAdminUnreadedNotificationsCount", "Notifications", new { area = "Admin" }); }
                                 </a>
                             </li>
                             <li><a href="@Url.Action("Index", "Notifications", new {seeUsersNotifications = true})" class="dropdown-item"><i class="fa fa-users"></i>&nbsp;&nbsp;&nbsp;@T("ManageUsersNotifications")</a></li>
-                            <li><hr/></li>
+                            <li><hr /></li>
                         }
                         @if (User.HasPermission("SiteSettings"))
                         {
@@ -229,7 +260,7 @@
                         {
                             <li><a href="@Url.Action("Index", "ManageFileServers")" class="dropdown-item"><i class="fa fa-server"></i>&nbsp;&nbsp;&nbsp;@T("FileServers")</a></li>
                         }
-                        <li><hr/></li>
+                        <li><hr /></li>
                         @if (User.HasPermission("FileManager"))
                         {
                             <li><a href="#" onclick="ShowFileExplorer();" class="dropdown-item"><i class="fa fa-folder-open"></i>&nbsp;&nbsp;&nbsp;@T("FileManager")</a></li>
@@ -256,7 +287,7 @@
                         {
                             <li><a href="@Url.Action("Index", "ManageBackgroundJobs")" class="dropdown-item"><i class="fa fa-thumb-tack"></i>&nbsp;&nbsp;&nbsp;@T("BackgroundJobsManager")</a></li>
                         }
-                        <li><hr/></li>
+                        <li><hr /></li>
                         @if (User.HasPermission("SiteSettings_RefreshSearchEngineIndexes"))
                         {
                             <li><a href="@Url.Action("RefreshSearchEngineIndexes", "ManageSettings")" class="dropdown-item"><i class="fa fa-refresh"></i>&nbsp;&nbsp;&nbsp;@T("RefreshSearchEngineIndexes")</a></li>

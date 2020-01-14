@@ -67,7 +67,7 @@ namespace Devesprit.DigiCommerce.Controllers
                 }
 
                 //Append Current Language ISO to Url
-                if (CurrentSettings.AppendLanguageCodeToUrl && Request.Url != null)
+                if (CurrentSettings.AppendLanguageCodeToUrl && Request.Url != null && Request.HttpMethod.ToLower() == "get")
                 {
                     var currentLanguage = WorkContext.CurrentLanguage;
 

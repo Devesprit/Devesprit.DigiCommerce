@@ -84,14 +84,11 @@
     if (Model.ShowPurchaseBtn)
     {
         <div class="btn-group-vertical d-block b-mar-20">
-            @Ajax.HtmlActionLink(PurchaseBtnInnerHtml().ToHtmlString(), "PurchaseProductWizard", "Purchase", new { productId = Model.ProductId }, new AjaxOptions()
-            {
-                InsertionMode = InsertionMode.Replace,
-                UpdateTargetId = "dlgProductPurchaseWizard",
-                LoadingElementId = "LoadingPanel",
-                LoadingElementDuration = 10,
-                OnFailure = "ErrorAlert('" + T("Error") + "', '" + T("ServerConnectionError") + "');"
-            }, new { @class = "btn btn-success shadow text-light fs-25 d-block white-space-initial" })
+            <button class="btn btn-success shadow text-light fs-25 d-block white-space-initial" 
+                    type="button"
+                    onclick="ShowProductPurchaseWizard(@Model.ProductId, null);">
+                @PurchaseBtnInnerHtml()
+            </button>
 
             @UserGroupDiscountsBtnInnerHtml()
         </div>

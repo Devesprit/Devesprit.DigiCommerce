@@ -22,11 +22,11 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Models
         [DisplayNameLocalized("GroupBy")]
         public TimePeriodType PeriodType { get; set; }
 
+        public string ReportName { get; set; }
+
         public string XAxisTitle { get; set; }
         public string YAxisTitle { get; set; }
-        public string ChartName { get; set; }
         public string ActionName { get; set; }
         public string ControllerName { get; set; }
-        public string UpdateTargetId { get; set; }
     }
 }

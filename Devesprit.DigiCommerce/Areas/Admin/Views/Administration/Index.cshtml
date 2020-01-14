@@ -27,17 +27,3 @@
 
     <div id="sellsChartHolder"></div>
 </div>
-
-@{
-    Html.AddInlineScript(ResourceLocation.Footer,
-        @<script>
-             $(document).ready(function() {
-                 $("#invoiceChartHolder").html('@Html.Raw(T("LoadingPanelHtml"))').load(
-                     '@Url.Action("InvoicesChart", "Administration")');
-                 $("#usersChartHolder").html('@Html.Raw(T("LoadingPanelHtml"))').load(
-                     '@Url.Action("UsersChart", "Administration")');
-                 $("#sellsChartHolder").html('@Html.Raw(T("LoadingPanelHtml"))').load(
-                     '@Url.Action("SellsChart", "Administration")');
-             });
-         </script>);
-}

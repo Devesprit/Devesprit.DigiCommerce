@@ -72,29 +72,8 @@
                      return;
                  }
                  var productId = productsGrid.getSelectedRecords()[0].Id;
-                 $('#LoadingPanel').show();
-                 $.ajax({
-                     type: "GET",
-                     url: '@Url.Action("PurchaseProductWizard", "Purchase")',
-                     data: {
-                         productId: productId,
-                         invoiceId: '@Model.ToString()'
-                     },
-                     error: function(xhr, status, error) {
-                         ErrorAlert('@T("Error")', '@T("ServerConnectionError")');
-                     },
-                     success: function (response) {
-                         $('#addNewItemModal').modal('hide');
-                         setTimeout(
-                             function() 
-                             {
-                                 $('#dlgProductPurchaseWizard').html(response);
-                             }, 500);
-                     },
-                     complete: function() {
-                         $('#LoadingPanel').hide();
-                     }
-                 });
+                 ShowProductPurchaseWizard(productId, '@Model.ToString()');
+                 $('#addNewItemModal').modal('hide');
              } else if ($("#ddItemType").val() === "UserGroup") {
                  var userGroupsGrid = $("#UserGroupsGrid").ejGrid("instance");
                  if (userGroupsGrid.getSelectedRecords().length === 0) {

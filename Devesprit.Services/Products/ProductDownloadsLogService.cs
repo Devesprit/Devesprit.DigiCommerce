@@ -1,7 +1,10 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Devesprit.Data;
 using Devesprit.Data.Domain;
+using Devesprit.Data.Enums;
 using Devesprit.Services.Events;
 using Z.EntityFramework.Plus;
 
@@ -53,6 +56,80 @@ namespace Devesprit.Services.Products
         public virtual int GetNumberOfDownloads()
         {
             return _dbContext.ProductDownloadsLog.DeferredCount().FromCache(CacheTags.ProductDownloadLog);
+        }
+
+        public virtual async Task<Dictionary<DateTime, int>> DownloadReportAsync(DateTime fromDate, DateTime toDate, TimePeriodType periodType, bool? demoVersions)
+        {
+            var query = _dbContext.ProductDownloadsLog.Where(p => p.DownloadDate >= fromDate && p.DownloadDate <= toDate);
+            if (demoVersions != null)
+            {
+                query = query.Where(p => p.IsDemoVersion == demoVersions.Value);
+            }
+
+            var downloads = await query.OrderBy(p => p.DownloadDate)
+                .Select(p => new { p.DownloadDate }).FromCacheAsync(CacheTags.ProductDownloadLog);
+
+            var report = new Dictionary<DateTime, int>();
+            var datetimeToStringFormat = "g";
+            switch (periodType)
+            {
+                case TimePeriodType.Hour:
+                    datetimeToStringFormat = "yyyy/MM/dd HH:mm";
+                    report = downloads.GroupBy(p =>
+                            new DateTime(p.DownloadDate.Year, p.DownloadDate.Month, p.DownloadDate.Day, p.DownloadDate.Hour, 0,
+                                0, 0))
+                        .Select(p => new { date = p.Key, count = p.Count() })
+                        .ToDictionary(p => p.date, p => p.count);
+                    break;
+                case TimePeriodType.Day:
+                    datetimeToStringFormat = "yyyy/MM/dd";
+                    report = downloads.GroupBy(p =>
+                            new DateTime(p.DownloadDate.Year, p.DownloadDate.Month, p.DownloadDate.Day, 0, 0, 0, 0))
+                        .Select(p => new { date = p.Key, count = p.Count() })
+                        .ToDictionary(p => p.date, p => p.count);
+                    break;
+                case TimePeriodType.Month:
+                    datetimeToStringFormat = "yyyy/MM";
+                    report = downloads.GroupBy(p =>
+                            new DateTime(p.DownloadDate.Year, p.DownloadDate.Month, 1, 0, 0, 0, 0))
+                        .Select(p => new { date = p.Key, count = p.Count() })
+                        .ToDictionary(p => p.date, p => p.count);
+                    break;
+                case TimePeriodType.Year:
+                    datetimeToStringFormat = "yyyy";
+                    report = downloads.GroupBy(p =>
+                            new DateTime(p.DownloadDate.Year, 1, 1, 0, 0, 0, 0))
+                        .Select(p => new { date = p.Key, count = p.Count() })
+                        .ToDictionary(p => p.date, p => p.count);
+                    break;
+            }
+
+            //Insert Zero Values
+            var dateCounter = fromDate;
+            while (dateCounter < toDate)
+            {
+                if (report.All(p => p.Key.ToString(datetimeToStringFormat) != dateCounter.ToString(datetimeToStringFormat)))
+                {
+                    report.Add(dateCounter, 0);
+                }
+                switch (periodType)
+                {
+                    case TimePeriodType.Hour:
+                        dateCounter = dateCounter.AddHours(1);
+                        break;
+                    case TimePeriodType.Day:
+                        dateCounter = dateCounter.AddDays(1);
+                        break;
+                    case TimePeriodType.Month:
+                        dateCounter = dateCounter.AddMonths(1);
+                        break;
+                    case TimePeriodType.Year:
+                        dateCounter = dateCounter.AddYears(1);
+                        break;
+                }
+            }
+
+            return report.OrderBy(p => p.Key).ToDictionary(p => p.Key, p => p.Value);
         }
     }
 }

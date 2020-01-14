@@ -21,8 +21,8 @@
     {
         <img src="@Model.DownloadLimitedToUserGroup.GetLocalized(p => p.GroupLargeIcon)" class="d-block mx-auto b-mar-5 mw-100" />
         @Html.Raw(T("SubscribeToPlan",
-            "<span style='color: "+Model.DownloadLimitedToUserGroup.GetLocalized(p => p.GroupTextColor)+" !important;'> "+
-            Model.DownloadLimitedToUserGroup.GetLocalized(p => p.GroupName)+ "</span>"))
+            "<span style='color: " + Model.DownloadLimitedToUserGroup.GetLocalized(p => p.GroupTextColor) + " !important;'> " +
+            Model.DownloadLimitedToUserGroup.GetLocalized(p => p.GroupName) + "</span>"))
         <hr class="my-1" />
         <small>
             @Html.Raw(string.Format(Model.HigherUserGroupsCanDownload ?
@@ -52,13 +52,13 @@
     //Purchase button
     if (Model.ShowPurchaseBtn)
     {
-        @Ajax.HtmlActionLink("<i class='fa fa-shopping-cart'></i>", "PurchaseProductWizard", "Purchase", new {productId = Model.ProductId}, new AjaxOptions()
-        {
-            InsertionMode = InsertionMode.Replace,
-            UpdateTargetId = "dlgProductPurchaseWizard",
-            LoadingElementId = "LoadingPanel",
-            LoadingElementDuration = 10,
-            OnFailure = "ErrorAlert('" + T("Error") + "', '" + T("ServerConnectionError") + "');"
-        }, new {@class = "btn btn-success btn-sm", data_toggle = "tooltip", data_html = "true", title = PurchaseBtnInnerHtml().ToHtmlString()})
+        <button class="btn btn-success btn-sm"
+                data-toggle="tooltip"
+                data-html="true"
+                title="@PurchaseBtnInnerHtml().ToHtmlString()"
+                type="button"
+                onclick="ShowProductPurchaseWizard(@Model.ProductId, null);">
+            <i class='fa fa-shopping-cart'></i>
+        </button>
     }
 }

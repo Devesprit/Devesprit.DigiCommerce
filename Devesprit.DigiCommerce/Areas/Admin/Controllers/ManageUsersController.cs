@@ -221,7 +221,8 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
                     ? p.MaxDownloadCount + strPer + p.MaxDownloadPeriodType
                     : strUnlimited,
                 p.SubscriptionDate,
-                p.SubscriptionExpireDate
+                p.SubscriptionExpireDate,
+                NumberOfDownloads = p.DownloadsLog.Count
             });
 
             var result = dataSource.ApplyDataManager(dm, out var count).ToList();

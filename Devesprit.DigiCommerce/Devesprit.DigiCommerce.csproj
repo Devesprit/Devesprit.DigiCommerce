@@ -881,7 +881,6 @@
     <Content Include="Areas\Admin\Views\ManageSettings\Index.cshtml" />
     <Content Include="Areas\Admin\Views\ManageInvoices\Index.cshtml" />
     <Content Include="Areas\Admin\Views\ManageUserGroups\Grid.cshtml" />
-    <Content Include="Areas\Admin\Views\Administration\Partials\_Chart.cshtml" />
     <Content Include="Areas\Admin\Views\ManageInvoices\Grid.cshtml" />
     <Content Include="Areas\Admin\Views\ManageTaxes\Editor.cshtml" />
     <Content Include="Areas\Admin\Views\ManageTaxes\Index.cshtml" />
@@ -1306,6 +1305,9 @@
     <Content Include="Content\ej\mobile\images\ejmmobilefonts.eot" />
     <Content Include="Areas\Admin\Views\ManageUserRoles\Editor.cshtml" />
     <Content Include="Areas\Admin\Views\ManageUserRoles\Index.cshtml" />
+    <Content Include="Areas\Admin\Views\Reports\ChartReport.cshtml" />
+    <Content Include="Areas\Admin\Views\Reports\Partials\_Chart.cshtml" />
+    <Content Include="Areas\Admin\Views\Reports\DownloadLogs.cshtml" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <Content Include="Scripts\bootstrap.bundle.js" />
     <Content Include="Scripts\bootstrap.bundle.min.js" />
@@ -1527,6 +1529,7 @@
     <Compile Include="App_Start\IdentityConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Areas\Admin\AdminAreaRegistration.cs" />
+    <Compile Include="Areas\Admin\Controllers\ReportsController.cs" />
     <Compile Include="Areas\Admin\Controllers\AdministrationController.cs" />
     <Compile Include="Areas\Admin\Controllers\Event\FileExplorerActionEvent.cs" />
     <Compile Include="Areas\Admin\Controllers\FileExplorerController.cs" />

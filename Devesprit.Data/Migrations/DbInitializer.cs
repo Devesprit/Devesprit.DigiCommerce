@@ -231,6 +231,8 @@ namespace Devesprit.Data.Migrations
             new TblUserAccessAreas("Reports", "Reports_InvoicesChart", "Invoices"),
             new TblUserAccessAreas("Reports", "Reports_SellsChart", "Selling"),
             new TblUserAccessAreas("Reports", "Reports_UsersChart", "Users"),
+            new TblUserAccessAreas("Reports", "Reports_DownloadLogs", "DownloadLogs"),
+            new TblUserAccessAreas("Reports", "Reports_DownloadsChart", "Downloads"),
             
             new TblUserAccessAreas("", "FileManager", "FileManager"),
 

@@ -1,0 +1,12 @@
+﻿@model Devesprit.DigiCommerce.Areas.Admin.Models.ChartModel
+@{
+    ViewBag.Title = T("Reports").ToString() +"-"+ Model.ReportName;
+}
+
+<div class="panel">
+    <div class="panel-title pad-10">
+        <h5 class="no-mar">@T("Reports") - @Model.ReportName</h5>
+    </div>
+
+    @Html.Partial("Partials/_Chart", Model)
+</div>

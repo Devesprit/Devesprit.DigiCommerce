@@ -85,7 +85,8 @@ namespace Devesprit.DigiCommerce.Controllers
                 return RedirectToAction("index", "Invoice");
             }
         }
-
+        
+        
         public virtual async Task<ActionResult> PurchaseProductWizard(int productId, Guid? invoiceId)
         {
             var product = await _productService.FindByIdAsync(productId);

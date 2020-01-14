@@ -1,0 +1,65 @@
+﻿@using Devesprit.WebFramework.Helpers
+@using Syncfusion.JavaScript.DataVisualization
+@using Syncfusion.MVC.EJ
+@model Devesprit.DigiCommerce.Areas.Admin.Models.ChartModel
+@{
+    Layout = null;
+}
+<div class="row">
+    <div class="col-12 ltr-dir">
+        @(Html.EJ().Chart("ejChart")
+                    .PrimaryXAxis(x => x.Title(t => t.Text(Model.XAxisTitle)).LabelIntersectAction(LabelIntersectAction.Trim))
+                    .PrimaryYAxis(y => y.Title(t => t.Text(Model.YAxisTitle)))
+                    .CommonSeriesOptions(cm =>
+                        cm.EnableAnimation(true)
+                            .Type(SeriesType.Spline)
+                            .DrawType(DrawType.Spline)
+                            .Tooltip(tooltip => tooltip.Visible(true))
+                            .Marker(mr => mr.Shape(ChartShape.Circle).Visible(true).Size(sz => sz.Height(10).Width(10))))
+                    .Series(sr =>
+                    {
+                        foreach (var chartData in Model.ChartDatas)
+                        {
+                            sr.Points(pt =>
+                            {
+                                foreach (var chartItems in chartData.ChartItems)
+                                {
+                                    pt.X(chartItems.X).Y(chartItems.Y).Add();
+                                }
+                            }).Name(chartData.Name).Fill(chartData.Color).Add();
+                        }
+
+                    })
+                    .IsResponsive(true)
+                    .Size(sz => sz.Height("300"))
+                    .Legend(lg => { lg.Visible(true); }))
+
+    </div>
+</div>
+
+@using (Html.BeginForm(Model.ActionName, Model.ControllerName, FormMethod.Get, new { @class = "form-inline fs-12 card-footer" }))
+{
+    @Html.LabelFor(p => p.FromDate)
+    <div class="input-group mx-1">
+        @Html.TextBoxFor(p => p.FromDate, "{0:yyyy/MM/dd HH:mm:ss}", new { @class = "form-control form-control-sm ltr-dir datetimepicker" })
+        <div class="input-group-append">
+            <button type='button' onclick="$(this).parent().prev('.datetimepicker').val(moment().format('YYYY/MM/DD HH:mm:ss'))" class='btn btn-outline-secondary btn-sm'><i class='fa fa-clock-o'></i></button>
+        </div>
+    </div>
+    @Html.ValidationMessageFor(p => p.FromDate, "", new { @class = "form-text text-danger fs-12" })
+
+    @Html.LabelFor(p => p.ToDate)
+    <div class="input-group mx-1">
+        @Html.TextBoxFor(p => p.ToDate, "{0:yyyy/MM/dd HH:mm:ss}", new { @class = "form-control form-control-sm ltr-dir datetimepicker" })
+        <div class="input-group-append">
+            <button type='button' onclick="$(this).parent().prev('.datetimepicker').val(moment().format('YYYY/MM/DD HH:mm:ss'))" class='btn btn-outline-secondary btn-sm'><i class='fa fa-clock-o'></i></button>
+        </div>
+    </div>
+    @Html.ValidationMessageFor(p => p.ToDate, "", new { @class = "form-text text-danger fs-12" })
+
+    @Html.LabelFor(p => p.PeriodType)
+    @Html.LocalizedEnumDropDownListFor(p => p.PeriodType, T("SelectAnItem").ToString(), new { @class = "form-control mx-1 custom-select form-control-sm" })
+    @Html.ValidationMessageFor(p => p.PeriodType, "", new { @class = "form-text text-danger fs-12" })
+
+    <button type="submit" class="btn btn-success btn-sm"><i class="fa fa-check"></i></button>
+}

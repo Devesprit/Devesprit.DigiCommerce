@@ -200,6 +200,32 @@ function UpdateNumberOfItemsInShoppingCard() {
     }
 }
 
+function ShowProductPurchaseWizard(prodId, invId) {
+    var modal = $('#dlgProductPurchaseWizard');
+    if (modal.length) {
+        $('#LoadingPanel').show();
+        $.ajax({
+            type: "POST",
+            url: '/Purchase/PurchaseProductWizard',
+            data: {
+                productId: prodId,
+                invoiceId: invId
+            },
+            error: function (xhr, status, error) {
+                $('#dlgProductPurchaseWizard').html('');
+                $('#LoadingPanel').hide();
+                ErrorAlert('Error', 'An error occurred while communicating with the server, please check your internet connection.');
+            },
+            success: function (response) {
+                $('#dlgProductPurchaseWizard').html(response);
+            },
+            complete: function () {
+                $('#LoadingPanel').hide();
+            }
+        });
+    }
+}
+
 String.prototype.format = String.prototype.f = function () {
     var s = this,
         i = arguments.length;
