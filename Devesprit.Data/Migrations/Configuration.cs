@@ -10,11 +10,11 @@ namespace Devesprit.Data.Migrations
 {
     public partial class Configuration : DbMigrationsConfiguration<AppDbContext>
     {
-        public Configuration()
+        public Configuration(): base()
         {
             AutomaticMigrationsEnabled = true;
             AutomaticMigrationDataLossAllowed = true;
-
+            
             var providerName = ConfigurationManager.ConnectionStrings["SITE.CONNSTR"].ProviderName;
             if (providerName.ToLower().Contains("MySql".ToLower()))
             {

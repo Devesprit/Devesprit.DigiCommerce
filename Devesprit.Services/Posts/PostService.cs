@@ -56,6 +56,7 @@ namespace Devesprit.Services.Posts
                 .Include(p => p.Descriptions)
                 .Include(p => p.Images)
                 .Include(p => p.Categories)
+                .AsNoTracking()
                 .FromCache(_cacheKey,
                     CacheTags.PostCategory,
                     CacheTags.PostDescription,
@@ -93,6 +94,7 @@ namespace Devesprit.Services.Posts
                     .Include(p => p.Categories)
                     .Include(p => p.Descriptions)
                     .Include(p => p.Images)
+                    .AsNoTracking()
                     .Skip(pageSize * (pageIndex - 1))
                     .Take(pageSize)
                     .FromCache(_cacheKey,
@@ -125,6 +127,7 @@ namespace Devesprit.Services.Posts
                     PublishDate = p.PublishDate,
                     PostType = p.PostType
                 })
+                .AsNoTracking()
                 .FromCache(_cacheKey);
 
             return result.ToList();
@@ -150,6 +153,7 @@ namespace Devesprit.Services.Posts
                     .Include(p => p.Descriptions)
                     .Include(p => p.Images)
                     .Include(p => p.Categories)
+                    .AsNoTracking()
                     .Skip(pageSize * (pageIndex - 1))
                     .Take(pageSize)
                     .FromCache(_cacheKey,
@@ -188,6 +192,7 @@ namespace Devesprit.Services.Posts
                     .Include(p => p.Descriptions)
                     .Include(p => p.Images)
                     .Include(p => p.Categories)
+                    .AsNoTracking()
                     .Skip(pageSize * (pageIndex - 1))
                     .Take(pageSize)
                     .FromCache(_cacheKey,
@@ -226,6 +231,7 @@ namespace Devesprit.Services.Posts
                     .Include(p => p.Descriptions)
                     .Include(p => p.Images)
                     .Include(p => p.Categories)
+                    .AsNoTracking()
                     .Skip(pageSize * (pageIndex - 1))
                     .Take(pageSize)
                     .FromCache(_cacheKey,

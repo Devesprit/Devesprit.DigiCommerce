@@ -78,6 +78,7 @@ namespace Devesprit.Services.Products
             var sortedItems = invoiceQuery
                 .GroupBy(p => p.ItemId)
                 .Select(p => new {p.FirstOrDefault().ItemId, Sum = p.Sum(c => c.Qty)}).OrderByDescending(p => p.Sum)
+                .AsNoTracking()
                 .Skip(pageSize * (pageIndex - 1))
                 .Take(pageSize)
                 .FromCache(CacheTags.Invoice).Select(p => p.ItemId).ToList();
@@ -95,6 +96,7 @@ namespace Devesprit.Services.Products
                 .Include(p => p.Descriptions)
                 .Include(p => p.Images)
                 .Include(p => p.Categories)
+                .AsNoTracking()
                 .FromCache(_cacheKey,
                     CacheTags.PostCategory,
                     CacheTags.PostDescription,
@@ -119,7 +121,7 @@ namespace Devesprit.Services.Products
             {
                 query = _dbContext.Products.Where(p => p.PublishDate >= fromDate);
             }
-
+             
             if (filterByCategory != null)
             {
                 var subCategories = _categoriesService.GetSubCategories(filterByCategory.Value);
@@ -132,6 +134,7 @@ namespace Devesprit.Services.Products
                     .Include(p => p.Descriptions)
                     .Include(p => p.Images)
                     .Include(p => p.Categories)
+                    .AsNoTracking()
                     .Skip(pageSize * (pageIndex - 1))
                     .Take(pageSize)
                     .FromCache(_cacheKey,
