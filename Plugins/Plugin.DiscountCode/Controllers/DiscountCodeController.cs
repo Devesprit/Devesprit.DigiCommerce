@@ -172,7 +172,7 @@ namespace Plugin.DiscountCode.Controllers
                 p.IsPercentage,
                 ExpiryDate = p.ExpiryDate == null ? "-" : p.ExpiryDate.Value.ToString("G"),
                 MaxNumberOfUsage = p.MaxNumberOfUsage == null ? "-" : p.MaxNumberOfUsage.Value.ToString("N0"),
-                NumberOfUsed = _dbContext.InvoicesDiscountCode.Count(x=> x.DiscountCode == p.DiscountCode).ToString("N0")
+                NumberOfUsed = _dbContext.InvoicesDiscountCode.Count(x=> x.DiscountCode == p.DiscountCode && x.Invoice.Status == InvoiceStatus.Paid).ToString("N0")
             });
             return Json(new { result = result, count = count });
         }
@@ -181,7 +181,9 @@ namespace Plugin.DiscountCode.Controllers
         [UserHasPermission("DevespritDiscountCodeConfig")]
         public virtual ActionResult InvoiceGridDataSource(DataManager dm, string code)
         {
-            var dataSource = _dbContext.InvoicesDiscountCode.Where(p=> p.DiscountCode == code).ApplyDataManager(dm, out var count).ToList();
+            var dataSource = _dbContext.InvoicesDiscountCode
+                .Where(p => p.DiscountCode == code && p.Invoice.Status == InvoiceStatus.Paid)
+                .ApplyDataManager(dm, out var count).ToList();
             var invoiceIds = dataSource.Select(x => x.InvoiceId).ToList();
             var result = _invoiceService.GetAsQueryable()
                 .Where(n => invoiceIds.Contains(n.Id)).ToList().Select(y =>

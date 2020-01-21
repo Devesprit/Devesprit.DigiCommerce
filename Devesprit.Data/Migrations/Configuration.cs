@@ -4,6 +4,7 @@ using System.Data.Entity.Migrations;
 using System.Data.Entity.Validation;
 using System.Text;
 using System.Web.Mvc;
+using Npgsql;
 
 namespace Devesprit.Data.Migrations
 {
@@ -18,6 +19,11 @@ namespace Devesprit.Data.Migrations
             if (providerName.ToLower().Contains("MySql".ToLower()))
             {
                 SetSqlGenerator("MySql.Data.MySqlClient", new MySql.Data.Entity.MySqlMigrationSqlGenerator());
+            }
+            else
+            if (providerName.ToLower().Contains("Npgsql".ToLower()))
+            {
+                SetSqlGenerator("Npgsql", new NpgsqlMigrationSqlGenerator());
             }
         }
 

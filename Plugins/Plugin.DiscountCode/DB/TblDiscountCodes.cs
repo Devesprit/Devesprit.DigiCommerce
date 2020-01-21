@@ -8,7 +8,7 @@ namespace Plugin.DiscountCode.DB
     public class TblDiscountCodes : BaseEntity
     {
         [Required,
-         Column(TypeName = "NVARCHAR"),
+         Column(TypeName = "VARCHAR"),
          StringLength(250),
          MaxLength(250),
          Index(IsUnique = true)]

@@ -99,6 +99,7 @@
     {
         <a href="@Url.Action("DownloadProduct", "Download", new {productId = Model.ProductId, demoFiles = false})"
            target="_blank"
+           rel="noindex, nofollow"
            class="btn btn-warning btn-lg fs-20 d-block white-space-initial b-mar-20">
             <i class="fa fa-download fa-2x"></i>
             <br />
@@ -111,6 +112,7 @@
     {
         <a href="@Url.Action("DownloadProduct", "Download", new {productId = Model.ProductId, demoFiles = true})"
            target="_blank"
+           rel="noindex, nofollow"
            class="btn btn-warning btn-lg fs-16 d-block b-mar-20 white-space-initial">
             @Html.Raw(T("DownloadDemo"))
         </a>

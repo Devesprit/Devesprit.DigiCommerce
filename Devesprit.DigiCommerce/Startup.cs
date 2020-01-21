@@ -19,6 +19,7 @@ using Hangfire.Dashboard.RecurringJobExtensions;
 using Hangfire.Logging;
 using Hangfire.Logging.LogProviders;
 using Hangfire.MySql;
+using Hangfire.PostgreSql;
 using Hangfire.SqlServer;
 using Microsoft.Owin;
 using Owin;
@@ -93,6 +94,19 @@ namespace Devesprit.DigiCommerce
                 .UseElmahLogProvider(LogLevel.Error)
                 .UseAutofacActivator(AutofacDependencyResolver.Current.ApplicationContainer)
                 .UseFilter(new CanBePausedAttribute());
+            }
+            else
+            if (providerName.ToLower().Contains("Npgsql".ToLower()))
+            {
+                GlobalConfiguration.Configuration
+                    .UseStorage(new PostgreSqlStorage(connectionString.ConnectionString, new PostgreSqlStorageOptions()
+                    {
+                        PrepareSchemaIfNecessary = true,
+                    }))
+                    .UseDashboardRecurringJobExtensions()
+                    .UseElmahLogProvider(LogLevel.Error)
+                    .UseAutofacActivator(AutofacDependencyResolver.Current.ApplicationContainer)
+                    .UseFilter(new CanBePausedAttribute());
             }
             else
             {

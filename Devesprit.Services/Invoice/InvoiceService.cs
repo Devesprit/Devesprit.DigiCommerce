@@ -825,7 +825,7 @@ namespace Devesprit.Services.Invoice
                 {
                     var emptyFilterDate = DateTime.Now.AddDays(-settings.DeleteEmptyInvoicesAfterDays);
                     await _dbContext.Invoices
-                        .Where(p => p.Status == InvoiceStatus.Pending && p.CreateDate < emptyFilterDate &&
+                        .Where(p => p.CreateDate < emptyFilterDate &&
                                     !p.InvoiceDetails.Any())
                         .DeleteAsync();
                 }

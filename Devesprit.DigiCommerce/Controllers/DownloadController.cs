@@ -170,7 +170,7 @@ namespace Devesprit.DigiCommerce.Controllers
                     model.FileGroups.Add(new FileGroup()
                     {
                         Title = productTitle,
-                        FileListTree = $"<ul><li data-jstree='{{\"icon\":\"/Content/img/FileExtIcons/download.png\"}}'><a target='_blank' href='{downloadLink}'><img src='/Content/img/FileExtIcons/link.png'/> <span class='{(productTitle.IsRtlLanguage() ? "rtl-dir" : "ltr-dir")}'>{productTitle}</span></a></li></ul>"
+                        FileListTree = $"<ul><li data-jstree='{{\"icon\":\"/Content/img/FileExtIcons/download.png\"}}'><a target='_blank' rel='noindex, nofollow' href='{downloadLink}'><img src='/Content/img/FileExtIcons/link.png'/> <span class='{(productTitle.IsRtlLanguage() ? "rtl-dir" : "ltr-dir")}'>{productTitle}</span></a></li></ul>"
                     });
                 }
             }
@@ -226,7 +226,7 @@ namespace Devesprit.DigiCommerce.Controllers
                                         Url.Action("DownloadLog", new { productId = productId, downloadLink = attributeOption.FilesPath, version = requestDemoFiles ? ("DEMO" + productId).EncryptString() : ("FULL" + productId).EncryptString() })
                                         : $"#' onclick='WarningAlert(\"{_localizationService.GetResource("Note")}\", \"{_localizationService.GetResource("YouDoNotHaveAccessRightsToThisFile")}\")";
                                     fileListTreeHtml +=
-                                        $"<li data-jstree='{{\"icon\":\"/Content/img/FileExtIcons/download.png\"}}'><a target='_blank' href='{downloadLink}'><img src='/Content/img/FileExtIcons/link.png'/> <span class='{(optionName.IsRtlLanguage() ? "rtl-dir" : "ltr-dir")}'>{optionName}</span></a></li>";
+                                        $"<li data-jstree='{{\"icon\":\"/Content/img/FileExtIcons/download.png\"}}'><a target='_blank' rel='noindex, nofollow' href='{downloadLink}'><img src='/Content/img/FileExtIcons/link.png'/> <span class='{(optionName.IsRtlLanguage() ? "rtl-dir" : "ltr-dir")}'>{optionName}</span></a></li>";
                                 }
                             }
 
@@ -259,7 +259,7 @@ namespace Devesprit.DigiCommerce.Controllers
                 var downloadLink = includeDownloadLink
                     ? Url.Action("DownloadLog", "Download", new { productId = productId, downloadLink = file.DownloadLink, version = isDemo ? ("DEMO" + productId).EncryptString() : ("FULL" + productId).EncryptString() })
                     : $"#' onclick='WarningAlert(\"{_localizationService.GetResource("Note")}\", \"{_localizationService.GetResource("YouDoNotHaveAccessRightsToThisFile")}\")";
-                result += $"<li data-jstree='{{\"icon\":\"/Content/img/FileExtIcons/download.png\"}}'><a target='_blank' href='{downloadLink}'><img src='{GetFileImage(file)}'/><span class='{(file.Name.IsRtlLanguage() ? "rtl-dir" : "ltr-dir")}'>{file.Name.Replace("_", " ")}     <small class='text-muted'>({_localizationService.GetResource("Size")}: {file.DisplaySize} - {_localizationService.GetResource("Date")}: {file.ModifiedDateUtc:G})</small></span></a></li>";
+                result += $"<li data-jstree='{{\"icon\":\"/Content/img/FileExtIcons/download.png\"}}'><a target='_blank' rel='noindex, nofollow' href='{downloadLink}'><img src='{GetFileImage(file)}'/><span class='{(file.Name.IsRtlLanguage() ? "rtl -dir" : "ltr-dir")}'>{file.Name.Replace("_", " ")}     <small class='text-muted'>({_localizationService.GetResource("Size")}: {file.DisplaySize} - {_localizationService.GetResource("Date")}: {file.ModifiedDateUtc:G})</small></span></a></li>";
             }
             result += "</ul>";
             return result;

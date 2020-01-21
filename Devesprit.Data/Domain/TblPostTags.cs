@@ -10,7 +10,7 @@ namespace Devesprit.Data.Domain
         [Required,
          StringLength(400),
          Index(IsUnique = true),
-         Column(TypeName = "NVARCHAR")]
+         Column(TypeName = "VARCHAR")]
         public string Tag { get; set; }
         public virtual ICollection<TblPosts> Posts { get; set; }
     }

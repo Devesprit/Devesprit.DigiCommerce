@@ -42,7 +42,6 @@ namespace Devesprit.Data
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             DbContextCustomizer.ApplyCustomization(modelBuilder);
-            
             base.OnModelCreating(modelBuilder);
         }
 

@@ -198,6 +198,8 @@ button {
     }
 
 .like-btn {
+    background: none;
+    border: none;
     color: rgb(201, 45, 45);
     -webkit-transition: all .15s ease-in-out;
     transition: all .15s ease-in-out;

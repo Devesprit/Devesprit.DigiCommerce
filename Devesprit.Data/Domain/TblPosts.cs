@@ -34,7 +34,7 @@ namespace Devesprit.Data.Domain
         [Required,
          StringLength(500),
          Index(IsClustered = false, IsUnique = true),
-        Column(TypeName = "NVARCHAR")]
+        Column(TypeName = "VARCHAR")]
         public string Slug { get; set; }
         public string MetaDescription { get; set; }
         public string MetaKeyWords { get; set; }

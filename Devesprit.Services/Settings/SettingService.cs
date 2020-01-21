@@ -42,7 +42,7 @@ namespace Devesprit.Services.Settings
                 return _memoryCache.GetObject<List<TblSettings>>(CacheTags.Setting);
             }
 
-            var result = _dbContext.Settings.FromCache(CacheTags.Setting).ToList();
+            var result = _dbContext.Settings.FromCache(CacheTags.Setting).ToList(); 
 
             _memoryCache.AddObject(CacheTags.Setting, result, TimeSpan.FromDays(30));
             return result;

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Text.RegularExpressions;
@@ -21,6 +22,12 @@ namespace Devesprit.FileServer
                                                                        .GetInstance<IFileManagerRepository>());
         public override async Task ProcessRequestAsync(HttpContext context)
         {
+            if (IsCrawlByBot(context.Request))
+            {
+                ReturnHttpStatusCode(context, HttpStatusCode.OK, "Bots detected.");
+                return;
+            }
+
             var request = context.Request.QueryString["request"];
             if (string.IsNullOrWhiteSpace(request))
             {
@@ -138,6 +145,31 @@ namespace Devesprit.FileServer
             //converter.IsValid only works since .NET4 but still returns invalid values for a few cases like NULL for Unit and not respecting locale for date validation
             try { return (T)System.ComponentModel.TypeDescriptor.GetConverter(typeof(T)).ConvertFrom(value.ToString()); }
             catch (Exception) { return default(T); }
+        }
+
+        private bool IsCrawlByBot(HttpRequest request)
+        {
+            var crawlers = new List<string>()
+            {
+                "googlebot","bingbot","yandexbot","ahrefsbot","msnbot","linkedinbot","exabot","compspybot",
+                "yesupbot","paperlibot","tweetmemebot","semrushbot","gigabot","voilabot","adsbot-google",
+                "botlink","alkalinebot","araybot","undrip bot","borg-bot","boxseabot","yodaobot","admedia bot",
+                "ezooms.bot","confuzzledbot","coolbot","internet cruiser robot","yolinkbot","diibot","musobot",
+                "dragonbot","elfinbot","wikiobot","twitterbot","contextad bot","hambot","iajabot","news bot",
+                "irobot","socialradarbot","ko_yappo_robot","skimbot","psbot","rixbot","seznambot","careerbot",
+                "simbot","solbot","mail.ru_bot","spiderbot","blekkobot","bitlybot","techbot","void-bot",
+                "vwbot_k","diffbot","friendfeedbot","archive.org_bot","woriobot","crystalsemanticsbot","wepbot",
+                "spbot","tweetedtimes bot","mj12bot","who.is bot","psbot","robot","jbot","bbot","bot"
+            };
+
+            if (request.UserAgent != null)
+            {
+                string ua = request.UserAgent.ToLower();
+                bool isCrawler = crawlers.Exists(x => ua.Contains(x));
+                return isCrawler;
+            }
+
+            return false;
         }
 
         public override bool IsReusable => false;
