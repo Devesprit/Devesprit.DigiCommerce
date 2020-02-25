@@ -15,11 +15,17 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Models
         [DisplayNameLocalized("SiteUrl")]
         public string SiteUrl { get; set; }
 
+
+        [DisplayNameLocalized("RedirectAllRequestsToSiteUrl")]
+        public bool RedirectAllRequestsToSiteUrl { get; set; }
+
+
         [RequiredLocalized()]
         [MaxLengthLocalized(500)]
         [AllowHtml]
         [DisplayNameLocalized("SiteName")]
         public LocalizedString SiteName { get; set; } = new LocalizedString();
+
 
         [DisplayNameLocalized("InvoicePrintPageCompanyInfo")]
         [AllowHtml]

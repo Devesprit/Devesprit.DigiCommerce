@@ -68,7 +68,7 @@ namespace Devesprit.DigiCommerce.Controllers
                     var user = UserManager.FindById(User.Identity.GetUserId());
                     if (user != null && user.UserDisabled)
                     {
-                        filterContext.Result = new RedirectResult(accountDisabledUrl, true);
+                        filterContext.Result = new RedirectResult(accountDisabledUrl, false);
                     }
                 }
 
@@ -76,7 +76,7 @@ namespace Devesprit.DigiCommerce.Controllers
                 if (Request.Url != null && Request.HttpMethod.ToLower() == "get")
                 {
                     Uri siteUri = Request.Url;
-                    if(CurrentSettings.SiteUrl.IsValidUrl())
+                    if(CurrentSettings.SiteUrl.IsValidUrl() && CurrentSettings.RedirectAllRequestsToSiteUrl)
                     {
                         siteUri = new Uri(CurrentSettings.SiteUrl);
                     }
@@ -105,7 +105,7 @@ namespace Devesprit.DigiCommerce.Controllers
                             if (!Response.IsRequestBeingRedirected)
                             {
 
-                                filterContext.Result = new RedirectResult($"{siteUri.Scheme}://{siteUri.Host}{port}/{currentLanguage.IsoCode.ToLower()}{normalizedPathAndQuery}", false);
+                                filterContext.Result = new RedirectResult($"{siteUri.Scheme}://{siteUri.Host}{port}/{currentLanguage.IsoCode.ToLower()}{normalizedPathAndQuery}", true);
                                 return;
                             }
                         }
@@ -116,7 +116,7 @@ namespace Devesprit.DigiCommerce.Controllers
                         if (!Response.IsRequestBeingRedirected)
                         {
 
-                            filterContext.Result = new RedirectResult($"{siteUri.Scheme}://{siteUri.Host}{port}{normalizedPathAndQuery}", false);
+                            filterContext.Result = new RedirectResult($"{siteUri.Scheme}://{siteUri.Host}{port}{normalizedPathAndQuery}", true);
                             return;
                         }
                     }

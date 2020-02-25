@@ -99,6 +99,14 @@
                 </div>
                 <div class="col-12">
                     <div class="form-group">
+                        <div class="custom-control custom-checkbox">
+                            @Html.CheckBoxFor(p => p.RedirectAllRequestsToSiteUrl, new { @class = "custom-control-input" })
+                            @Html.LabelFor(p => p.RedirectAllRequestsToSiteUrl, new { @class = "custom-control-label" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="form-group">
                         @Html.LabelFor(p => p.SiteUrl)
                         @Html.TextBoxFor(p => p.SiteUrl, null, new { @class = "form-control form-control-sm ltr-dir" })
                         @Html.ValidationMessageFor(p => p.SiteUrl, "", new { @class = "form-text text-danger fs-12" })
@@ -489,55 +497,55 @@
                 <div class="col-12 col-lg-6">
                     <div class="form-group">
                         <div class="custom-control custom-checkbox">
-                            @Html.CheckBoxFor(p => p.ShowQtyColInInvoice, new {@class = "custom-control-input"})
-                            @Html.LabelFor(p => p.ShowQtyColInInvoice, new {@class = "custom-control-label"})
+                            @Html.CheckBoxFor(p => p.ShowQtyColInInvoice, new { @class = "custom-control-input" })
+                            @Html.LabelFor(p => p.ShowQtyColInInvoice, new { @class = "custom-control-label" })
                         </div>
                     </div>
                 </div>
                 <div class="col-12 col-lg-6">
                     <div class="form-group">
                         <div class="custom-control custom-checkbox">
-                            @Html.CheckBoxFor(p => p.UserMustRegisterBeforeCheckoutInvoice, new {@class = "custom-control-input"})
-                            @Html.LabelFor(p => p.UserMustRegisterBeforeCheckoutInvoice, new {@class = "custom-control-label"})
+                            @Html.CheckBoxFor(p => p.UserMustRegisterBeforeCheckoutInvoice, new { @class = "custom-control-input" })
+                            @Html.LabelFor(p => p.UserMustRegisterBeforeCheckoutInvoice, new { @class = "custom-control-label" })
                         </div>
                     </div>
                 </div>
                 <div class="col-12 col-lg-6">
                     <div class="form-group">
                         <div class="custom-control custom-checkbox">
-                            @Html.CheckBoxFor(p => p.GetBillingAddressForInvoice, new {@class = "custom-control-input"})
-                            @Html.LabelFor(p => p.GetBillingAddressForInvoice, new {@class = "custom-control-label"})
+                            @Html.CheckBoxFor(p => p.GetBillingAddressForInvoice, new { @class = "custom-control-input" })
+                            @Html.LabelFor(p => p.GetBillingAddressForInvoice, new { @class = "custom-control-label" })
                         </div>
                     </div>
                 </div>
                 <div class="col-12 col-lg-6">
                     <div class="form-group">
                         <div class="custom-control custom-checkbox">
-                            @Html.CheckBoxFor(p => p.DeleteEmptyInvoices, new {@class = "custom-control-input"})
-                            @Html.LabelFor(p => p.DeleteEmptyInvoices, new {@class = "custom-control-label"})
+                            @Html.CheckBoxFor(p => p.DeleteEmptyInvoices, new { @class = "custom-control-input" })
+                            @Html.LabelFor(p => p.DeleteEmptyInvoices, new { @class = "custom-control-label" })
                         </div>
                     </div>
                 </div>
                 <div class="col-12 col-lg-6">
                     <div class="form-group">
                         <div class="custom-control custom-checkbox">
-                            @Html.CheckBoxFor(p => p.DeletePendingInvoices, new {@class = "custom-control-input"})
-                            @Html.LabelFor(p => p.DeletePendingInvoices, new {@class = "custom-control-label"})
+                            @Html.CheckBoxFor(p => p.DeletePendingInvoices, new { @class = "custom-control-input" })
+                            @Html.LabelFor(p => p.DeletePendingInvoices, new { @class = "custom-control-label" })
                         </div>
                     </div>
                 </div>
                 <div class="col-12">
                     <div class="form-group">
                         @Html.LabelFor(p => p.DeleteEmptyInvoicesAfterDays)
-                        @Html.TextBoxFor(p => p.DeleteEmptyInvoicesAfterDays, null, new {@class = "form-control form-control-sm ltr-dir", type = "number"})
-                        @Html.ValidationMessageFor(p => p.DeleteEmptyInvoicesAfterDays, "", new {@class = "form-text text-danger fs-12"})
+                        @Html.TextBoxFor(p => p.DeleteEmptyInvoicesAfterDays, null, new { @class = "form-control form-control-sm ltr-dir", type = "number" })
+                        @Html.ValidationMessageFor(p => p.DeleteEmptyInvoicesAfterDays, "", new { @class = "form-text text-danger fs-12" })
                     </div>
                 </div>
                 <div class="col-12">
                     <div class="form-group">
                         @Html.LabelFor(p => p.DeletePendingInvoicesAfterDays)
-                        @Html.TextBoxFor(p => p.DeletePendingInvoicesAfterDays, null, new {@class = "form-control form-control-sm ltr-dir", type = "number"})
-                        @Html.ValidationMessageFor(p => p.DeletePendingInvoicesAfterDays, "", new {@class = "form-text text-danger fs-12"})
+                        @Html.TextBoxFor(p => p.DeletePendingInvoicesAfterDays, null, new { @class = "form-control form-control-sm ltr-dir", type = "number" })
+                        @Html.ValidationMessageFor(p => p.DeletePendingInvoicesAfterDays, "", new { @class = "form-text text-danger fs-12" })
                     </div>
                 </div>
             </div>

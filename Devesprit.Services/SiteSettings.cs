@@ -8,6 +8,7 @@ namespace Devesprit.Services
     public partial class SiteSettings: ISettings
     {
         public virtual string SiteUrl { get; set; } = "http://www.mywebsite.com";
+        public virtual bool RedirectAllRequestsToSiteUrl { get; set; } = false;
         public virtual LocalizedString SiteName { get; set; } = new LocalizedString("My Web Site");
         public virtual LocalizedString InvoicePrintPageCompanyInfo { get; set; } = new LocalizedString("My Web Site");
         public virtual LocalizedString ContactUsDescription { get; set; } = new LocalizedString();

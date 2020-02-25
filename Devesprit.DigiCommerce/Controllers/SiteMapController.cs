@@ -78,18 +78,18 @@ namespace Devesprit.DigiCommerce.Controllers
                     var user = UserManager.FindById(User.Identity.GetUserId());
                     if (user != null && user.UserDisabled)
                     {
-                        filterContext.Result = new RedirectResult(accountDisabledUrl, true);
+                        filterContext.Result = new RedirectResult(accountDisabledUrl, false);
                     }
                 }
 
                 //Append 'https' & 'www' to Url and redirect it
                 if (Request.Url != null && Request.HttpMethod.ToLower() == "get")
                 {
-                    var siteUrl = _settingService.LoadSetting<SiteSettings>().SiteUrl;
+                    var currentSettings = _settingService.LoadSetting<SiteSettings>();
                     Uri siteUri = Request.Url;
-                    if (siteUrl.IsValidUrl())
+                    if (currentSettings.SiteUrl.IsValidUrl() && currentSettings.RedirectAllRequestsToSiteUrl)
                     {
-                        siteUri = new Uri(siteUrl);
+                        siteUri = new Uri(currentSettings.SiteUrl);
                     }
 
                     var normalizedPathAndQuery = Request.Url.PathAndQuery;
@@ -104,7 +104,7 @@ namespace Devesprit.DigiCommerce.Controllers
                         if (!Response.IsRequestBeingRedirected)
                         {
 
-                            filterContext.Result = new RedirectResult($"{siteUri.Scheme}://{siteUri.Host}{port}{normalizedPathAndQuery}", false);
+                            filterContext.Result = new RedirectResult($"{siteUri.Scheme}://{siteUri.Host}{port}{normalizedPathAndQuery}", true);
                             return;
                         }
                     }
