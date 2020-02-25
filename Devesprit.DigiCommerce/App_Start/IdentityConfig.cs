@@ -121,6 +121,7 @@ namespace Devesprit.DigiCommerce
                         EmailConfirmed = true,
                         FirstName = "Admin",
                         MaxDownloadCount = 0,
+                        RoleId = db.UserRoles.FirstOrDefault(p => p.RoleName == "Administrator")?.Id
                     };
                     userManager.Create(user, password);
                     userManager.SetLockoutEnabled(user.Id, false);
