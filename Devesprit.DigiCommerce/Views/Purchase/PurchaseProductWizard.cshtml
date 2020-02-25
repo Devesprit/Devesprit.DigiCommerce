@@ -307,7 +307,7 @@
                          if (data === 'OK') {
                              @if (ViewBag.InvoiceId == null)
                              {
-                                 @Html.Raw("ShowAddToCartMsg();$('#dlgPurchase_" + Model.Id + "').modal('hide');UpdateNumberOfItemsInShoppingCard();");
+                                 @Html.Raw("ShowAddToCartMsg();$('#dlgPurchase_" + Model.Id + "').modal('hide');UpdateNumberOfItemsInShoppingCard('" + Url.Action("GetUserShoppingCartItemsCount", "Invoice") + "');");
                              }
                              else
                              {

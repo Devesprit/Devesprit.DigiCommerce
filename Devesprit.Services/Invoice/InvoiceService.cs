@@ -22,6 +22,7 @@ using System.Web.Mvc;
 using Devesprit.Services.Currency;
 using Mapster;
 using Z.EntityFramework.Plus;
+using Devesprit.Utilities;
 
 namespace Devesprit.Services.Invoice
 {
@@ -582,11 +583,17 @@ namespace Devesprit.Services.Invoice
                     var responseCookie = HttpContext.Current.Request.Cookies["UserSetting"] ?? new HttpCookie("UserSetting");
                     responseCookie.Values["CurrentInvoice"] = invoice.Id.ToString();
                     responseCookie.Expires = DateTime.Now.AddYears(1).ToUniversalTime();
+                    responseCookie.Domain = "." + HttpContext.Current.Request.Url.Host.TrimStart("www.").Trim();
                     HttpContext.Current.Response.Cookies.Add(responseCookie);
                 }
             }
 
             return invoice;
+        }
+
+        public virtual TblInvoices GetUserCurrentInvoice(bool createNewIfNull = true)
+        {
+            return AsyncHelper.RunSync(() => GetUserCurrentInvoiceAsync(createNewIfNull));
         }
 
         public virtual async Task SetInvoiceNoteAsync(Guid invoiceId, string note, bool isForAdmin)

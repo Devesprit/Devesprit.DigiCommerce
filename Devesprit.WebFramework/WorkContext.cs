@@ -101,7 +101,7 @@ namespace Devesprit.WebFramework
 
             var language = _languagesService
                 .GetAsEnumerable()
-                .FirstOrDefault(l => userLanguage.Values["Language"].Trim().Equals(l.IsoCode, StringComparison.InvariantCultureIgnoreCase));
+                .FirstOrDefault(l => userLanguage.Values["Language"].Trim().Equals(l.IsoCode.Trim(), StringComparison.InvariantCultureIgnoreCase));
             if (language != null && language.Published)
             {
                 return language;

@@ -39,6 +39,7 @@ namespace Devesprit.Services.Invoice
         Task CheckoutInvoiceAsync(Guid invoiceId, string transactionId);
         Task<bool> UserCanEditInvoiceAsync(Guid id, string userId);
         Task<TblInvoices> GetUserCurrentInvoiceAsync(bool createNewIfNull = true);
+        TblInvoices GetUserCurrentInvoice(bool createNewIfNull = true);
         Task SetInvoiceNoteAsync(Guid invoiceId, string note, bool isForAdmin);
         Task AddUpdateBillingAddressAsync(Guid invoiceId, TblInvoiceBillingAddress address);
         Task<TblInvoiceBillingAddress> FindUserLatestBillingAddressAsync(string userid);

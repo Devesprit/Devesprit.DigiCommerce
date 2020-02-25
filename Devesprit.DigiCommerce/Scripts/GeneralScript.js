@@ -184,12 +184,12 @@ function randomPassword(length) {
     return pass;
 }
 
-function UpdateNumberOfItemsInShoppingCard() {
+function UpdateNumberOfItemsInShoppingCard(url) {
     var label = $('#lblNumberOfItemsInShoppingCart');
     if (label.length) {
         $.ajax({
             type: "GET",
-            url: '/Invoice/GetUserShoppingCartItemsCount',
+            url: url,
             error: function (xhr, status, error) {
                 $(label).text('0');
             },
@@ -397,8 +397,6 @@ $(document).ready(function () {
         return false;
     });
     /* ------------Multi level bootstrap navbar */
-
-    UpdateNumberOfItemsInShoppingCard();
 });
 
 //Images Lazy Load

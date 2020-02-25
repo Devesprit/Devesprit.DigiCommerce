@@ -9,6 +9,7 @@ using Devesprit.DigiCommerce.Controllers.Event;
 using Devesprit.Services;
 using Devesprit.Services.Currency;
 using Devesprit.Services.Events;
+using Devesprit.Services.Invoice;
 using Devesprit.Services.Languages;
 using Devesprit.Services.Notifications;
 using Devesprit.Services.Users;
@@ -46,6 +47,11 @@ namespace Devesprit.DigiCommerce.Controllers
 
         protected override void OnActionExecuting(ActionExecutingContext filterContext)
         {
+            if (Response != null)
+            {
+                Response.AddHeader("Set-Cookie", "HttpOnly;Secure;SameSite=Lax");
+            }
+
             if (!filterContext.IsChildAction)
             {
                 //Save user latest IP address
@@ -66,40 +72,57 @@ namespace Devesprit.DigiCommerce.Controllers
                     }
                 }
 
-                //Append Current Language ISO to Url
-                if (CurrentSettings.AppendLanguageCodeToUrl && Request.Url != null && Request.HttpMethod.ToLower() == "get")
+                //Append 'https', 'www' and current Language ISO to Url and redirect it
+                if (Request.Url != null && Request.HttpMethod.ToLower() == "get")
                 {
-                    var currentLanguage = WorkContext.CurrentLanguage;
-
-                    var normalizedPathAndQuery = Request.Url.PathAndQuery;
-
-                    var isLocaleDefined = normalizedPathAndQuery.TrimStart('/').StartsWith(currentLanguage.IsoCode + "/",
-                                              StringComparison.InvariantCultureIgnoreCase) ||
-                                          normalizedPathAndQuery.TrimStart('/').StartsWith(currentLanguage.IsoCode + "?",
-                                              StringComparison.InvariantCultureIgnoreCase) ||
-                                          normalizedPathAndQuery.TrimStart('/').StartsWith(currentLanguage.IsoCode + "#",
-                                              StringComparison.InvariantCultureIgnoreCase) ||
-                                          normalizedPathAndQuery.TrimStart('/').Equals(currentLanguage.IsoCode,
-                                              StringComparison.InvariantCultureIgnoreCase);
-
-                    if (!isLocaleDefined)
+                    Uri siteUri = Request.Url;
+                    if(CurrentSettings.SiteUrl.IsValidUrl())
                     {
-                        var port = "";
-                        if (Request.Url.Port != 443 && Request.Url.Port != 80 && Request.Url.Port != 0)
-                        {
-                            port = ":" + Request.Url.Port;
-                        }
+                        siteUri = new Uri(CurrentSettings.SiteUrl);
+                    }
+                    var normalizedPathAndQuery = Request.Url.PathAndQuery;
+                    var port = "";
+                    if (Request.Url.Port != 443 && Request.Url.Port != 80 && Request.Url.Port != 0)
+                    {
+                        port = ":" + Request.Url.Port;
+                    }
 
+                    if (CurrentSettings.AppendLanguageCodeToUrl)
+                    {
+                        var currentLanguage = WorkContext.CurrentLanguage;
+
+                        var isLocaleDefined = normalizedPathAndQuery.TrimStart('/').StartsWith(currentLanguage.IsoCode + "/",
+                                                  StringComparison.InvariantCultureIgnoreCase) ||
+                                              normalizedPathAndQuery.TrimStart('/').StartsWith(currentLanguage.IsoCode + "?",
+                                                  StringComparison.InvariantCultureIgnoreCase) ||
+                                              normalizedPathAndQuery.TrimStart('/').StartsWith(currentLanguage.IsoCode + "#",
+                                                  StringComparison.InvariantCultureIgnoreCase) ||
+                                              normalizedPathAndQuery.TrimStart('/').Equals(currentLanguage.IsoCode,
+                                                  StringComparison.InvariantCultureIgnoreCase);
+
+                        if (!isLocaleDefined)
+                        {
+                            if (!Response.IsRequestBeingRedirected)
+                            {
+
+                                filterContext.Result = new RedirectResult($"{siteUri.Scheme}://{siteUri.Host}{port}/{currentLanguage.IsoCode.ToLower()}{normalizedPathAndQuery}", false);
+                                return;
+                            }
+                        }
+                    }
+
+                    if ($"{Request.Url.Scheme}://{Request.Url.Host}".ToLower().Trim().TrimEnd('/') != $"{siteUri.Scheme}://{siteUri.Host}".ToLower().Trim().TrimEnd('/'))
+                    {
                         if (!Response.IsRequestBeingRedirected)
                         {
 
-                            filterContext.Result = new RedirectResult($"{Request.Url.Scheme}://{Request.Url.Host}{port}/{currentLanguage.IsoCode.ToLower()}{normalizedPathAndQuery}", false);
+                            filterContext.Result = new RedirectResult($"{siteUri.Scheme}://{siteUri.Host}{port}{normalizedPathAndQuery}", false);
                             return;
                         }
                     }
                 }
 
-
+                               
                 //Set Current Language
                 if (!string.IsNullOrWhiteSpace(Request.QueryString["usl"]))
                 {
@@ -110,6 +133,7 @@ namespace Devesprit.DigiCommerce.Controllers
 
                         var responseCookie = Request.Cookies["UserSetting"] ?? new HttpCookie("UserSetting");
                         responseCookie.Values["Language"] = lang;
+                        responseCookie.Domain = "." + Request.Url.Host.TrimStart("www.").Trim();
                         responseCookie.Expires = DateTime.Now.AddYears(1).ToUniversalTime();
                         Response.Cookies.Add(responseCookie);
 
@@ -129,6 +153,7 @@ namespace Devesprit.DigiCommerce.Controllers
                         var responseCookie = Request.Cookies["UserSetting"] ?? new HttpCookie("UserSetting");
                         responseCookie.Values["Currency"] = currency;
                         responseCookie.Expires = DateTime.Now.AddYears(1).ToUniversalTime();
+                        responseCookie.Domain = "." + Request.Url.Host.TrimStart("www.").Trim();
                         Response.Cookies.Add(responseCookie);
 
                         EventPublisher.Publish(new CurrentCurrencyChangeEvent(currency));
@@ -151,6 +176,10 @@ namespace Devesprit.DigiCommerce.Controllers
                     }
                 }
             }
+
+            //Send current invoice items count to view
+            var invoice = DependencyResolver.Current.GetService<IInvoiceService>().GetUserCurrentInvoice(false);
+            ViewData["InvoiceItemsCount"] = invoice?.InvoiceDetails?.Count ?? 0;
 
             base.OnActionExecuting(filterContext);
         }

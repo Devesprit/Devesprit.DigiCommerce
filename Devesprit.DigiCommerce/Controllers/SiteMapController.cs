@@ -3,11 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web;
 using System.Web.Mvc;
 using System.Web.UI;
 using Autofac.Extras.DynamicProxy;
+using Devesprit.Core.Settings;
 using Devesprit.Data.Domain;
 using Devesprit.Data.Enums;
+using Devesprit.Services;
 using Devesprit.Services.Languages;
 using Devesprit.Services.Localization;
 using Devesprit.Services.MemoryCache;
@@ -15,7 +18,10 @@ using Devesprit.Services.Pages;
 using Devesprit.Services.Posts;
 using Devesprit.Services.SearchEngine;
 using Devesprit.Services.SEO;
+using Devesprit.Services.Users;
 using Devesprit.Utilities.Extensions;
+using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.Owin;
 
 namespace Devesprit.DigiCommerce.Controllers
 {
@@ -28,13 +34,15 @@ namespace Devesprit.DigiCommerce.Controllers
         private readonly IPostTagsService _tagsService;
         private readonly IPagesService _pagesService;
         private readonly ILanguagesService _languagesService;
+        private readonly ISettingService _settingService;
 
         public SiteMapController(ISitemapGenerator sitemapGenerator, 
             IPostService<TblPosts> postService,
             IPostCategoriesService categoriesService,
             IPostTagsService tagsService,
             IPagesService pagesService,
-            ILanguagesService languagesService)
+            ILanguagesService languagesService,
+            ISettingService settingService)
         {
             _sitemapGenerator = sitemapGenerator;
             _postService = postService;
@@ -42,6 +50,68 @@ namespace Devesprit.DigiCommerce.Controllers
             _tagsService = tagsService;
             _pagesService = pagesService;
             _languagesService = languagesService;
+            _settingService = settingService;
+        }
+
+        public ApplicationUserManager UserManager => HttpContext.GetOwinContext().Get<ApplicationUserManager>();
+
+        protected override void OnActionExecuting(ActionExecutingContext filterContext)
+        {
+            if (Response != null)
+            {
+                Response.AddHeader("Set-Cookie", "HttpOnly;Secure;SameSite=Lax");
+            }
+
+            if (!filterContext.IsChildAction)
+            {
+                //Save user latest IP address
+                if (User.Identity.IsAuthenticated)
+                {
+                    DependencyResolver.Current.GetService<IUsersService>()
+                        .SetUserLatestIpAndLoginDate(User.Identity.GetUserId(), HttpContext.GetClientIpAddress());
+                }
+
+                //If user disabled
+                var accountDisabledUrl = Url.Action("AccountDisabled", "User");
+                if (User.Identity.IsAuthenticated && filterContext.HttpContext?.Request.Url?.LocalPath != accountDisabledUrl)
+                {
+                    var user = UserManager.FindById(User.Identity.GetUserId());
+                    if (user != null && user.UserDisabled)
+                    {
+                        filterContext.Result = new RedirectResult(accountDisabledUrl, true);
+                    }
+                }
+
+                //Append 'https' & 'www' to Url and redirect it
+                if (Request.Url != null && Request.HttpMethod.ToLower() == "get")
+                {
+                    var siteUrl = _settingService.LoadSetting<SiteSettings>().SiteUrl;
+                    Uri siteUri = Request.Url;
+                    if (siteUrl.IsValidUrl())
+                    {
+                        siteUri = new Uri(siteUrl);
+                    }
+
+                    var normalizedPathAndQuery = Request.Url.PathAndQuery;
+                    var port = "";
+                    if (Request.Url.Port != 443 && Request.Url.Port != 80 && Request.Url.Port != 0)
+                    {
+                        port = ":" + Request.Url.Port;
+                    }
+
+                    if ($"{Request.Url.Scheme}://{Request.Url.Host}".ToLower().Trim().TrimEnd('/') != $"{siteUri.Scheme}://{siteUri.Host}".ToLower().Trim().TrimEnd('/'))
+                    {
+                        if (!Response.IsRequestBeingRedirected)
+                        {
+
+                            filterContext.Result = new RedirectResult($"{siteUri.Scheme}://{siteUri.Host}{port}{normalizedPathAndQuery}", false);
+                            return;
+                        }
+                    }
+                }
+            }
+
+            base.OnActionExecuting(filterContext);
         }
 
         // GET: SiteMap

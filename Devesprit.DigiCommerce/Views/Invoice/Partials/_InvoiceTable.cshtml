@@ -306,7 +306,7 @@
 
 @Html.MinifyInlineScript(
                     @<script>
-    UpdateNumberOfItemsInShoppingCard();
+    UpdateNumberOfItemsInShoppingCard('@Url.Action("GetUserShoppingCartItemsCount", "Invoice")');
 
     if (@Model.InvoiceDetails.Count === 0) {
         $('#checkoutSection').empty();
