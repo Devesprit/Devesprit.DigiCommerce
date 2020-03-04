@@ -87,12 +87,20 @@
                     <li><span>@T("TotalDownloads", productDownloadsLogService.GetNumberOfDownloads().ToString("N0"))</span></li>
                     <li><span>@T("YourIP", Context.GetClientIpAddress())</span></li>
                     <li><span>@T("CurrentDate", DateTime.Now.ToString("yyyy/MM/dd"))</span></li>
-                </ul> 
+                </ul>
                 <span class="title">@T("Socials")</span>
                 @foreach (var socialAccount in socialAccountsService.GetAsEnumerable())
                 {
                     <a href="@socialAccount.GetLocalized(x => x.YourAccountUrl)" target="_blank" title="@socialAccount.GetLocalized(x => x.SocialNetworkName)" class="social-btn mx-0">
-                        <img src="@socialAccount.GetLocalized(x=> x.SocialNetworkLargeIconUrl)" alt="@socialAccount.GetLocalized(x => x.SocialNetworkName)"/>
+                        @{var resource = socialAccount.GetLocalized(x => x.SocialNetworkLargeIconUrl);}
+                        @if (resource.Trim().ToLower() == "style" || resource.Trim().ToLower() == "class")
+                        {
+                            <div @resource></div>
+                        }
+                        else
+                        {
+                            <img src="@resource" alt="@socialAccount.GetLocalized(x => x.SocialNetworkName)" />
+                        }
                     </a>
                 }
                 <a href="@Url.Action("Index", "RssFeed", new {listType = PostsListType.Newest, area = ""})" target="_blank" title="@T("RSSFeed")" class="social-btn mx-0"><img src="/Content/img/rss_25px.png" alt="@T("RSSFeed")" /></a>

@@ -1,4 +1,9 @@
-﻿using Devesprit.Data.Enums;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web.Mvc;
+using Devesprit.Core.Localization;
+using Devesprit.Data.Enums;
 using Devesprit.WebFramework.Attributes;
 
 
@@ -16,7 +21,6 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Models
         [DisplayNameLocalized("RequestedUrl")]
         public string RequestedUrl { get; set; }
 
-        [RequiredLocalized(AllowEmptyStrings = false)]
         [DisplayNameLocalized("ResponseUrl")]
         public string ResponseUrl { get; set; }
 
@@ -28,8 +32,8 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Models
         [DisplayNameLocalized("ResponseType")]
         public ResponseType ResponseType { get; set; } = ResponseType.Rewrite;
 
-        [DisplayNameLocalized("RedirectStatus")]
-        public RedirectStatusCode? RedirectStatus { get; set; }
+        [DisplayNameLocalized("ResponseStatusCode")]
+        public int? RedirectStatus { get; set; }
 
         [DisplayNameLocalized("IgnoreCase")]
         public bool IgnoreCase { get; set; } = true;
@@ -42,6 +46,9 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Models
 
         [DisplayNameLocalized("Active")]
         public bool Active { get; set; } = true;
+
+        [DisplayNameLocalized("AppendLanguageCodeToUrl")]
+        public bool AppendLanguageCodeToUrl { get; set; }
 
         [DisplayNameLocalized("Order")]
         public int Order { get; set; }

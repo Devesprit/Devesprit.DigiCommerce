@@ -59,7 +59,7 @@
                 <div class="col-12 col-md-4 ">
                     <div class="form-group">
                         @Html.LabelFor(p => p.RedirectStatus)
-                        @Html.EnumDropDownListFor(p => p.RedirectStatus, T("SelectAnItem").ToString(), new { @class = "form -control custom-select form-control-sm" })
+                        @Html.TextBoxFor(p => p.RedirectStatus, null, new { @class = "form-control form-control-sm ltr-dir", type = "number" })
                         @Html.ValidationMessageFor(p => p.RedirectStatus, "", new { @class = "form-text text-danger fs-12" })
                     </div>
                 </div>
@@ -90,6 +90,15 @@
                             @Html.LabelFor(p => p.AppendQueryString, new { @class = "custom-control-label" })
                         </div>
                         @Html.ValidationMessageFor(p => p.AppendQueryString, "", new { @class = "form-text text-danger fs-12" })
+                    </div>
+                </div>
+                <div class="col-12 col-md-6 ">
+                    <div class="form-group">
+                        <div class="custom-control custom-checkbox">
+                            @Html.CheckBoxFor(p => p.AppendLanguageCodeToUrl, new { @class = "custom-control-input" })
+                            @Html.LabelFor(p => p.AppendLanguageCodeToUrl, new { @class = "custom-control-label" })
+                        </div>
+                        @Html.ValidationMessageFor(p => p.AppendLanguageCodeToUrl, "", new { @class = "form-text text-danger fs-12" })
                     </div>
                 </div>
                 <div class="col-12 col-md-6 ">

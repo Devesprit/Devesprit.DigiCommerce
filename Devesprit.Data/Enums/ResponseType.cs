@@ -7,6 +7,8 @@ namespace Devesprit.Data.Enums
         [Description("Redirect")]
         Redirect,
         [Description("Rewrite")]
-        Rewrite
+        Rewrite,
+        [Description("Just Return Status Code")]
+        JustReturnStatusCode
     }
 }

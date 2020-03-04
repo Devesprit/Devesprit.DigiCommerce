@@ -90,16 +90,26 @@ namespace Devesprit.Services.Redirects
                         }
                         break;
                     case MatchType.Regex:
-                        if (Regex.IsMatch(url, rule.RequestedUrl, rule.IgnoreCase ? RegexOptions.IgnoreCase : RegexOptions.None))
+                        try
                         {
-                            return rule;
+                            if (Regex.IsMatch(url, rule.RequestedUrl, rule.IgnoreCase ? RegexOptions.IgnoreCase : RegexOptions.None))
+                            {
+                                return rule;
+                            }
                         }
+                        catch
+                        { }
                         break;
                     case MatchType.Wildcards:
-                        if (url.IsMatchWildcard(rule.RequestedUrl, rule.IgnoreCase))
+                        try
                         {
-                            return rule;
+                            if (url.IsMatchWildcard(rule.RequestedUrl, rule.IgnoreCase))
+                            {
+                                return rule;
+                            }
                         }
+                        catch
+                        { }
                         break;
                     default:
                         throw new ArgumentOutOfRangeException();

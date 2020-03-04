@@ -23,7 +23,7 @@ namespace Devesprit.WebFramework.HttpModules
             {
                 var app = (HttpApplication)source;
                 var ctx = app.Context;
-                var request = ctx.Request;
+                var request = ctx.Request; 
 
                 var requestedUrl = request.Url;
 
@@ -32,6 +32,11 @@ namespace Devesprit.WebFramework.HttpModules
 
                 while (rule != null)
                 {
+                    if (rule.ResponseType == ResponseType.JustReturnStatusCode)
+                    {
+                        break;
+                    }
+
                     if (rule.StopProcessingOfSubsequentRules)
                     {
                         break;
@@ -52,10 +57,20 @@ namespace Devesprit.WebFramework.HttpModules
 
                 if (rule != null)
                 {
+                    if (rule.ResponseType == ResponseType.JustReturnStatusCode)
+                    {
+                        ctx.Response.Clear();
+                        if (rule.RedirectStatus != null)
+                        {
+                            ctx.Response.StatusCode = rule.RedirectStatus.Value;
+                        }
+                        ctx.Response.End();
+                        return;
+                    }
+
                     var responseUrl = redirectsService.GenerateRedirectUrl(rule, requestedUrl);
 
-                    var siteSettings = DependencyResolver.Current.GetService<ISettingService>().LoadSetting<SiteSettings>();
-                    if (siteSettings.AppendLanguageCodeToUrl && responseUrl.StartsWith("/")) //check language iso code added to url if redirect to local path
+                    if (rule.AppendLanguageCodeToUrl && responseUrl.StartsWith("/")) //check language iso code added to url if redirect to local path
                     {
                         var currentLanguage = DependencyResolver.Current.GetService<IWorkContext>().CurrentLanguage;
                         var isLocaleDefined = responseUrl.TrimStart('/').StartsWith(currentLanguage.IsoCode + "/",
@@ -79,7 +94,7 @@ namespace Devesprit.WebFramework.HttpModules
                             ctx.Response.Redirect(responseUrl, false);
                             if (rule.RedirectStatus != null)
                             {
-                                ctx.Response.StatusCode = (int)rule.RedirectStatus.Value;
+                                ctx.Response.StatusCode = rule.RedirectStatus.Value;
                             }
                             ctx.Response.End();
                             eventPublisher.Publish(new RedirectEvent()

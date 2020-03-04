@@ -84,6 +84,13 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
         [UserHasAtLeastOnePermission("ManageRedirects_Add", "ManageRedirects_Edit")]
         public virtual async Task<ActionResult> Editor(RedirectModel model, bool? saveAndContinue)
         {
+            if (model.ResponseType != ResponseType.JustReturnStatusCode && string.IsNullOrWhiteSpace(model.ResponseUrl))
+            {
+                ModelState.AddModelError(nameof(model.ResponseUrl),
+                    string.Format(_localizationService.GetResource("FieldRequired"),
+                        _localizationService.GetResource("ResponseUrl")));
+            }
+
             if (!ModelState.IsValid)
             {
                 return View(model);
@@ -165,7 +172,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
                 model.MatchType = MatchType.Wildcards;
                 model.ResponseType = ResponseType.Redirect;
                 model.RequestedUrl = "*/";
-                model.RedirectStatus = RedirectStatusCode.MovedPermanently;
+                model.RedirectStatus = 301;
 
                 switch (redirectGroup)
                 {
@@ -295,7 +302,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
                 p.Active,
                 MatchType = p.MatchType + "",
                 ResponseType = p.ResponseType + "",
-                RedirectStatus = p.RedirectStatus == null ? "-" : p.RedirectStatus + "",
+                RedirectStatus = p.RedirectStatus == null ? "-" : p.RedirectStatus.ToString(),
             });
 
             var result = dataSource.ApplyDataManager(dm, out var count).ToList();

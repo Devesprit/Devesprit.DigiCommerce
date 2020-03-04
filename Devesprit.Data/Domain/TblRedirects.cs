@@ -15,7 +15,6 @@ namespace Devesprit.Data.Domain
         [Index(IsClustered = false, IsUnique = false)]
         public string RequestedUrl { get; set; }
 
-        [Required]
         [Column(TypeName = "VARCHAR")]
         [StringLength(450)]
         [Index(IsClustered = false, IsUnique = false)]
@@ -29,11 +28,13 @@ namespace Devesprit.Data.Domain
         [Index(IsClustered = false, IsUnique = false)]
         public ResponseType ResponseType { get; set; }
 
-        public RedirectStatusCode? RedirectStatus { get; set; }
+        public int? RedirectStatus { get; set; }
 
         public bool IgnoreCase { get; set; }
 
         public bool AppendQueryString { get; set; }
+
+        public bool AppendLanguageCodeToUrl { get; set; }
 
         public bool StopProcessingOfSubsequentRules { get; set; }
 
