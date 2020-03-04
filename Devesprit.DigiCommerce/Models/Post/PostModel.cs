@@ -18,8 +18,6 @@ namespace Devesprit.DigiCommerce.Models.Post
 {
     public partial class PostModel
     {
-        private CreativeWork _schema;
-
         public int Id { get; set; }
         public string Title { get; set; }
         public bool Published { get; set; }
@@ -46,93 +44,5 @@ namespace Devesprit.DigiCommerce.Models.Post
         public List<PostImagesModel> Images { get; set; } = new List<PostImagesModel>();
         public List<PostDescriptionsModel> Descriptions { get; set; } = new List<PostDescriptionsModel>();
         public List<PostAttributesModel> Attributes { get; set; } = new List<PostAttributesModel>();
-
-        public virtual CreativeWork Schema
-        {
-            get
-            {
-                if (_schema != null)
-                {
-                    return _schema;
-                }
-
-                var setting = DependencyResolver.Current.GetService<ISettingService>().LoadSetting<SiteSettings>();
-                var images = new List<Uri>();
-                foreach (var image in Images)
-                {
-                    images.Add(new Uri(image.ImageUrl.GetAbsoluteUrl()));
-                }
-
-                var result = new WebPage()
-                {
-                    Name = Title.ConvertHtmlToText(),
-                    Headline = Title.ConvertHtmlToText(),
-                    Description = Descriptions != null && Descriptions.Count > 0
-                        ? JsonConvert.ToString(Descriptions[0].Description.ConvertHtmlToText())
-                        : MetaDescription,
-                    Keywords = MetaKeyWords,
-                    DatePublished = PublishDate,
-                    DateCreated = PublishDate,
-                    DateModified = LastUpdate,
-                    InteractionStatistic = new InteractionCounter()
-                    {
-                        UserInteractionCount = NumberOfViews,
-                    },
-                    Url = new Uri(PostUrl.GetAbsoluteUrl()),
-                    DiscussionUrl = new Uri(PostUrl.GetAbsoluteUrl()),
-                    PrimaryImageOfPage = new ImageObject()
-                    {
-                        Url = Images != null && Images.Count > 0 ? new Uri(Images[0].ImageUrl.GetAbsoluteUrl()) : null
-                    },
-                    Image = images,
-                    AggregateRating = new AggregateRating()
-                    {
-                        RatingValue = 5,
-                        BestRating = 5,
-                        RatingCount = NumberOfLikes + 1,
-                    },
-                    Publisher = new Organization()
-                    {
-                        Name = setting.GetLocalized(x => x.SiteName),
-                        Email = setting.SiteEmailAddress,
-                        Url = new Uri(setting.SiteUrl),
-                        Logo = new Uri(setting.GetLocalized(x => x.SiteLogoHeader).GetAbsoluteUrl())
-                    },
-                    Provider = new Organization()
-                    {
-                        Name = setting.GetLocalized(x => x.SiteName),
-                        Email = setting.SiteEmailAddress,
-                        Url = new Uri(setting.SiteUrl),
-                        Logo = new Uri(setting.GetLocalized(x => x.SiteLogoHeader).GetAbsoluteUrl())
-                    }
-                };
-
-                var relatedPosts = DependencyResolver.Current.GetService<ISearchEngine>()
-                    .MoreLikeThis(Id, null, 0, PostType.BlogPost, SearchPlace.Title | SearchPlace.Description | SearchPlace.Tags, 20);
-                var relatedLinks = new List<Uri>();
-                if (!relatedPosts.HasError && relatedPosts.Documents.Count > 0)
-                {
-                    var posts = DependencyResolver.Current.GetService<IPostService<TblPosts>>().GetItemsById(
-                        relatedPosts.Documents.Select(p => p.DocumentId).Take(5)
-                            .ToList(), 1,
-                        5);
-
-                    foreach (var post in posts)
-                    {
-                        relatedLinks.Add(
-                            new Uri(("/Blog/Post/" + post.Slug).GetAbsoluteUrl()));
-                    }
-                }
-
-                if (relatedLinks.Count > 0)
-                {
-                    result.RelatedLink = new OneOrMany<Uri>(relatedLinks);
-                }
-
-
-                return result;
-            }
-            set => _schema = value;
-        }
     }
 }

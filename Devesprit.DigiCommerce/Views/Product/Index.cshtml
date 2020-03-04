@@ -1,8 +1,17 @@
-﻿@using Devesprit.Core.Settings
+﻿@using System.Globalization
+@using Devesprit.Core.Settings
+@using Devesprit.Data.Domain
 @using Devesprit.Data.Enums
 @using Devesprit.Services
+@using Devesprit.Services.Currency
 @using Devesprit.Services.Localization
+@using Devesprit.Services.Posts
+@using Devesprit.Services.SearchEngine
+@using Devesprit.Utilities
+@using Devesprit.Utilities.Extensions
 @using Devesprit.WebFramework.Helpers
+@using Newtonsoft.Json
+@using Schema.NET
 @model Devesprit.DigiCommerce.Models.Products.ProductModel
 @{
     ViewBag.Title = Model.PageTitle;
@@ -95,7 +104,7 @@
 </div>
 
 <script type="application/ld+json">
-    @Html.Raw(Model.Schema.ToHtmlEscapedString())
+    @Html.Raw(GenerateSchema())
 </script>
 
 @Html.Widget("product_page_end")
@@ -113,4 +122,87 @@
          ]
      });
 </script>);
+}
+
+@functions
+{
+    private string GenerateSchema()
+    {
+        var setting = DependencyResolver.Current.GetService<ISettingService>().LoadSetting<SiteSettings>();
+        var defaultCurrency = DependencyResolver.Current.GetService<ICurrencyService>().GetDefaultCurrency();
+        var images = new List<Uri>();
+        foreach (var image in Model.Images)
+        {
+            images.Add(new Uri(image.ImageUrl.GetAbsoluteUrl()));
+        }
+
+        var result = new Schema.NET.WebPage()
+        {
+            Name = Model.Title.ConvertHtmlToText(),
+            Headline = Model.Title.ConvertHtmlToText(),
+            Description = Model.Descriptions != null && Model.Descriptions.Count > 0
+                ? JsonConvert.ToString(Model.Descriptions[0].Description.ConvertHtmlToText())
+                : Model.MetaDescription,
+            Keywords = Model.MetaKeyWords,
+            DatePublished = Model.PublishDate,
+            DateCreated = Model.PublishDate,
+            DateModified = Model.LastUpdate,
+            InteractionStatistic = new InteractionCounter()
+            {
+                UserInteractionCount = Model.NumberOfViews,
+            },
+            Url = new Uri(Model.PostUrl.GetAbsoluteUrl()),
+            DiscussionUrl = new Uri(Model.PostUrl.GetAbsoluteUrl()),
+            PrimaryImageOfPage = new ImageObject()
+            {
+                Url = Model.Images != null && Model.Images.Count > 0 ? new Uri(Model.Images[0].ImageUrl.GetAbsoluteUrl()) : null
+            },
+            Image = images,
+            ContentRating = new Values<IRating, string>(),
+            Publisher = new Organization()
+            {
+                Name = setting.GetLocalized(x => x.SiteName),
+                Email = setting.SiteEmailAddress,
+                Url = new Uri(setting.SiteUrl),
+                Logo = new Uri(setting.GetLocalized(x => x.SiteLogoHeader).GetAbsoluteUrl())
+            },
+            Provider = new Organization()
+            {
+                Name = setting.GetLocalized(x => x.SiteName),
+                Email = setting.SiteEmailAddress,
+                Url = new Uri(setting.SiteUrl),
+                Logo = new Uri(setting.GetLocalized(x => x.SiteLogoHeader).GetAbsoluteUrl())
+            },
+            Offers = new OneOrMany<IOffer>(new Offer()
+            {
+                Price = Model.Price.ToString("F2", CultureInfo.InvariantCulture),
+                PriceCurrency = defaultCurrency.IsoCode
+            }),
+        };
+
+        var relatedProducts = DependencyResolver.Current.GetService<ISearchEngine>()
+            .MoreLikeThis(Model.Id, null, 0, PostType.Product, SearchPlace.Title | SearchPlace.Description | SearchPlace.Tags, 20);
+        var relatedLinks = new List<Uri>();
+        if (!relatedProducts.HasError && relatedProducts.Documents.Count > 0)
+        {
+            var posts = DependencyResolver.Current.GetService<IPostService<TblPosts>>().GetItemsById(
+                relatedProducts.Documents.Select(p => p.DocumentId).Take(5)
+                    .ToList(), 1,
+                5);
+
+            foreach (var post in posts)
+            {
+                relatedLinks.Add(
+                    new Uri(("/Product/" + post.Slug).GetAbsoluteUrl()));
+            }
+        }
+
+        if (relatedLinks.Count > 0)
+        {
+            result.RelatedLink = new OneOrMany<Uri>(relatedLinks);
+        }
+
+
+        return result.ToHtmlEscapedString();
+    }
 }
