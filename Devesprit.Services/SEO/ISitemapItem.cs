@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Devesprit.Services.SEO
 {
@@ -11,5 +12,7 @@ namespace Devesprit.Services.SEO
         SitemapChangeFrequency? ChangeFrequency { get; }
 
         double? Priority { get; }
+
+        List<Tuple<string, string>> AlternateUrls { get; }
     }
 }

@@ -9,6 +9,7 @@ namespace Devesprit.Services.SEO
     public partial class SitemapGenerator : ISitemapGenerator
     {
         protected readonly XNamespace Xmlns = "http://www.sitemaps.org/schemas/sitemap/0.9";
+        protected readonly XNamespace Xhtml = "http://www.w3.org/1999/xhtml";
         protected readonly XNamespace Xsi = "http://www.w3.org/2001/XMLSchema-instance";
 
         public virtual XDocument GenerateSiteMap(IEnumerable<ISitemapItem> items)
@@ -22,6 +23,7 @@ namespace Devesprit.Services.SEO
                 new XDeclaration("1.0", "utf-8", "yes"),
                 new XElement(Xmlns + "urlset",
                     new XAttribute("xmlns", Xmlns),
+                    new XAttribute(XNamespace.Xmlns + "xhtml", "http://www.w3.org/1999/xhtml"),
                     new XAttribute(XNamespace.Xmlns + "xsi", Xsi),
                     new XAttribute(Xsi + "schemaLocation", "http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd"),
                     from item in items
@@ -46,6 +48,17 @@ namespace Devesprit.Services.SEO
 
             if (item.Priority.HasValue)
                 itemElement.Add(new XElement(Xmlns + "priority", item.Priority.Value.ToString("F1", CultureInfo.InvariantCulture)));
+
+            if (item.AlternateUrls != null && item.AlternateUrls.Any())
+            {
+                foreach (var alternateUrl in item.AlternateUrls)
+                {
+                    itemElement.Add(new XElement(Xhtml + "link",
+                        new XAttribute("rel", "alternate"),
+                        new XAttribute("hreflang", alternateUrl.Item1),
+                        new XAttribute("href", alternateUrl.Item2)));
+                }
+            }
 
             return itemElement;
         }

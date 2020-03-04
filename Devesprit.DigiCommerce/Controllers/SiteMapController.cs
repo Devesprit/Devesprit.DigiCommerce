@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.Routing;
 using System.Web.UI;
 using Autofac.Extras.DynamicProxy;
 using Devesprit.Core.Settings;
@@ -114,70 +115,152 @@ namespace Devesprit.DigiCommerce.Controllers
             base.OnActionExecuting(filterContext);
         }
 
+        private string GenerateUrl(string action, string controller, object routeValues)
+        {
+            return Url.Action(action, controller, routeValues, Request.Url.Scheme);
+        }
+        
+        private List<Tuple<string, string>> GenerateAlternateUrls(List<TblLanguages> languagesList, string action, string controller, object routeValues)
+        {
+            if (languagesList.Count == 1)
+            {
+                return null;
+            }
+            var routeValueDictionary = new RouteValueDictionary(routeValues);
+            if (routeValueDictionary.Keys.Any(p => p.ToString().ToLower().Trim() == "lang"))
+            {
+                routeValueDictionary.Remove("lang");
+            }
+
+            var result = new List<Tuple<string, string>>();
+            foreach (var lang in languagesList)
+            {
+                if (routeValueDictionary.Keys.Any(p => p.ToString().ToLower().Trim() == "lang"))
+                {
+                    routeValueDictionary["lang"] = lang.IsoCode;
+                }
+                else
+                {
+                    routeValueDictionary.Add("lang", lang.IsoCode);
+                }
+
+                result.Add(new Tuple<string, string>(
+                        lang.IsoCode, 
+                        Url.Action(action, controller, routeValueDictionary, Request.Url.Scheme)
+                    ));
+            }
+
+            return result;
+        }
+
         // GET: SiteMap
         [MethodCache(Tags = new[] { nameof(TblBlogPosts), nameof(TblProducts) })]
         public virtual async Task<ActionResult> Index()
         {
+            var settings = _settingService.LoadSetting<SiteSettings>();
+            
             var items = new List<SitemapItem>();
             var languagesList = _languagesService.GetAsEnumerable().Where(p => p.Published)
-                .OrderByDescending(p => p.IsDefault);
+                .OrderByDescending(p => p.DisplayOrder).ToList();
             
             foreach (var language in languagesList)
             {
                 items.Add(new SitemapItem(
-                    Url.Action("Index", "Home",
-                        new {lang = language.IsoCode},
-                        Request.Url.Scheme), DateTime.Now,
-                    SitemapChangeFrequency.Daily, 1));
+                    GenerateUrl("Index", "Home", new {lang = language.IsoCode}),
+                    DateTime.Now,
+                    SitemapChangeFrequency.Daily,
+                    1,
+                    GenerateAlternateUrls(languagesList, "Index", "Home", null)
+                ));
 
-                items.AddRange((await _pagesService.GetAsEnumerableAsync()).Where(p=> p.Published).Select(page =>
+                items.AddRange((await _pagesService.GetAsEnumerableAsync()).Where(p => p.Published).Select(page =>
                     new SitemapItem(
-                        Url.Action("Index", "Page", new { slug = page.Slug, lang = language.IsoCode },
-                            Request.Url.Scheme), DateTime.Now,
-                        SitemapChangeFrequency.Daily, 1)));
+                        GenerateUrl("Index", "Page", new {slug = page.Slug, lang = language.IsoCode}),
+                        DateTime.Now,
+                        SitemapChangeFrequency.Daily,
+                        0.7,
+                        GenerateAlternateUrls(languagesList, "Index", "Page", new {slug = page.Slug})
+                    )));
+
 
                 items.AddRange((await _tagsService.GetAsEnumerableAsync()).Select(tag =>
                     new SitemapItem(
-                        Url.Action("Tag", "Search",
-                            new { tag = tag.GetLocalized(x => x.Tag, language.Id), lang = language.IsoCode },
-                            Request.Url.Scheme), DateTime.Now,
-                        SitemapChangeFrequency.Daily, 0.9)).DistinctBy(p=> p.Url));
+                        GenerateUrl("Tag", "Search",
+                            new {tag = tag.GetLocalized(x => x.Tag, language.Id), lang = language.IsoCode}),
+                        DateTime.Now,
+                        SitemapChangeFrequency.Daily,
+                        0.8,
+                        GenerateAlternateUrls(languagesList, "Tag", "Search",
+                            new {tag = tag.GetLocalized(x => x.Tag, language.Id)})
+                    )));
 
 
                 items.AddRange((await _categoriesService.GetAsEnumerableAsync()).Select(category =>
                     new SitemapItem(
-                        Url.Action("FilterByCategory", "Product", new { slug = category.Slug, lang = language.IsoCode },
-                            Request.Url.Scheme), DateTime.Now,
-                        SitemapChangeFrequency.Daily, 0.8)));
+                        GenerateUrl("FilterByCategory", "Product", new {slug = category.Slug, lang = language.IsoCode}),
+                        DateTime.Now,
+                        SitemapChangeFrequency.Daily,
+                        0.9,
+                        GenerateAlternateUrls(languagesList, "FilterByCategory", "Product", new {slug = category.Slug})
+                    )));
 
-                items.AddRange((await _categoriesService.GetAsEnumerableAsync()).Select(category =>
-                    new SitemapItem(
-                        Url.Action("FilterByCategory", "Blog", new { slug = category.Slug, lang = language.IsoCode },
-                            Request.Url.Scheme), DateTime.Now,
-                        SitemapChangeFrequency.Daily, 0.8)));
+                if (settings.EnableBlog)
+                {
+                    items.AddRange((await _categoriesService.GetAsEnumerableAsync()).Select(category =>
+                        new SitemapItem(
+                            GenerateUrl("FilterByCategory", "Blog",
+                                new {slug = category.Slug, lang = language.IsoCode}),
+                            DateTime.Now,
+                            SitemapChangeFrequency.Daily,
+                            0.8,
+                            GenerateAlternateUrls(languagesList, "FilterByCategory", "Blog", new {slug = category.Slug})
+                        )));
+                }
 
 
                 foreach (var post in _postService.GetNewItemsForSiteMap())
                 {
-                    Uri url = new Uri(Url.Action("Index", "Search", new
+                    if (post.PostType == PostType.BlogPost && settings.EnableBlog)
                     {
-                        lang = language.IsoCode,
-                        OrderBy = SearchResultSortType.Score,
-                        SearchPlace = SearchPlace.Title,
-                        Query = post.Title
-                    }, Request.Url.Scheme));
-
-                    if (post.PostType == PostType.BlogPost)
-                    {
-                        url = new Uri(Url.Action("Post", "Blog", new { slug = post.Slug, lang = language.IsoCode }, Request.Url.Scheme));
+                        items.Add(new SitemapItem(
+                            GenerateUrl("Post", "Blog", new {slug = post.Slug, lang = language.IsoCode}),
+                            post.LastUpDate ?? post.PublishDate,
+                            SitemapChangeFrequency.Weekly,
+                            0.9,
+                            GenerateAlternateUrls(languagesList, "Post", "Blog", new {slug = post.Slug})
+                        ));
                     }
-                    if (post.PostType == PostType.Product)
+                    else if (post.PostType == PostType.Product)
                     {
-                        url = new Uri(Url.Action("Index", "Product", new { slug = post.Slug, lang = language.IsoCode }, Request.Url.Scheme));
+                        items.Add(new SitemapItem(
+                            GenerateUrl("Index", "Product", new {slug = post.Slug, lang = language.IsoCode}),
+                            post.LastUpDate ?? post.PublishDate,
+                            SitemapChangeFrequency.Weekly,
+                            1,
+                            GenerateAlternateUrls(languagesList, "Index", "Product", new {slug = post.Slug})
+                        ));
                     }
-
-                    items.Add(new SitemapItem(url.ToString(), post.LastUpDate ?? post.PublishDate,
-                        SitemapChangeFrequency.Weekly, 0.7));
+                    else
+                    {
+                        items.Add(new SitemapItem(
+                            GenerateUrl("Index", "Search", new
+                            {
+                                lang = language.IsoCode,
+                                OrderBy = SearchResultSortType.Score,
+                                SearchPlace = SearchPlace.Title,
+                                Query = post.Title
+                            }),
+                            post.LastUpDate ?? post.PublishDate,
+                            SitemapChangeFrequency.Weekly,
+                            0.7,
+                            GenerateAlternateUrls(languagesList, "Index", "Search", new
+                            {
+                                OrderBy = SearchResultSortType.Score,
+                                SearchPlace = SearchPlace.Title,
+                                Query = post.Title
+                            })
+                        ));
+                    }
                 }
             }
 
