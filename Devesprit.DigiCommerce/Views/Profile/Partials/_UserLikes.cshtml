@@ -52,7 +52,7 @@
     <div class="row">
         <div class="col-12">
             @Html.PagedListPager(Model,
-                page => Url.Action("UserLikedEntities", "Profile", new {pageNumber = page, userId = Request.QueryString["userId"] }),
+                page => Url.Action("UserLikes", "Profile", new {pageNumber = page, userId = Request.QueryString["userId"] }),
                 PagedListRenderOptions.EnableUnobtrusiveAjaxReplacing(
                     new TwitterBootstrap4Pager(),
                     new AjaxOptions() {HttpMethod = "POST", UpdateTargetId = "placeholder"}))
