@@ -118,6 +118,7 @@ namespace Devesprit.FileServer
                 return false;
             }
 
+            response.StatusCode = (int)HttpStatusCode.OK;
             if (request.Headers["Range"] != null && (request.Headers["If-Range"] == null || request.Headers["IF-Range"] == etag))
             {
                 var match = Regex.Match(request.Headers["Range"], @"bytes=(\d*)-(\d*)");
