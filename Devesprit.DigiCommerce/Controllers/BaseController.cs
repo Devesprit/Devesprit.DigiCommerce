@@ -49,7 +49,12 @@ namespace Devesprit.DigiCommerce.Controllers
         {
             if (Response != null)
             {
-                Response.AddHeader("Set-Cookie", "HttpOnly;Secure;SameSite=Lax");
+                try
+                {
+                    Response.AddHeader("Set-Cookie", "HttpOnly;Secure;SameSite=Lax");
+                }
+                catch
+                { }
             }
 
             if (!filterContext.IsChildAction)
@@ -75,58 +80,64 @@ namespace Devesprit.DigiCommerce.Controllers
                 //Append 'https', 'www' and current Language ISO to Url and redirect it
                 if (Request.Url != null && Request.HttpMethod.ToLower() == "get")
                 {
-                    Uri siteUri = Request.Url;
-                    if(CurrentSettings.SiteUrl.IsValidUrl() && CurrentSettings.RedirectAllRequestsToSiteUrl)
-                    {
-                        siteUri = new Uri(CurrentSettings.SiteUrl);
-                    }
-                    var normalizedPathAndQuery = Request.Url.PathAndQuery;
+                    var mustRedirect = false;
+                    var redirectToUrl = "";
+                    var hostUrl = "";
+                    var pathAndQuery = Request.Url.AbsolutePath + Request.Url.Query + Request.Url.Fragment;
                     var port = "";
                     if (Request.Url.Port != 443 && Request.Url.Port != 80 && Request.Url.Port != 0)
                     {
                         port = ":" + Request.Url.Port;
                     }
 
+                    if (CurrentSettings.SiteUrl.IsValidUrl() && CurrentSettings.RedirectAllRequestsToSiteUrl)
+                    {
+                        hostUrl = CurrentSettings.SiteUrl.TrimEnd("/");
+                    }
+                    else
+                    {
+                        hostUrl = Request.Url.Scheme + Uri.SchemeDelimiter + Request.Url.Host + port;
+                    }
+
                     if (CurrentSettings.AppendLanguageCodeToUrl)
                     {
                         var currentLanguage = WorkContext.CurrentLanguage;
 
-                        var isLocaleDefined = normalizedPathAndQuery.TrimStart('/').StartsWith(currentLanguage.IsoCode + "/",
+                        var isLocaleDefined = pathAndQuery.TrimStart('/').StartsWith(currentLanguage.IsoCode + "/",
                                                   StringComparison.InvariantCultureIgnoreCase) ||
-                                              normalizedPathAndQuery.TrimStart('/').StartsWith(currentLanguage.IsoCode + "?",
+                                              pathAndQuery.TrimStart('/').StartsWith(currentLanguage.IsoCode + "?",
                                                   StringComparison.InvariantCultureIgnoreCase) ||
-                                              normalizedPathAndQuery.TrimStart('/').StartsWith(currentLanguage.IsoCode + "#",
+                                              pathAndQuery.TrimStart('/').StartsWith(currentLanguage.IsoCode + "#",
                                                   StringComparison.InvariantCultureIgnoreCase) ||
-                                              normalizedPathAndQuery.TrimStart('/').Equals(currentLanguage.IsoCode,
+                                              pathAndQuery.TrimStart('/').Equals(currentLanguage.IsoCode,
                                                   StringComparison.InvariantCultureIgnoreCase);
 
                         if (!isLocaleDefined)
                         {
-                            if (!Response.IsRequestBeingRedirected)
-                            {
-
-                                filterContext.Result = new RedirectResult($"{siteUri.Scheme}://{siteUri.Host}{port}/{currentLanguage.IsoCode.ToLower()}{normalizedPathAndQuery}", true);
-                                return;
-                            }
+                            pathAndQuery = $"/{currentLanguage.IsoCode.ToLower()}{pathAndQuery}";
+                            mustRedirect = true;
                         }
                     }
 
-                    if ($"{Request.Url.Scheme}://{Request.Url.Host}".ToLower().Trim().TrimEnd('/') != $"{siteUri.Scheme}://{siteUri.Host}".ToLower().Trim().TrimEnd('/'))
-                    {
-                        if (!Response.IsRequestBeingRedirected)
-                        {
+                    redirectToUrl = $"{hostUrl}{pathAndQuery}";
 
-                            filterContext.Result = new RedirectResult($"{siteUri.Scheme}://{siteUri.Host}{port}{normalizedPathAndQuery}", true);
-                            return;
-                        }
+                    if (!redirectToUrl.ToLower().Trim().StartsWith($"{Request.Url.Scheme}{Uri.SchemeDelimiter}{Request.Url.Host}".ToLower().Trim().TrimEnd('/')))
+                    {
+                        mustRedirect = true;
+                    }
+
+                    if (mustRedirect)
+                    {
+                        Response.RedirectPermanent(redirectToUrl, true);
+                        return;
                     }
                 }
 
-                               
+
                 //Set Current Language
-                if (!string.IsNullOrWhiteSpace(Request.QueryString["usl"]))
+                if (!string.IsNullOrWhiteSpace(Request.Form["usl"]))
                 {
-                    var lang = Request.QueryString["usl"].Trim().ToLower();
+                    var lang = Request.Form["usl"].Trim().ToLower();
                     if (LanguagesService.GetAllLanguagesIsoList().Contains(lang))
                     {
                         Session["CurrentLanguageISO"] = lang;
@@ -135,17 +146,27 @@ namespace Devesprit.DigiCommerce.Controllers
                         responseCookie.Values["Language"] = lang;
                         responseCookie.Domain = "." + Request.Url.Host.TrimStart("www.").Trim();
                         responseCookie.Expires = DateTime.Now.AddYears(1).ToUniversalTime();
-                        Response.Cookies.Add(responseCookie);
+                        if (Request.Cookies["UserSetting"] == null)
+                        {
+                            Response.Cookies.Add(responseCookie);
+                        }
+                        else
+                        {
+                            Response.Cookies.Set(responseCookie);
+                        }
 
                         EventPublisher.Publish(new CurrentLanguageChangeEvent(lang));
+
+                        Response.Redirect(Request.RawUrl);
+                        return;
                     }
                 }
 
 
                 //Set Current Currency
-                if (!string.IsNullOrWhiteSpace(Request.QueryString["usc"]))
+                if (!string.IsNullOrWhiteSpace(Request.Form["usc"]))
                 {
-                    var currency = Request.QueryString["usc"].Trim().ToLower();
+                    var currency = Request.Form["usc"].Trim().ToLower();
                     if (CurrencyService.GetAllCurrenciesIsoList().Contains(currency))
                     {
                         Session["CurrentCurrencyISO"] = currency;
@@ -154,9 +175,19 @@ namespace Devesprit.DigiCommerce.Controllers
                         responseCookie.Values["Currency"] = currency;
                         responseCookie.Expires = DateTime.Now.AddYears(1).ToUniversalTime();
                         responseCookie.Domain = "." + Request.Url.Host.TrimStart("www.").Trim();
-                        Response.Cookies.Add(responseCookie);
+                        if (Request.Cookies["UserSetting"] == null)
+                        {
+                            Response.Cookies.Add(responseCookie);
+                        }
+                        else
+                        {
+                            Response.Cookies.Set(responseCookie);
+                        }
 
                         EventPublisher.Publish(new CurrentCurrencyChangeEvent(currency));
+
+                        Response.Redirect(Request.RawUrl);
+                        return;
                     }
                 }
 

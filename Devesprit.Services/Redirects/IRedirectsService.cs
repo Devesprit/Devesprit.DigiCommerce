@@ -12,7 +12,7 @@ namespace Devesprit.Services.Redirects
         Task<TblRedirects> FindByIdAsync(int id);
         Task<int> AddAsync(TblRedirects record);
         Task UpdateAsync(TblRedirects record);
-        TblRedirects FindMatchedRuleForRequestedUrl(string url, int? fromOrder);
+        TblRedirects FindMatchedRuleForRequestedUrl(string url);
         string GenerateRedirectUrl(TblRedirects rule, Uri requestedUrl, bool absoluteUrl = false);
     }
 }

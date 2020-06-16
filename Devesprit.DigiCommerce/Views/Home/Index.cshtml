@@ -39,7 +39,7 @@
 <div class="row t-pad-20">
     <div class="col-12 b-mar-70">
         <div class="text-center mb-3">
-            <h2 class="mb-0">@ProductsListType.Newest.GetLocalized()</h2>
+            <h2 class="mb-0">@T("NewestProductsWithoutPage")</h2>
             <a class="text-warning fs-12" href="@Url.Action("ProductsExplorer", "Product", new {listType = ProductsListType.Newest})">@T("SeeMore")</a>
         </div>
         @{Html.RenderAction("GetProductsList", "Product", new
@@ -53,7 +53,7 @@
     </div>
     <div class="col-12 col-md-4 col-lg-4 col-xl-3 b-mar-70">
         <div class="text-center mb-3">
-            <h2 class="mb-0">@ProductsListType.HotList.GetLocalized()</h2>
+            <h2 class="mb-0">@T("HotProductsWithoutPage")</h2>
             <a class="text-warning fs-12" href="@Url.Action("ProductsExplorer", "Product", new {listType = ProductsListType.HotList})">@T("SeeMore")</a>
         </div>
         @{Html.RenderAction("GetProductsList", "Product", new
@@ -68,7 +68,7 @@
     </div>
     <div class="col b-mar-70">
         <div class="text-center mb-3">
-            <h2 class="mb-0">@ProductsListType.MostDownloaded.GetLocalized()</h2>
+            <h2 class="mb-0">@T("MostDownloadedProductsWithoutPage")</h2>
             <a class="text-warning fs-12" href="@Url.Action("ProductsExplorer", "Product", new {listType = ProductsListType.MostDownloaded, fromDate = DateTime.Now.AddYears(-1).Date})">@T("SeeMore")</a>
         </div>
         @{Html.RenderAction("GetProductsList", "Product", new

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Devesprit.Core.Settings;
 using Devesprit.Data;
 using Devesprit.Data.Domain;
 using Devesprit.Data.Enums;
@@ -15,12 +16,15 @@ namespace Devesprit.Services.Users
     {
         private readonly AppDbContext _dbContext;
         private readonly IEventPublisher _eventPublisher;
+        private readonly ISettingService _settingService;
 
         public UserWishlistService(AppDbContext dbContext,
-            IEventPublisher eventPublisher)
+            IEventPublisher eventPublisher,
+            ISettingService settingService)
         {
             _dbContext = dbContext;
             _eventPublisher = eventPublisher;
+            _settingService = settingService;
         }
 
         public virtual IQueryable<TblUserWishlist> GetAsQueryable()
@@ -72,6 +76,11 @@ namespace Devesprit.Services.Users
 
         public virtual async Task<bool> AddPostToUserWishlistAsync(int postId, string userId, PostType? postType)
         {
+            if (!(await _settingService.LoadSettingAsync<SiteSettings>()).Wishlist)
+            {
+                return false;
+            }
+
             var alreadyLiked = (await _dbContext.UserWishlist.Where(p => p.PostId == postId && p.UserId == userId)
                 .FromCacheAsync(CacheTags.UserWishlist)).ToList();
             if (alreadyLiked.Any())
@@ -95,6 +104,11 @@ namespace Devesprit.Services.Users
                 return false;
             }
 
+            if (!_settingService.LoadSetting<SiteSettings>().Wishlist)
+            {
+                return false;
+            }
+
             return _dbContext.UserWishlist.Where(p => p.UserId == userId).FromCache(CacheTags.UserWishlist)
                 .Any(p => p.PostId == postId);
         }
@@ -102,6 +116,11 @@ namespace Devesprit.Services.Users
         public virtual Dictionary<int, bool> UserAddedThisPostToWishlist(int[] postIds, string userId)
         {
             if (string.IsNullOrWhiteSpace(userId))
+            {
+                return postIds.ToDictionary(p => p, p => false);
+            }
+
+            if (!_settingService.LoadSetting<SiteSettings>().Wishlist)
             {
                 return postIds.ToDictionary(p => p, p => false);
             }

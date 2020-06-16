@@ -1,4 +1,5 @@
 ﻿using System.Globalization;
+using System.Net;
 using System.Threading;
 using System.Web.Mvc;
 using System.Web.Routing;
@@ -31,7 +32,6 @@ namespace Devesprit.DigiCommerce.Controllers
             }
 
             EventPublisher.Publish(new PageNotFoundEvent(HttpContext, errorCode));
-
             return View("PageNotFound");
         }
 
@@ -44,7 +44,6 @@ namespace Devesprit.DigiCommerce.Controllers
             }
 
             EventPublisher.Publish(new ErrorEvent(HttpContext, errorCode));
-
             return View("Error");
         }
 

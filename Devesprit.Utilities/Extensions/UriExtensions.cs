@@ -8,5 +8,10 @@ namespace Devesprit.Utilities.Extensions
         {
             return uri.Scheme + Uri.SchemeDelimiter + uri.Host + (uri.Port > 0 && uri.Port != 443 && uri.Port != 80 ? ":" + uri.Port : "");
         }
+
+        public static string GetPathAndQueryAndFragment(this Uri uri)
+        {
+            return uri.AbsolutePath + uri.Query + uri.Fragment;
+        }
     }
 }

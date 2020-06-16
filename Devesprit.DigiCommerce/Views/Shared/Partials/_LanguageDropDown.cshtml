@@ -32,17 +32,21 @@
 {
     <div class="btn-group btn-group-xs lang-dropdown">
         <button title="@T("ChangeLanguage")" type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <img src="@curLang.Icon.ByteArrayToBase64Image()" alt="@curLang.LanguageName"/>
+            <img src="@curLang.Icon.ByteArrayToBase64Image()" alt="@curLang.LanguageName" />
             @curLang.LanguageName
         </button>
         <div class="dropdown-menu dropdown-menu-xs">
             @foreach (var item in allLanguages)
             {
-                var targetUrl = string.Format(targetUrlMask, item.IsoCode).BuildQueryStringUrl(new[] { "usl=" + item.IsoCode });
-                <a class="dropdown-item dropdown-item-xs" href="@targetUrl">
-                    <img src="@item.Icon.ByteArrayToBase64Image()" alt="@item.LanguageName"/>
-                    @item.LanguageName
-                </a>
+                var targetUrl = string.Format(targetUrlMask, item.IsoCode);//.BuildQueryStringUrl(new[] { "usl=" + item.IsoCode });
+                <form method="post" action="@targetUrl">
+                    <input type="hidden" name="usl" value="@item.IsoCode" />
+                    @Html.AntiForgeryToken()
+                    <button class="dropdown-item dropdown-item-xs" type="submit">
+                        <img src="@item.Icon.ByteArrayToBase64Image()" alt="@item.LanguageName" />
+                        @item.LanguageName
+                    </button>
+                </form>
             }
         </div>
     </div>

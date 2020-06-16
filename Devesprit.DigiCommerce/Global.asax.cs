@@ -16,8 +16,11 @@ using Autofac.Integration.Mvc;
 using Devesprit.Core;
 using Devesprit.Core.Localization;
 using Devesprit.Core.Plugin;
+using Devesprit.Core.Settings;
 using Devesprit.DigiCommerce.Controllers;
+using Devesprit.Services;
 using Devesprit.Services.MemoryCache;
+using Devesprit.Utilities.Extensions;
 using Devesprit.WebFramework;
 using Devesprit.WebFramework.Helpers;
 using Devesprit.WebFramework.ModelBinder;
@@ -98,7 +101,7 @@ namespace Devesprit.DigiCommerce
                 if (!User.HasPermission("SiteSettings_ApplicationErrorsLog"))
                 {
                     if (!Response.IsRequestBeingRedirected)
-                        Response.Redirect("~/Error/AccessPermissionError");
+                        Redirect("/Error/AccessPermissionError", HttpContext.Current);
                 }
             }
 
@@ -107,7 +110,7 @@ namespace Devesprit.DigiCommerce
                 if (!User.HasPermission("ManageBackgroundJobs_BackgroundJobServer"))
                 {
                     if (!Response.IsRequestBeingRedirected)
-                        Response.Redirect("~/Error/AccessPermissionError");
+                        Redirect("/Error/AccessPermissionError", HttpContext.Current);
                 }
             }
         }
@@ -143,7 +146,7 @@ namespace Devesprit.DigiCommerce
             {
                 var errorCode = ErrorLog.GetDefault(HttpContext.Current).Log(new Error(exception, HttpContext.Current));
                 if (!Response.IsRequestBeingRedirected)
-                    Response.Redirect("~/Error/Index?errorCode=" + errorCode);
+                    Redirect("/Error/Index?errorCode=" + errorCode, HttpContext.Current);
             }
             else //It's an Http Exception, Let's handle it.
             {
@@ -152,12 +155,12 @@ namespace Devesprit.DigiCommerce
                     case 404:
                         // Page not found.
                         if (!Response.IsRequestBeingRedirected)
-                            Response.Redirect("~/Error/PageNotFound");
+                            Redirect("/Error/PageNotFound", HttpContext.Current); 
                         break;
                     default:
                         var errorCode = ErrorLog.GetDefault(HttpContext.Current).Log(new Error(exception, HttpContext.Current));
                         if (!Response.IsRequestBeingRedirected)
-                            Response.Redirect("~/Error/Index?errorCode=" + errorCode);
+                            Redirect("/Error/Index?errorCode=" + errorCode, HttpContext.Current);
                         break;
                 }
             }
@@ -267,6 +270,41 @@ namespace Devesprit.DigiCommerce
             }
 
             return base.GetVaryByCustomString(context, value);
+        }
+
+        private void Redirect(string url, HttpContext ctx)
+        {
+            var redirectToUrl = url;
+            if (!url.IsAbsoluteUrl())
+            {
+                redirectToUrl = url.GetAbsoluteUrl(new Uri(ctx.Request.Url.GetHostUrl()));
+            }
+            var pathAndQuery = new Uri(redirectToUrl).GetPathAndQueryAndFragment();
+            var currentSettings = DependencyResolver.Current.GetService<ISettingService>().LoadSetting<SiteSettings>();
+            if (currentSettings.AppendLanguageCodeToUrl)
+            {
+                var currentLanguage = DependencyResolver.Current.GetService<IWorkContext>().CurrentLanguage;
+
+                var isLocaleDefined = pathAndQuery.TrimStart('/').StartsWith(currentLanguage.IsoCode + "/",
+                                          StringComparison.InvariantCultureIgnoreCase) ||
+                                      pathAndQuery.TrimStart('/').StartsWith(currentLanguage.IsoCode + "?",
+                                          StringComparison.InvariantCultureIgnoreCase) ||
+                                      pathAndQuery.TrimStart('/').StartsWith(currentLanguage.IsoCode + "#",
+                                          StringComparison.InvariantCultureIgnoreCase) ||
+                                      pathAndQuery.TrimStart('/').Equals(currentLanguage.IsoCode,
+                                          StringComparison.InvariantCultureIgnoreCase);
+
+                if (!isLocaleDefined)
+                {
+                    pathAndQuery = $"/{currentLanguage.IsoCode.ToLower()}{pathAndQuery}";
+                }
+            }
+            if (currentSettings.SiteUrl.IsValidUrl() && currentSettings.RedirectAllRequestsToSiteUrl)
+            {
+                redirectToUrl = currentSettings.SiteUrl.TrimEnd("/") + pathAndQuery;
+            }
+            redirectToUrl = $"{new Uri(redirectToUrl).GetHostUrl()}{pathAndQuery}";
+            Response.RedirectPermanent(redirectToUrl);
         }
     }
 }

@@ -18,7 +18,8 @@ namespace Devesprit.DigiCommerce.Controllers
             _pagesService = pagesService;
         }
 
-        [MethodCache(Tags = new[] { nameof(TblBlogPosts), nameof(TblProducts) }, VaryByCustom = "lang,user", DurationSec = 60 * 5)]
+        //[MethodCache(Tags = new[] { nameof(TblBlogPosts), nameof(TblProducts) }, VaryByCustom = "lang,user", DurationSec = 60 * 5)]
+        [MethodCache(Tags = new[] { nameof(TblBlogPosts), nameof(TblProducts) }, VaryByCustom = "lang", DurationSec = 60 * 5)]
         public virtual async Task<ActionResult> Index()
         {
             var defaultPage = await _pagesService.GetWebsiteDefaultPageAsync();

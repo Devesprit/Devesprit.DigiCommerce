@@ -4,6 +4,8 @@ using System.Data.Entity.Migrations;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Devesprit.Core;
+using Devesprit.Core.Settings;
 using Devesprit.Data;
 using Devesprit.Data.Domain;
 using Devesprit.Data.Enums;
@@ -18,12 +20,18 @@ namespace Devesprit.Services.Redirects
     {
         private readonly AppDbContext _dbContext;
         private readonly IEventPublisher _eventPublisher;
+        private readonly ISettingService _settingService;
+        private readonly IWorkContext _workContext;
 
         public RedirectsService(AppDbContext dbContext,
-            IEventPublisher eventPublisher)
+            IEventPublisher eventPublisher,
+            ISettingService settingService,
+            IWorkContext workContext)
         {
             _dbContext = dbContext;
             _eventPublisher = eventPublisher;
+            _settingService = settingService;
+            _workContext = workContext;
         }
 
         public virtual IQueryable<TblRedirects> GetAsQueryable()
@@ -71,13 +79,9 @@ namespace Devesprit.Services.Redirects
             _eventPublisher.EntityUpdated(record, oldRecord);
         }
 
-        public virtual TblRedirects FindMatchedRuleForRequestedUrl(string url, int? fromOrder)
+        public virtual TblRedirects FindMatchedRuleForRequestedUrl(string url)
         {
             var rules = GetAsQueryable().FromCache(CacheTags.RedirectRule);
-            if (fromOrder != null)
-            {
-                rules = rules.Where(p => p.Order > fromOrder.Value);
-            }
 
             foreach (var rule in rules.Where(p => p.Active))
             {
@@ -142,7 +146,7 @@ namespace Devesprit.Services.Redirects
                     result = result.GetAbsoluteUrl(requestedUrl);
                 }
 
-                return result;
+                return NormalizeUrl(result, requestedUrl, rule.AppendLanguageCodeToUrl);
             }
 
             var pattern = rule.RequestedUrl;
@@ -177,7 +181,51 @@ namespace Devesprit.Services.Redirects
                 responseUrl = responseUrl.GetAbsoluteUrl(requestedUrl);
             }
 
-            return responseUrl;
+            return NormalizeUrl(responseUrl, requestedUrl, rule.AppendLanguageCodeToUrl);
+        }
+
+        private string NormalizeUrl(string url, Uri requestedUrl, bool appendLanguageCodeToUrl)
+        {
+            
+            var settings = _settingService.LoadSetting<SiteSettings>();
+            if (!url.IsAbsoluteUrl())
+            {
+                url = url.GetAbsoluteUrl(new Uri(requestedUrl.GetHostUrl()));
+            }
+
+            //Check if response url is local, add Lang ISO and normalize url
+            if (new Uri(url).Host.ToLower().Trim() == requestedUrl.Host.ToLower().Trim())
+            {
+                if (settings.SiteUrl.IsValidUrl() && settings.RedirectAllRequestsToSiteUrl)
+                {
+                    var responseUri = new Uri(url);
+                    url = settings.SiteUrl.TrimEnd("/") + responseUri.GetPathAndQueryAndFragment();
+                }
+
+                if (settings.AppendLanguageCodeToUrl || appendLanguageCodeToUrl)
+                {
+                    var responseUri = new Uri(url);
+                    var pathAndQuery = responseUri.GetPathAndQueryAndFragment();
+                    var currentLanguage = _workContext.CurrentLanguage;
+
+                    var isLocaleDefined = pathAndQuery.TrimStart('/').StartsWith(currentLanguage.IsoCode + "/",
+                                              StringComparison.InvariantCultureIgnoreCase) ||
+                                          pathAndQuery.TrimStart('/').StartsWith(currentLanguage.IsoCode + "?",
+                                              StringComparison.InvariantCultureIgnoreCase) ||
+                                          pathAndQuery.TrimStart('/').StartsWith(currentLanguage.IsoCode + "#",
+                                              StringComparison.InvariantCultureIgnoreCase) ||
+                                          pathAndQuery.TrimStart('/').Equals(currentLanguage.IsoCode,
+                                              StringComparison.InvariantCultureIgnoreCase);
+
+                    if (!isLocaleDefined)
+                    {
+                        pathAndQuery = $"/{currentLanguage.IsoCode.ToLower()}{pathAndQuery}";
+                        url = $"{responseUri.GetHostUrl()}{pathAndQuery}";
+                    }
+                }
+            }
+
+            return url;
         }
     }
 }

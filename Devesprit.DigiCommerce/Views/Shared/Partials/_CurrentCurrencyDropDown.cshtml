@@ -22,9 +22,13 @@
         <div class="dropdown-menu dropdown-menu-xs">
             @foreach (var item in allCurrencies)
             {
-                <a class="dropdown-item dropdown-item-xs" href="@Request.RawUrl.BuildQueryStringUrl(new[] {"usc=" + item.IsoCode})">
-                    @Html.Raw(item.GetLocalized(x => x.CurrencyName))
-                </a>
+                <form method="post" action="@Request.RawUrl">
+                    <input type="hidden" name="usc" value="@item.IsoCode" />
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="dropdown-item dropdown-item-xs">
+                        @Html.Raw(item.GetLocalized(x => x.CurrencyName))
+                    </button>
+                </form>
             }
         </div>
     </div>

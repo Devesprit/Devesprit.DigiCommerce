@@ -7,6 +7,7 @@ using Devesprit.Data.Enums;
 using Devesprit.Services;
 using Devesprit.Services.Events;
 using Devesprit.Services.Redirects;
+using Devesprit.Utilities.Extensions;
 
 namespace Devesprit.WebFramework.HttpModules
 {
@@ -28,7 +29,7 @@ namespace Devesprit.WebFramework.HttpModules
                 var requestedUrl = request.Url;
 
                 var redirectsService = DependencyResolver.Current.GetService<IRedirectsService>();
-                var rule = redirectsService.FindMatchedRuleForRequestedUrl(request.Url.AbsoluteUri.Trim(), null);
+                var rule = redirectsService.FindMatchedRuleForRequestedUrl(request.Url.AbsoluteUri.Trim());
 
                 while (rule != null)
                 {
@@ -43,7 +44,7 @@ namespace Devesprit.WebFramework.HttpModules
                     }
 
                     var responseUrl = redirectsService.GenerateRedirectUrl(rule, requestedUrl, true);
-                    var newRule = redirectsService.FindMatchedRuleForRequestedUrl(responseUrl, rule.Order);
+                    var newRule = redirectsService.FindMatchedRuleForRequestedUrl(responseUrl);
                     if (newRule == null)
                     {
                         break;
@@ -69,23 +70,6 @@ namespace Devesprit.WebFramework.HttpModules
                     }
 
                     var responseUrl = redirectsService.GenerateRedirectUrl(rule, requestedUrl);
-
-                    if (rule.AppendLanguageCodeToUrl && responseUrl.StartsWith("/")) //check language iso code added to url if redirect to local path
-                    {
-                        var currentLanguage = DependencyResolver.Current.GetService<IWorkContext>().CurrentLanguage;
-                        var isLocaleDefined = responseUrl.TrimStart('/').StartsWith(currentLanguage.IsoCode + "/",
-                                                  StringComparison.InvariantCultureIgnoreCase) ||
-                                              responseUrl.TrimStart('/').StartsWith(currentLanguage.IsoCode + "?",
-                                                  StringComparison.InvariantCultureIgnoreCase) ||
-                                              responseUrl.TrimStart('/').StartsWith(currentLanguage.IsoCode + "#",
-                                                  StringComparison.InvariantCultureIgnoreCase) ||
-                                              responseUrl.TrimStart('/').Equals(currentLanguage.IsoCode,
-                                                  StringComparison.InvariantCultureIgnoreCase);
-                        if (!isLocaleDefined)
-                        {
-                            responseUrl = $"/{currentLanguage.IsoCode.ToLower()}{responseUrl}";
-                        }
-                    }
 
                     var eventPublisher = DependencyResolver.Current.GetService<IEventPublisher>();
                     switch (rule.ResponseType)
