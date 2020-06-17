@@ -209,8 +209,8 @@ namespace Devesprit.DigiCommerce.Controllers
             }
 
             //Send current invoice items count to view
-            var invoice = DependencyResolver.Current.GetService<IInvoiceService>().GetUserCurrentInvoice(false);
-            ViewData["InvoiceItemsCount"] = invoice?.InvoiceDetails?.Count ?? 0;
+            //var invoice = DependencyResolver.Current.GetService<IInvoiceService>().GetUserCurrentInvoice(false);
+            //ViewData["InvoiceItemsCount"] = invoice?.InvoiceDetails?.Count ?? 0;
 
             base.OnActionExecuting(filterContext);
         }

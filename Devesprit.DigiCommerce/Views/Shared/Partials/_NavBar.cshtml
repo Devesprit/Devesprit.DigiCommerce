@@ -95,7 +95,8 @@
                     <input id="txtSearch" type="text" name="query" class="form-control form-control-sm " placeholder="@T("Search")" data-val="true" data-val-required="" />
                 }
                 <a class="btn btn-success btn-sm text-light shopping-cart-btn" href="@Url.Action("Index", "Invoice", new {id = ""})">
-                    <span id="lblNumberOfItemsInShoppingCart" class="badge badge-danger">@ViewData["InvoiceItemsCount"]</span> <i class="fa fa-shopping-cart"></i> &nbsp;&nbsp;&nbsp; @T("MyShoppingCart")
+                    @*<span id="lblNumberOfItemsInShoppingCart" class="badge badge-danger">@ViewData["InvoiceItemsCount"]</span>*@ 
+                    <i class="fa fa-shopping-cart"></i> &nbsp;&nbsp;&nbsp; @T("MyShoppingCart")
                 </a>
             </div>
         </div>

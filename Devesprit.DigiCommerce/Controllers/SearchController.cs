@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using System.Web.Mvc;
 using System.Web.UI;
 using Autofac.Extras.DynamicProxy;
+using Devesprit.Core.Localization;
 using Devesprit.Data.Domain;
 using Devesprit.Data.Enums;
 using Devesprit.DigiCommerce.Factories.Interfaces;
@@ -23,7 +24,7 @@ namespace Devesprit.DigiCommerce.Controllers
         private readonly IPostService<TblPosts> _postService;
         private readonly IPostModelFactory _postModelFactory;
         private readonly ISearchEngine _searchEngine;
-
+        
         public SearchController(
             IPostService<TblPosts> postService,
             IPostModelFactory postModelFactory,
@@ -86,6 +87,8 @@ namespace Devesprit.DigiCommerce.Controllers
                 }
             }
 
+            var localizationService = DependencyResolver.Current.GetService<ILocalizationService>();
+            ViewBag.MetaDescription = string.Format(localizationService.GetResource("SearchFor"), model.Query).Replace("\"", "'");
             return View(viewModel);
         }
 
@@ -125,6 +128,8 @@ namespace Devesprit.DigiCommerce.Controllers
 
             };
 
+            var localizationService = DependencyResolver.Current.GetService<ILocalizationService>();
+            ViewBag.MetaDescription = string.Format(localizationService.GetResource("SearchForTag"), tag).Replace("\"", "'");
             return View("Index", viewModel);
         }
 
@@ -152,7 +157,7 @@ namespace Devesprit.DigiCommerce.Controllers
             var currentUser = UserManager.FindById(User.Identity.GetUserId());
             var posts = _postService.GetItemsById(result.Documents.Select(p => p.DocumentId).ToList(),
                 searchTerm.Page.Value, searchTerm.PageSize.Value);
-
+             
             var viewModel = new SearchResultModel
             {
                 TimeElapsed = result.ElapsedMilliseconds,
@@ -163,7 +168,9 @@ namespace Devesprit.DigiCommerce.Controllers
                 CardViewStyles = ViewStyles.Small,
 
             };
-            
+
+            var localizationService = DependencyResolver.Current.GetService<ILocalizationService>();
+            ViewBag.MetaDescription = string.Format(localizationService.GetResource("SearchForKeyword"), keyword).Replace("\"", "'");
             return View("Index", viewModel);
         }
 

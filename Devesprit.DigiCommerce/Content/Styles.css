@@ -582,7 +582,7 @@ button {
 
 @media (min-width: 992px) {
     .shopping-cart-btn {
-        width: 50px;
+        width: 35px;
         overflow: hidden;
         -webkit-transition: all 1s; 
         transition: all 1s;

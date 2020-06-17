@@ -39,7 +39,8 @@ namespace Devesprit.DigiCommerce.Controllers
         // GET: Product
         [Route("{lang}/Product/{slug}", Order = 0)]
         [Route("Product/{slug}", Order = 1)]
-        [MethodCache(Tags = new[] { nameof(TblProducts) }, VaryByCustom = "lang,user")]
+        //[MethodCache(Tags = new[] { nameof(TblProducts) }, VaryByCustom = "lang,user")]
+        [MethodCache(Tags = new[] { nameof(TblProducts) }, VaryByCustom = "lang")]
         public virtual async Task<ActionResult> Index(string slug)
         {
             var currentUser = await UserManager.FindByIdAsync(HttpContext.User.Identity.GetUserId());

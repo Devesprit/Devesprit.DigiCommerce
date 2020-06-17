@@ -5,10 +5,10 @@
 @model Devesprit.DigiCommerce.Models.Search.SearchResultModel
 @{
     ViewBag.Title = Model != null ? T("SearchFor", Model.SearchTerm.Query) : T("NoItemFound");
-
+    
     Html.AddHeadCustomParts("<meta name=\"robots\" content=\"index,follow\">");
 }
-
+@Html.Raw(ViewBag.MetaDescription2)
 @if (Model == null || Model.NumberOfItemsFound == 0)
 {
     <div class="row justify-content-center">

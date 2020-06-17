@@ -64,7 +64,7 @@
     <meta name="generator" content="Devesprit DigiCommerce" />
     <meta name="theme-color" content="#494949"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="@Html.Raw(ViewBag.MetaDescription ?? settings.GetLocalized(x => x.SiteDescription))">
+    <meta name="description" content="@Html.Raw(ViewBag.MetaDescription ?? (ViewBag.Title ?? settings.GetLocalized(x => x.SiteName)))">
     <meta name="keywords" content="@Html.Raw(ViewBag.MetaKeyword ?? settings.GetLocalized(x => x.MetaKeyWords))">
     @Html.GenerateHeadCustom()
 
