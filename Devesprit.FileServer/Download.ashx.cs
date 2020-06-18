@@ -128,7 +128,7 @@ namespace Devesprit.FileServer
                 response.Headers["Content-Range"] = "bytes " + startIndex + "-" + (startIndex + responseLength - 1) + "/" + fileInfo.Length;
             }
 
-            response.AddHeader("content-disposition", "filename=" + Path.GetFileName(filename));
+            response.AddHeader("content-disposition", "attachment; filename=\"" + Path.GetFileName(filename).Replace(",", "")+"\"");
             response.ContentType = MimeMapping.GetMimeMapping(filename);
             response.Headers["Accept-Ranges"] = "bytes";
             response.Headers["Content-Length"] = responseLength.ToString();

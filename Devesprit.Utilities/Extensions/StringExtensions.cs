@@ -289,6 +289,7 @@ namespace Devesprit.Utilities.Extensions
                 .Replace("`", "")
                 .Replace("!", "")
                 .Replace("$", "")
+                .Replace("+", "")
                 .Replace("*", "");
 
             text = Regex.Replace(text, "_+", "_");
