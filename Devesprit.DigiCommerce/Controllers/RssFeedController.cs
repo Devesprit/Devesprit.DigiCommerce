@@ -75,11 +75,11 @@ namespace Devesprit.DigiCommerce.Controllers
 
                 if (post.PostType == PostType.BlogPost)
                 {
-                    url = new Uri(Url.Action("Post", "Blog", new {slug = post.Slug}, Request.Url.Scheme));
+                    url = new Uri(Url.Action("Post", "Blog", new { id = post.Id, slug = post.Slug}, Request.Url.Scheme));
                 }
                 if (post.PostType == PostType.Product)
                 {
-                    url = new Uri(Url.Action("Index", "Product", new {slug = post.Slug}, Request.Url.Scheme));
+                    url = new Uri(Url.Action("Index", "Product", new { id = post.Id, slug = post.Slug}, Request.Url.Scheme));
                 }
 
                 var item = new SyndicationItem(
@@ -130,7 +130,7 @@ namespace Devesprit.DigiCommerce.Controllers
                     product.GetLocalized(p => p.Title).EscapeXml(), (product.Descriptions?.OrderBy(p => p.DisplayOrder)
                                                                    ?.FirstOrDefault()
                                                                    ?.GetLocalized(p => p.HtmlDescription) ?? " - ").EscapeXml(),
-                    new Uri(Url.Action("Index", "Product", new {slug = product.Slug}, Request.Url.Scheme)),
+                    new Uri(Url.Action("Index", "Product", new { id = product.Id, slug = product.Slug}, Request.Url.Scheme)),
                     product.Id.ToString(), product.LastUpDate ?? product.PublishDate))
                 .ToList();
             feed.Items = items;
@@ -166,7 +166,7 @@ namespace Devesprit.DigiCommerce.Controllers
                     post.GetLocalized(p => p.Title).EscapeXml(), (post.Descriptions?.OrderBy(p => p.DisplayOrder)
                                                                    ?.FirstOrDefault()
                                                                    ?.GetLocalized(p => p.HtmlDescription) ?? " - ").EscapeXml(),
-                    new Uri(Url.Action("Post", "Blog", new {slug = post.Slug}, Request.Url.Scheme)),
+                    new Uri(Url.Action("Post", "Blog", new { id = post.Id, slug = post.Slug}, Request.Url.Scheme)),
                     post.Id.ToString(), post.LastUpDate ?? post.PublishDate))
                 .ToList();
             feed.Items = items;

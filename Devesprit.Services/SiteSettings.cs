@@ -76,6 +76,9 @@ namespace Devesprit.Services
 
         public virtual string TinyMCESettings { get; set; } = @"theme: 'silver',
 skin: 'oxide',
+relative_urls : false,
+remove_script_host : false,
+convert_urls : true,
 min_height: 300,
 toolbar_drawer: 'floating',
 branding: false,

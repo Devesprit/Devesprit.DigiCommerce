@@ -37,16 +37,27 @@ namespace Devesprit.DigiCommerce.Controllers
         }
 
         // GET: Product
-        [Route("{lang}/Product/{slug}", Order = 0)]
-        [Route("Product/{slug}", Order = 1)]
-        //[MethodCache(Tags = new[] { nameof(TblProducts) }, VaryByCustom = "lang,user")]
-        [MethodCache(Tags = new[] { nameof(TblProducts) }, VaryByCustom = "lang")]
-        public virtual async Task<ActionResult> Index(string slug)
+        [Route("{lang}/Product/{id}/{slug}", Order = 0)]
+        [Route("Product/{id}/{slug}", Order = 1)]
+        [Route("{lang}/Product/{slug}", Order = 2)]
+        [Route("Product/{slug}", Order = 3)]
+        [MethodCache(Tags = new[] { nameof(TblProducts) }, VaryByCustom = "lang" /*"lang,user"*/)]
+        public virtual async Task<ActionResult> Index(int? id, string slug)
         {
             var currentUser = await UserManager.FindByIdAsync(HttpContext.User.Identity.GetUserId());
             var isAdmin = HttpContext.User.IsInRole("Admin");
+            
+            TblProducts product = null;
+            if (id != null)
+            {
+                product = await _productService.FindByIdAsync(id.Value);
+            }
 
-            var product = await _productService.FindBySlugAsync(slug);
+            if (product == null)
+            {
+                product = await _productService.FindBySlugAsync(slug);
+            }
+
             if (product == null && int.TryParse(slug, out int productId))
             {
                 product = await _productService.FindByIdAsync(productId);
@@ -62,15 +73,14 @@ namespace Devesprit.DigiCommerce.Controllers
 
             //Current product editor page URL (for Admin User)
             ViewBag.AdminEditCurrentPage =
-                $"PopupWindows('{Url.Action("Editor", "ManageProducts", new {area = "Admin"})}', 'ProductEditor', 1200, 700, {{ id: {product.Id} }}, 'get')";
+                $"PopupWindows('{Url.Action("Editor", "ManageProducts", new { area = "Admin" })}', 'ProductEditor', 1200, 700, {{ id: {product.Id} }}, 'get')";
 
             return View(_productModelFactory.PrepareProductModel(product, currentUser, Url));
         }
 
         [Route("{lang}/Products/{listType}", Order = 0)]
         [Route("Products/{listType}", Order = 1)]
-        //[MethodCache(Tags = new[] { nameof(TblProducts) }, VaryByCustom = "lang,user")]
-        [MethodCache(Tags = new[] { nameof(TblProducts) }, VaryByCustom = "lang")]
+        [MethodCache(Tags = new[] { nameof(TblProducts) }, VaryByCustom = "lang" /*"lang,user"*/)]
         public virtual ActionResult ProductsExplorer(ProductsListType listType, int? page, int? pageSize, int? catId, DateTime? fromDate)
         {
             return View(new ProductsExplorerModel()
@@ -84,8 +94,7 @@ namespace Devesprit.DigiCommerce.Controllers
         }
 
         [ChildActionOnly]
-        //[MethodCache(Tags = new[] { nameof(TblProducts) }, VaryByCustom = "lang,user")]
-        [MethodCache(Tags = new[] { nameof(TblProducts) }, VaryByCustom = "lang")]
+        [MethodCache(Tags = new[] { nameof(TblProducts) }, VaryByCustom = "lang" /*"lang,user"*/)]
         public virtual ActionResult GetProductsList(ProductsListType listType, int? page, int? pageSize, int? catId, DateTime? fromDate, ViewStyles? style, NumberOfCol? numberOfCol, bool? showPager)
         {
             var currentUser = UserManager.FindById(User.Identity.GetUserId());
@@ -129,8 +138,7 @@ namespace Devesprit.DigiCommerce.Controllers
 
         [Route("{lang}/Categories/{slug}", Order = 0)]
         [Route("Categories/{slug}", Order = 1)]
-        //[MethodCache(Tags = new[] { nameof(TblProducts) }, VaryByCustom = "lang,user")]
-        [MethodCache(Tags = new[] { nameof(TblProducts) }, VaryByCustom = "lang")]
+        [MethodCache(Tags = new[] { nameof(TblProducts) }, VaryByCustom = "lang" /*"lang,user"*/)]
         public virtual async Task<ActionResult> FilterByCategory(string slug, int? page, int? pageSize)
         {
             var category = await _categoriesService.FindBySlugAsync(slug);

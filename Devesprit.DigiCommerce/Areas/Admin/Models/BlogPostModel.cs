@@ -80,6 +80,10 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Models
         public string Slug { get; set; }
 
 
+        [DisplayNameLocalized("AlternativeSlugs")]
+        public string AlternativeSlugsStr { get; set; }
+
+
         [DisplayNameLocalized("MetaDescription")]
         public LocalizedString MetaDescription { get; set; }
 

@@ -271,7 +271,7 @@ namespace Devesprit.Services.Posts
         public virtual async Task<T> FindBySlugAsync(string slug)
         {
             var result = await _dbContext.Set<T>()
-                .Where(p => p.Slug == slug)
+                .Where(p => p.Slug == slug || p.AlternativeSlugs.Any(x => x.Slug == slug))
                 .Include(p => p.Categories)
                 .Include(p => p.Descriptions)
                 .Include(p => p.Images)
@@ -317,7 +317,8 @@ namespace Devesprit.Services.Posts
             _dbContext.Set<T>().AddOrUpdate(record);
             await _dbContext.SaveChangesAsync();
 
-            //Set Post Tags & Categories
+            //Set Post Tags & Categories & Alternative Slugs
+            await UpdatePostSlugsAsync(record.Id, record.AlternativeSlugs?.Select(p => p.Slug).ToList());
             await UpdatePostTagsAsync(record.Id, record.Tags?.Select(p => p.Tag).ToList());
             await UpdatePostCategoriesAsync(record.Id, record.Categories?.Select(p => p.Id).ToList());
 
@@ -329,15 +330,18 @@ namespace Devesprit.Services.Posts
 
         public virtual async Task<int> AddAsync(T record)
         {
+            var postSlugs = record.AlternativeSlugs?.Select(p => p.Slug).ToList();
             var postTags = record.Tags?.Select(p => p.Tag).ToList();
             var postCategories = record.Categories?.Select(p => p.Id).ToList();
+            record.AlternativeSlugs = null;
             record.Tags = null;
             record.Categories = null;
 
             _dbContext.Set<T>().Add(record);
             await _dbContext.SaveChangesAsync();
 
-            //Set Post Tags & Categories
+            //Set Post Tags & Categories & Alternative Slugs
+            await UpdatePostSlugsAsync(record.Id, postSlugs);
             await UpdatePostTagsAsync(record.Id, postTags);
             await UpdatePostCategoriesAsync(record.Id, postCategories);
 
@@ -354,7 +358,18 @@ namespace Devesprit.Services.Posts
             post.NumberOfViews += value;
             await _dbContext.SaveChangesAsync();
         }
-        
+
+        public virtual async Task UpdatePostSlugsAsync(int postId, List<string> slugsList)
+        {
+            await _dbContext.PostSlugs.Where(p => p.PostId == postId).DeleteAsync();
+            slugsList = slugsList.Select(x => x.Trim()).Where(x => !string.IsNullOrWhiteSpace(x)).Distinct(StringComparer.InvariantCultureIgnoreCase).ToList();
+            foreach (var slugStr in slugsList)
+            {
+                _dbContext.PostSlugs.Add(new TblPostSlugs() { Slug = slugStr, PostId = postId});
+            }
+            await _dbContext.SaveChangesAsync();
+        }
+
         public virtual async Task UpdatePostTagsAsync(int postId, List<string> tagsList)
         {
             var post = await _dbContext.Set<T>()
@@ -373,7 +388,7 @@ namespace Devesprit.Services.Posts
                 return;
             }
 
-            tagsList = tagsList.Select(x => x.Trim()).Where(x => !string.IsNullOrWhiteSpace(x)).Distinct().ToList();
+            tagsList = tagsList.Select(x => x.Trim()).Where(x => !string.IsNullOrWhiteSpace(x)).Distinct(StringComparer.InvariantCultureIgnoreCase).ToList();
             var existingTags = await _dbContext.PostTags
                 .Where(p => tagsList.Contains(p.Tag)).ToListAsync();
 

@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Devesprit.Data.Domain;
 using Devesprit.DigiCommerce.Areas.Admin.Factories.Interfaces;
@@ -28,6 +29,8 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Factories
 
                 var categories = await blogPost.Categories.OrderBy(p => p.CategoryName).Select(p => p.Id).ToListAsync();
                 result.PostCategories = categories.ToArray();
+
+                result.AlternativeSlugsStr = string.Join(Environment.NewLine, blogPost.AlternativeSlugs.Select(p => p.Slug).ToList());
             }
 
             return result;
@@ -39,6 +42,9 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Factories
             result.Tags = post.PostTags?.Select(p => new TblPostTags() { Tag = p }).ToList();
             result.Categories =
                 post.PostCategories?.Select(p => new TblPostCategories() { Id = p }).ToList();
+            result.AlternativeSlugs = post.AlternativeSlugsStr
+                .Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None).Select(p => new TblPostSlugs() { Slug = p })
+                .ToList();
 
             return result;
         }

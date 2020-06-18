@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using System.Web.Mvc;
+using System.Web.UI;
 using Autofac.Extras.DynamicProxy;
 using Devesprit.Data.Domain;
 using Devesprit.Data.Enums;
@@ -39,10 +40,12 @@ namespace Devesprit.DigiCommerce.Controllers
             return View();
         }
 
-        [Route("{lang}/Blog/Post/{slug}", Order = 0)]
-        [Route("Blog/Post/{slug}", Order = 1)]
-        [MethodCache(Tags = new[] { nameof(TblBlogPosts) }, VaryByCustom = "lang,user")]
-        public virtual async Task<ActionResult> Post(string slug)
+        [Route("{lang}/Blog/Post/{id}/{slug}", Order = 0)]
+        [Route("Blog/Post/{id}/{slug}", Order = 1)]
+        [Route("{lang}/Blog/Post/{slug}", Order = 2)]
+        [Route("Blog/Post/{slug}", Order = 3)]
+        [MethodCache(Tags = new[] { nameof(TblBlogPosts) }, VaryByCustom = "lang" /*"lang,user"*/)]
+        public virtual async Task<ActionResult> Post(int? id, string slug)
         {
             if (!CurrentSettings.EnableBlog)
             {
@@ -52,7 +55,17 @@ namespace Devesprit.DigiCommerce.Controllers
             var currentUser = await UserManager.FindByIdAsync(HttpContext.User.Identity.GetUserId());
             var isAdmin = HttpContext.User.IsInRole("Admin");
 
-            var post = await _blogPostService.FindBySlugAsync(slug);
+            TblBlogPosts post = null;
+            if (id != null)
+            {
+                post = await _blogPostService.FindByIdAsync(id.Value);
+            }
+
+            if (post == null)
+            {
+                post = await _blogPostService.FindBySlugAsync(slug);
+            }
+
             if (post == null && int.TryParse(slug, out int postId))
             {
                 post = await _blogPostService.FindByIdAsync(postId);

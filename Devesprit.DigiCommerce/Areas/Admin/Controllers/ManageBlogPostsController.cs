@@ -77,7 +77,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
         public virtual async Task<ActionResult> Editor(BlogPostModel model, bool? saveAndContinue)
         {
             if (!model.Slug.IsNormalizedUrl())
-            {
+            { 
                 ModelState.AddModelError("Slug", string.Format(_localizationService.GetResource("InvalidFieldData"), _localizationService.GetResource("Slug")));
             }
 
@@ -139,6 +139,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
             {
                 foreach (var key in keys)
                     await _blogPostService.DeleteAsync(key);
+
                 return Content("OK");
             }
             catch (Exception e)
@@ -170,7 +171,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
                 p.AllowCustomerReviews,
                 p.PageTitle,
                 p.Slug,
-                PostUrl = "<a target='_blank' href='" + postUrl + "/" + p.Slug + "'>" + p.Title + "</a>"
+                PostUrl = "<a target='_blank' href='" + postUrl + "/" + p.Id + "/" + p.Slug + "'>" + p.Title + "</a>"
             });
 
             var result = dataSource.ApplyDataManager(dm, out var count).ToList();

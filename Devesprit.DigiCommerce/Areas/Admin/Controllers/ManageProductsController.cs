@@ -112,6 +112,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
                 }
 
                 await _localizedEntityService.SaveAllLocalizedStringsAsync(record, model);
+
             }
             catch (Exception e)
             {
@@ -139,6 +140,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
             {
                 foreach (var key in keys)
                     await _productService.DeleteAsync(key);
+
                 return Content("OK");
             }
             catch (Exception e)
@@ -178,7 +180,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
                 p.AllowCustomerReviews,
                 p.PageTitle,
                 p.Slug,
-                ProductUrl = "<a target='_blank' href='" + postUrl + "/" + p.Slug + "'>" + p.Title + "</a>"
+                ProductUrl = "<a target='_blank' href='" + postUrl + "/" + p.Id + "/" + p.Slug + "'>" + p.Title + "</a>"
             });
 
             var result = dataSource.ApplyDataManager(dm, out var count).ToList();

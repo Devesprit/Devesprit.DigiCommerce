@@ -183,7 +183,7 @@ namespace Devesprit.Services.Products
         public override async Task<TblProducts> FindBySlugAsync(string slug)
         {
             var result = await _dbContext.Products
-                .Where(p => p.Slug == slug)
+                .Where(p => p.Slug == slug || p.AlternativeSlugs.Any(x=> x.Slug == slug))
                 .Include(p => p.Categories)
                 .Include(p => p.Descriptions)
                 .Include(p => p.Images)

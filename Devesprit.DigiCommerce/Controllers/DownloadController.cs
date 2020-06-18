@@ -58,7 +58,7 @@ namespace Devesprit.DigiCommerce.Controllers
             var model = new DownloadModel
             {
                 PageTitle = product.GetLocalized(p => p.Title),
-                ProductPageUrl = Url.Action("Index", "Product", new { slug = product.Slug }),
+                ProductPageUrl = Url.Action("Index", "Product", new { id = product.Id, slug = product.Slug }),
                 IsDemo = requestDemoFiles
             };
 

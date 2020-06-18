@@ -28,7 +28,7 @@
                             </th>
                             <td>
                                 <a target="_blank"
-                                   href="@Url.Action("Index", "Product", new {slug = item.Product.Slug})">
+                                   href="@Url.Action("Index", "Product", new {id = item.Product.Id, slug = item.Product.Slug})">
                                     @item.Product.GetLocalized(p => p.Title)
                                 </a>
                             </td>

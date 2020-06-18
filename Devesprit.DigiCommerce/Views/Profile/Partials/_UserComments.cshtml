@@ -29,7 +29,7 @@
                             <td>
                                 @item.Comment
                                 <a target="_blank"
-                                   href="@(item.Post.PostType == PostType.Product ? Url.Action("Index", "Product", new { slug = item.Post.Slug }) : Url.Action("Post", "Blog", new { slug = item.Post.Slug }))">
+                                   href="@(item.Post.PostType == PostType.Product ? Url.Action("Index", "Product", new { id = item.Post.Id, slug = item.Post.Slug }) : Url.Action("Post", "Blog", new { id = item.Post.Id, slug = item.Post.Slug }))">
                                     <i class="fa fa-external-link"></i>
                                 </a>
                             </td>

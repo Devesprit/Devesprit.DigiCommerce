@@ -1,4 +1,5 @@
 ﻿@using System.Globalization
+@using Devesprit.Core
 @using Devesprit.Core.Settings
 @using Devesprit.Data.Domain
 @using Devesprit.Data.Enums
@@ -29,6 +30,11 @@
     {
         Html.AddHeadCustomParts("<meta property=\"og:image\" content=\"" + Model.Images[0].ImageUrl + "\">");
     }
+
+    //Add Canonical Url
+    var workContext = DependencyResolver.Current.GetService<IWorkContext>();
+    var pageMainUrl = Url.Action("Index", "Product", new {id = Model.Id, slug = Model.Slug, lang = workContext.CurrentLanguage.IsoCode}, Request.Url.Scheme);
+    Html.AppendCanonicalUrlParts(pageMainUrl);
 }
 
 @Html.Widget("product_page_start")

@@ -42,6 +42,7 @@ namespace Devesprit.Data.Domain
         public PostType? PostType { get; set; }
         
 
+        public virtual ICollection<TblPostSlugs> AlternativeSlugs { get; set; }
         public virtual ICollection<TblPostImages> Images { get; set; }
         public virtual ICollection<TblPostDescriptions> Descriptions { get; set; }
         public virtual ICollection<TblPostTags> Tags { get; set; }

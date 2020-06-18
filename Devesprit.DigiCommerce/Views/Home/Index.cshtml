@@ -1,4 +1,5 @@
 ﻿@using System.Web.Mvc.Html
+@using Devesprit.Core
 @using Devesprit.Core.Settings
 @using Devesprit.DigiCommerce.Models
 @using Devesprit.DigiCommerce.Models.Post
@@ -34,6 +35,11 @@
 
     };
     Html.AddHeadCustomParts("<meta name=\"robots\" content=\"index,follow\">");
+
+    //Add Canonical Url
+    var workContext = DependencyResolver.Current.GetService<IWorkContext>();
+    var pageMainUrl = Url.Action("Index", "Home", new {lang = workContext.CurrentLanguage.IsoCode}, Request.Url.Scheme);
+    Html.AppendCanonicalUrlParts(pageMainUrl);
 }
 @Html.Widget("home_page_start")
 <div class="row t-pad-20">

@@ -93,7 +93,8 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
                 p.CommentDate,
                 p.UserEmail,
                 p.Published,
-                PostTitle = "<a target='_blank' href='" + postUrl + "/" + p.Post.Slug + "'>" + p.Post.Title + "</a>"
+                PostTitle = "<a target='_blank' href='" + postUrl + "/" + p.Id + "/" + p.Post.Slug + "'>" +
+                            p.Post.Title + "</a>"
             });
 
             var result = dataSource.ApplyDataManager(dm, out var count).ToList();

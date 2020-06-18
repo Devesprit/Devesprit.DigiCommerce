@@ -353,7 +353,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
                 ProductTitle = p.Product.Title,
                 p.Product.Slug,
                 p.DownloadLink,
-                ProductUrl = "<a target='_blank' href='" + postUrl + "/" + p.Product.Slug + "'>" + p.Product.Title + "</a>",
+                ProductUrl = "<a target='_blank' href='" + postUrl + "/" + p.Id + "/" + p.Product.Slug + "'>" + p.Product.Title + "</a>",
                 UserProfileUrl = "<a target='_blank' href='" + userProfileUrl + "?userId=" + p.UserId + "'>" + p.User.Email + "</a>",
             });
 

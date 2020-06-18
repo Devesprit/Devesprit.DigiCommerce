@@ -223,21 +223,21 @@ namespace Devesprit.DigiCommerce.Controllers
                     if (post.PostType == PostType.BlogPost && settings.EnableBlog)
                     {
                         items.Add(new SitemapItem(
-                            GenerateUrl("Post", "Blog", new {slug = post.Slug, lang = language.IsoCode}),
+                            GenerateUrl("Post", "Blog", new { id = post.Id, slug = post.Slug, lang = language.IsoCode}),
                             post.LastUpDate ?? post.PublishDate,
                             SitemapChangeFrequency.Weekly,
                             0.9,
-                            GenerateAlternateUrls(languagesList, "Post", "Blog", new {slug = post.Slug})
+                            GenerateAlternateUrls(languagesList, "Post", "Blog", new { id = post.Id, slug = post.Slug})
                         ));
                     }
                     else if (post.PostType == PostType.Product)
                     {
                         items.Add(new SitemapItem(
-                            GenerateUrl("Index", "Product", new {slug = post.Slug, lang = language.IsoCode}),
+                            GenerateUrl("Index", "Product", new { id = post.Id, slug = post.Slug, lang = language.IsoCode}),
                             post.LastUpDate ?? post.PublishDate,
                             SitemapChangeFrequency.Weekly,
                             1,
-                            GenerateAlternateUrls(languagesList, "Index", "Product", new {slug = post.Slug})
+                            GenerateAlternateUrls(languagesList, "Index", "Product", new { id = post.Id, slug = post.Slug})
                         ));
                     }
                     else

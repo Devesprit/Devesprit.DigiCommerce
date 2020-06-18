@@ -41,6 +41,7 @@ namespace Devesprit.DigiCommerce.Models.Post
 
         public List<PostCategoriesModel> Categories { get; set; }
         public List<Tuple<int, string>> TagsList { get; set; }
+        public List<PostSlugsModel> AlternativeSlugs { get; set; } = new List<PostSlugsModel>();
         public List<PostImagesModel> Images { get; set; } = new List<PostImagesModel>();
         public List<PostDescriptionsModel> Descriptions { get; set; } = new List<PostDescriptionsModel>();
         public List<PostAttributesModel> Attributes { get; set; } = new List<PostAttributesModel>();

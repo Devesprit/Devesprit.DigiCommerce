@@ -122,7 +122,7 @@ namespace Devesprit.DigiCommerce.Controllers
                 await _invoiceService.AddItemToInvoiceAsync(
                    InvoiceDetailsItemType.Product,
                    product.GetLocalized(p => p.Title),
-                   Url.Action("Index", "Product", new { slug = product.Slug }, Request.Url.Scheme),
+                   Url.Action("Index", "Product", new { id = product.Id, slug = product.Slug }, Request.Url.Scheme),
                    productId,
                    _productService.CalculateProductPriceForUser(product, currentUser),
                    1,
@@ -152,7 +152,7 @@ namespace Devesprit.DigiCommerce.Controllers
                                     await _invoiceService.AddItemToInvoiceAsync(
                                         InvoiceDetailsItemType.ProductAttributeOption,
                                         attribute.GetLocalized(p => p.Name) + ": " + option.GetLocalized(p => p.Name),
-                                        Url.Action("Index", "Product", new { slug = product.Slug }, Request.Url.Scheme),
+                                        Url.Action("Index", "Product", new { id = product.Id, slug = product.Slug }, Request.Url.Scheme),
                                         optId,
                                         await _productCheckoutAttributesService.CalculateAttributeOptionPriceForUserAsync(
                                             option.Id, currentUser),
@@ -168,7 +168,7 @@ namespace Devesprit.DigiCommerce.Controllers
                                 await _invoiceService.AddItemToInvoiceAsync(
                                     InvoiceDetailsItemType.ProductAttribute,
                                     attribute.GetLocalized(p => p.Name),
-                                    Url.Action("Index", "Product", new { slug = product.Slug }, Request.Url.Scheme),
+                                    Url.Action("Index", "Product", new { id = product.Id, slug = product.Slug }, Request.Url.Scheme),
                                     attrId,
                                     attribute.UnitPrice,
                                     value,
@@ -183,7 +183,7 @@ namespace Devesprit.DigiCommerce.Controllers
                                 await _invoiceService.AddItemToInvoiceAsync(
                                     InvoiceDetailsItemType.ProductAttribute,
                                     attribute.GetLocalized(p => p.Name) + ": " + Environment.NewLine + "<small>" + value + "</small>",
-                                    Url.Action("Index", "Product", new { slug = product.Slug }, Request.Url.Scheme),
+                                    Url.Action("Index", "Product", new { id = product.Id, slug = product.Slug }, Request.Url.Scheme),
                                     attrId,
                                     0,
                                     0,

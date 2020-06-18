@@ -213,7 +213,7 @@
                 <div class="col-12 border border-left-0 border-right-0 border-top-0 b-mar-10 t-mar-20">
                     <h5 class="text-secondary text-capitalize">@T("SearchEngineOptimization")</h5>
                 </div>
-                <div class="col-12 col-md-6 ">
+                <div class="col-12">
                     <div class="form-group">
                         @Html.LabelFor(p => p.PageTitle)
                         @Html.LocalizedTextBoxFor(p => p.PageTitle, null, new { @class = "form-control form-control-sm" })
@@ -221,11 +221,18 @@
                         @Html.ValidationMessageFor(p => p.PageTitle, "", new { @class = "form-text text-danger fs-12" })
                     </div>
                 </div>
-                <div class="col-12 col-md-6 ">
+                <div class="col-12">
                     <div class="form-group">
                         @Html.LabelFor(p => p.Slug)
                         @Html.TextBoxFor(p => p.Slug, new { @class = "form-control form-control-sm ltr-dir" })
                         @Html.ValidationMessageFor(p => p.Slug, "", new { @class = "form-text text-danger fs-12" })
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="form-group">
+                        @Html.LabelFor(p => p.AlternativeSlugsStr)
+                        @Html.TextAreaFor(p => p.AlternativeSlugsStr, new { @class = "form-control form-control-sm" })
+                        @Html.ValidationMessageFor(p => p.AlternativeSlugsStr, "", new { @class = "form-text text-danger fs-12" })
                     </div>
                 </div>
                 <div class="col-12 col-lg-6 ">

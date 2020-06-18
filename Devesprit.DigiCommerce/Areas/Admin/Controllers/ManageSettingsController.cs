@@ -142,6 +142,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
             {
                 MethodCache.ExpireAll();
                 QueryCacheManager.ExpireAll();
+
                 SuccessNotification(_localizationService.GetResource("OperationCompletedSuccessfully"));
             }
             catch (Exception e)

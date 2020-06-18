@@ -81,7 +81,7 @@ namespace Devesprit.DigiCommerce.Factories
                 var desc = product.Descriptions?.OrderBy(p => p.DisplayOrder).FirstOrDefault()?.GetLocalized(x => x.HtmlDescription) ?? "";
                 model.DescriptionTruncated = desc.ConvertHtmlToText().TruncateText(350);
 
-                model.PostUrl = new Uri(url.Action("Index", "Product", new { slug = product.Slug }, _httpContext.Request.Url.Scheme)).ToString();
+                model.PostUrl = new Uri(url.Action("Index", "Product", new { id = product.Id, slug = product.Slug }, _httpContext.Request.Url.Scheme)).ToString();
 
                 if (numberOfLikes.ContainsKey(model.Id))
                     model.NumberOfLikes = numberOfLikes[model.Id];
@@ -161,6 +161,15 @@ namespace Devesprit.DigiCommerce.Factories
             };
 
             result.DownloadModel = PrepareProductDownloadPurchaseButtonModel(product, currentUser);
+            
+            result.AlternativeSlugs.Clear();
+            foreach (var slug in product.AlternativeSlugs)
+            {
+                result.AlternativeSlugs.Add(new PostSlugsModel()
+                {
+                    Slug = slug.Slug
+                });
+            }
 
             result.Images.Clear();
             foreach (var img in product.Images.OrderBy(p => p.DisplayOrder))
@@ -221,7 +230,7 @@ namespace Devesprit.DigiCommerce.Factories
             }
 
             var protocol = _httpContext?.Request.Url?.Scheme ?? "http";
-            result.PostUrl = new Uri(url.Action("Index", "Product", new { slug = product.Slug },protocol: protocol) ?? "").ToString();
+            result.PostUrl = new Uri(url.Action("Index", "Product", new { id = product.Id, slug = product.Slug },protocol: protocol) ?? "").ToString();
 
             return result;
         }

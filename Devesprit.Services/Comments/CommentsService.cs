@@ -177,8 +177,8 @@ namespace Devesprit.Services.Comments
 
                 var urlHelper = new UrlHelper(_httpContext.Request.RequestContext);
                 var postUrl = post.PostType == PostType.Product
-                    ? urlHelper.Action("Index", "Product", new { slug = post.Slug }, _httpContext.Request.Url.Scheme)
-                    : urlHelper.Action("Post", "Blog", new { slug = post.Slug }, _httpContext.Request.Url.Scheme);
+                    ? urlHelper.Action("Index", "Product", new { id = post.Id, slug = post.Slug }, _httpContext.Request.Url.Scheme)
+                    : urlHelper.Action("Post", "Blog", new { id = post.Id, slug = post.Slug }, _httpContext.Request.Url.Scheme);
 
                 string userId = "";
                 if (record.ParentCommentId != null)
@@ -242,8 +242,8 @@ namespace Devesprit.Services.Comments
                     var urlHelper = new UrlHelper(_httpContext.Request.RequestContext);
 
                     var postUrl = comment.Post.PostType == PostType.Product
-                        ? urlHelper.Action("Index", "Product", new { slug = comment.Post.Slug }, _httpContext.Request.Url.Scheme)
-                        : urlHelper.Action("Post", "Blog", new { slug = comment.Post.Slug }, _httpContext.Request.Url.Scheme);
+                        ? urlHelper.Action("Index", "Product", new { id = comment.Post.Id, slug = comment.Post.Slug }, _httpContext.Request.Url.Scheme)
+                        : urlHelper.Action("Post", "Blog", new { id = comment.Post.Id, slug = comment.Post.Slug }, _httpContext.Request.Url.Scheme);
                     await _notificationsService.SendNotificationAsync(comment.UserId, "Notification_CommentPublished", new { Url = postUrl });
                 }
             }

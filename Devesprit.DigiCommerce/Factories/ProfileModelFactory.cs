@@ -136,11 +136,11 @@ namespace Devesprit.DigiCommerce.Factories
 
                 if (post.PostType == PostType.BlogPost)
                 {
-                    url = new Uri(urlHelper.Action("Post", "Blog", new { slug = post.Slug }, _httpContext.Request.Url.Scheme));
+                    url = new Uri(urlHelper.Action("Post", "Blog", new { id = post.Id, slug = post.Slug }, _httpContext.Request.Url.Scheme));
                 }
                 if (post.PostType == PostType.Product)
                 {
-                    url = new Uri(urlHelper.Action("Index", "Product", new { slug = post.Slug }, _httpContext.Request.Url.Scheme));
+                    url = new Uri(urlHelper.Action("Index", "Product", new { id = post.Id, slug = post.Slug }, _httpContext.Request.Url.Scheme));
                 }
 
                 userLikeWishlistModel.PostHomePageUrl = url.ToString();
@@ -174,11 +174,11 @@ namespace Devesprit.DigiCommerce.Factories
 
                 if (post.PostType == PostType.BlogPost)
                 {
-                    url = new Uri(urlHelper.Action("Post", "Blog", new { slug = post.Slug }, _httpContext.Request.Url.Scheme));
+                    url = new Uri(urlHelper.Action("Post", "Blog", new { id = post.Id, slug = post.Slug }, _httpContext.Request.Url.Scheme));
                 }
                 if (post.PostType == PostType.Product)
                 {
-                    url = new Uri(urlHelper.Action("Index", "Product", new { slug = post.Slug }, _httpContext.Request.Url.Scheme));
+                    url = new Uri(urlHelper.Action("Index", "Product", new { id = post.Id, slug = post.Slug }, _httpContext.Request.Url.Scheme));
                 }
 
                 userLikeWishlistModel.PostHomePageUrl = url.ToString();

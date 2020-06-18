@@ -69,11 +69,11 @@ namespace Devesprit.DigiCommerce.Factories
 
                 if (post.PostType == PostType.BlogPost)
                 {
-                    model.PostUrl = new Uri(url.Action("Post", "Blog", new { slug = post.Slug }, _httpContext.Request.Url.Scheme)).ToString();
+                    model.PostUrl = new Uri(url.Action("Post", "Blog", new { id = post.Id, slug = post.Slug }, _httpContext.Request.Url.Scheme)).ToString();
                 }
                 else if (post.PostType == PostType.Product)
                 {
-                    model.PostUrl = new Uri(url.Action("Index", "Product", new { slug = post.Slug }, _httpContext.Request.Url.Scheme)).ToString();
+                    model.PostUrl = new Uri(url.Action("Index", "Product", new { id = post.Id, slug = post.Slug }, _httpContext.Request.Url.Scheme)).ToString();
                 }
                 else
                 {
@@ -142,6 +142,15 @@ namespace Devesprit.DigiCommerce.Factories
                 AlreadyLiked = _userLikesService.UserLikedThisPost(post.Id, currentUser?.Id)
             };
 
+            result.AlternativeSlugs.Clear();
+            foreach (var slug in post.AlternativeSlugs)
+            {
+                result.AlternativeSlugs.Add(new PostSlugsModel()
+                {
+                    Slug = slug.Slug
+                });
+            }
+
             result.Images.Clear();
             foreach (var img in post.Images.OrderBy(p => p.DisplayOrder))
             {
@@ -182,11 +191,11 @@ namespace Devesprit.DigiCommerce.Factories
 
             if (post.PostType == PostType.BlogPost)
             {
-                result.PostUrl = new Uri(url.Action("Post", "Blog", new { slug = post.Slug }, _httpContext.Request.Url.Scheme)).ToString();
+                result.PostUrl = new Uri(url.Action("Post", "Blog", new { id = post.Id, slug = post.Slug }, _httpContext.Request.Url.Scheme)).ToString();
             }
             else if (post.PostType == PostType.Product)
             {
-                result.PostUrl = new Uri(url.Action("Index", "Product", new { slug = post.Slug }, _httpContext.Request.Url.Scheme)).ToString();
+                result.PostUrl = new Uri(url.Action("Index", "Product", new { id = post.Id, slug = post.Slug }, _httpContext.Request.Url.Scheme)).ToString();
             }
             else
             {

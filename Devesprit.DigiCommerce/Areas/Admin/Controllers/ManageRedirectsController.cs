@@ -180,11 +180,11 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
                         break;
                     case RedirectRuleGroup.Product:
                         var product = await _productService.FindByIdAsync(entityId);
-                        model.ResponseUrl = await RemoveLanguageFromUrl(Url.Action("Index", "Product", new { slug = product.Slug, area = "" }));
+                        model.ResponseUrl = await RemoveLanguageFromUrl(Url.Action("Index", "Product", new { id = product.Id, slug = product.Slug, area = "" }));
                         break;
                     case RedirectRuleGroup.BlogPost:
                         var blogPost = await _blogPostService.FindByIdAsync(entityId);
-                        model.ResponseUrl = await RemoveLanguageFromUrl(Url.Action("Post", "Blog", new { slug = blogPost.Slug, area = "" }));
+                        model.ResponseUrl = await RemoveLanguageFromUrl(Url.Action("Post", "Blog", new { id = blogPost.Id, slug = blogPost.Slug, area = "" }));
                         break;
                     case RedirectRuleGroup.Page:
                         var page = await _pagesService.FindByIdAsync(entityId);

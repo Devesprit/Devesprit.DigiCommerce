@@ -64,6 +64,7 @@ namespace Devesprit.Data
         public DbSet<TblNotifications> Notifications { get; set; }
 
         public DbSet<TblPosts> Posts { get; set; }
+        public DbSet<TblPostSlugs> PostSlugs { get; set; }
         public DbSet<TblPostImages> PostImages { get; set; }
         public DbSet<TblPostDescriptions> PostDescriptions { get; set; }
         public DbSet<TblPostCategories> PostCategories { get; set; }
