@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Devesprit.Data.Domain;
@@ -42,9 +43,17 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Factories
             result.Tags = post.PostTags?.Select(p => new TblPostTags() { Tag = p }).ToList();
             result.Categories =
                 post.PostCategories?.Select(p => new TblPostCategories() { Id = p }).ToList();
-            result.AlternativeSlugs = post.AlternativeSlugsStr
-                .Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None).Select(p => new TblPostSlugs() { Slug = p })
-                .ToList();
+            if (string.IsNullOrWhiteSpace(post.AlternativeSlugsStr))
+            {
+                result.AlternativeSlugs = new List<TblPostSlugs>();
+            }
+            else
+            {
+                result.AlternativeSlugs = post.AlternativeSlugsStr
+                    .Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None)
+                    .Select(p => new TblPostSlugs() { Slug = p })
+                    .ToList();
+            }
 
             return result;
         }
