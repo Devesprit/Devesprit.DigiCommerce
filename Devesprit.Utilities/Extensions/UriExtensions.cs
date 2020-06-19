@@ -34,7 +34,7 @@ namespace Devesprit.Utilities.Extensions
 
                 if (isLocaleDefined)
                 {
-                    path = path.TrimStart(iso, StringComparison.InvariantCultureIgnoreCase);
+                    path = path.TrimStart(iso, StringComparison.InvariantCultureIgnoreCase).TrimStart("/");
                 }
             }
 
@@ -59,7 +59,7 @@ namespace Devesprit.Utilities.Extensions
 
                 if (isLocaleDefined)
                 {
-                    path = path.TrimStart(iso, StringComparison.InvariantCultureIgnoreCase);
+                    path = path.TrimStart(iso, StringComparison.InvariantCultureIgnoreCase).TrimStart("/");
                 }
             }
 
