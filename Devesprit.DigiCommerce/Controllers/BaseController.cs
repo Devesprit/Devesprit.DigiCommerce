@@ -44,19 +44,9 @@ namespace Devesprit.DigiCommerce.Controllers
                                                        DependencyResolver.Current.GetService<ISettingService>().LoadSetting<SiteSettings>());
         public IEventPublisher EventPublisher => _eventPublisher ?? (_eventPublisher =
                                                        DependencyResolver.Current.GetService<IEventPublisher>());
-
+        
         protected override void OnActionExecuting(ActionExecutingContext filterContext)
         {
-            if (Response != null)
-            {
-                try
-                {
-                    Response.AddHeader("Set-Cookie", "HttpOnly;Secure;SameSite=Lax");
-                }
-                catch
-                { }
-            }
-
             if (!filterContext.IsChildAction)
             {
                 //Save user latest IP address

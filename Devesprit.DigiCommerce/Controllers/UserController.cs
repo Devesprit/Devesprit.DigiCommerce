@@ -60,7 +60,7 @@ namespace Devesprit.DigiCommerce.Controllers
             _externalLoginProviderManager = externalLoginProviderManager;
         }
 
-        [HttpGet]
+        [HttpGet] 
         [AllowAnonymous]
         [RedirectAuthenticatedRequests(Action = "Index", Controller = "Profile")]
         public virtual ActionResult Login(string returnUrl)
@@ -86,7 +86,7 @@ namespace Devesprit.DigiCommerce.Controllers
         [RedirectAuthenticatedRequests(Action = "Index", Controller = "Profile")]
         public virtual async Task<ActionResult> Login(LoginModel model)
         {
-            var currentLanguage = WorkContext.CurrentLanguage;
+            var currentLanguage = WorkContext.CurrentLanguage;  
             model.CurrentLanguage = currentLanguage;
             model.ExternalLoginProviders = _externalLoginProviderManager.GetAvailableLoginProvidersInfo();
 

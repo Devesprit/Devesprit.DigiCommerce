@@ -166,7 +166,6 @@ namespace Devesprit.DigiCommerce.Controllers
                 SearchResult = _postModelFactory.PreparePostCardViewModel(posts, currentUser, Url),
                 ShowAdvancedSearchPanel = false,
                 CardViewStyles = ViewStyles.Small,
-
             };
 
             var localizationService = DependencyResolver.Current.GetService<ILocalizationService>();

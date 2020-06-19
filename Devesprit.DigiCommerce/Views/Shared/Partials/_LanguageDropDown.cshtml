@@ -38,10 +38,9 @@
         <div class="dropdown-menu dropdown-menu-xs">
             @foreach (var item in allLanguages)
             {
-                var targetUrl = string.Format(targetUrlMask, item.IsoCode);//.BuildQueryStringUrl(new[] { "usl=" + item.IsoCode });
+                var targetUrl = string.Format(targetUrlMask, item.IsoCode);
                 <form method="post" action="@targetUrl">
                     <input type="hidden" name="usl" value="@item.IsoCode" />
-                    @Html.AntiForgeryToken()
                     <button class="dropdown-item dropdown-item-xs" type="submit">
                         <img src="@item.Icon.ByteArrayToBase64Image()" alt="@item.LanguageName" />
                         @item.LanguageName

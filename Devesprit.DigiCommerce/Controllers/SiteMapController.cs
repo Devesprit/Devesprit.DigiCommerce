@@ -58,11 +58,6 @@ namespace Devesprit.DigiCommerce.Controllers
 
         protected override void OnActionExecuting(ActionExecutingContext filterContext)
         {
-            if (Response != null)
-            {
-                Response.AddHeader("Set-Cookie", "HttpOnly;Secure;SameSite=Lax");
-            }
-
             if (!filterContext.IsChildAction)
             {
                 //Save user latest IP address

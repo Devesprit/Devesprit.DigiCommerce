@@ -14,7 +14,7 @@ namespace Devesprit.WebFramework.ActionFilters
                 if (string.IsNullOrWhiteSpace(Controller) || string.IsNullOrWhiteSpace(Action))
                 {
                     Controller = "Home";
-                    Action = "Index";
+                    Action = "Index"; 
                 }
                 filterContext.Result = new RedirectToRouteResult(
                     new RouteValueDictionary(new

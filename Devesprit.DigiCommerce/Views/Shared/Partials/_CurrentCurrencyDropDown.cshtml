@@ -24,7 +24,6 @@
             {
                 <form method="post" action="@Request.RawUrl">
                     <input type="hidden" name="usc" value="@item.IsoCode" />
-                    @Html.AntiForgeryToken()
                     <button type="submit" class="dropdown-item dropdown-item-xs">
                         @Html.Raw(item.GetLocalized(x => x.CurrencyName))
                     </button>

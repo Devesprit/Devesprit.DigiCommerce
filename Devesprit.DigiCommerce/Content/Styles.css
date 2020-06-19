@@ -274,7 +274,6 @@ button {
 
         .keyword-cloud li a {
             display: inline-block;
-            max-width: 235px;
             height: 18px;
             line-height: 18px;
             padding: 0 .3em;

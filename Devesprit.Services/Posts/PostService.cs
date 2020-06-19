@@ -255,8 +255,10 @@ namespace Devesprit.Services.Posts
                 .Include(p => p.Descriptions)
                 .Include(p => p.Images)
                 .Include(p => p.Attributes)
+                .Include(p => p.Attributes.Select(x => x.PostAttribute))
                 .Include(p => p.Attributes.Select(x => x.AttributeOption))
                 .Include(p => p.Tags)
+                .Include(p => p.AlternativeSlugs)
                 .DeferredFirstOrDefault()
                 .FromCacheAsync(
                     _cacheKey,
@@ -276,8 +278,10 @@ namespace Devesprit.Services.Posts
                 .Include(p => p.Descriptions)
                 .Include(p => p.Images)
                 .Include(p => p.Attributes)
+                .Include(p => p.Attributes.Select(x => x.PostAttribute))
                 .Include(p => p.Attributes.Select(x => x.AttributeOption))
                 .Include(p => p.Tags)
+                .Include(p => p.AlternativeSlugs)
                 .DeferredFirstOrDefault()
                 .FromCacheAsync(
                     _cacheKey,

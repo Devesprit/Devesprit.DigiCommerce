@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
 namespace Devesprit.Utilities.Extensions
 {
@@ -12,6 +14,56 @@ namespace Devesprit.Utilities.Extensions
         public static string GetPathAndQueryAndFragment(this Uri uri)
         {
             return uri.AbsolutePath + uri.Query + uri.Fragment;
+        }
+
+        public static Uri SetLangIso(this Uri uri, string langIso, List<string> allLanguagesIso)
+        {
+            var host = uri.GetHostUrl().TrimEnd("/");
+            var path = uri.GetPathAndQueryAndFragment().TrimStart("/");
+
+            foreach (var iso in allLanguagesIso)
+            {
+                var isLocaleDefined = path.StartsWith(iso + "/",
+                                          StringComparison.InvariantCultureIgnoreCase) ||
+                                      path.StartsWith(iso + "?",
+                                          StringComparison.InvariantCultureIgnoreCase) ||
+                                      path.StartsWith(iso + "#",
+                                          StringComparison.InvariantCultureIgnoreCase) ||
+                                      path.Equals(iso,
+                                          StringComparison.InvariantCultureIgnoreCase);
+
+                if (isLocaleDefined)
+                {
+                    path = path.TrimStart(iso, StringComparison.InvariantCultureIgnoreCase);
+                }
+            }
+
+            return new Uri(host + "/" + langIso + "/" + path);
+        }
+
+        public static Uri RemoveLangIso(this Uri uri, List<string> allLanguagesIso)
+        {
+            var host = uri.GetHostUrl().TrimEnd("/");
+            var path = uri.GetPathAndQueryAndFragment().TrimStart("/");
+
+            foreach (var iso in allLanguagesIso)
+            {
+                var isLocaleDefined = path.StartsWith(iso + "/",
+                                          StringComparison.InvariantCultureIgnoreCase) ||
+                                      path.StartsWith(iso + "?",
+                                          StringComparison.InvariantCultureIgnoreCase) ||
+                                      path.StartsWith(iso + "#",
+                                          StringComparison.InvariantCultureIgnoreCase) ||
+                                      path.Equals(iso,
+                                          StringComparison.InvariantCultureIgnoreCase);
+
+                if (isLocaleDefined)
+                {
+                    path = path.TrimStart(iso, StringComparison.InvariantCultureIgnoreCase);
+                }
+            }
+
+            return new Uri(host + "/" + path);
         }
     }
 }

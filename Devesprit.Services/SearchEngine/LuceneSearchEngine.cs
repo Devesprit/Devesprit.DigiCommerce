@@ -621,7 +621,7 @@ namespace Devesprit.Services.SearchEngine
 
                 MethodCache.ExpireTag(CacheTags.Search);
 
-                return watch.ElapsedMilliseconds;
+                return watch.ElapsedMilliseconds; 
             }
             catch (Exception e)
             {

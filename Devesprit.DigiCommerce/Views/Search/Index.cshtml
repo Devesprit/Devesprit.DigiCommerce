@@ -55,7 +55,7 @@ else
 {
     <div class="row t-pad-20">
         <div class="col-12">
-            <p class="text-muted">
+            <h1 class="fs-18 text-muted">
                 <i class="fa fa-search"></i> @Html.Raw(T("SearchResult", Model.SearchTerm.Query, Model.NumberOfItemsFound.ToString("N0"), Model.TimeElapsed.ToString("N0")))
                 @if (Model.SuggestSimilar?.Any() == true)
                 {
@@ -68,7 +68,7 @@ else
                         }
                     </small>
                 }
-            </p>
+            </h1>
             <hr />
             <div class="row">
                 @if (Model.ShowAdvancedSearchPanel)
