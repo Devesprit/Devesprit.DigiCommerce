@@ -1,12 +1,17 @@
-﻿@using Devesprit.Data.Domain
+﻿@using Devesprit.Core
+@using Devesprit.Data.Domain
 @using Devesprit.Services.Localization
 @using Devesprit.Services.NavBar
 @using Devesprit.Core.Settings
 @using Devesprit.Data.Enums
 @using Devesprit.Services
+@using Devesprit.Services.Languages
+@using Devesprit.Utilities.Extensions
 @{
     Layout = null;
+    var currentLang = DependencyResolver.Current.GetService<IWorkContext>().CurrentLanguage;
     var settings = DependencyResolver.Current.GetService<ISettingService>().LoadSetting<SiteSettings>();
+    var langsList = DependencyResolver.Current.GetService<ILanguagesService>().GetAllLanguagesIsoList();
     List<TblNavBarItems> navbarItems;
     if (Request.RequestContext.RouteData.Values["controller"].ToString().ToLower().Trim().Contains("blog"))
     {
@@ -22,7 +27,7 @@
 
 @functions
 {
-    string GenerateMenu(List<TblNavBarItems> navbarItems, int? currentParentId)
+    string GenerateMenu(List<TblNavBarItems> navbarItems, int? currentParentId, string currentLangIso, List<string> allLangsIso)
     {
         var result = "";
         foreach (var navbarItem in navbarItems.Where(p => p.ParentItemId == currentParentId).OrderBy(p => p.Index))
@@ -36,6 +41,14 @@
             var liClass = (isFirstLevel ? "class='nav-item'" : "");
             var aClass = (isFirstLevel ? "nav-link" : "dropdown-item");
 
+            var url = navbarItem.GetLocalized(p => p.Url);
+            var uri = new Uri(url.GetAbsoluteUrl(Request.Url));
+
+            if (uri.GetHostUrl().Trim().ToLower().TrimEnd('/') == Request.Url.GetHostUrl().Trim().ToLower().TrimEnd('/'))
+            {
+                url = uri.SetLangIso(currentLangIso, allLangsIso).ToString();
+            }
+
             if (navbarItems.Any(p => p.ParentItemId == navbarItem.Id))
             {
                 result += $@"<li class='{dropdownliClass}'>
@@ -43,7 +56,7 @@
            data-toggle='dropdown'
            aria-haspopup='true'
            aria-expanded='false'
-           href='{navbarItem.GetLocalized(p => p.Url)}'
+           href='{url}'
            target='{navbarItem.Target}'
            title='{navbarItem.GetLocalized(p => p.Tooltip)}'
            {onClickScript}>
@@ -51,7 +64,7 @@
             {navbarItem.GetLocalized(p => p.InnerHtml)}
         </a>
         <ul class='dropdown-menu' aria-labelledby='navbarDropdownMenuLink'>
-            {GenerateMenu(navbarItems, navbarItem.Id)}
+            {GenerateMenu(navbarItems, navbarItem.Id, currentLangIso, allLangsIso)}
         </ul>
     </li>";
             }
@@ -59,7 +72,7 @@
             {
                 result += $@"<li {liClass}>
     <a class='{aClass}'
-       href='{navbarItem.GetLocalized(p => p.Url)}'
+       href='{url}'
        target='{navbarItem.Target}'
        title='{navbarItem.GetLocalized(p => p.Tooltip)}'
        {onClickScript}>
@@ -87,7 +100,7 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarNavDropdown">
             <ul class="navbar-nav navbar-links">
-                @Html.Raw(GenerateMenu(navbarItems, null))
+                @Html.Raw(GenerateMenu(navbarItems, null, currentLang.IsoCode, langsList))
             </ul>
             <div class="form-inline my-1 my-md-0">
                 @using (Html.BeginForm("Index", "Search", FormMethod.Get, new { @class = "search-box", novalidate = "novalidate" }))

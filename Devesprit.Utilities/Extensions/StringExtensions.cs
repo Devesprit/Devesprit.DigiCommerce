@@ -165,7 +165,7 @@ namespace Devesprit.Utilities.Extensions
                 return url;
             }
 
-            return new System.Uri(baseUri, url).AbsoluteUri;
+            return new System.Uri(new Uri(baseUri.GetHostUrl().ToString()), url).AbsoluteUri;
         }
 
         public static string GetAbsoluteUrl(this string url)

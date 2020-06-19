@@ -10,7 +10,7 @@
     Layout = null;
     var currentLang = DependencyResolver.Current.GetService<IWorkContext>().CurrentLanguage;
     var settings = DependencyResolver.Current.GetService<ISettingService>().LoadSetting<SiteSettings>();
-    var langsList = DependencyResolver.Current.GetService<ILanguagesService>().GetAsEnumerable().Where(p=> p.Published);
+    var langsList = DependencyResolver.Current.GetService<ILanguagesService>().GetAllLanguagesIsoList();
 
 
     //Java scripts
@@ -61,17 +61,10 @@
         <link rel="icon" type="@(settings.GetLocalized(p => p.FavIcon).EndsWith(".ico", StringComparison.OrdinalIgnoreCase) ? "image/x-icon" : "image/png")" href="@settings.GetLocalized(p => p.FavIcon)" />
     }
 
-    @if (settings.AppendLanguageCodeToUrl)
-    {
-        <link rel="alternate" hreflang="x-default" href="@Request.Url.SetLangIso(langsList.FirstOrDefault(p=> p.IsDefault).IsoCode, langsList.Select(p=> p.IsoCode).ToList()).ToString()" />
-    }
-    else
-    {
-        <link rel="alternate" hreflang="x-default" href="@Request.Url.RemoveLangIso(langsList.Select(p=> p.IsoCode).ToList()).ToString()" />
-    }
+    <link rel="alternate" hreflang="x-default" href="@Request.Url.RemoveLangIso(langsList).ToString()" />
     @foreach (var lang in langsList)
     {
-        <link rel="alternate" hreflang="@lang.IsoCode" href="@Request.Url.SetLangIso(lang.IsoCode, langsList.Select(p=> p.IsoCode).ToList()).ToString()" />
+        <link rel="alternate" hreflang="@lang" href="@Request.Url.SetLangIso(lang, langsList).ToString()" />
     }
 
     <meta charset="utf-8">
