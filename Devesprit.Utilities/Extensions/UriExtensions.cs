@@ -38,7 +38,11 @@ namespace Devesprit.Utilities.Extensions
                 }
             }
 
-            return new Uri(host + "/" + langIso + "/" + path);
+            if (!string.IsNullOrWhiteSpace(path))
+            {
+                return new Uri(host + "/" + langIso + "/" + path);
+            }
+            return new Uri(host + "/" + langIso);
         }
 
         public static Uri RemoveLangIso(this Uri uri, List<string> allLanguagesIso)
@@ -63,7 +67,12 @@ namespace Devesprit.Utilities.Extensions
                 }
             }
 
-            return new Uri(host + "/" + path);
+            if (!string.IsNullOrWhiteSpace(path))
+            {
+                return new Uri(host + "/" + path);
+            }
+
+            return new Uri(host);
         }
     }
 }
