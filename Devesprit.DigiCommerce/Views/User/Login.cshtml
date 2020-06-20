@@ -4,7 +4,7 @@
 @{
     ViewBag.Title = T("Login");
     bool showSocialsPanel = Model.ExternalLoginProviders?.Any() == true;
-
+    Html.AddCanonicalUrlParts(Url.Action("Login", "User", null, Request.Url.Scheme));
     Html.AddHeadCustomParts("<meta name=\"robots\" content=\"index,follow\">");
 }
 

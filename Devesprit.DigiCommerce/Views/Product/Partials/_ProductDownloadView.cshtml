@@ -36,6 +36,7 @@
                     <div class="row">
                         <div class="col-3 py-2">
                             <img src="@discount.Item1.GetLocalized(p => p.GroupSmallIcon)"
+                                 alt="@discount.Item1.GetLocalized(p => p.GroupName)"
                                  class="m-auto rounded d-block p-2 mw-100 mh-100"
                                  style="background-color: @discount.Item1.GetLocalized(p => p.GroupBackgroundColor);"/>
                         </div>
@@ -53,7 +54,8 @@
 {
     if (Model.DownloadLimitedToUserGroup != null)
     {
-        <img src="@Model.DownloadLimitedToUserGroup.GetLocalized(p => p.GroupLargeIcon)" class="d-block mx-auto b-mar-5 mw-100" />
+        <img src="@Model.DownloadLimitedToUserGroup.GetLocalized(p => p.GroupLargeIcon)" 
+             alt="@Model.DownloadLimitedToUserGroup.GetLocalized(p => p.GroupName)" class="d-block mx-auto b-mar-5 mw-100" />
         @Html.Raw(T("SubscribeToPlan",
             "<span style='color: " + Model.DownloadLimitedToUserGroup.GetLocalized(p => p.GroupTextColor) + " !important;'> " +
             Model.DownloadLimitedToUserGroup.GetLocalized(p => p.GroupName) + "</span>"))
@@ -99,7 +101,6 @@
     {
         <a href="@Url.Action("DownloadProduct", "Download", new {productId = Model.ProductId, demoFiles = false})"
            target="_blank"
-           rel="noindex, nofollow"
            class="btn btn-warning btn-lg fs-20 d-block white-space-initial b-mar-20">
             <i class="fa fa-download fa-2x"></i>
             <br />
@@ -112,7 +113,6 @@
     {
         <a href="@Url.Action("DownloadProduct", "Download", new {productId = Model.ProductId, demoFiles = true})"
            target="_blank"
-           rel="noindex, nofollow"
            class="btn btn-warning btn-lg fs-16 d-block b-mar-20 white-space-initial">
             @Html.Raw(T("DownloadDemo"))
         </a>

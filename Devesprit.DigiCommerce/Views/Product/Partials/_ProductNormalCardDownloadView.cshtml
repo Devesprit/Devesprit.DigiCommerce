@@ -19,7 +19,8 @@
 {
     if (Model.DownloadLimitedToUserGroup != null)
     {
-        <img src="@Model.DownloadLimitedToUserGroup.GetLocalized(p => p.GroupLargeIcon)" class="d-block mx-auto b-mar-5 mw-100" />
+        <img src="@Model.DownloadLimitedToUserGroup.GetLocalized(p => p.GroupLargeIcon)" 
+             alt="@Model.DownloadLimitedToUserGroup.GetLocalized(p => p.GroupName)" class="d-block mx-auto b-mar-5 mw-100" />
         @Html.Raw(T("SubscribeToPlan",
             "<span style='color: " + Model.DownloadLimitedToUserGroup.GetLocalized(p => p.GroupTextColor) + " !important;'> " +
             Model.DownloadLimitedToUserGroup.GetLocalized(p => p.GroupName) + "</span>"))
@@ -45,7 +46,8 @@
            title="@UpgradeUserAccountBtnInnerHtml().ToHtmlString()"
            class="btn btn-sm"
            style="background-color: @Model.DownloadLimitedToUserGroup.GetLocalized(p => p.GroupBackgroundColor);">
-            <img src="@Model.DownloadLimitedToUserGroup.GetLocalized(p => p.GroupSmallIcon)" style="max-height: 20px" />
+            <img src="@Model.DownloadLimitedToUserGroup.GetLocalized(p => p.GroupSmallIcon)"
+                 alt="@Model.DownloadLimitedToUserGroup.GetLocalized(p => p.GroupName)" style="max-height: 20px" />
         </a>
     }
 
