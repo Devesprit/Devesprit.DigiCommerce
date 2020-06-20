@@ -68,6 +68,22 @@ namespace Devesprit.DigiCommerce.Controllers
                 return View("PageNotFound");
             }
 
+            var pageMainUrl = "";
+            if (CurrentSettings.AppendLanguageCodeToUrl)
+            {
+                pageMainUrl = Url.Action("Index", "Product",
+                    new {id = product.Id, slug = product.Slug, lang = WorkContext.CurrentLanguage.IsoCode},
+                    Request.Url.Scheme);
+            }
+            else
+            {
+                pageMainUrl = Url.Action("Index", "Product", new { id = product.Id, slug = product.Slug }, Request.Url.Scheme);
+            }
+            if (Request.Url.ToString().Trim().ToLower() != pageMainUrl.Trim().ToLower())
+            {
+                return RedirectPermanent(pageMainUrl);
+            }
+
             //Increase the number of product views
             await _productService.IncreaseNumberOfViewsAsync(product);
 

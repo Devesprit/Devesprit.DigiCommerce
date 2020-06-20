@@ -10,16 +10,9 @@
 
 @helper PurchaseBtnInnerHtml()
 {
-    if (Model.CurrentUserHasAlreadyPurchasedThisProduct)
-    {
-        <small>@Html.Raw(T("BuyAgainUpgrade"))</small>
-    }
-    else
-    {
-        <small>@Html.Raw(T("PurchaseNow"))</small>
-        <br />
-        <b>@Model.PriceForCurrentUser.ExchangeCurrencyStr()</b>
-    }
+    <small>@Html.Raw(T("PurchaseNow"))</small>
+    <br />
+    <b>@Model.PriceForCurrentUser.ExchangeCurrencyStr()</b>
 }
 
 @helper UserGroupDiscountsBtnInnerHtml()
@@ -38,7 +31,7 @@
                             <img src="@discount.Item1.GetLocalized(p => p.GroupSmallIcon)"
                                  alt="@discount.Item1.GetLocalized(p => p.GroupName)"
                                  class="m-auto rounded d-block p-2 mw-100 mh-100"
-                                 style="background-color: @discount.Item1.GetLocalized(p => p.GroupBackgroundColor);"/>
+                                 style="background-color: @discount.Item1.GetLocalized(p => p.GroupBackgroundColor);" />
                         </div>
                         <div class="col py-2 text-align-initial">
                             @Html.Raw(discount.Item2)
@@ -54,7 +47,7 @@
 {
     if (Model.DownloadLimitedToUserGroup != null)
     {
-        <img src="@Model.DownloadLimitedToUserGroup.GetLocalized(p => p.GroupLargeIcon)" 
+        <img src="@Model.DownloadLimitedToUserGroup.GetLocalized(p => p.GroupLargeIcon)"
              alt="@Model.DownloadLimitedToUserGroup.GetLocalized(p => p.GroupName)" class="d-block mx-auto b-mar-5 mw-100" />
         @Html.Raw(T("SubscribeToPlan",
             "<span style='color: " + Model.DownloadLimitedToUserGroup.GetLocalized(p => p.GroupTextColor) + " !important;'> " +
@@ -86,7 +79,7 @@
     if (Model.ShowPurchaseBtn)
     {
         <div class="btn-group-vertical d-block b-mar-20">
-            <button class="btn btn-success shadow text-light fs-25 d-block white-space-initial" 
+            <button class="btn btn-success shadow text-light fs-25 d-block white-space-initial"
                     type="button"
                     onclick="ShowProductPurchaseWizard(@Model.ProductId, null);">
                 @PurchaseBtnInnerHtml()

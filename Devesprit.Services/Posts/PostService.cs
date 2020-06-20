@@ -300,12 +300,13 @@ namespace Devesprit.Services.Posts
 
         public virtual async Task DeleteAsync(int id)
         {
-            var record = await FindByIdAsync(id);
             await _userLikesService.DeletePostLikesAsync(id);
             await _userWishlistService.DeletePostFromWishlistAsync(id);
             await _dbContext.PostComments.Where(p => p.PostId == id).DeleteAsync();
-            var post = await FindByIdAsync(id);
-            _dbContext.Set<T>().Remove(post);
+            
+            QueryCacheManager.ExpireTag(_cacheKey);
+            var record = await FindByIdAsync(id);
+            _dbContext.Set<T>().Remove(record);
             await _dbContext.SaveChangesAsync();
             await _localizedEntityService.DeleteEntityAllLocalizedStringsAsync(typeof(T).Name, id);
 

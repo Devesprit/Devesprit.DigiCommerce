@@ -6,6 +6,7 @@ using Devesprit.Core.Localization;
 using Devesprit.DigiCommerce.Areas.Admin.Factories.Interfaces;
 using Devesprit.DigiCommerce.Areas.Admin.Models;
 using Devesprit.DigiCommerce.Controllers;
+using Devesprit.Services.FileServers;
 using Devesprit.Services.Products;
 using Devesprit.Utilities.Extensions;
 using Devesprit.WebFramework.ActionFilters;
@@ -23,16 +24,19 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
         private readonly IAdminProductModelFactory _adminProductModelFactory;
         private readonly ILocalizationService _localizationService;
         private readonly ILocalizedEntityService _localizedEntityService;
+        private readonly IFileServersService _fileServersService;
 
         public ManageProductsController(IProductService productService, 
             IAdminProductModelFactory adminProductModelFactory,
             ILocalizationService localizationService,
-            ILocalizedEntityService localizedEntityService)
+            ILocalizedEntityService localizedEntityService,
+            IFileServersService fileServersService)
         {
             _productService = productService;
             _adminProductModelFactory = adminProductModelFactory;
             _localizationService = localizationService;
             _localizedEntityService = localizedEntityService;
+            _fileServersService = fileServersService;
         }
 
         public virtual ActionResult Index()
@@ -140,6 +144,36 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
             {
                 foreach (var key in keys)
                     await _productService.DeleteAsync(key);
+
+                return Content("OK");
+            }
+            catch (Exception e)
+            {
+                var errorCode = ErrorLog.GetDefault(System.Web.HttpContext.Current).Log(new Error(e, System.Web.HttpContext.Current));
+                return Content(string.Format(_localizationService.GetResource("ErrorOnOperation"), e.Message, errorCode));
+            }
+        }
+
+        [HttpPost]
+        [UserHasPermission("ManageProducts_Delete")]
+        public virtual async Task<ActionResult> DeleteProductWithFiles(int id, bool? deleteFiles)
+        {
+            try
+            {
+                if (deleteFiles != null && deleteFiles.Value == true)
+                {
+                    var product = await _productService.FindByIdAsync(id);
+                    var fileServer = _fileServersService.GetWebService(product.FileServer);
+                    if (!string.IsNullOrWhiteSpace(product.FilesPath))
+                    {
+                        await fileServer.DeleteDirectoryAsync(product.FilesPath);
+                    }
+                    if (!string.IsNullOrWhiteSpace(product.DemoFilesPath))
+                    {
+                        await fileServer.DeleteDirectoryAsync(product.DemoFilesPath);
+                    }
+                }
+                await _productService.DeleteAsync(id);
 
                 return Content("OK");
             }
