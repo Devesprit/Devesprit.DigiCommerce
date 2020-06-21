@@ -91,6 +91,7 @@ namespace Devesprit.DigiCommerce
 
         protected void Application_BeginRequest(object sender, EventArgs e)
         {
+            Response.BufferOutput = true;
             AntiForgeryConfig.RequireSsl = HttpContext.Current.Request.IsSecureConnection;
         }
 
@@ -304,7 +305,10 @@ namespace Devesprit.DigiCommerce
                 redirectToUrl = currentSettings.SiteUrl.TrimEnd("/") + pathAndQuery;
             }
             redirectToUrl = $"{new Uri(redirectToUrl).GetHostUrl()}{pathAndQuery}";
+            Response.Clear();
             Response.RedirectPermanent(redirectToUrl);
+            Response.Flush();
+            Response.End();
         }
     }
 }

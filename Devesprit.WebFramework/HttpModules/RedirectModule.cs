@@ -65,6 +65,7 @@ namespace Devesprit.WebFramework.HttpModules
                         {
                             ctx.Response.StatusCode = rule.RedirectStatus.Value;
                         }
+                        ctx.Response.Flush();
                         ctx.Response.End();
                         return;
                     }
@@ -80,6 +81,7 @@ namespace Devesprit.WebFramework.HttpModules
                             {
                                 ctx.Response.StatusCode = rule.RedirectStatus.Value;
                             }
+                            ctx.Response.Flush();
                             ctx.Response.End();
                             eventPublisher.Publish(new RedirectEvent()
                             {

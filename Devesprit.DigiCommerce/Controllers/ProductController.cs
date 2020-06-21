@@ -42,7 +42,7 @@ namespace Devesprit.DigiCommerce.Controllers
         [Route("{lang}/Product/{slug}", Order = 2)]
         [Route("Product/{slug}", Order = 3)]
         [MethodCache(Tags = new[] { nameof(TblProducts) }, VaryByCustom = "lang" /*"lang,user"*/)]
-        public virtual async Task<ActionResult> Index(int? id, string slug)
+        public virtual async Task<ActionResult> Index(int? id, string slug) 
         {
             var currentUser = await UserManager.FindByIdAsync(HttpContext.User.Identity.GetUserId());
             var isAdmin = HttpContext.User.IsInRole("Admin");
@@ -81,6 +81,7 @@ namespace Devesprit.DigiCommerce.Controllers
             }
             if (Request.Url.ToString().Trim().ToLower() != pageMainUrl.Trim().ToLower())
             {
+                Response.Clear();
                 return RedirectPermanent(pageMainUrl);
             }
 

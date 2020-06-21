@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.Routing;
 using Devesprit.Core;
 using Devesprit.Core.Localization;
 using Devesprit.Core.Settings;
@@ -44,9 +45,11 @@ namespace Devesprit.DigiCommerce.Controllers
                                                        DependencyResolver.Current.GetService<ISettingService>().LoadSetting<SiteSettings>());
         public IEventPublisher EventPublisher => _eventPublisher ?? (_eventPublisher =
                                                        DependencyResolver.Current.GetService<IEventPublisher>());
-        
+
         protected override void OnActionExecuting(ActionExecutingContext filterContext)
         {
+            Response.BufferOutput = true;
+
             if (!filterContext.IsChildAction)
             {
                 //Save user latest IP address
@@ -118,7 +121,11 @@ namespace Devesprit.DigiCommerce.Controllers
 
                     if (mustRedirect)
                     {
-                        Response.RedirectPermanent(redirectToUrl, true);
+                        Response.Clear();
+                        Response.RedirectPermanent(redirectToUrl);
+                        Response.Flush();
+                        Response.End();
+                        filterContext.Result = new EmptyResult();
                         return;
                     }
                 }
@@ -148,6 +155,9 @@ namespace Devesprit.DigiCommerce.Controllers
                         EventPublisher.Publish(new CurrentLanguageChangeEvent(lang));
 
                         Response.Redirect(Request.RawUrl);
+                        Response.Flush();
+                        Response.End();
+                        filterContext.Result = new EmptyResult();
                         return;
                     }
                 }
@@ -177,6 +187,9 @@ namespace Devesprit.DigiCommerce.Controllers
                         EventPublisher.Publish(new CurrentCurrencyChangeEvent(currency));
 
                         Response.Redirect(Request.RawUrl);
+                        Response.Flush();
+                        Response.End();
+                        filterContext.Result = new EmptyResult();
                         return;
                     }
                 }

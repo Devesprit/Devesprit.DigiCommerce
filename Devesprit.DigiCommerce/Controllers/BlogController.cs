@@ -89,6 +89,7 @@ namespace Devesprit.DigiCommerce.Controllers
             }
             if (Request.Url.ToString().Trim().ToLower() != pageMainUrl.Trim().ToLower())
             {
+                Response.Clear();
                 return RedirectPermanent(pageMainUrl);
             }
 
