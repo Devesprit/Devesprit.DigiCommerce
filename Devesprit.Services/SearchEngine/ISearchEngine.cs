@@ -24,5 +24,9 @@ namespace Devesprit.Services.SearchEngine
             SearchResultSortType orderBy = SearchResultSortType.LastUpDate);
 
         long CreateIndex();
+
+        bool DeletePostFromIndex(int postId);
+
+        bool AddPostToIndex(int postId);
     }
 }

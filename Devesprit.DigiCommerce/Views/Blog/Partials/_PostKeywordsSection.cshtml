@@ -11,7 +11,7 @@
             <ul class="keyword-cloud text-center">
                 @foreach (var keyword in Model.Split(new []{","}, StringSplitOptions.RemoveEmptyEntries).Select(p=> p.Trim()).Where(p=> !string.IsNullOrWhiteSpace(p)))
                 {
-                    <li><a href="@Url.Action("Keyword", "Search", new {keyword=keyword})" target="_blank">@keyword</a></li>
+                    <li><a href="@Url.Action("Keyword", "Search", new {keyword=keyword})" target="_blank"><strong>@keyword</strong></a></li>
                 }
             </ul>
         </div>

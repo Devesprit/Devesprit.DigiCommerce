@@ -817,5 +817,83 @@ namespace Devesprit.Services.SearchEngine
 
             return document;
         }
+
+        public virtual bool AddPostToIndex(int postId)
+        {
+            try
+            {
+                var post = _postService.GetAsQueryable()
+                    .Include(p => p.Descriptions)
+                    .Include(p => p.Tags)
+                    .Include(p => p.Categories)
+                    .FirstOrDefault(p => p.Published && p.Id == postId);
+                if (post == null)
+                {
+                    return false;
+                }
+
+                var languages = _languagesService.GetAsEnumerable();
+
+                var analyzer = new StandardAnalyzer(Version);
+                using (var directory = FSDirectory.Open(new DirectoryInfo(_indexFilesPath)))
+                {
+                    using (var writer =
+                        new IndexWriter(directory, analyzer, true, IndexWriter.MaxFieldLength.UNLIMITED))
+                    {
+                        writer.AddDocument(MapPost(post, post.PostType));//Default values
+
+                        foreach (var language in languages.OrderByDescending(p => p.IsDefault))
+                        {
+                            var localizedMap = MapPost(post, language, post.PostType);
+                            if (localizedMap != null)
+                                writer.AddDocument(localizedMap);//Localized values
+                        }
+
+                        writer.Optimize();
+                        writer.Commit();
+                    }
+                }
+
+                MethodCache.ExpireTag(CacheTags.Search);
+
+                return true;
+            }
+            catch (Exception e)
+            {
+                MethodCache.ExpireTag(CacheTags.Search);
+                _eventPublisher.Publish(new CreateSearchIndexesFailEvent(e));
+                throw;
+            }
+        }
+
+        public virtual bool DeletePostFromIndex(int postId)
+        {
+            try
+            {
+                var analyzer = new StandardAnalyzer(Version);
+                using (var directory = FSDirectory.Open(new DirectoryInfo(_indexFilesPath)))
+                {
+                    using (var writer =
+                        new IndexWriter(directory, analyzer, true, IndexWriter.MaxFieldLength.UNLIMITED))
+                    {
+                        var parser = new QueryParser(Version, "ID", analyzer);
+                        var query = parser.Parse(postId.ToString());
+                        writer.DeleteDocuments(query);
+                        writer.Optimize();
+                        writer.Commit();
+                    }
+                }
+
+                MethodCache.ExpireTag(CacheTags.Search);
+
+                return true;
+            }
+            catch (Exception e)
+            {
+                MethodCache.ExpireTag(CacheTags.Search);
+                _eventPublisher.Publish(new CreateSearchIndexesFailEvent(e));
+                throw;
+            }
+        }
     }
 }

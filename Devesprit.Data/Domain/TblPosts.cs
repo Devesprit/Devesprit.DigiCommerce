@@ -40,6 +40,8 @@ namespace Devesprit.Data.Domain
         public string MetaKeyWords { get; set; }
         [Index(IsClustered = false, IsUnique = false)]
         public PostType? PostType { get; set; }
+
+        public string AdminNote { get; set; }
         
 
         public virtual ICollection<TblPostSlugs> AlternativeSlugs { get; set; }

@@ -5,6 +5,7 @@ using System.Data.Entity;
 using System.Data.Entity.Migrations;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Web.Mvc;
 using Devesprit.Core;
 using Devesprit.Core.Localization;
 using Devesprit.Data;
@@ -310,6 +311,9 @@ namespace Devesprit.Services.Posts
             await _dbContext.SaveChangesAsync();
             await _localizedEntityService.DeleteEntityAllLocalizedStringsAsync(typeof(T).Name, id);
 
+            //Remove from search engine
+            DependencyResolver.Current.GetService<ISearchEngine>().DeletePostFromIndex(id);
+
             QueryCacheManager.ExpireTag(_cacheKey);
             MethodCache.ExpireTag(_cacheKey);
 
@@ -326,6 +330,11 @@ namespace Devesprit.Services.Posts
             await UpdatePostSlugsAsync(record.Id, record.AlternativeSlugs?.Select(p => p.Slug).ToList());
             await UpdatePostTagsAsync(record.Id, record.Tags?.Select(p => p.Tag).ToList());
             await UpdatePostCategoriesAsync(record.Id, record.Categories?.Select(p => p.Id).ToList());
+
+            //Update search engine
+            var searchEngine = DependencyResolver.Current.GetService<ISearchEngine>();
+            searchEngine.DeletePostFromIndex(record.Id);
+            searchEngine.AddPostToIndex(record.Id);
 
             QueryCacheManager.ExpireTag(_cacheKey);
             MethodCache.ExpireTag(_cacheKey);
@@ -349,6 +358,9 @@ namespace Devesprit.Services.Posts
             await UpdatePostSlugsAsync(record.Id, postSlugs);
             await UpdatePostTagsAsync(record.Id, postTags);
             await UpdatePostCategoriesAsync(record.Id, postCategories);
+
+            //Add to search engine
+            DependencyResolver.Current.GetService<ISearchEngine>().AddPostToIndex(record.Id);
 
             QueryCacheManager.ExpireTag(_cacheKey);
             MethodCache.ExpireTag(_cacheKey);

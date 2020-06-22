@@ -51,6 +51,13 @@
                     @Html.ValidationMessageFor(p => p.Title, "", new { @class = "form-text text-danger fs-12" })
                 </div>
             </div>
+            <div class="col-12">
+                <div class="form-group">
+                    @Html.LabelFor(p => p.AdminNote)
+                    @Html.TextBoxFor(p => p.AdminNote, null, new { @class = "form-control form-control-sm" })
+                    @Html.ValidationMessageFor(p => p.AdminNote, "", new { @class = "form-text text-danger fs-12" })
+                </div>
+            </div>
             <div class="col-12 ">
                 <div class="form-group" style="max-width: 100%!important">
                     @Html.LabelFor(p => p.PostTags)

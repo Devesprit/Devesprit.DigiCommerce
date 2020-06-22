@@ -24,6 +24,9 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Models
         [DisplayNameLocalized("ProductTitle")]
         public LocalizedString Title { get; set; }
 
+        [DisplayNameLocalized("NoteForAdmin")]
+        public string AdminNote { get; set; }
+
 
         [DisplayNameLocalized("Tags")]
         public string[] ProductTags { get; set; } = new string[]{};
