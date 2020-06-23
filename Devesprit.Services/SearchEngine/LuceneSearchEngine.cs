@@ -598,6 +598,7 @@ namespace Devesprit.Services.SearchEngine
                     }
                 }
 
+#if !DEBUG
                 using (var directory = FSDirectory.Open(new DirectoryInfo(_indexFilesPath)))
                 {
                     using (var spellDirectory = FSDirectory.Open(new DirectoryInfo(_spellFilesPath)))
@@ -616,13 +617,13 @@ namespace Devesprit.Services.SearchEngine
                         }
                     }
                 }
-
+#endif
                 watch.Stop();
 
                 MethodCache.ExpireTag(CacheTags.Search);
 
                 return watch.ElapsedMilliseconds; 
-            }
+            } 
             catch (Exception e)
             {
                 MethodCache.ExpireTag(CacheTags.Search);
@@ -838,7 +839,7 @@ namespace Devesprit.Services.SearchEngine
                 using (var directory = FSDirectory.Open(new DirectoryInfo(_indexFilesPath)))
                 {
                     using (var writer =
-                        new IndexWriter(directory, analyzer, true, IndexWriter.MaxFieldLength.UNLIMITED))
+                        new IndexWriter(directory, analyzer, false, IndexWriter.MaxFieldLength.UNLIMITED))
                     {
                         writer.AddDocument(MapPost(post, post.PostType));//Default values
 
@@ -873,15 +874,29 @@ namespace Devesprit.Services.SearchEngine
                 var analyzer = new StandardAnalyzer(Version);
                 using (var directory = FSDirectory.Open(new DirectoryInfo(_indexFilesPath)))
                 {
-                    using (var writer =
-                        new IndexWriter(directory, analyzer, true, IndexWriter.MaxFieldLength.UNLIMITED))
+                    using (var reader = IndexReader.Open(directory, false))
                     {
-                        var parser = new QueryParser(Version, "ID", analyzer);
-                        var query = parser.Parse(postId.ToString());
-                        writer.DeleteDocuments(query);
-                        writer.Optimize();
-                        writer.Commit();
+                        int numDocs = reader.NumDocs();
+
+                        for (int i = numDocs - 1; i >= 0; i--)
+                        {
+                            string id = reader.Document(i).Get("ID");
+                            if (postId.ToString() == id)
+                            {
+                                reader.DeleteDocument(i);
+                            }
+                        } 
+
+                        reader.Commit();
                     }
+
+                    //using (var writer = new IndexWriter(directory, analyzer, false, IndexWriter.MaxFieldLength.UNLIMITED))
+                    //{
+                    //    //var query = new QueryParser(Version, "ID", analyzer).Parse("ID:" + postId);
+                    //    writer.DeleteDocuments(new Term("ID", postId.ToString()));
+                    //    writer.Optimize();
+                    //    writer.Commit();
+                    //}
                 }
 
                 MethodCache.ExpireTag(CacheTags.Search);

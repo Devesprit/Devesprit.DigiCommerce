@@ -88,7 +88,7 @@ namespace Devesprit.DigiCommerce.Controllers
             }
 
             var localizationService = DependencyResolver.Current.GetService<ILocalizationService>();
-            ViewBag.MetaDescription = string.Format(localizationService.GetResource("SearchFor"), model.Query).Replace("\"", "'");
+            ViewBag.MetaDescription = string.Format(localizationService.GetResource("SearchFor"), model.Query, viewModel.SearchTerm.Page ?? 1).Replace("\"", "'");
             return View(viewModel);
         }
 
@@ -129,7 +129,7 @@ namespace Devesprit.DigiCommerce.Controllers
             };
 
             var localizationService = DependencyResolver.Current.GetService<ILocalizationService>();
-            ViewBag.MetaDescription = string.Format(localizationService.GetResource("SearchForTag"), tag).Replace("\"", "'");
+            ViewBag.MetaDescription = string.Format(localizationService.GetResource("SearchForTag"), tag, viewModel.SearchTerm.Page ?? 1).Replace("\"", "'");
             return View("Index", viewModel);
         }
 
@@ -169,7 +169,7 @@ namespace Devesprit.DigiCommerce.Controllers
             };
 
             var localizationService = DependencyResolver.Current.GetService<ILocalizationService>();
-            ViewBag.MetaDescription = string.Format(localizationService.GetResource("SearchForKeyword"), keyword).Replace("\"", "'");
+            ViewBag.MetaDescription = string.Format(localizationService.GetResource("SearchForKeyword"), keyword, viewModel.SearchTerm.Page ?? 1).Replace("\"", "'");
             return View("Index", viewModel);
         }
 

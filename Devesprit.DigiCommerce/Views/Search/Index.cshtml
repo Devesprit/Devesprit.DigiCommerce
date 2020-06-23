@@ -4,7 +4,7 @@
 @using X.PagedList.Mvc
 @model Devesprit.DigiCommerce.Models.Search.SearchResultModel
 @{
-    ViewBag.Title = Model != null ? T("SearchFor", Model.SearchTerm.Query) : T("NoItemFound");
+    ViewBag.Title = Model != null ? T("SearchFor", Model.SearchTerm.Query, Model.SearchTerm.Page ?? 1) : T("NoItemFound");
     
     Html.AddHeadCustomParts("<meta name=\"robots\" content=\"index,follow\">");
 }
@@ -56,7 +56,7 @@ else
     <div class="row t-pad-20">
         <div class="col-12">
             <h1 class="fs-18 text-muted">
-                <i class="fa fa-search"></i> @Html.Raw(T("SearchResult", Model.SearchTerm.Query, Model.NumberOfItemsFound.ToString("N0"), Model.TimeElapsed.ToString("N0")))
+                <i class="fa fa-search"></i> @Html.Raw(T("SearchResult", Model.SearchTerm.Query, Model.SearchTerm.Page ?? 1, Model.NumberOfItemsFound.ToString("N0"), Model.TimeElapsed.ToString("N0")))
                 @if (Model.SuggestSimilar?.Any() == true)
                 {
                     <br />
