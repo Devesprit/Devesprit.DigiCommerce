@@ -117,7 +117,7 @@ namespace Devesprit.DigiCommerce.Controllers
             var currentUser = UserManager.FindById(User.Identity.GetUserId());
             IPagedList<TblProducts> products = null;
             switch (listType)
-            {
+            { 
                 case ProductsListType.Newest:
                     products = _productService.GetNewItems(page ?? 1, pageSize ?? 24, catId, fromDate);
                     break;

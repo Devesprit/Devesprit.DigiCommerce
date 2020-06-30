@@ -20,19 +20,19 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
     [UserHasPermission("ManageProducts")]
     public partial class ManageProductsController : BaseController
     {
-        private readonly IProductService _productService;
+        private readonly IAdminPanelProductService _adminPanelProductService;
         private readonly IAdminProductModelFactory _adminProductModelFactory;
         private readonly ILocalizationService _localizationService;
         private readonly ILocalizedEntityService _localizedEntityService;
         private readonly IFileServersService _fileServersService;
 
-        public ManageProductsController(IProductService productService, 
+        public ManageProductsController(IAdminPanelProductService adminPanelProductService, 
             IAdminProductModelFactory adminProductModelFactory,
             ILocalizationService localizationService,
             ILocalizedEntityService localizedEntityService,
             IFileServersService fileServersService)
         {
-            _productService = productService;
+            _adminPanelProductService = adminPanelProductService;
             _adminProductModelFactory = adminProductModelFactory;
             _localizationService = localizationService;
             _localizedEntityService = localizedEntityService;
@@ -65,7 +65,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
         {
             if (id != null)
             {
-                var record = await _productService.FindByIdAsync(id.Value);
+                var record = await _adminPanelProductService.FindByIdAsync(id.Value);
                 if (record != null)
                 {
                     return View(await _adminProductModelFactory.PrepareProductModelAsync(record));
@@ -102,7 +102,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
                     }
 
                     //Add new record
-                    recordId = await _productService.AddAsync(record);
+                    recordId = await _adminPanelProductService.AddAsync(record);
                 }
                 else
                 {
@@ -112,7 +112,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
                     }
 
                     //Edit record
-                    await _productService.UpdateAsync(record);
+                    await _adminPanelProductService.UpdateAsync(record);
                 }
 
                 await _localizedEntityService.SaveAllLocalizedStringsAsync(record, model);
@@ -143,7 +143,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
             try
             {
                 foreach (var key in keys)
-                    await _productService.DeleteAsync(key);
+                    await _adminPanelProductService.DeleteAsync(key);
 
                 return Content("OK");
             }
@@ -162,7 +162,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
             {
                 if (deleteFiles != null && deleteFiles.Value == true)
                 {
-                    var product = await _productService.FindByIdAsync(id);
+                    var product = await _adminPanelProductService.FindByIdAsync(id);
                     var fileServer = _fileServersService.GetWebService(product.FileServer);
                     if (!string.IsNullOrWhiteSpace(product.FilesPath))
                     {
@@ -173,7 +173,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
                         await fileServer.DeleteDirectoryAsync(product.DemoFilesPath);
                     }
                 }
-                await _productService.DeleteAsync(id);
+                await _adminPanelProductService.DeleteAsync(id);
 
                 return Content("OK");
             }
@@ -186,7 +186,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
 
         public virtual ActionResult GridDataSource(DataManager dm, int? categoryId)
         {
-            var query = _productService.GetAsQueryable();
+            var query = _adminPanelProductService.GetAsQueryable();
             if (categoryId != null && categoryId > 0)
             {
                 query = query.Where(p => p.Categories.Any(x => x.Id == categoryId));

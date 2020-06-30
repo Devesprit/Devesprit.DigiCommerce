@@ -153,11 +153,6 @@ else
                      commentId);
              }
          </script>);
-
-    Html.AddInlineScript(ResourceLocation.Footer,
-        @<script>
-             LoadCommentsList(@Model.PostId);
-         </script>);
 }
 
 @if (TempData["SuccessNotification"] != null)

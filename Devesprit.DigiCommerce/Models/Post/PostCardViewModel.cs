@@ -16,6 +16,5 @@ namespace Devesprit.DigiCommerce.Models.Post
         public virtual LikeWishlistButtonsModel LikeWishlistButtonsModel { get; set; }
         public virtual string PostUrl { get; set; }
         public virtual List<PostCategoriesModel> Categories { get; set; }
-
     }
 }

@@ -18,25 +18,9 @@ namespace Devesprit.Utilities.Extensions
 
         public static Uri SetLangIso(this Uri uri, string langIso, List<string> allLanguagesIso)
         {
+            uri = uri.RemoveLangIso(allLanguagesIso);
             var host = uri.GetHostUrl().TrimEnd("/");
             var path = uri.GetPathAndQueryAndFragment().TrimStart("/");
-
-            foreach (var iso in allLanguagesIso)
-            {
-                var isLocaleDefined = path.StartsWith(iso + "/",
-                                          StringComparison.InvariantCultureIgnoreCase) ||
-                                      path.StartsWith(iso + "?",
-                                          StringComparison.InvariantCultureIgnoreCase) ||
-                                      path.StartsWith(iso + "#",
-                                          StringComparison.InvariantCultureIgnoreCase) ||
-                                      path.Equals(iso,
-                                          StringComparison.InvariantCultureIgnoreCase);
-
-                if (isLocaleDefined)
-                {
-                    path = path.TrimStart(iso, StringComparison.InvariantCultureIgnoreCase).TrimStart("/");
-                }
-            }
 
             if (!string.IsNullOrWhiteSpace(path))
             {

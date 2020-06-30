@@ -14,6 +14,10 @@ namespace Devesprit.Data.Domain
         [Index(IsClustered = false, IsUnique = false)]
         public double Price { get; set; }
         [Index(IsClustered = false, IsUnique = false)]
+        public int NumberOfDownloads { get; set; }
+        [Index(IsClustered = false, IsUnique = false)]
+        public int NumberOfPurchases { get; set; }
+        [Index(IsClustered = false, IsUnique = false)]
         public double RenewalPrice { get; set; }
         [Index(IsClustered = false, IsUnique = false)]
         public int? PurchaseExpiration { get; set; }

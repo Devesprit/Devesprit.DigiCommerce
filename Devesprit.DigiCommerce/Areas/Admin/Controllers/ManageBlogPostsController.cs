@@ -19,17 +19,17 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
     [UserHasPermission("ManageBlogPosts")]
     public partial class ManageBlogPostsController : BaseController
     {
-        private readonly IBlogPostService _blogPostService;
+        private readonly IAdminPanelBlogPostService _adminPanelBlogPostService;
         private readonly IAdminBlogPostModelFactory _adminBlogPostModelFactory;
         private readonly ILocalizationService _localizationService;
         private readonly ILocalizedEntityService _localizedEntityService;
 
-        public ManageBlogPostsController(IBlogPostService blogPostService,
+        public ManageBlogPostsController(IAdminPanelBlogPostService adminPanelBlogPostService,
             IAdminBlogPostModelFactory adminBlogPostModelFactory,
             ILocalizationService localizationService,
             ILocalizedEntityService localizedEntityService)
         {
-            _blogPostService = blogPostService;
+            _adminPanelBlogPostService = adminPanelBlogPostService;
             _adminBlogPostModelFactory = adminBlogPostModelFactory;
             _localizationService = localizationService;
             _localizedEntityService = localizedEntityService;
@@ -61,7 +61,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
         {
             if (id != null)
             {
-                var record = await _blogPostService.FindByIdAsync(id.Value);
+                var record = await _adminPanelBlogPostService.FindByIdAsync(id.Value);
                 if (record != null)
                 {
                     return View(await _adminBlogPostModelFactory.PrepareBlogPostModelAsync(record));
@@ -98,7 +98,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
                     }
 
                     //Add new record
-                    recordId = await _blogPostService.AddAsync(record);
+                    recordId = await _adminPanelBlogPostService.AddAsync(record);
                 }
                 else
                 {
@@ -108,7 +108,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
                     }
 
                     //Edit record
-                    await _blogPostService.UpdateAsync(record);
+                    await _adminPanelBlogPostService.UpdateAsync(record);
                 }
 
                 await _localizedEntityService.SaveAllLocalizedStringsAsync(record, model);
@@ -138,7 +138,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
             try
             {
                 foreach (var key in keys)
-                    await _blogPostService.DeleteAsync(key);
+                    await _adminPanelBlogPostService.DeleteAsync(key);
 
                 return Content("OK");
             }
@@ -151,7 +151,7 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
 
         public virtual ActionResult GridDataSource(DataManager dm, int? categoryId)
         {
-            var query = _blogPostService.GetAsQueryable();
+            var query = _adminPanelBlogPostService.GetAsQueryable();
             if (categoryId != null && categoryId > 0)
             {
                 query = query.Where(p => p.Categories.Any(x => x.Id == categoryId));

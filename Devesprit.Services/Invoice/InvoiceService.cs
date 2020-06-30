@@ -35,7 +35,7 @@ namespace Devesprit.Services.Invoice
         private readonly IWorkContext _workContext;
         private readonly IUsersService _usersService;
         private readonly IUserGroupsService _userGroupsService;
-        private readonly IProductService _productService;
+        private readonly IAdminPanelProductService _adminPanelProductService;
         private readonly IProductCheckoutAttributesService _productCheckoutAttributesService;
         private readonly ITaxesService _taxesService;
         private readonly IPluginFinder _pluginFinder;
@@ -52,7 +52,7 @@ namespace Devesprit.Services.Invoice
             IWorkContext workContext,
             IUsersService usersService,
             IUserGroupsService userGroupsService,
-            IProductService productService,
+            IAdminPanelProductService adminPanelProductService,
             IProductCheckoutAttributesService productCheckoutAttributesService,
             ITaxesService taxesService,
             IPluginFinder pluginFinder,
@@ -64,7 +64,7 @@ namespace Devesprit.Services.Invoice
             _workContext = workContext;
             _usersService = usersService;
             _userGroupsService = userGroupsService;
-            _productService = productService;
+            _adminPanelProductService = adminPanelProductService;
             _productCheckoutAttributesService = productCheckoutAttributesService;
             _taxesService = taxesService;
             _pluginFinder = pluginFinder;
@@ -419,9 +419,11 @@ namespace Devesprit.Services.Invoice
             //Process Products
             foreach (var productItem in invoice.InvoiceDetails.Where(p => p.ItemType == InvoiceDetailsItemType.Product))
             {
-                var product = await _productService.FindByIdAsync(productItem.ItemId);
+                var product = await _adminPanelProductService.FindByIdAsync(productItem.ItemId);
                 if (product != null)
                 {
+                    await _adminPanelProductService.IncreaseNumberOfPurchasesAsync(product);
+
                     //Purchase Expiration
                     await SetItemExpirationAsync(productItem.Id, invoice.PaymentDate?.AddTimePeriodToDateTime(product.PurchaseExpirationTimeType, product.PurchaseExpiration));
 

@@ -1,15 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.Data.Entity.Migrations;
 using System.Linq;
 using System.Threading.Tasks;
 using Devesprit.Core.Localization;
 using Devesprit.Data;
 using Devesprit.Data.Domain;
 using Devesprit.Data.Enums;
-using Devesprit.Services.Currency;
 using Devesprit.Services.Events;
-using Devesprit.Services.Localization;
 using Devesprit.Services.Posts;
 using Devesprit.Services.Users;
 using Devesprit.Utilities;
@@ -22,15 +21,15 @@ namespace Devesprit.Services.Products
 {
     public partial class ProductService : PostService<TblProducts>, IProductService
     {
-        private readonly AppDbContext _dbContext;
-        private readonly IProductDownloadsLogService _productDownloadsLogService;
-        private readonly IUserGroupsService _userGroupsService;
-        private readonly IPostCategoriesService _categoriesService;
-        private readonly IProductDiscountsForUserGroupsService _productDiscountsForUserGroupsService;
-        private readonly IProductCheckoutAttributesService _productCheckoutAttributesService;
-        private readonly ILocalizationService _localizationService;
-        private readonly IUsersService _usersService;
-        private readonly string _cacheKey;
+        protected readonly AppDbContext _dbContext;
+        protected readonly IProductDownloadsLogService _productDownloadsLogService;
+        protected readonly IUserGroupsService _userGroupsService;
+        protected readonly IPostCategoriesService _categoriesService;
+        protected readonly IProductDiscountsForUserGroupsService _productDiscountsForUserGroupsService;
+        protected readonly IProductCheckoutAttributesService _productCheckoutAttributesService;
+        protected readonly ILocalizationService _localizationService;
+        protected readonly IUsersService _usersService;
+        protected readonly string _cacheKey;
 
         public ProductService(AppDbContext dbContext,
             ILocalizedEntityService localizedEntityService,
@@ -64,64 +63,12 @@ namespace Devesprit.Services.Products
 
         public virtual IPagedList<TblProducts> GetBestSelling(int pageIndex = 1, int pageSize = int.MaxValue, int? filterByCategory = null, DateTime? fromDate = null)
         {
-            IQueryable<TblInvoiceDetails> invoiceQuery;
-            if (fromDate != null)
-            {
-                invoiceQuery = _dbContext.Invoices.Where(p => p.CreateDate > fromDate).SelectMany(p => p.InvoiceDetails)
-                    .Where(p => p.ItemType == InvoiceDetailsItemType.Product);
-            }
-            else
-            {
-                invoiceQuery = _dbContext.InvoiceDetails.Where(p => p.ItemType == InvoiceDetailsItemType.Product);
-            }
-
-            var sortedItems = invoiceQuery
-                .GroupBy(p => p.ItemId)
-                .Select(p => new {p.FirstOrDefault().ItemId, Sum = p.Sum(c => c.Qty)}).OrderByDescending(p => p.Sum)
-                .AsNoTracking()
-                .Skip(pageSize * (pageIndex - 1))
-                .Take(pageSize)
-                .FromCache(CacheTags.Invoice).Select(p => p.ItemId).ToList();
-
-            var query = _dbContext.Products.Where(p => p.Published);
-
-            if (filterByCategory != null)
-            {
-                var subCategories = _categoriesService.GetSubCategories(filterByCategory.Value);
-                query = query.Where(p => p.Categories.Any(x => subCategories.Contains(x.Id)));
-            }
-
-            var products = query
-                .Where(p => sortedItems.Contains(p.Id))
-                .Include(p => p.Descriptions)
-                .Include(p => p.Images)
-                .Include(p => p.Categories)
-                .AsNoTracking()
-                .FromCache(_cacheKey,
-                    CacheTags.PostCategory,
-                    CacheTags.PostDescription,
-                    CacheTags.PostImage);
-            var result = new StaticPagedList<TblProducts>(
-                products.OrderBy(p=> sortedItems.IndexOf(p.Id)),
-                pageIndex,
-                pageSize,
-                invoiceQuery
-                    .GroupBy(p => p.ItemId)
-                    .Select(p => new {p.FirstOrDefault().ItemId, Sum = p.Sum(c => c.Qty)}).DeferredCount()
-                    .FromCache(CacheTags.Invoice));
-
-            return result;
-        }
-
-        public virtual IPagedList<TblProducts> GetMostDownloadedItems(int pageIndex = 1, int pageSize = Int32.MaxValue, int? filterByCategory = null,
-            DateTime? fromDate = null)
-        {
             var query = _dbContext.Products.Where(p => p.Published);
             if (fromDate != null)
             {
-                query = _dbContext.Products.Where(p => p.PublishDate >= fromDate);
+                query = query.Where(p => p.PublishDate >= fromDate);
             }
-             
+
             if (filterByCategory != null)
             {
                 var subCategories = _categoriesService.GetSubCategories(filterByCategory.Value);
@@ -130,7 +77,7 @@ namespace Devesprit.Services.Products
 
             var result = new StaticPagedList<TblProducts>(
                 query
-                    .OrderByDescending(p => p.DownloadsLog.Count)
+                    .OrderByDescending(p => p.NumberOfPurchases)
                     .Include(p => p.Descriptions)
                     .Include(p => p.Images)
                     .Include(p => p.Categories)
@@ -144,7 +91,44 @@ namespace Devesprit.Services.Products
                 pageIndex,
                 pageSize,
                 query
-                    .DeferredCount(p => p.Published)
+                    .DeferredCount()
+                    .FromCache(_cacheKey));
+
+            return result;
+        }
+
+        public virtual IPagedList<TblProducts> GetMostDownloadedItems(int pageIndex = 1, int pageSize = Int32.MaxValue, int? filterByCategory = null,
+            DateTime? fromDate = null)
+        {
+            var query = _dbContext.Products.Where(p => p.Published);
+            if (fromDate != null)
+            {
+                query = query.Where(p => p.PublishDate >= fromDate);
+            }
+
+            if (filterByCategory != null)
+            {
+                var subCategories = _categoriesService.GetSubCategories(filterByCategory.Value);
+                query = query.Where(p => p.Categories.Any(x => subCategories.Contains(x.Id)));
+            }
+
+            var result = new StaticPagedList<TblProducts>(
+                query
+                    .OrderByDescending(p => p.NumberOfDownloads)
+                    .Include(p => p.Descriptions)
+                    .Include(p => p.Images)
+                    .Include(p => p.Categories)
+                    .AsNoTracking()
+                    .Skip(pageSize * (pageIndex - 1))
+                    .Take(pageSize)
+                    .FromCache(_cacheKey,
+                        CacheTags.PostCategory,
+                        CacheTags.PostDescription,
+                        CacheTags.PostImage),
+                pageIndex,
+                pageSize,
+                query
+                    .DeferredCount()
                     .FromCache(_cacheKey));
 
             return result;
@@ -161,12 +145,13 @@ namespace Devesprit.Services.Products
                 .Include(p => p.Attributes.Select(x => x.PostAttribute))
                 .Include(p => p.Attributes.Select(x => x.AttributeOption))
                 .Include(p => p.CheckoutAttributes)
-                .Include(p => p.CheckoutAttributes.Select(x=> x.Options))
+                .Include(p => p.CheckoutAttributes.Select(x => x.Options))
+                .Include(p => p.CheckoutAttributes.Select(x => x.Options.Select(o => o.FileServer)))
+                .Include(p => p.CheckoutAttributes.Select(x => x.Options.Select(o => o.DownloadLimitedToUserGroup)))
                 .Include(p => p.DiscountsForUserGroups)
                 .Include(p => p.DownloadLimitedToUserGroup)
                 .Include(p => p.Tags)
                 .Include(p => p.AlternativeSlugs)
-                .Include(p => p.DownloadsLog)
                 .Include(p => p.FileServer)
                 .DeferredFirstOrDefault()
                 .FromCacheAsync(_cacheKey,
@@ -185,7 +170,7 @@ namespace Devesprit.Services.Products
         public override async Task<TblProducts> FindBySlugAsync(string slug)
         {
             var result = await _dbContext.Products
-                .Where(p => p.Slug == slug || p.AlternativeSlugs.Any(x=> x.Slug == slug))
+                .Where(p => p.Slug == slug || p.AlternativeSlugs.Any(x => x.Slug == slug))
                 .Include(p => p.Categories)
                 .Include(p => p.Descriptions)
                 .Include(p => p.Images)
@@ -194,11 +179,12 @@ namespace Devesprit.Services.Products
                 .Include(p => p.Attributes.Select(x => x.AttributeOption))
                 .Include(p => p.CheckoutAttributes)
                 .Include(p => p.CheckoutAttributes.Select(x => x.Options))
+                .Include(p => p.CheckoutAttributes.Select(x => x.Options.Select(o => o.FileServer)))
+                .Include(p => p.CheckoutAttributes.Select(x => x.Options.Select(o => o.DownloadLimitedToUserGroup)))
                 .Include(p => p.DiscountsForUserGroups)
                 .Include(p => p.DownloadLimitedToUserGroup)
                 .Include(p => p.Tags)
                 .Include(p => p.AlternativeSlugs)
-                .Include(p => p.DownloadsLog)
                 .Include(p => p.FileServer)
                 .DeferredFirstOrDefault()
                 .FromCacheAsync(_cacheKey,
@@ -214,26 +200,18 @@ namespace Devesprit.Services.Products
             return result;
         }
 
-        public virtual int GetNumberOfDownloads(int productId)
+        public virtual async Task IncreaseNumberOfDownloadsAsync(TblProducts product, int value = 1)
         {
-            return _productDownloadsLogService.GetAsQueryable()
-                .DeferredCount(p => p.ProductId == productId)
-                .FromCache(DateTimeOffset.Now.AddHours(24));
+            product.NumberOfDownloads += value;
+            _dbContext.Products.AddOrUpdate(product);
+            await _dbContext.SaveChangesAsync();
         }
 
-        public virtual Dictionary<int, int> GetNumberOfDownloads(int[] productIds)
+        public virtual async Task IncreaseNumberOfPurchasesAsync(TblProducts product, int value = 1)
         {
-            var res = _productDownloadsLogService.GetAsQueryable()
-                .Where(p => productIds.Contains(p.ProductId))
-                .GroupBy(p => p.ProductId)
-                .Select(n => new
-                    {
-                        PostId = n.Key,
-                        LikeCount = n.Count()
-                    }
-                ).FromCache(DateTimeOffset.Now.AddHours(24));
-
-            return res.ToDictionary(p => p.PostId, p => p.LikeCount);
+            product.NumberOfPurchases += value;
+            _dbContext.Products.AddOrUpdate(product);
+            await _dbContext.SaveChangesAsync();
         }
 
         public virtual double CalculateProductPriceForUser(TblProducts product, TblUsers user)
@@ -308,7 +286,7 @@ namespace Devesprit.Services.Products
             }
 
             var result = UserCanDownloadProductResult.None;
-            
+
             //Admin can download everything
             if (user != null && _usersService.UserIsAdmin(user.Id))
                 result |= UserCanDownloadProductResult.UserCanDownloadProduct;
@@ -452,7 +430,7 @@ namespace Devesprit.Services.Products
 
             return result;
         }
-        
+
         public virtual async Task<List<TblProductCheckoutAttributeOptions>> GetUserDownloadableAttributesAsync(TblProducts product, TblUsers user)
         {
             if (product == null)
@@ -567,7 +545,7 @@ namespace Devesprit.Services.Products
                                 {
                                     discountForUserGroup =
                                         discountsForUserGroup
-                                            .Where(p => p.ApplyDiscountToProductAttributes && 
+                                            .Where(p => p.ApplyDiscountToProductAttributes &&
                                                         p.ApplyDiscountToHigherUserGroups &&
                                                         p.UserGroup.GroupPriority <= user.UserGroup.GroupPriority)
                                             .OrderByDescending(p => p.UserGroup.GroupPriority)

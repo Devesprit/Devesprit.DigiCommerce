@@ -16,7 +16,7 @@ namespace Devesprit.DigiCommerce.Models.Products
         public bool HigherUserGroupsCanDownload { get; set; }
         public List<Tuple<TblUserGroups, string>> DiscountForUserGroupsDescription { get; set; }
         public bool CanDownloadByCurrentUser { get; set; }
-        public ProductService.UserCanDownloadProductResult DownloadBlockingReason { get; set; }
+        public UserCanDownloadProductResult DownloadBlockingReason { get; set; }
         public bool AlwaysShowDownloadButton { get; set; }
         public bool ShowUpgradeUserAccountBtn { get; set; }
         public bool ShowDownloadFullVersionBtn { get; set; }

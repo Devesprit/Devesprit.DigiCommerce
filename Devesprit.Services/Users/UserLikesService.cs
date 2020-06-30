@@ -132,27 +132,5 @@ namespace Devesprit.Services.Users
 
             return postIds.ToDictionary(postId => postId, postId => records.Any(p => p.PostId == postId));
         }
-
-        public virtual int GetNumberOfLikes(int postId)
-        {
-            return GetAsQueryable()
-                .DeferredCount(p => p.PostId == postId)
-                .FromCache(DateTimeOffset.Now.AddHours(24));
-        }
-
-        public virtual Dictionary<int, int> GetNumberOfLikes(int[] postIds)
-        {
-            var res = GetAsQueryable()
-                .Where(p => postIds.Contains(p.PostId))
-                .GroupBy(p => p.PostId)
-                .Select(n => new
-                    {
-                        PostId = n.Key,
-                        LikeCount = n.Count()
-                    }
-                ).FromCache(DateTimeOffset.Now.AddHours(24));
-
-            return res.ToDictionary(p => p.PostId, p => p.LikeCount);
-        }
     }
 }

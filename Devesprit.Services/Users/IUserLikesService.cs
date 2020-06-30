@@ -16,7 +16,5 @@ namespace Devesprit.Services.Users
         Task<bool> LikePostAsync(int postId, string userId, PostType? postType);
         bool UserLikedThisPost(int postId, string userId);
         Dictionary<int, bool> UserLikedThisPost(int[] postIds, string userId);
-        int GetNumberOfLikes(int postId);
-        Dictionary<int, int> GetNumberOfLikes(int[] postIds);
     }
 }

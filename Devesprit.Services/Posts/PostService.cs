@@ -79,7 +79,7 @@ namespace Devesprit.Services.Posts
             var query = _dbContext.Set<T>().Where(p => p.Published);
             if (fromDate != null)
             {
-                query = _dbContext.Set<T>().Where(p => p.PublishDate >= fromDate);
+                query = query.Where(p => p.PublishDate >= fromDate);
             }
             if (filterByCategory != null)
             {
@@ -111,7 +111,7 @@ namespace Devesprit.Services.Posts
             return result;
         }
 
-        public List<SiteMapEntity> GetNewItemsForSiteMap()
+        public virtual List<SiteMapEntity> GetNewItemsForSiteMap()
         {
             var query = _dbContext.Set<T>().Where(p => p.Published);
 
@@ -139,7 +139,7 @@ namespace Devesprit.Services.Posts
             var query = _dbContext.Set<T>().Where(p => p.Published);
             if (fromDate != null)
             {
-                query = _dbContext.Set<T>().Where(p => p.PublishDate >= fromDate);
+                query = query.Where(p => p.PublishDate >= fromDate);
             }
 
             if (filterByCategory != null)
@@ -164,7 +164,7 @@ namespace Devesprit.Services.Posts
                 pageIndex,
                 pageSize,
                 query
-                    .DeferredCount(p => p.Published)
+                    .DeferredCount()
                     .FromCache(_cacheKey));
 
             return result;
@@ -172,10 +172,10 @@ namespace Devesprit.Services.Posts
 
         public virtual IPagedList<T> GetHotList(int pageIndex = 1, int pageSize = int.MaxValue, int? filterByCategory = null, DateTime? fromDate = null)
         {
-            var query = _dbContext.Set<T>().Where(p => p.Published);
+            var query = _dbContext.Set<T>().Where(p => p.Published && p.ShowInHotList);
             if (fromDate != null)
             {
-                query = _dbContext.Set<T>().Where(p => p.PublishDate >= fromDate);
+                query = query.Where(p => p.PublishDate >= fromDate);
             }
 
             if (filterByCategory != null)
@@ -186,7 +186,6 @@ namespace Devesprit.Services.Posts
 
             var result = new StaticPagedList<T>(
                 query
-                    .Where(p => p.ShowInHotList)
                     .OrderByDescending(p => p.PinToTop)
                     .ThenByDescending(p => p.LastUpDate)
                     .ThenByDescending(p => p.PublishDate)
@@ -202,8 +201,8 @@ namespace Devesprit.Services.Posts
                         CacheTags.PostImage),
                 pageIndex,
                 pageSize,
-                _dbContext.Set<T>()
-                    .DeferredCount(p => p.ShowInHotList && p.Published)
+                query
+                    .DeferredCount()
                     .FromCache(_cacheKey));
 
             return result;
@@ -211,10 +210,10 @@ namespace Devesprit.Services.Posts
 
         public virtual IPagedList<T> GetFeaturedItems(int pageIndex = 1, int pageSize = int.MaxValue, int? filterByCategory = null, DateTime? fromDate = null)
         {
-            var query = _dbContext.Set<T>().Where(p => p.Published);
+            var query = _dbContext.Set<T>().Where(p => p.Published && p.IsFeatured);
             if (fromDate != null)
             {
-                query = _dbContext.Set<T>().Where(p => p.PublishDate >= fromDate);
+                query = query.Where(p => p.PublishDate >= fromDate);
             }
 
             if (filterByCategory != null)
@@ -225,7 +224,6 @@ namespace Devesprit.Services.Posts
 
             var result = new StaticPagedList<T>(
                 query
-                    .Where(p => p.IsFeatured)
                     .OrderByDescending(p => p.PinToTop)
                     .ThenByDescending(p => p.LastUpDate)
                     .ThenByDescending(p => p.PublishDate)
@@ -241,8 +239,8 @@ namespace Devesprit.Services.Posts
                         CacheTags.PostImage),
                 pageIndex,
                 pageSize,
-                _dbContext.Set<T>()
-                    .DeferredCount(p => p.ShowInHotList && p.Published)
+                query
+                    .DeferredCount()
                     .FromCache(_cacheKey));
 
             return result;
@@ -373,6 +371,14 @@ namespace Devesprit.Services.Posts
         public virtual async Task IncreaseNumberOfViewsAsync(T post, int value = 1)
         {
             post.NumberOfViews += value;
+            _dbContext.Set<T>().AddOrUpdate(post);
+            await _dbContext.SaveChangesAsync();
+        }
+
+        public virtual async Task IncreaseNumberOfLikesAsync(T post, int value = 1)
+        {
+            post.NumberOfLikes += value;
+            _dbContext.Set<T>().AddOrUpdate(post);
             await _dbContext.SaveChangesAsync();
         }
 

@@ -36,7 +36,13 @@ namespace Devesprit.DigiCommerce.Controllers
             }
             var post = await _postService.FindByIdAsync(postId);
             var result = await _userLikesService.LikePostAsync(postId, userId, post.PostType);
-            return Json(new { response = result ? "add" : "remove" });
+            if (result)
+            {
+                await _postService.IncreaseNumberOfLikesAsync(post);
+                return Json(new { response = "add"});
+            }
+            await _postService.IncreaseNumberOfLikesAsync(post, -1);
+            return Json(new { response = "remove" });
         }
 
         [HttpPost]

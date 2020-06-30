@@ -55,8 +55,6 @@ namespace Devesprit.DigiCommerce.Factories
 
         public virtual IPagedList<ProductCardViewModel> PrepareProductCardViewModel(IPagedList<TblProducts> products, TblUsers currentUser, UrlHelper url)
         {
-            var numberOfLikes = _userLikesService.GetNumberOfLikes(products.Select(p => p.Id).ToArray());
-            var numberOfDownloads = _productService.GetNumberOfDownloads(products.Select(p => p.Id).ToArray());
             var userAddedThisPostsToWishlist = _userWishlistService.UserAddedThisPostToWishlist(products.Select(p => p.Id).ToArray(), currentUser?.Id);
             var userLikedThisPosts = _userLikesService.UserLikedThisPost(products.Select(p => p.Id).ToArray(), currentUser?.Id);
             var userGroups = _userGroupsService.GetAsEnumerable().ToList();
@@ -82,12 +80,6 @@ namespace Devesprit.DigiCommerce.Factories
                 model.DescriptionTruncated = desc.ConvertHtmlToText().TruncateText(350);
 
                 model.PostUrl = new Uri(url.Action("Index", "Product", new { id = product.Id, slug = product.Slug }, _httpContext.Request.Url.Scheme)).ToString();
-
-                if (numberOfLikes.ContainsKey(model.Id))
-                    model.NumberOfLikes = numberOfLikes[model.Id];
-
-                if (numberOfDownloads.ContainsKey(model.Id))
-                    model.NumberOfDownloads = numberOfDownloads[model.Id];
 
                 var likeWishlistButtonsModel = new LikeWishlistButtonsModel()
                 {
@@ -124,11 +116,6 @@ namespace Devesprit.DigiCommerce.Factories
             result.PageTitle = product.GetLocalized(p => p.PageTitle);
             result.MetaDescription = product.GetLocalized(p => p.MetaDescription);
             result.MetaKeyWords = product.GetLocalized(p => p.MetaKeyWords);
-            
-            var downloadsCount = _productService.GetNumberOfDownloads(product.Id);
-            var likesCount = _userLikesService.GetNumberOfLikes(product.Id);
-            result.NumberOfDownloads = downloadsCount;
-            result.NumberOfLikes = likesCount;
             result.LastUpdate = product.LastUpDate ?? product.PublishDate;
             result.Categories = product.Categories
                 .Select(p => new PostCategoriesModel()
@@ -261,7 +248,7 @@ namespace Devesprit.DigiCommerce.Factories
                 DownloadBlockingReason = _productService.UserCanDownloadProduct(product, currentUser, false)
             };
 
-            result.CanDownloadByCurrentUser = result.DownloadBlockingReason.HasFlagFast(ProductService.UserCanDownloadProductResult.UserCanDownloadProduct);
+            result.CanDownloadByCurrentUser = result.DownloadBlockingReason.HasFlagFast(UserCanDownloadProductResult.UserCanDownloadProduct);
             result.CurrentUserGroup = currentUser?.UserGroup;
             result.HasDemoVersion = !string.IsNullOrWhiteSpace(product.DemoFilesPath);
 
@@ -275,8 +262,8 @@ namespace Devesprit.DigiCommerce.Factories
 
             //ShowUpgradeUserAccountBtn
             if (result.DownloadLimitedToUserGroup != null &&
-                (result.DownloadBlockingReason.HasFlagFast(ProductService.UserCanDownloadProductResult.UserMustSubscribeToAPlan) ||
-                 result.DownloadBlockingReason.HasFlagFast(ProductService.UserCanDownloadProductResult.UserMustSubscribeToAPlanOrHigher)))
+                (result.DownloadBlockingReason.HasFlagFast(UserCanDownloadProductResult.UserMustSubscribeToAPlan) ||
+                 result.DownloadBlockingReason.HasFlagFast(UserCanDownloadProductResult.UserMustSubscribeToAPlanOrHigher)))
             {
                 if (result.CurrentUserGroup == null)
                 {
@@ -285,12 +272,12 @@ namespace Devesprit.DigiCommerce.Factories
                 }
                 else
                 {
-                    if (result.DownloadBlockingReason.HasFlagFast(ProductService.UserCanDownloadProductResult.UserMustSubscribeToAPlan) &&
+                    if (result.DownloadBlockingReason.HasFlagFast(UserCanDownloadProductResult.UserMustSubscribeToAPlan) &&
                         result.CurrentUserGroup.Id != result.DownloadLimitedToUserGroup.Id)
                     {
                         result.ShowUpgradeUserAccountBtn = true;
                     }
-                    if (result.DownloadBlockingReason.HasFlagFast(ProductService.UserCanDownloadProductResult.UserMustSubscribeToAPlanOrHigher) &&
+                    if (result.DownloadBlockingReason.HasFlagFast(UserCanDownloadProductResult.UserMustSubscribeToAPlanOrHigher) &&
                         result.CurrentUserGroup.GroupPriority < result.DownloadLimitedToUserGroup.GroupPriority)
                     {
                         result.ShowUpgradeUserAccountBtn = true;
@@ -302,17 +289,17 @@ namespace Devesprit.DigiCommerce.Factories
             if (result.HasDownloadableFile)
             {
                 if (result.AlwaysShowDownloadButton ||
-                    result.DownloadBlockingReason.HasFlagFast(ProductService.UserCanDownloadProductResult.UserCanDownloadProduct))
+                    result.DownloadBlockingReason.HasFlagFast(UserCanDownloadProductResult.UserCanDownloadProduct))
                 {
                     result.ShowDownloadFullVersionBtn = true;
                 }
-                if (result.DownloadBlockingReason.HasFlagFast(ProductService.UserCanDownloadProductResult.UserMustLoggedIn) ||
-                    result.DownloadBlockingReason.HasFlagFast(ProductService.UserCanDownloadProductResult.UserDownloadLimitReached) ||
-                    result.DownloadBlockingReason.HasFlagFast(ProductService.UserCanDownloadProductResult.UserGroupDownloadLimitReached))
+                if (result.DownloadBlockingReason.HasFlagFast(UserCanDownloadProductResult.UserMustLoggedIn) ||
+                    result.DownloadBlockingReason.HasFlagFast(UserCanDownloadProductResult.UserDownloadLimitReached) ||
+                    result.DownloadBlockingReason.HasFlagFast(UserCanDownloadProductResult.UserGroupDownloadLimitReached))
                 {
-                    if (!(result.DownloadBlockingReason.HasFlagFast(ProductService.UserCanDownloadProductResult.UserMustSubscribeToAPlan) ||
-                          result.DownloadBlockingReason.HasFlagFast(ProductService.UserCanDownloadProductResult.UserMustSubscribeToAPlanOrHigher) ||
-                          result.DownloadBlockingReason.HasFlagFast(ProductService.UserCanDownloadProductResult.UserMustPurchaseTheProduct)))
+                    if (!(result.DownloadBlockingReason.HasFlagFast(UserCanDownloadProductResult.UserMustSubscribeToAPlan) ||
+                          result.DownloadBlockingReason.HasFlagFast(UserCanDownloadProductResult.UserMustSubscribeToAPlanOrHigher) ||
+                          result.DownloadBlockingReason.HasFlagFast(UserCanDownloadProductResult.UserMustPurchaseTheProduct)))
                     {
                         result.ShowDownloadFullVersionBtn = true;
                     }

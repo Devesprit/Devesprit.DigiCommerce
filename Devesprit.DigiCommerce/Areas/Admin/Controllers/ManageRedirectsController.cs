@@ -25,22 +25,22 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
         private readonly IRedirectsService _redirectsService;
         private readonly IRedirectModelFactory _redirectModelFactory;
         private readonly ILocalizationService _localizationService;
-        private readonly IProductService _productService;
-        private readonly IBlogPostService _blogPostService;
+        private readonly IAdminPanelProductService _adminPanelProductService;
+        private readonly IAdminPanelBlogPostService _adminPanelBlogPostService;
         private readonly IPagesService _pagesService;
 
         public ManageRedirectsController(IRedirectsService redirectsService,
             IRedirectModelFactory redirectModelFactory,
             ILocalizationService localizationService,
-            IProductService productService, 
-            IBlogPostService blogPostService,
+            IAdminPanelProductService adminPanelProductService, 
+            IAdminPanelBlogPostService adminPanelBlogPostService,
             IPagesService pagesService)
         {
             _redirectsService = redirectsService;
             _redirectModelFactory = redirectModelFactory;
             _localizationService = localizationService;
-            _productService = productService;
-            _blogPostService = blogPostService;
+            _adminPanelProductService = adminPanelProductService;
+            _adminPanelBlogPostService = adminPanelBlogPostService;
             _pagesService = pagesService;
         }
 
@@ -179,11 +179,11 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
                     case RedirectRuleGroup.None:
                         break;
                     case RedirectRuleGroup.Product:
-                        var product = await _productService.FindByIdAsync(entityId);
+                        var product = await _adminPanelProductService.FindByIdAsync(entityId);
                         model.ResponseUrl = await RemoveLanguageFromUrl(Url.Action("Index", "Product", new { id = product.Id, slug = product.Slug, area = "" }));
                         break;
                     case RedirectRuleGroup.BlogPost:
-                        var blogPost = await _blogPostService.FindByIdAsync(entityId);
+                        var blogPost = await _adminPanelBlogPostService.FindByIdAsync(entityId);
                         model.ResponseUrl = await RemoveLanguageFromUrl(Url.Action("Post", "Blog", new { id = blogPost.Id, slug = blogPost.Slug, area = "" }));
                         break;
                     case RedirectRuleGroup.Page:

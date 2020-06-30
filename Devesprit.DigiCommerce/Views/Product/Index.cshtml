@@ -94,7 +94,9 @@
             <div class="panel fs-13 b-mar-20">
                 <div class="panel-title pad-10"><b>@T("Comments")</b></div>
                 <div class="pad-15">
-                    <div id="commentsListPlaceholder"></div>
+                    <div id="commentsListPlaceholder">
+                        @{ Html.RenderAction("CommentsList", "Comment", new { postId = Model.Id }); }
+                    </div>
 
                     <h4>@T("WriteYourComment")</h4>
                     <div id="CommentEditor">

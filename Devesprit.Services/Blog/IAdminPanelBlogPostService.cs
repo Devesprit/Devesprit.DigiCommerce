@@ -11,7 +11,7 @@ using X.PagedList;
 namespace Devesprit.Services.Blog
 {
     [Intercept(typeof(MethodCache))]
-    public partial interface IBlogPostService : IPostService<TblBlogPosts>
+    public partial interface IAdminPanelBlogPostService : IPostService<TblBlogPosts>
     {
         [MethodCache(Tags = new[] { nameof(TblBlogPosts) }, VaryByCustom = "lang")]
         IPagedList<TblBlogPosts> GetNewItems(int pageIndex = 1, int pageSize = int.MaxValue, int? filterByCategory = null, DateTime? fromDate = null);

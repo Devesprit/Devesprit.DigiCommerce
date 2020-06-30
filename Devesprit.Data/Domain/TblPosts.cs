@@ -22,6 +22,7 @@ namespace Devesprit.Data.Domain
         public bool ShowInHotList { get; set; }
         [Index(IsClustered = false, IsUnique = false)]
         public int NumberOfViews { get; set; }
+        public int NumberOfLikes { get; set; }
         [Index(IsClustered = false, IsUnique = false)]
         public bool IsFeatured { get; set; }
         public bool ShowSimilarCases { get; set; }

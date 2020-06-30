@@ -5,6 +5,7 @@ using Devesprit.Core.Localization;
 using Devesprit.DigiCommerce.Factories.Interfaces;
 using Devesprit.DigiCommerce.Models.Comment;
 using Devesprit.Services.Comments;
+using Devesprit.Utilities;
 using Microsoft.AspNet.Identity;
 using reCaptcha;
 
@@ -25,10 +26,11 @@ namespace Devesprit.DigiCommerce.Controllers
             _localizationService = localizationService;
         }
 
-        public virtual async Task<ActionResult> CommentsList(int postId, int? page)
+        public virtual ActionResult CommentsList(int postId, int? page)
         {
             var isAdmin = HttpContext.User.IsInRole("Admin");
-            var comments = await _commentsService.GetAsPagedListAsync(!isAdmin, postId, page ?? 1, 15);
+            var comments = AsyncHelper
+                .RunSync(() => _commentsService.GetAsPagedListAsync(!isAdmin, postId, page ?? 1, 15));
             return View(_commentModelFactory.PrepareCommentsListModel(comments, postId, isAdmin));
         }
 

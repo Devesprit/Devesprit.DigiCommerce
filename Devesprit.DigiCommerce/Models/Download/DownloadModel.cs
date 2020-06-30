@@ -7,7 +7,7 @@ namespace Devesprit.DigiCommerce.Models.Download
     public partial class DownloadModel
     {
         public string PageTitle { get; set; }
-        public ProductService.UserCanDownloadProductResult? UserHasAccessToFiles { get; set; }
+        public UserCanDownloadProductResult? UserHasAccessToFiles { get; set; }
         public string DiscountsForUserGroups { get; set; }
         public string UserGroupName { get; set; }
         public int DownloadLimit { get; set; }

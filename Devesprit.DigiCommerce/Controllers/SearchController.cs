@@ -133,8 +133,8 @@ namespace Devesprit.DigiCommerce.Controllers
             return View("Index", viewModel);
         }
 
-        [Route("{lang}/Keywords/{keyword}", Order = 0)]
-        [Route("Keywords/{keyword}", Order = 1)]
+        [Route("{lang}/Keyword/{keyword}", Order = 0)]
+        [Route("Keyword/{keyword}", Order = 1)]
         [MethodCache(Tags = new[] { CacheTags.Search }, VaryByCustom = "lang")]
         public virtual async Task<ActionResult> Keyword(string keyword, int? page)
         {

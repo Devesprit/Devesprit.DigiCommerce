@@ -35,7 +35,7 @@
     </div>
 
     
-        @if (Model.UserHasAccessToFiles != null && !OtherExtensions.HasFlagFast(Model.UserHasAccessToFiles.Value, ProductService.UserCanDownloadProductResult.UserCanDownloadProduct))
+        @if (Model.UserHasAccessToFiles != null && !OtherExtensions.HasFlagFast(Model.UserHasAccessToFiles.Value, UserCanDownloadProductResult.UserCanDownloadProduct))
         {
             <img src="~/Content/img/Error_250px.png" class="d-block m-auto" style="max-width: 150px" />
             <h6 class="alert alert-danger text-center mar-h-40">
@@ -44,7 +44,7 @@
             <div class="mar-h-40 b-mar-40 pad-20 border rounded border-danger">
                 @Html.Raw(T("ToDownloadThisProductFollowTheseSteps"))
                 <ul>
-                    @if (OtherExtensions.HasFlagFast(Model.UserHasAccessToFiles.Value, ProductService.UserCanDownloadProductResult.UserMustLoggedIn))
+                    @if (OtherExtensions.HasFlagFast(Model.UserHasAccessToFiles.Value, UserCanDownloadProductResult.UserMustLoggedIn))
                     {
                         <li>
                             @Html.Raw(T("ToDownloadThisProductUserMustLoggedIn",
@@ -53,7 +53,7 @@
                         </li>
                     }
 
-                    @if (OtherExtensions.HasFlagFast(Model.UserHasAccessToFiles.Value, ProductService.UserCanDownloadProductResult.UserMustSubscribeToAPlan))
+                    @if (OtherExtensions.HasFlagFast(Model.UserHasAccessToFiles.Value, UserCanDownloadProductResult.UserMustSubscribeToAPlan))
                     {
                         <li>
                             @Html.Raw(T("ToDownloadThisProductUserMustSubscribeToAPlan",
@@ -62,7 +62,7 @@
                         </li>
                     }
 
-                    @if (OtherExtensions.HasFlagFast(Model.UserHasAccessToFiles.Value, ProductService.UserCanDownloadProductResult.UserMustSubscribeToAPlanOrHigher))
+                    @if (OtherExtensions.HasFlagFast(Model.UserHasAccessToFiles.Value, UserCanDownloadProductResult.UserMustSubscribeToAPlanOrHigher))
                     {
                         <li>
                             @Html.Raw(T("ToDownloadThisProductUserMustSubscribeToAPlanOrHigher",
@@ -71,14 +71,14 @@
                         </li>
                     }
 
-                    @if (OtherExtensions.HasFlagFast(Model.UserHasAccessToFiles.Value, ProductService.UserCanDownloadProductResult.UserMustPurchaseTheProduct))
+                    @if (OtherExtensions.HasFlagFast(Model.UserHasAccessToFiles.Value, UserCanDownloadProductResult.UserMustPurchaseTheProduct))
                     {
                         <li>
                             @Html.Raw(T("ToDownloadThisProductUserMustBuyTheProduct", Model.ProductPageUrl))
                         </li>
                     }
 
-                    @if (OtherExtensions.HasFlagFast(Model.UserHasAccessToFiles.Value, ProductService.UserCanDownloadProductResult.UserDownloadLimitReached))
+                    @if (OtherExtensions.HasFlagFast(Model.UserHasAccessToFiles.Value, UserCanDownloadProductResult.UserDownloadLimitReached))
                     {
                         <li>
                             @Html.Raw(T("YourDownloadLimitationHasBeenReached",
@@ -89,7 +89,7 @@
                         </li>
                     }
 
-                    @if (OtherExtensions.HasFlagFast(Model.UserHasAccessToFiles.Value, ProductService.UserCanDownloadProductResult.UserGroupDownloadLimitReached))
+                    @if (OtherExtensions.HasFlagFast(Model.UserHasAccessToFiles.Value, UserCanDownloadProductResult.UserGroupDownloadLimitReached))
                     {
                         <li>
                             @Html.Raw(T("YourUserGroupDownloadLimitationHasBeenReached",
@@ -101,9 +101,9 @@
                     }
                 </ul>
 
-                @if ((OtherExtensions.HasFlagFast(Model.UserHasAccessToFiles.Value, ProductService.UserCanDownloadProductResult.UserMustSubscribeToAPlan) ||
-                     OtherExtensions.HasFlagFast(Model.UserHasAccessToFiles.Value, ProductService.UserCanDownloadProductResult.UserMustSubscribeToAPlanOrHigher) ||
-                     OtherExtensions.HasFlagFast(Model.UserHasAccessToFiles.Value, ProductService.UserCanDownloadProductResult.UserMustPurchaseTheProduct))
+                @if ((OtherExtensions.HasFlagFast(Model.UserHasAccessToFiles.Value, UserCanDownloadProductResult.UserMustSubscribeToAPlan) ||
+                     OtherExtensions.HasFlagFast(Model.UserHasAccessToFiles.Value, UserCanDownloadProductResult.UserMustSubscribeToAPlanOrHigher) ||
+                     OtherExtensions.HasFlagFast(Model.UserHasAccessToFiles.Value, UserCanDownloadProductResult.UserMustPurchaseTheProduct))
                     && !string.IsNullOrWhiteSpace(Model.DiscountsForUserGroups))
                 {
                     <h6 class="alert alert-warning text-center t-mar-40">
@@ -111,7 +111,7 @@
                         <br />
                         <br />
                         <small>@Html.Raw(Model.DiscountsForUserGroups)</small>
-                    </h6>
+                    </h6> 
                 }
             </div>
         }

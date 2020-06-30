@@ -64,7 +64,7 @@ namespace Devesprit.DigiCommerce.Controllers
 
             var userHasAccessToFiles = _productService.UserCanDownloadProduct(product, user, requestDemoFiles);
             var canDownload =
-                userHasAccessToFiles.HasFlagFast(ProductService.UserCanDownloadProductResult.UserCanDownloadProduct);
+                userHasAccessToFiles.HasFlagFast(UserCanDownloadProductResult.UserCanDownloadProduct);
 
             if (!canDownload &&
                 (!string.IsNullOrWhiteSpace(product.FilesPath) ||
@@ -77,19 +77,19 @@ namespace Devesprit.DigiCommerce.Controllers
             //---------------------------
 
             //User must upgrade subscription
-            if (userHasAccessToFiles.HasFlagFast(ProductService.UserCanDownloadProductResult.UserMustSubscribeToAPlan) ||
-               userHasAccessToFiles.HasFlagFast(ProductService.UserCanDownloadProductResult.UserMustSubscribeToAPlanOrHigher))
+            if (userHasAccessToFiles.HasFlagFast(UserCanDownloadProductResult.UserMustSubscribeToAPlan) ||
+               userHasAccessToFiles.HasFlagFast(UserCanDownloadProductResult.UserMustSubscribeToAPlanOrHigher))
             {
                 model.UserGroupName = product.DownloadLimitedToUserGroup.GetLocalized(p => p.GroupName);
             }
 
             //User download limit has been reached
-            if (userHasAccessToFiles.HasFlagFast(ProductService.UserCanDownloadProductResult.UserDownloadLimitReached) ||
-                userHasAccessToFiles.HasFlagFast(ProductService.UserCanDownloadProductResult.UserGroupDownloadLimitReached))
+            if (userHasAccessToFiles.HasFlagFast(UserCanDownloadProductResult.UserDownloadLimitReached) ||
+                userHasAccessToFiles.HasFlagFast(UserCanDownloadProductResult.UserGroupDownloadLimitReached))
             {
                 TimePeriodType? periodType = null;
                 //User number of download limitation
-                if (userHasAccessToFiles.HasFlagFast(ProductService.UserCanDownloadProductResult.UserDownloadLimitReached))
+                if (userHasAccessToFiles.HasFlagFast(UserCanDownloadProductResult.UserDownloadLimitReached))
                     if (user.MaxDownloadCount > 0 && user.MaxDownloadPeriodType != null)
                     {
                         model.DownloadLimit = user.MaxDownloadCount.Value;
@@ -97,7 +97,7 @@ namespace Devesprit.DigiCommerce.Controllers
                     }
 
                 //User group number of download limitation
-                if (userHasAccessToFiles.HasFlagFast(ProductService.UserCanDownloadProductResult.UserGroupDownloadLimitReached))
+                if (userHasAccessToFiles.HasFlagFast(UserCanDownloadProductResult.UserGroupDownloadLimitReached))
                     if (user.UserGroup?.MaxDownloadCount > 0 && user.UserGroup?.MaxDownloadPeriodType != null)
                     {
                         model.DownloadLimit = user.UserGroup.MaxDownloadCount.Value;
@@ -383,6 +383,8 @@ namespace Devesprit.DigiCommerce.Controllers
                 UserIp = HttpContext.GetClientIpAddress(),
                 IsDemoVersion = version.DecryptString() == "DEMO" + productId
             });
+
+            await _productService.IncreaseNumberOfDownloadsAsync(await _productService.FindByIdAsync(productId));
 
             return Redirect(downloadLink);
         }

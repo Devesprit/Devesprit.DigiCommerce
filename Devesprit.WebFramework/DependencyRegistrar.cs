@@ -56,6 +56,7 @@ namespace Devesprit.WebFramework
             builder.RegisterType<RoutePublisher>().As<IRoutePublisher>().EnableInterfaceInterceptors().InstancePerLifetimeScope();
             builder.RegisterType<WebHelper>().As<IWebHelper>().EnableInterfaceInterceptors().InstancePerLifetimeScope();
             builder.RegisterType<WorkContext>().As<IWorkContext>().EnableInterfaceInterceptors().InstancePerLifetimeScope();
+            builder.RegisterType<AdminPanelProductService>().As<IAdminPanelProductService>().EnableInterfaceInterceptors().InstancePerLifetimeScope();
             builder.RegisterType<ProductService>().As<IProductService>().EnableInterfaceInterceptors().InstancePerLifetimeScope();
             builder.RegisterType<NavBarService>().As<INavBarService>().EnableInterfaceInterceptors().InstancePerLifetimeScope();
             builder.RegisterType<PostCategoriesService>().As<IPostCategoriesService>().EnableInterfaceInterceptors().InstancePerLifetimeScope();
@@ -101,6 +102,7 @@ namespace Devesprit.WebFramework
             builder.RegisterType<ResourceBundler.ResourceBundler>().As<IResourceBundler>().EnableInterfaceInterceptors().InstancePerLifetimeScope();
             builder.RegisterType<ExternalLoginProviderManager>().As<IExternalLoginProviderManager>().EnableInterfaceInterceptors().InstancePerLifetimeScope();
             builder.RegisterType<Services.StartupTask>().As<IStartupTask>().EnableInterfaceInterceptors().InstancePerLifetimeScope();
+            builder.RegisterType<AdminPanelBlogPostService>().As<IAdminPanelBlogPostService>().EnableInterfaceInterceptors().InstancePerLifetimeScope();
             builder.RegisterType<BlogPostService>().As<IBlogPostService>().EnableInterfaceInterceptors().InstancePerLifetimeScope();
             builder.RegisterType<PostService<TblPosts>>().As<PostService<TblPosts>>().InstancePerLifetimeScope();
             builder.RegisterGeneric(typeof(PostService<>)).As(typeof(IPostService<>)).InstancePerLifetimeScope();

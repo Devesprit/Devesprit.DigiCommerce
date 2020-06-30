@@ -41,7 +41,6 @@ namespace Devesprit.DigiCommerce.Factories
         public virtual IPagedList<PostCardViewModel> PreparePostCardViewModel(IPagedList<TblPosts> posts,
             TblUsers currentUser, UrlHelper url)
         {
-            var numberOfLikes = _userLikesService.GetNumberOfLikes(posts.Select(p => p.Id).ToArray());
             var userAddedThisPostsToWishlist = _userWishlistService.UserAddedThisPostToWishlist(posts.Select(p => p.Id).ToArray(), currentUser?.Id);
             var userLikedThisPosts = _userLikesService.UserLikedThisPost(posts.Select(p => p.Id).ToArray(), currentUser?.Id);
 
@@ -86,9 +85,6 @@ namespace Devesprit.DigiCommerce.Factories
                     }, _httpContext.Request.Url.Scheme)).ToString();
                 }
 
-                if (numberOfLikes.ContainsKey(model.Id))
-                    model.NumberOfLikes = numberOfLikes[model.Id];
-
                 var likeWishlistButtonsModel = new LikeWishlistButtonsModel()
                 {
                     PostId = model.Id
@@ -116,9 +112,6 @@ namespace Devesprit.DigiCommerce.Factories
             result.PageTitle = post.GetLocalized(p => p.PageTitle);
             result.MetaDescription = post.GetLocalized(p => p.MetaDescription);
             result.MetaKeyWords = post.GetLocalized(p => p.MetaKeyWords);
-
-            var likesCount = _userLikesService.GetNumberOfLikes(post.Id);
-            result.NumberOfLikes = likesCount;
             result.LastUpdate = post.LastUpDate ?? post.PublishDate;
             result.Categories = post.Categories
                 .Select(p => new PostCategoriesModel()
