@@ -23,13 +23,13 @@ namespace Devesprit.Services.Posts
 {
     public partial class PostService<T> : IPostService<T> where T : TblPosts
     {
-        private readonly AppDbContext _dbContext;
-        private readonly ILocalizedEntityService _localizedEntityService;
-        private readonly IUserLikesService _userLikesService;
-        private readonly IUserWishlistService _userWishlistService;
-        private readonly IPostCategoriesService _categoriesService;
-        private readonly IEventPublisher _eventPublisher;
-        private readonly string _cacheKey;
+        protected readonly AppDbContext _dbContext;
+        protected readonly ILocalizedEntityService _localizedEntityService;
+        protected readonly IUserLikesService _userLikesService;
+        protected readonly IUserWishlistService _userWishlistService;
+        protected readonly IPostCategoriesService _categoriesService;
+        protected readonly IEventPublisher _eventPublisher;
+        protected readonly string _cacheKey;
 
         public PostService(AppDbContext dbContext,
             ILocalizedEntityService localizedEntityService,

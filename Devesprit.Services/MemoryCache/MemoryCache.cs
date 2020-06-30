@@ -6,7 +6,7 @@ using System.Runtime.Caching;
 
 namespace Devesprit.Services.MemoryCache
 {
-    public partial class MemoryCache : IMemoryCache
+    public partial class MemoryCache : IMemoryCache, IDisposable
     {
         private static readonly CustomMemoryCache Cache = new CustomMemoryCache(Guid.NewGuid().ToString("N"));
         public MemoryCache()

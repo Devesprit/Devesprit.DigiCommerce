@@ -22,7 +22,7 @@ namespace Plugin.Widgets.Slider
             _dbContext = dbContext;
             _userRolesService = userRolesService;
         }
-
+         
         public virtual IList<string> GetWidgetZones()
         {
             var zoneLists = _dbContext.Slider.Select(p => p.Zone).FromCache(CacheKey).Distinct().ToList();
