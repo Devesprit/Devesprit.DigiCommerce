@@ -130,7 +130,14 @@ namespace Devesprit.DigiCommerce.Controllers
             var result = new List<Tuple<string, string>>();
             foreach (var lang in languagesList)
             {
-                routeValueDictionary.Add("lang", lang.IsoCode);
+                if (routeValueDictionary.Keys.Any(p => p.ToString().ToLower().Trim() == "lang"))
+                {
+                    routeValueDictionary["lang"] = lang.IsoCode;
+                }
+                else
+                {
+                    routeValueDictionary.Add("lang", lang.IsoCode);
+                }
 
                 result.Add(new Tuple<string, string>(
                         lang.IsoCode,
@@ -151,10 +158,10 @@ namespace Devesprit.DigiCommerce.Controllers
 
             var action = "Tag";
             var controller = "Search";
-            var routeValueDictionary = new RouteValueDictionary();
             var result = new List<Tuple<string, string>>();
             foreach (var lang in languagesList)
             {
+                var routeValueDictionary = new RouteValueDictionary();
                 routeValueDictionary.Add("lang", lang.IsoCode);
                 routeValueDictionary.Add("tag", tag.GetLocalized(x => x.Tag, lang.Id));
 
