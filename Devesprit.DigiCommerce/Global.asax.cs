@@ -18,7 +18,11 @@ using Devesprit.Core.Localization;
 using Devesprit.Core.Plugin;
 using Devesprit.Core.Settings;
 using Devesprit.DigiCommerce.Controllers;
+using Devesprit.DigiCommerce.Controllers.Event;
 using Devesprit.Services;
+using Devesprit.Services.Currency;
+using Devesprit.Services.Events;
+using Devesprit.Services.Languages;
 using Devesprit.Services.MemoryCache;
 using Devesprit.Utilities.Extensions;
 using Devesprit.WebFramework;
@@ -118,6 +122,78 @@ namespace Devesprit.DigiCommerce
 
         protected void Application_AcquireRequestState(object sender, EventArgs e)
         {
+            if (HttpContext.Current != null && HttpContext.Current.Session != null)
+            {
+                var eventPublisher = DependencyResolver.Current.GetService<IEventPublisher>();
+
+                //Set Current Language
+                var languagesService = DependencyResolver.Current.GetService<ILanguagesService>();
+                if (!string.IsNullOrWhiteSpace(Request.Form["usl"]))
+                {
+                    var lang = Request.Form["usl"].Trim().ToLower();
+                    if (languagesService.GetAllLanguagesIsoList().Contains(lang))
+                    {
+                        Response.Clear();
+
+                        HttpContext.Current.Session["CurrentLanguageISO"] = lang;
+
+                        var responseCookie = Request.Cookies["UserSetting"] ?? new HttpCookie("UserSetting");
+                        responseCookie.Values["Language"] = lang;
+                        responseCookie.Domain = "." + Request.Url.Host.TrimStart("www.").Trim();
+                        responseCookie.Expires = DateTime.Now.AddYears(1).ToUniversalTime();
+                        if (Request.Cookies["UserSetting"] == null)
+                        {
+                            Response.Cookies.Add(responseCookie);
+                        }
+                        else
+                        {
+                            Response.Cookies.Set(responseCookie);
+                        }
+
+                        eventPublisher.Publish(new CurrentLanguageChangeEvent(lang));
+
+                        Response.Redirect(Request.RawUrl);
+                        Response.Flush();
+                        Response.End();
+                        return;
+                    }
+                }
+
+
+                //Set Current Currency
+                var currencyService = DependencyResolver.Current.GetService<ICurrencyService>();
+                if (!string.IsNullOrWhiteSpace(Request.Form["usc"]))
+                {
+                    var currency = Request.Form["usc"].Trim().ToLower();
+                    if (currencyService.GetAllCurrenciesIsoList().Contains(currency))
+                    {
+                        Response.Clear();
+
+                        HttpContext.Current.Session["CurrentCurrencyISO"] = currency;
+
+                        var responseCookie = Request.Cookies["UserSetting"] ?? new HttpCookie("UserSetting");
+                        responseCookie.Values["Currency"] = currency;
+                        responseCookie.Expires = DateTime.Now.AddYears(1).ToUniversalTime();
+                        responseCookie.Domain = "." + Request.Url.Host.TrimStart("www.").Trim();
+                        if (Request.Cookies["UserSetting"] == null)
+                        {
+                            Response.Cookies.Add(responseCookie);
+                        }
+                        else
+                        {
+                            Response.Cookies.Set(responseCookie);
+                        }
+
+                        eventPublisher.Publish(new CurrentCurrencyChangeEvent(currency));
+
+                        Response.Redirect(Request.RawUrl);
+                        Response.Flush();
+                        Response.End();
+                        return;
+                    }
+                }
+            }
+
             //Set Current Thread Culture
             var langIso = DependencyResolver.Current.GetService<IWorkContext>().CurrentLanguage.IsoCode;
             if (HttpContext.Current?.Request.RequestContext?.RouteData?.DataTokens["area"]?.ToString().ToLower() == "admin")

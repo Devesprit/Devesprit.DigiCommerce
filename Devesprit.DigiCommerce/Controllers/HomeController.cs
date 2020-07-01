@@ -11,7 +11,7 @@ using Devesprit.Services.Pages;
 using Z.EntityFramework.Plus;
 
 namespace Devesprit.DigiCommerce.Controllers
-{
+{ 
     [Intercept(typeof(MethodCache))]
     public partial class HomeController : BaseController
     {
