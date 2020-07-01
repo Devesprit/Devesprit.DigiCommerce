@@ -68,7 +68,7 @@
                         <div>@Html.Raw(attribute.Name): @Html.Raw(attribute.Value)</div>
                         break;
                     case PostAttributeType.Link:
-                        <div><a href="@attribute.Value" target="_blank">@Html.Raw(attribute.Name)</a></div>
+                        <div><a href="@attribute.Value" rel="nofollow noreferrer noopener" target="_blank">@Html.Raw(attribute.Name)</a></div>
                         break;
                 }
             }

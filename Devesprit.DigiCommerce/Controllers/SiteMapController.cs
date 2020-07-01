@@ -288,7 +288,9 @@ namespace Devesprit.DigiCommerce.Controllers
                 }
             }
 
-            return Content(_sitemapGenerator.GenerateSiteMap(items).ToString(), "text/xml", Encoding.UTF8);
+            return Content(
+                "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + Environment.NewLine +
+                _sitemapGenerator.GenerateSiteMap(items).ToString(), "text/xml", Encoding.UTF8);
         }
     }
 }
