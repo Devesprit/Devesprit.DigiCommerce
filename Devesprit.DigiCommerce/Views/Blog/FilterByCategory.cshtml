@@ -1,4 +1,5 @@
 ﻿@using System.Web.Mvc.Html
+@using Devesprit.Core
 @using Devesprit.DigiCommerce.Models
 @using Devesprit.DigiCommerce.Models.Post
 @using Devesprit.Utilities
@@ -8,6 +9,8 @@
     ViewBag.Title = T("NewestPostsIn", Model.CategoryName, Model.PageIndex);
     ViewBag.MetaDescription = ViewBag.Title;
     Html.AddHeadCustomParts("<meta name=\"robots\" content=\"index,follow\">");
+    var workContext = DependencyResolver.Current.GetService<IWorkContext>();
+    Html.AddCanonicalUrlParts(Url.Action("FilterByCategory", "Blog", new {page = Model.PageIndex, slug = Model.CategorySlug, lang = workContext.CurrentLanguage.IsoCode}, Request.Url.Scheme));
 }
 
 

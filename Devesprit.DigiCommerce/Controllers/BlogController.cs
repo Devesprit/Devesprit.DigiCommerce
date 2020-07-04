@@ -191,7 +191,8 @@ namespace Devesprit.DigiCommerce.Controllers
                 CategoryName = category.GetLocalized(p => p.CategoryName),
                 FilterByCategoryId = category.Id,
                 PageIndex = page ?? 1,
-                PageSize = pageSize
+                PageSize = pageSize,
+                CategorySlug = slug,
             });
         }
     }

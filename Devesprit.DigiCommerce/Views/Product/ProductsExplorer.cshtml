@@ -1,4 +1,5 @@
 ﻿@using System.Web.Mvc.Html
+@using Devesprit.Core
 @using Devesprit.DigiCommerce.Models.Post
 @using Devesprit.Services.Localization
 @using Devesprit.Utilities
@@ -8,6 +9,8 @@
     ViewBag.Title = string.Format(Model.PostsListType.GetLocalized(), Model.PageIndex);
     ViewBag.MetaDescription = ViewBag.Title;
     Html.AddHeadCustomParts("<meta name=\"robots\" content=\"index,follow\">");
+    var workContext = DependencyResolver.Current.GetService<IWorkContext>();
+    Html.AddCanonicalUrlParts(Url.Action("ProductsExplorer", "Product", new {page = Model.PageIndex, listType = Model.PostsListType, catId= Model.FilterByCategoryId, fromDate = Model.FromDate, lang = workContext.CurrentLanguage.IsoCode}, Request.Url.Scheme));
 }
 
 

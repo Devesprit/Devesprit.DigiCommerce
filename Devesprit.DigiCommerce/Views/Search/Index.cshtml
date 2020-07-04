@@ -5,8 +5,12 @@
 @model Devesprit.DigiCommerce.Models.Search.SearchResultModel
 @{
     ViewBag.Title = Model != null ? T("SearchFor", Model.SearchTerm.Query, Model.SearchTerm.Page ?? 1) : T("NoItemFound");
-    
     Html.AddHeadCustomParts("<meta name=\"robots\" content=\"index,follow\">");
+    if (ViewBag.CanonicalUrl != null)
+    {
+        string url = ViewBag.CanonicalUrl.ToString();
+        Html.AddCanonicalUrlParts(url);
+    }
 }
 @Html.Raw(ViewBag.MetaDescription2)
 @if (Model == null || Model.NumberOfItemsFound == 0)

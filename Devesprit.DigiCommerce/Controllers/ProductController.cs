@@ -93,7 +93,7 @@ namespace Devesprit.DigiCommerce.Controllers
                 $"PopupWindows('{Url.Action("Editor", "ManageProducts", new { area = "Admin" })}', 'ProductEditor', 1200, 700, {{ id: {product.Id} }}, 'get')";
 
             return View(_productModelFactory.PrepareProductModel(product, currentUser, Url));
-        }
+        } 
 
         [Route("{lang}/Products/{listType}", Order = 0)]
         [Route("Products/{listType}", Order = 1)]
@@ -104,7 +104,7 @@ namespace Devesprit.DigiCommerce.Controllers
             {
                 PageIndex = page ?? 1,
                 PageSize = pageSize,
-                PostsListType = listType,
+                PostsListType = listType,  
                 FilterByCategoryId = catId,
                 FromDate = fromDate
             });
@@ -174,7 +174,8 @@ namespace Devesprit.DigiCommerce.Controllers
                 CategoryName = category.GetLocalized(p => p.CategoryName),
                 FilterByCategoryId = category.Id,
                 PageIndex = page ?? 1,
-                PageSize = pageSize
+                PageSize = pageSize,
+                CategorySlug = slug
             });
         }
     }

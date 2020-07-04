@@ -17,20 +17,20 @@
     <div class="panel-title pad-15">
         @if (!string.IsNullOrWhiteSpace(Model.ProductPageUrl))
         {
-            <h4 class="fw-bold no-mar">
+            <h1 class="fw-bold no-mar fs-22">
                 <a class="card-link text-light" href="@Model.ProductPageUrl">
                     <i class="fa fa-arrow-circle-o-@Html.Raw(currentLang.IsRtl ? "right" : "left") text-warning"></i>
                     @T("Download") - @Html.Raw(Model.PageTitle)
                     @Html.Raw(Model.IsDemo ? $"<small>({T("DemoVersion")})</small>" : "")
                 </a>
-            </h4>
+            </h1>
         }
         else
         {
-            <h4 class="fw-bold no-mar">
+            <h1 class="fw-bold no-mar fs-22">
                 @T("Download") - @Html.Raw(Model.PageTitle)
                 @Html.Raw(Model.IsDemo ? $"<small>({T("DemoVersion")})</small>" : "")
-            </h4>
+            </h1>
         }
     </div>
 

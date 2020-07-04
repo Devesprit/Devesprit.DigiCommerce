@@ -1,9 +1,11 @@
-﻿@using reCaptcha
+﻿@using Devesprit.Core
+@using reCaptcha
 @model Devesprit.DigiCommerce.Models.Users.SignUpModel
 @{
     ViewBag.Title = T("Signup");
     bool showSocialsPanel = Model.ExternalLoginProviders?.Any() == true;
-
+    var workContext = DependencyResolver.Current.GetService<IWorkContext>();
+    Html.AddCanonicalUrlParts(Url.Action("SignUp", "User", new {lang = workContext.CurrentLanguage.IsoCode}, Request.Url.Scheme));
     Html.AddHeadCustomParts("<meta name=\"robots\" content=\"index,follow\">");
 }
 
@@ -12,7 +14,7 @@
         <div class="col-12 @(showSocialsPanel ? "col-lg-10" : "col-lg-6")">
             <div class="panel">
                 <div class="panel-title pad-10">
-                    <h5 class="no-mar">@T("Signup")</h5>
+                    <h1 class="no-mar fs-22">@T("Signup")</h1>
                 </div>
                 <div class="row no-gutters">
 

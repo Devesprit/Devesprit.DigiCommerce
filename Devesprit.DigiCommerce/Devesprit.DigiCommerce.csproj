@@ -2276,7 +2276,6 @@
     <Content Include="Themes\WarezComponent\Views\Shared\_Layout.cshtml" />
     <Content Include="Themes\WarezComponent\Views\web.config" />
     <Content Include="Themes\WarezComponent\theme.config" />
-    <Content Include="Themes\WarezComponent\Views\Product\FilterByCategory.cshtml" />
     <Content Include="Themes\WarezComponent\Views\Product\Index.cshtml" />
     <Content Include="Themes\WarezComponent\Views\Product\Partials\_ProductAttributesSection.cshtml" />
     <Content Include="Themes\WarezComponent\Views\Product\Partials\_ProductDescriptionsSection.cshtml" />
@@ -2290,7 +2289,6 @@
     <Content Include="Themes\WarezComponent\Views\Product\Partials\_ProductsList.cshtml" />
     <Content Include="Themes\WarezComponent\Views\Product\Partials\_ProductSmallCardView.cshtml" />
     <Content Include="Themes\WarezComponent\Views\Product\Partials\_ProductTagsSection.cshtml" />
-    <Content Include="Themes\WarezComponent\Views\Product\ProductsExplorer.cshtml" />
     <Content Include="Themes\WarezComponent\Scripts\bootstrap.bundle.js.map" />
     <Content Include="Themes\WarezComponent\Scripts\bootstrap.bundle.min.js.map" />
     <Content Include="Themes\WarezComponent\Scripts\bootstrap.js.map" />
@@ -2404,7 +2402,7 @@
           <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
         </WebProjectProperties>
       </FlavorProperties>
-      <UserProperties BuildVersion_BuildVersioningStyle="YearStamp.MonthStamp.DayStamp.Increment" BuildVersion_UseGlobalSettings="True" BuildVersion_AssemblyInfoFilename="Properties\AssemblyInfo.cs" BuildVersion_UpdateFileVersion="True" BuildVersion_UpdateAssemblyVersion="True" BuildVersion_StartDate="2018/10/14" />
+      <UserProperties BuildVersion_StartDate="2018/10/14" BuildVersion_UpdateAssemblyVersion="True" BuildVersion_UpdateFileVersion="True" BuildVersion_AssemblyInfoFilename="Properties\AssemblyInfo.cs" BuildVersion_UseGlobalSettings="True" BuildVersion_BuildVersioningStyle="YearStamp.MonthStamp.DayStamp.Increment" />
     </VisualStudio>
   </ProjectExtensions>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

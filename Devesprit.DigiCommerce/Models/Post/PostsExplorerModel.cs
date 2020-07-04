@@ -10,6 +10,7 @@ namespace Devesprit.DigiCommerce.Models.Post
         public virtual int? FilterByCategoryId { get; set; }
         public virtual DateTime? FromDate { get; set; }
         public string CategoryName { get; set; }
+        public string CategorySlug { get; set; }
     }
 
     public class PostsExplorerModel : PostsExplorerModel<PostsListType>

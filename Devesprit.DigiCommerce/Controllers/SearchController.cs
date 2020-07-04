@@ -89,6 +89,18 @@ namespace Devesprit.DigiCommerce.Controllers
 
             var localizationService = DependencyResolver.Current.GetService<ILocalizationService>();
             ViewBag.MetaDescription = string.Format(localizationService.GetResource("SearchFor"), model.Query, viewModel.SearchTerm.Page ?? 1).Replace("\"", "'");
+            ViewBag.CanonicalUrl = Url.Action("Index", "Search", new
+            {
+                lang = WorkContext.CurrentLanguage.IsoCode,
+                model.Query,
+                model.PostType,
+                model.FilterByCategory,
+                model.Page,
+                model.OrderBy,
+                model.SearchPlace,
+                model.LanguageId,
+                model.PageSize
+            }, Request.Url.Scheme);
             return View(viewModel);
         }
 
@@ -130,6 +142,12 @@ namespace Devesprit.DigiCommerce.Controllers
 
             var localizationService = DependencyResolver.Current.GetService<ILocalizationService>();
             ViewBag.MetaDescription = string.Format(localizationService.GetResource("SearchForTag"), tag, viewModel.SearchTerm.Page ?? 1).Replace("\"", "'");
+            ViewBag.CanonicalUrl = Url.Action("Tag", "Search", new
+            {
+                lang = WorkContext.CurrentLanguage.IsoCode,
+                tag,
+                page,
+            }, Request.Url.Scheme);
             return View("Index", viewModel);
         }
 
@@ -166,10 +184,16 @@ namespace Devesprit.DigiCommerce.Controllers
                 SearchResult = _postModelFactory.PreparePostCardViewModel(posts, currentUser, Url),
                 ShowAdvancedSearchPanel = false,
                 CardViewStyles = ViewStyles.Small,
-            };
+            };  
 
             var localizationService = DependencyResolver.Current.GetService<ILocalizationService>();
             ViewBag.MetaDescription = string.Format(localizationService.GetResource("SearchForKeyword"), keyword, viewModel.SearchTerm.Page ?? 1).Replace("\"", "'");
+            ViewBag.CanonicalUrl = Url.Action("Keyword", "Search", new
+            {
+                lang = WorkContext.CurrentLanguage.IsoCode,
+                keyword,
+                page,
+            }, Request.Url.Scheme);
             return View("Index", viewModel);
         }
 
