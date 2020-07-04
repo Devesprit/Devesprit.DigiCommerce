@@ -7,6 +7,7 @@ namespace Devesprit.DigiCommerce.Models.Post
     {
         public virtual int Id { get; set; }
         public virtual string Title { get; set; }
+        public virtual string IconImageUrl { get; set; }
         public virtual int NumberOfViews { get; set; }
         public virtual int NumberOfLikes { get; set; }
         public virtual DateTime LastUpDate { get; set; }

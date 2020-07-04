@@ -1,0 +1,19 @@
+﻿
+@model string
+@{Layout = null;}
+@if (!string.IsNullOrWhiteSpace(Model))
+{
+    <div class="panel fs-14 b-mar-20">
+        <div class="panel-title pad-10">
+            <b>@T("Keywords")</b>
+        </div>
+        <div class="pad-10">
+            <ul class="keyword-cloud text-center">
+                @foreach (var keyword in Model.Split(new []{","}, StringSplitOptions.RemoveEmptyEntries).Select(p=> p.Trim()).Where(p=> !string.IsNullOrWhiteSpace(p)))
+                {
+                    <li><a href="@Url.Action("Keyword", "Search", new {keyword=keyword})" target="_blank"><strong>@keyword</strong></a></li>
+                }
+            </ul>
+        </div>
+    </div>
+}

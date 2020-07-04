@@ -1,0 +1,216 @@
+﻿@using System.Globalization
+@using Devesprit.Core
+@using Devesprit.Core.Settings
+@using Devesprit.Data.Domain
+@using Devesprit.Data.Enums
+@using Devesprit.Services
+@using Devesprit.Services.Currency
+@using Devesprit.Services.Localization
+@using Devesprit.Services.Posts
+@using Devesprit.Services.SearchEngine
+@using Devesprit.Utilities
+@using Devesprit.Utilities.Extensions
+@using Devesprit.WebFramework.Helpers
+@using Newtonsoft.Json
+@using Schema.NET
+@model Devesprit.DigiCommerce.Models.Products.ProductModel
+@{
+    ViewBag.Title = Model.PageTitle;
+    ViewBag.MetaKeyword = Model.MetaKeyWords;
+    ViewBag.MetaDescription = Model.MetaDescription;
+    var settings = DependencyResolver.Current.GetService<ISettingService>().LoadSetting<SiteSettings>();
+
+    Html.AddHeadCustomParts("<meta name=\"robots\" content=\"index,follow\">");
+    Html.AddHeadCustomParts("<meta property=\"og:title\" content=\"" + Model.Title + "\">");
+    Html.AddHeadCustomParts("<meta property=\"og:url\" content=\"" + Model.PostUrl + "\">");
+    Html.AddHeadCustomParts("<meta property=\"og:description\" content=\"" + Model.MetaDescription + "\">");
+    Html.AddHeadCustomParts("<meta property=\"og:site_name\" content=\"" + settings.GetLocalized(x => x.SiteName) + "\">");
+    Html.AddHeadCustomParts("<meta property=\"og:description\" content=\"" + Model.MetaDescription + "\">");
+    if (Model.Images != null && Model.Images.Count > 0)
+    {
+        Html.AddHeadCustomParts("<meta property=\"og:image\" content=\"" + Model.Images[0].ImageUrl + "\">");
+    }
+
+    //Add Canonical Url
+    var workContext = DependencyResolver.Current.GetService<IWorkContext>();
+    var pageMainUrl = Url.Action("Index", "Product", new {id = Model.Id, slug = Model.Slug, lang = workContext.CurrentLanguage.IsoCode}, Request.Url.Scheme);
+    Html.AppendCanonicalUrlParts(pageMainUrl);
+}
+
+@Html.Widget("product_page_start")
+
+<div class="row t-mar-20">
+    <div class="col-12 col-lg-4 col-xl-3 order-2 order-lg-1">
+        @if (User.IsInRole("Admin"))
+        {
+            if (Model.Published)
+            {
+                <div class="alert alert-success p-1 fs-12 text-center" role="alert">
+                    @T("Published")
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-danger p-1 fs-12 text-center" role="alert">
+                    @T("UnPublished")
+                </div>
+            }
+        }
+        @{Html.RenderPartial("Partials/_ProductDownloadView", Model.DownloadModel);}
+        @{Html.RenderPartial("Partials/_ProductAttributesSection", Model);}
+        @{Html.RenderPartial("Partials/_ProductTagsSection", Model.TagsList);}
+        @if (Model.ShowSimilarCases)
+        {
+            Html.RenderAction("MoreLikeThis", "Search", new { postId = Model.Id, postType = PostType.Product });
+        }
+        @if (Model.ShowKeywords)
+        {
+            Html.RenderPartial("Partials/_ProductKeywordsSection", Model.MetaKeyWords);
+        }
+    </div>
+
+    <div class="col-12 col-lg-8 col-xl-9 order-1 order-lg-4">
+        <div class="panel b-mar-20">
+            <div class="panel-title">
+                @if (settings.Wishlist || settings.LikePosts)
+                {
+                    <span class="fs-18 btn btn-warning btn-sm float-end line-height-1 mar-h-5">
+                        @{Html.RenderAction("LikeWishlistButtonsPartialView", "Post", Model.LikeWishlistButtonsModel);}
+                    </span>
+                }
+                <h1 class="no-b-mar fs-25 @Html.Raw(Model.TitleIsRtl ? "rtl-dir text-right" : "ltr-dir text-left")">
+                    @Html.Raw(Model.Title.Trim())
+                </h1>
+            </div>
+
+            @{Html.RenderPartial("Partials/_ProductImagesSection", Model.Images);}
+            @{Html.RenderPartial("Partials/_ProductDescriptionsSection", Model.Descriptions);}
+
+            <div id="shareIconsCountInside" class="fs-16 mar-v-20 text-center"></div>
+        </div>
+
+        @if (settings.AllowUsersToWriteComment && Model.AllowCustomerReviews)
+        {
+            <div class="panel fs-13 b-mar-20">
+                <div class="panel-title pad-10"><b>@T("Comments")</b></div>
+                <div class="pad-15">
+                    <div id="commentsListPlaceholder">
+                        @{ Html.RenderAction("CommentsList", "Comment", new { postId = Model.Id }); }
+                    </div>
+
+                    <h4>@T("WriteYourComment")</h4>
+                    <div id="CommentEditor">
+                        @{
+                            Html.RenderAction("CommentEditor", "Comment", new { postId = Model.Id });
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+
+    </div>
+</div>
+
+<script type="application/ld+json">
+    @Html.Raw(GenerateSchema())
+</script>
+
+@Html.Widget("product_page_end")
+
+@{
+    Html.AddInlineScript(ResourceLocation.Footer,
+@<script>
+     $("#shareIconsCountInside").jsSocials({
+         showLabel: false,
+         shareIn: "popup",
+         showCount: false,
+         shares: [
+             "email", "twitter", "facebook", "linkedin", "pinterest", "stumbleupon", "pocket", "whatsapp", "viber",
+             "messenger", "vkontakte", "telegram", "line"
+         ]
+     });
+</script>);
+}
+
+@functions
+{
+    private string GenerateSchema()
+    {
+        var setting = DependencyResolver.Current.GetService<ISettingService>().LoadSetting<SiteSettings>();
+        var defaultCurrency = DependencyResolver.Current.GetService<ICurrencyService>().GetDefaultCurrency();
+        var images = new List<Uri>();
+        foreach (var image in Model.Images)
+        {
+            images.Add(new Uri(image.ImageUrl.GetAbsoluteUrl()));
+        }
+
+        var result = new Schema.NET.WebPage()
+        {
+            Name = Model.Title.ConvertHtmlToText(),
+            Headline = Model.Title.ConvertHtmlToText(),
+            Description = Model.Descriptions != null && Model.Descriptions.Count > 0
+                ? JsonConvert.ToString(Model.Descriptions[0].Description.ConvertHtmlToText())
+                : Model.MetaDescription,
+            Keywords = Model.MetaKeyWords,
+            DatePublished = Model.PublishDate,
+            DateCreated = Model.PublishDate,
+            DateModified = Model.LastUpdate,
+            InteractionStatistic = new InteractionCounter()
+            {
+                UserInteractionCount = Model.NumberOfViews,
+            },
+            Url = new Uri(Model.PostUrl.GetAbsoluteUrl()),
+            DiscussionUrl = new Uri(Model.PostUrl.GetAbsoluteUrl()),
+            PrimaryImageOfPage = new ImageObject()
+            {
+                Url = Model.Images != null && Model.Images.Count > 0 ? new Uri(Model.Images[0].ImageUrl.GetAbsoluteUrl()) : null
+            },
+            Image = images,
+            ContentRating = new Values<IRating, string>(),
+            Publisher = new Organization()
+            {
+                Name = setting.GetLocalized(x => x.SiteName),
+                Email = setting.SiteEmailAddress,
+                Url = new Uri(setting.SiteUrl),
+                Logo = new Uri(setting.GetLocalized(x => x.SiteLogoHeader).GetAbsoluteUrl())
+            },
+            Provider = new Organization()
+            {
+                Name = setting.GetLocalized(x => x.SiteName),
+                Email = setting.SiteEmailAddress,
+                Url = new Uri(setting.SiteUrl),
+                Logo = new Uri(setting.GetLocalized(x => x.SiteLogoHeader).GetAbsoluteUrl())
+            },
+            Offers = new OneOrMany<IOffer>(new Offer()
+            {
+                Price = Model.Price.ToString("F2", CultureInfo.InvariantCulture),
+                PriceCurrency = defaultCurrency.IsoCode
+            }),
+        };
+
+        var relatedProducts = DependencyResolver.Current.GetService<ISearchEngine>()
+            .MoreLikeThis(Model.Id, null, 0, PostType.Product, SearchPlace.Title | SearchPlace.Description | SearchPlace.Tags, 20);
+        var relatedLinks = new List<Uri>();
+        if (!relatedProducts.HasError && relatedProducts.Documents.Count > 0)
+        {
+            var posts = DependencyResolver.Current.GetService<IPostService<TblPosts>>().GetItemsById(
+                relatedProducts.Documents.Select(p => p.DocumentId).Take(5)
+                    .ToList(), 1,
+                5);
+
+            foreach (var post in posts)
+            {
+                relatedLinks.Add(
+                    new Uri(("/Product/" + post.Slug).GetAbsoluteUrl()));
+            }
+        }
+
+        if (relatedLinks.Count > 0)
+        {
+            result.RelatedLink = new OneOrMany<Uri>(relatedLinks);
+        }
+
+
+        return result.ToHtmlEscapedString();
+    }
+}

@@ -1,0 +1,19 @@
+﻿@{Layout = null;}
+<div class="row justify-content-center">
+    <div class="col-12 col-lg-6">
+        <div class="panel">
+            <div class="panel-title pad-10">
+                <h5 class="no-mar">@T("Error")</h5>
+            </div>
+            <div class="fs-14 pad-20 text-center">
+                <img src="~/Content/img/no_entry_250px.png" width="200" alt="no entry" class="b-mar-20"/>
+                <h4>@T("AccessPermissionError")</h4>
+                <p>@Html.Raw(T("AccessPermissionErrorDesc"))</p>
+                <button class="btn btn-outline-secondary btn-sm" role="button" onclick="window.history.go(-1); return false;">@T("ReturnPrevious")</button>
+                <a class="btn btn-outline-secondary btn-sm" href="@Url.Action("Index", "Home", new { area = "" }, null)">@T("ReturnHome")</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+

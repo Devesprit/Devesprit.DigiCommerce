@@ -82,6 +82,7 @@ namespace Devesprit.Services.Products
                 .Include(p => p.DownloadLimitedToUserGroup)
                 .Include(p => p.Tags)
                 .Include(p => p.AlternativeSlugs)
+                .Include(p=> p.DownloadsLog)
                 .Include(p => p.FileServer)
                 .DeferredFirstOrDefault()
                 .FromCacheAsync(_cacheKey,
@@ -115,6 +116,7 @@ namespace Devesprit.Services.Products
                 .Include(p => p.DownloadLimitedToUserGroup)
                 .Include(p => p.Tags)
                 .Include(p => p.AlternativeSlugs)
+                .Include(p => p.DownloadsLog)
                 .Include(p => p.FileServer)
                 .DeferredFirstOrDefault()
                 .FromCacheAsync(_cacheKey,

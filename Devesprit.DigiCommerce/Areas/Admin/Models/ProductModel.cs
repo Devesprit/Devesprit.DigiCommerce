@@ -24,6 +24,9 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Models
         [DisplayNameLocalized("ProductTitle")]
         public LocalizedString Title { get; set; }
 
+        [DisplayNameLocalized("IconImageUrl")]
+        public LocalizedString IconImageUrl { get; set; }
+
         [DisplayNameLocalized("NoteForAdmin")]
         public string AdminNote { get; set; }
 
@@ -75,6 +78,15 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Models
         [RequiredLocalized(AllowEmptyStrings = false)]
         [DisplayNameLocalized("Visits")]
         public int NumberOfViews { get; set; }
+
+        [DisplayNameLocalized("Likes")]
+        public int NumberOfLikes { get; set; }
+
+        [DisplayNameLocalized("Downloads")]
+        public int NumberOfDownloads { get; set; }
+
+        [DisplayNameLocalized("NumberOfPurchases")]
+        public int NumberOfPurchases { get; set; }
 
 
         [DisplayNameLocalized("FilesPath")]

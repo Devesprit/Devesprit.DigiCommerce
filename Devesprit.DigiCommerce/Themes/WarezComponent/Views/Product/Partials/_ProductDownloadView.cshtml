@@ -1,0 +1,113 @@
+﻿
+@using Devesprit.DigiCommerce.Models
+@using Devesprit.Services.Currency
+@using Devesprit.Services.Localization
+@model Devesprit.DigiCommerce.Models.Products.ProductDownloadModel
+
+@{
+    Layout = null;
+}
+
+@helper PurchaseBtnInnerHtml()
+{
+    <small>@Html.Raw(T("PurchaseNow"))</small>
+    <br />
+    <b>@Model.PriceForCurrentUser.ExchangeCurrencyStr()</b>
+}
+
+@helper UserGroupDiscountsBtnInnerHtml()
+{
+    var discounts = Model.DiscountForUserGroupsDescription;
+    if (discounts != null && discounts.Any())
+    {
+        foreach (var discount in discounts.Where(p => p.Item1 != null && !string.IsNullOrWhiteSpace(p.Item2)))
+        {
+            <a href="@Url.Action("UpgradeAccount", "Purchase")"
+               target="_blank"
+               class="btn btn-sm btn-secondary fs-12 p-0">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-3 py-2">
+                            <img src="@discount.Item1.GetLocalized(p => p.GroupSmallIcon)"
+                                 alt="@discount.Item1.GetLocalized(p => p.GroupName)"
+                                 class="m-auto rounded d-block p-2 mw-100 mh-100"
+                                 style="background-color: @discount.Item1.GetLocalized(p => p.GroupBackgroundColor);" />
+                        </div>
+                        <div class="col py-2 text-align-initial">
+                            @Html.Raw(discount.Item2)
+                        </div>
+                    </div>
+                </div>
+            </a>
+        }
+    }
+}
+
+@helper UpgradeUserAccountBtnInnerHtml()
+{
+    if (Model.DownloadLimitedToUserGroup != null)
+    {
+        <img src="@Model.DownloadLimitedToUserGroup.GetLocalized(p => p.GroupLargeIcon)"
+             alt="@Model.DownloadLimitedToUserGroup.GetLocalized(p => p.GroupName)" class="d-block mx-auto b-mar-5 mw-100" />
+        @Html.Raw(T("SubscribeToPlan",
+            "<span style='color: " + Model.DownloadLimitedToUserGroup.GetLocalized(p => p.GroupTextColor) + " !important;'> " +
+            Model.DownloadLimitedToUserGroup.GetLocalized(p => p.GroupName) + "</span>"))
+        <hr class="my-1" />
+        <small>
+            @Html.Raw(string.Format(Model.HigherUserGroupsCanDownload ?
+                T("ForDownloadSubscribeToPlanOrHigher").ToString()
+                : T("ForDownloadSubscribeToPlan").ToString(),
+                "<span style='color: " + Model.DownloadLimitedToUserGroup.GetLocalized(p => p.GroupTextColor) + " !important;'>" +
+                Model.DownloadLimitedToUserGroup.GetLocalized(p => p.GroupName) + "</span>"))
+        </small>
+    }
+}
+
+@{
+    //Subscribe to a plan
+    if (Model.ShowUpgradeUserAccountBtn)
+    {
+        <a href="@Url.Action("UpgradeAccount", "Purchase")"
+           target="_blank"
+           class="btn btn-lg text-light fs-16 d-block white-space-initial b-mar-20"
+           style="background-color: @Model.DownloadLimitedToUserGroup.GetLocalized(p => p.GroupBackgroundColor);">
+            @UpgradeUserAccountBtnInnerHtml()
+        </a>
+    }
+
+    //Purchase button
+    if (Model.ShowPurchaseBtn)
+    {
+        <div class="btn-group-vertical d-block b-mar-20">
+            <button class="btn btn-success shadow text-light fs-25 d-block white-space-initial"
+                    type="button"
+                    onclick="ShowProductPurchaseWizard(@Model.ProductId, null);">
+                @PurchaseBtnInnerHtml()
+            </button>
+
+            @UserGroupDiscountsBtnInnerHtml()
+        </div>
+    }
+
+    //Full version download button
+    if (Model.ShowDownloadFullVersionBtn)
+    {
+        <a href="@Url.Action("DownloadProduct", "Download", new {productId = Model.ProductId, demoFiles = false})"
+           target="_blank"
+           class="btn btn-warning btn-lg fs-20 d-block white-space-initial b-mar-20">
+            <i class="fa fa-download fa-2x"></i>
+            <br />
+            @Html.Raw(T("DownloadNow"))
+        </a>
+    }
+
+    //Demo version download button
+    if (Model.ShowDownloadDemoVersionBtn)
+    {
+        <a href="@Url.Action("DownloadProduct", "Download", new {productId = Model.ProductId, demoFiles = true})"
+           target="_blank"
+           class="btn btn-warning btn-lg fs-16 d-block b-mar-20 white-space-initial">
+            @Html.Raw(T("DownloadDemo"))
+        </a>
+    }
+}

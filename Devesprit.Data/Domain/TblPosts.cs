@@ -11,6 +11,7 @@ namespace Devesprit.Data.Domain
     {
         [Required, MaxLength(500)]
         public string Title { get; set; }
+        public string IconImageUrl { get; set; }
         [Index(IsClustered = false, IsUnique = false)]
         public bool Published { get; set; }
         [Required]

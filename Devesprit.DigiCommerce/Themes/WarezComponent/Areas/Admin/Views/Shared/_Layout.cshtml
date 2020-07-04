@@ -1,0 +1,19 @@
+﻿@{
+    Layout = "~/Themes/WarezComponent/Areas/Admin/Views/Shared/_BaseLayout.cshtml";
+}
+
+@{
+    Html.RenderPartial("Partials/_UsersMenuBar");
+    Html.RenderPartial("Partials/_Header");
+    Html.RenderPartial("Partials/_NavBar");
+}
+
+<div id="content-placeholder" class="container t-mar-35 b-mar-80">
+    @RenderBody()
+</div>
+
+@{
+    Html.RenderPartial("Partials/_Footer");
+}
+
+

@@ -1,0 +1,34 @@
+﻿
+@using Devesprit.Core
+@using Devesprit.Services.Currency
+@using Devesprit.Utilities
+@using Devesprit.Services.Localization
+
+@{
+    Layout = null;
+    var currencyService = DependencyResolver.Current.GetService<ICurrencyService>();
+    var workContext = DependencyResolver.Current.GetService<IWorkContext>();
+    var allCurrencies = currencyService.GetAsEnumerable().ToList();
+
+    var curCurrency = workContext.CurrentCurrency;
+}
+
+@if (allCurrencies.Count > 1)
+{
+    <div class="btn-group btn-group-xs lang-dropdown">
+        <button title="@T("ChangeCurrency")" type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <i class="fa fa-money"></i> @Html.Raw(curCurrency.GetLocalized(x => x.ShortName))
+        </button>
+        <div class="dropdown-menu dropdown-menu-xs">
+            @foreach (var item in allCurrencies)
+            {
+                <form method="post" action="@Request.RawUrl">
+                    <input type="hidden" name="usc" value="@item.IsoCode" />
+                    <button type="submit" class="dropdown-item dropdown-item-xs">
+                        @Html.Raw(item.GetLocalized(x => x.CurrencyName))
+                    </button>
+                </form>
+            }
+        </div>
+    </div>
+}

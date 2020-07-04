@@ -1,0 +1,25 @@
+﻿@{
+    Layout = "~/Themes/WarezComponent/Views/Shared/_BaseLayout.cshtml";
+}
+
+<header class="main-header">
+    @{
+        Html.RenderPartial("Partials/_UsersMenuBar");
+        Html.RenderPartial("Partials/_NavBar");
+    }
+</header>
+
+@{ Html.RenderPartial("Partials/_Header"); }
+
+
+@Html.Widget("layout_start")
+
+@RenderBody()
+
+@Html.Widget("layout_end")
+
+
+@{
+    Html.RenderPartial("Partials/_Footer");
+}
+

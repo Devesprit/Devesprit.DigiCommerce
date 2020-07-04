@@ -1,0 +1,79 @@
+﻿@{
+    Layout = null;
+    //success messages
+    var successMessages = new List<string>();
+    if (TempData[$"notifications.{NotificationType.Success}"] is IList<string> tempDataSuccessMsgList)
+    {
+        successMessages.AddRange(tempDataSuccessMsgList);
+    }
+    if (ViewData[$"notifications.{NotificationType.Success}"] is IList<string> viewDataSuccessMsgList)
+    {
+        successMessages.AddRange(viewDataSuccessMsgList);
+    }
+
+
+    //error messages
+    var errorMessages = new List<string>();
+    if (TempData[$"notifications.{NotificationType.Error}"] is IList<string> tempDataErrorMsgList)
+    {
+        errorMessages.AddRange(tempDataErrorMsgList);
+    }
+    if (ViewData[$"notifications.{NotificationType.Error}"] is IList<string> viewDataErrorMsgList)
+    {
+        errorMessages.AddRange(viewDataErrorMsgList);
+    }
+
+
+    //warning messages
+    var warningMessages = new List<string>();
+    if (TempData[$"notifications.{NotificationType.Warning}"] is IList<string> tempDataWarningMsgList)
+    {
+        warningMessages.AddRange(tempDataWarningMsgList);
+    }
+    if (ViewData[$"notifications.{NotificationType.Warning}"] is IList<string> viewDataWarningrMsgList)
+    {
+        warningMessages.AddRange(viewDataWarningrMsgList);
+    }
+}
+@if (successMessages.Count > 0)
+{
+    Html.AddInlineScript(ResourceLocation.Footer,
+        @<script>
+             $(document).ready(function() {
+                 var msg = [
+                     @Html.Raw("'" + string.Join("', '", successMessages.Select(HttpUtility.JavaScriptStringEncode).ToList()) + "'")
+                 ];
+                 for (var i = 0; i < msg.length; i++) {
+                     SuccessAlert('@T("Successful")', msg[i]);
+                 }
+             });
+         </script>);         
+}
+@if (errorMessages.Count > 0)
+{
+    Html.AddInlineScript(ResourceLocation.Footer,
+        @<script>
+             $(document).ready(function() {
+                 var msg = [
+                     @Html.Raw("'" + string.Join("', '", errorMessages.Select(HttpUtility.JavaScriptStringEncode).ToList()) + "'")
+                 ];
+                 for (var i = 0; i < msg.length; i++) {
+                     ErrorAlert('@T("Error")', msg[i]);
+                 }
+             });
+         </script>);
+}
+@if(warningMessages.Count > 0)
+{
+    Html.AddInlineScript(ResourceLocation.FooterAfterOther,
+        @<script>
+             $(document).ready(function() {
+                 var msg = [
+                     @Html.Raw("'" + string.Join("', '", warningMessages.Select(HttpUtility.JavaScriptStringEncode).ToList()) + "'")
+                 ];
+                 for (var i = 0; i < msg.length; i++) {
+                     WarningAlert('@T("Warning")', msg[i]);
+                 }
+             });
+         </script>);
+}

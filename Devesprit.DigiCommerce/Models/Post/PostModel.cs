@@ -20,6 +20,7 @@ namespace Devesprit.DigiCommerce.Models.Post
     {
         public int Id { get; set; }
         public string Title { get; set; }
+        public string IconImageUrl { get; set; }
         public bool Published { get; set; }
         public bool TitleIsRtl => Title.IsRtlLanguage();
         public int NumberOfViews { get; set; }

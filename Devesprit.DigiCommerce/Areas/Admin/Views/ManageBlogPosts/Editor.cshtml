@@ -13,21 +13,21 @@
     <div id="panel" class="panel no-hide-overflow pad-20 fs-14">
         <div id="waitingPopup"></div>
         @{Html.EJ().Tab("settingTabs")
-                .EnableTabScroll(true)
-                .Items(data =>
-                {
-                    data.Add().ID("Home").Text(T("PostInfo").ToString()).ContentTemplate(content => BlogPostEditor());
-                    if (Model.Id != null)
-                    {
-                        data.Add().ID("Descriptions").Text(T("PostDescriptions").ToString()).Url(Url.Action("Grid", "PostDescriptions", new { postId = Model.Id }));
-                        data.Add().ID("Images").Text(T("PostImages").ToString()).Url(Url.Action("Grid", "PostImages", new { postId = Model.Id }));
-                        data.Add().ID("Attributes").Text(T("PostAttributes").ToString()).Url(Url.Action("Grid", "PostAttributesMapping", new { postId = Model.Id }));
-                        data.Add().ID("Redirects").Text(T("UrlRewrite").ToString()).Url(Url.Action("Grid", "ManageRedirects", new { redirectGroup = RedirectRuleGroup.BlogPost, entityId = Model.Id }));
-                    }
-                })
-                .AjaxSettings(ajax => ajax.ContentType("html").DataType("html").Async(true).Cache(false))
-                .ClientSideEvents(evt => evt.AjaxError("tabAjaxContentError").AjaxSuccess("tabAjaxContentSuccess").AjaxBeforeLoad("tabAjaxBeforeLoad"))
-                .Render();
+                  .EnableTabScroll(true)
+                  .Items(data =>
+                  {
+                      data.Add().ID("Home").Text(T("PostInfo").ToString()).ContentTemplate(content => BlogPostEditor());
+                      if (Model.Id != null)
+                      {
+                          data.Add().ID("Descriptions").Text(T("PostDescriptions").ToString()).Url(Url.Action("Grid", "PostDescriptions", new { postId = Model.Id }));
+                          data.Add().ID("Images").Text(T("PostImages").ToString()).Url(Url.Action("Grid", "PostImages", new { postId = Model.Id }));
+                          data.Add().ID("Attributes").Text(T("PostAttributes").ToString()).Url(Url.Action("Grid", "PostAttributesMapping", new { postId = Model.Id }));
+                          data.Add().ID("Redirects").Text(T("UrlRewrite").ToString()).Url(Url.Action("Grid", "ManageRedirects", new { redirectGroup = RedirectRuleGroup.BlogPost, entityId = Model.Id }));
+                      }
+                  })
+                  .AjaxSettings(ajax => ajax.ContentType("html").DataType("html").Async(true).Cache(false))
+                  .ClientSideEvents(evt => evt.AjaxError("tabAjaxContentError").AjaxSuccess("tabAjaxContentSuccess").AjaxBeforeLoad("tabAjaxBeforeLoad"))
+                  .Render();
         }
     </div>
 </div>
@@ -49,6 +49,13 @@
                     @Html.LabelFor(p => p.Title)
                     @Html.LocalizedTextBoxFor(p => p.Title, null, new { @class = "form-control form-control-sm" })
                     @Html.ValidationMessageFor(p => p.Title, "", new { @class = "form-text text-danger fs-12" })
+                </div>
+            </div>
+            <div class="col-12">
+                <div class="form-group">
+                    @Html.LabelFor(p => p.IconImageUrl)
+                    @Html.LocalizedTextBoxFor(p => p.IconImageUrl, null, new { @class = "form-control form-control-sm" })
+                    @Html.ValidationMessageFor(p => p.IconImageUrl, "", new { @class = "form-text text-danger fs-12" })
                 </div>
             </div>
             <div class="col-12">
@@ -101,6 +108,13 @@
                     @Html.LabelFor(p => p.NumberOfViews)
                     @Html.TextBoxFor(p => p.NumberOfViews, new { @class = "form-control form-control-sm ltr-dir", type = "number" })
                     @Html.ValidationMessageFor(p => p.NumberOfViews, "", new { @class = "form-text text-danger fs-12" })
+                </div>
+            </div>
+            <div class="col-12 col-md-4 ">
+                <div class="form-group">
+                    @Html.LabelFor(p => p.NumberOfLikes)
+                    @Html.TextBoxFor(p => p.NumberOfLikes, new { @class = "form-control form-control-sm ltr-dir", type = "number" })
+                    @Html.ValidationMessageFor(p => p.NumberOfLikes, "", new { @class = "form-text text-danger fs-12" })
                 </div>
             </div>
         </div>

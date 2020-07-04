@@ -1,0 +1,142 @@
+﻿
+@using Devesprit.Services.Localization
+@using Devesprit.Services.Pages
+@using Devesprit.Core.Settings
+@using Devesprit.Data.Domain
+@using Devesprit.Data.Enums
+@using Devesprit.DigiCommerce.Models.Post
+@using Devesprit.Services
+@using Devesprit.Services.Posts
+@using Devesprit.Services.Products
+@using Devesprit.Services.SocialAccounts
+@using Devesprit.Utilities.Extensions
+@{
+    Layout = null;
+    var settings = DependencyResolver.Current.GetService<ISettingService>().LoadSetting<SiteSettings>();
+    var pagesService = DependencyResolver.Current.GetService<IPagesService>();
+    var productService = DependencyResolver.Current.GetService<IProductService>();
+    productService.GetStatics(out int numberOfProducts, out int numberOfViews, out DateTime lastUpdate);
+    var productDownloadsLogService = DependencyResolver.Current.GetService<IProductDownloadsLogService>();
+    var socialAccountsService = DependencyResolver.Current.GetService<ISocialAccountsService>();
+    var categoriesService = DependencyResolver.Current.GetService<IPostCategoriesService>();
+    List<TblPostCategories> categories;
+    if (Request.RequestContext.RouteData.Values["controller"].ToString().ToLower().Trim().Contains("blog"))
+    {
+        categories = categoriesService.GetCategoriesMustShowInFooter().Where(p => p.DisplayArea == DisplayArea.Both ||
+                                                                                  p.DisplayArea == DisplayArea.BlogSection).ToList();
+    }
+    else
+    {
+        categories = categoriesService.GetCategoriesMustShowInFooter().Where(p => p.DisplayArea == DisplayArea.Both ||
+                                                                                  p.DisplayArea == DisplayArea.ProductsSection).ToList();
+    }
+
+    var retUrl = string.IsNullOrWhiteSpace(Request.QueryString["returnUrl"]) ?
+                 Request.Url.PathAndQuery : Request.QueryString["returnUrl"];
+}
+<!-- Statics -->
+<div class="statics">
+    <div class="container">
+        <ul class="statics-list">
+            <div class="row">
+                <div class="col-12 col-sm-4">
+                    <li>
+                        <span class="icon-cms static-icon"></span>
+                        <span class="count-static">@numberOfProducts.ToString("N0")</span>@T("Products")
+                    </li>
+                </div>
+                <div class="col-12 col-sm-4">
+                    <li>
+                        <span class="icon-download static-icon"></span>
+                        <span class="count-static">@productDownloadsLogService.GetNumberOfDownloads().ToString("N0")</span>@T("Downloads")
+                    </li>
+                </div>
+                <div class="col-12 col-sm-4">
+                    <li>
+                        <span class="icon-analytics static-icon"></span>
+                        <span class="count-static">@numberOfViews.ToString("N0")</span>@T("WarezComponent.Viewers")
+                    </li>
+                </div>
+            </div>
+        </ul>
+    </div>
+</div>
+
+<!-- Footer -->
+<footer class="main-footer">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 col-md-6 col-lg-6">
+                <div class="footer-content">
+                    <a href="@Url.Action("Index", "Home", new {area = ""})" class="footer-logo">
+                        <img alt="@settings.SiteName" src="@settings.SiteLogoHeader">
+                    </a>
+                    <div class="footer-about-desc">
+                        @Html.Raw(settings.GetLocalized(x => x.FooterDescription))
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-6 col-lg-3">
+                <div class="footer-content">
+                    <h5 class="footer-title">@T("Links")</h5>
+                    <ul class="footer-menu-list">
+                        <li><a href="@Url.Action("Index", "Home", new { area = "" })">@T("Home")</a></li>
+                        @if (User != null && User.Identity.IsAuthenticated)
+                        {
+                            <li><a href="@Url.Action("Index", "Profile", new { area = "" })">@T("MyProfile")</a></li>
+                            using (Html.BeginForm("LogOff", "User", new { area = "" }, FormMethod.Post, new { id = "footerLogoutForm" }))
+                            {
+                                <li><a href="javascript:document.getElementById('footerLogoutForm').submit()">@T("Logout")</a></li>
+                            }
+                        }
+                        else
+                        {
+                            <li><a href="@Url.Action("Login", "User", new {returnUrl = retUrl, area = ""})">@T("Login")</a></li>
+                            <li><a href="@Url.Action("SignUp", "User", new { area = "" })">@T("Signup")</a></li>
+                        }
+                        @if (settings.EnableBlog)
+                        {
+                            <li><a href="@Url.Action("Index", "Blog", new { area = "" })">@T("Blog")</a></li>
+                        }
+                        @if (!settings.GetLocalized(p => p.TermsAndConditions).IsNullOrWhiteSpace())
+                        {
+                            <li><a href="@Url.Action("TermsAndConditions", "Home", new {area = ""})">@T("TermsAndConditions")</a></li>
+                        }
+                        <li><a href="@Url.Action("Index", "ContactUs", new {area = ""})">@T("ContactUs")</a></li>
+                        @foreach (var page in pagesService.GetPagesMustShowInFooter().OrderBy(p => p.GetLocalized(x => x.Title)))
+                        {
+                            <li><a href="@Url.Action("Index", "Page", new {slug=page.Slug, area = ""})">@page.GetLocalized(p => p.Title)</a></li>
+                        }
+                    </ul>
+                </div>
+            </div>
+            <div class="col-12 col-md-6 col-lg-3">
+                <div class="footer-content">
+                    <h5 class="footer-title">@T("Categories")</h5>
+                    <ul class="footer-menu-list">
+                        @foreach (var cat in categories)
+                        {
+                            <li><a href="@Url.Action("FilterByCategory", "Product", new {slug=cat.Slug, area = ""})">@cat.GetLocalized(p => p.CategoryName)</a></li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <ul class="list-social">
+                    @foreach (var socialAccount in socialAccountsService.GetAsEnumerable())
+                    {
+                        <li>
+                            <a href="@socialAccount.GetLocalized(x => x.YourAccountUrl)" target="_blank" title="@socialAccount.GetLocalized(x => x.SocialNetworkName)">
+                                @Html.Raw(socialAccount.GetLocalized(x => x.SocialNetworkLargeIconUrl))
+                            </a>
+                        </li>
+                    }
+                    <li><a href="@Url.Action("Index", "RssFeed", new {listType = PostsListType.Newest, area = ""})" target="_blank"><i class="fa fa-rss"></i> @T("RSSFeed")</a></li>
+                </ul>
+            </div>
+        </div>
+        <p class="copyright">@Html.Raw(T("Copyright", DateTime.Now.Year + " " + settings.GetLocalized(x => x.SiteName)))</p>
+    </div>
+</footer>

@@ -1,0 +1,111 @@
+﻿@using Devesprit.Core
+@using Devesprit.Data.Domain
+@using Devesprit.Services.Localization
+@using Devesprit.Services.NavBar
+@using Devesprit.Core.Settings
+@using Devesprit.Data.Enums
+@using Devesprit.Services
+@using Devesprit.Services.Languages
+@using Devesprit.Utilities.Extensions
+@{
+    Layout = null;
+    var currentLang = DependencyResolver.Current.GetService<IWorkContext>().CurrentLanguage;
+    var settings = DependencyResolver.Current.GetService<ISettingService>().LoadSetting<SiteSettings>();
+    var langsList = DependencyResolver.Current.GetService<ILanguagesService>().GetAllLanguagesIsoList();
+    List<TblNavBarItems> navbarItems;
+    if (Request.RequestContext.RouteData.Values["controller"].ToString().ToLower().Trim().Contains("blog"))
+    {
+        navbarItems = DependencyResolver.Current.GetService<INavBarService>().GetAsEnumerable().Where(p=> p.DisplayArea == DisplayArea.Both ||
+                                                                                                          p.DisplayArea == DisplayArea.BlogSection).ToList();
+    }
+    else
+    {
+        navbarItems = DependencyResolver.Current.GetService<INavBarService>().GetAsEnumerable().Where(p => p.DisplayArea == DisplayArea.Both ||
+                                                                                                           p.DisplayArea == DisplayArea.ProductsSection).ToList();
+    }
+}
+
+@functions
+{
+    string GenerateMenu(List<TblNavBarItems> navbarItems, int? currentParentId, string currentLangIso, List<string> allLangsIso)
+    {
+        var result = "";
+        foreach (var navbarItem in navbarItems.Where(p => p.ParentItemId == currentParentId).OrderBy(p => p.Index))
+        {
+            var itemIcon = navbarItem.GetLocalized(p => p.Icon);
+            var itemOnClickJs = navbarItem.GetLocalized(p => p.OnClickJs);
+            var iconTag = string.IsNullOrWhiteSpace(itemIcon) ? "" : $"<i class=\'{itemIcon}\'></i> ";
+            var onClickScript = string.IsNullOrWhiteSpace(itemOnClickJs) ? "" : $" onclick=\"{itemOnClickJs}\" ";
+            var url = navbarItem.GetLocalized(p => p.Url);
+            var uri = new Uri(url.GetAbsoluteUrl(Request.Url));
+
+            if (uri.GetHostUrl().Trim().ToLower().TrimEnd('/') == Request.Url.GetHostUrl().Trim().ToLower().TrimEnd('/'))
+            {
+                url = uri.SetLangIso(currentLangIso, allLangsIso).ToString();
+            }
+
+            if (navbarItems.Any(p => p.ParentItemId == navbarItem.Id))
+            {
+                result += $@"<li class='nav-item'>
+                                <a class='nav-link'
+                                   href='{url}'
+                                   target='{navbarItem.Target}'
+                                   title='{navbarItem.GetLocalized(p => p.Tooltip)}'
+                                   {onClickScript}>
+                                    {iconTag}
+                                    {navbarItem.GetLocalized(p => p.InnerHtml)}
+                                    <i class='fas fa-chevron-down'></i>
+                                </a>
+                                <ul class='sub-menu'>
+                                    {GenerateMenu(navbarItems, navbarItem.Id, currentLangIso, allLangsIso)}
+                                </ul>
+                            </li>";
+            }
+            else
+            {
+                result += $@"<li class='nav-item'>
+                                <a class='nav-link'
+                                   href='{url}'
+                                   target='{navbarItem.Target}'
+                                   title='{navbarItem.GetLocalized(p => p.Tooltip)}'
+                                   {onClickScript}>
+                                    {iconTag}
+                                    {navbarItem.GetLocalized(p => p.InnerHtml)}
+                                </a>
+                             </li>";
+            }
+        }
+
+        return result;
+    }
+}
+
+<div class="main-menu">
+    <div class="container">
+        <nav class="navbar navbar-expand-lg navbar-light main-menu-nav">
+            <a class="navbar-brand" href="@Url.Action("Index", "Home")">
+                @if (!settings.GetLocalized(p => p.SiteLogoNavigationBar).IsNullOrWhiteSpace())
+                {
+                    <img src="@settings.GetLocalized(p => p.SiteLogoNavigationBar)" alt="@settings.GetLocalized(p=> p.SiteName)" />
+                }
+            </a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse navbar-custom-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav list-main-menu">
+                    @Html.Raw(GenerateMenu(navbarItems, null, currentLang.IsoCode, langsList))
+                </ul>
+            </div>
+            <div class="shopping-bag">
+                <span class="icon-shopping-bag"></span>
+                <span class="count-shopping-bag" id="lblNumberOfItemsInShoppingCart">@ViewData["InvoiceItemsCount"]</span>
+                <div class="details-shopping-bag">
+                    @T("MyShoppingCart")
+                    <span class="shopping-bag-cost">$0.00</span>
+                </div>
+            </div>
+        </nav>
+    </div>
+</div>
