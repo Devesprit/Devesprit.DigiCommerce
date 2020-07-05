@@ -7,7 +7,7 @@ namespace Devesprit.Utilities.Extensions
     public static partial class UnitConverter
     {
         public static string TimeAgo(this DateTime dateTime)
-        {
+        { 
             var localization = DependencyResolver.Current.GetService<ILocalizationService>();
             var span = DateTime.Now.Subtract(dateTime);
             if (span.Days > 365)

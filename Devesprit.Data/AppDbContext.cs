@@ -1,4 +1,6 @@
-﻿using System.Data.Entity;
+﻿using System;
+using System.Data.Entity;
+using System.Data.Entity.Infrastructure;
 using System.Data.Entity.Validation;
 using System.Threading.Tasks;
 using Devesprit.Data.Domain;
@@ -11,6 +13,36 @@ namespace Devesprit.Data
         public AppDbContext() : base("name=SITE.CONNSTR")
         {
             Database.SetInitializer(new MigrateDatabaseToLatestVersion<AppDbContext, Migrations.Configuration>());
+            ((IObjectContextAdapter)this).ObjectContext.ObjectMaterialized += (sender, e) => SetDateTimesToUtc(e.Entity);
+        }
+
+        private static void SetDateTimesToUtc(object entity)
+        {
+            if (entity == null)
+            {
+                return;
+            }
+
+            var properties = entity.GetType().GetProperties();
+            foreach (var property in properties)
+            {
+                if (property.PropertyType == typeof(DateTime))
+                {
+                    var datetime = (DateTime) property.GetValue(entity);
+                    datetime = DateTime.SpecifyKind(datetime, DateTimeKind.Utc);
+                    property.SetValue(entity, datetime);
+                }
+                else if (property.PropertyType == typeof(DateTime?))
+                {
+                    var value = (DateTime?)property.GetValue(entity);
+                    if (value.HasValue)
+                    {
+                        var datetime = value.Value;
+                        datetime = DateTime.SpecifyKind(datetime, DateTimeKind.Utc);
+                        property.SetValue(entity, datetime);
+                    }
+                }
+            }
         }
 
         public override int SaveChanges()

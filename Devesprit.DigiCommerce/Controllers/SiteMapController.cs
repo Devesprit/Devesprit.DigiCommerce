@@ -176,6 +176,8 @@ namespace Devesprit.DigiCommerce.Controllers
 
         // GET: SiteMap
         [MethodCache(Tags = new[] { nameof(TblBlogPosts), nameof(TblProducts) })]
+        [Route("SiteMap", Order = 0)]
+        [Route("SiteMap.xml", Order = 1)]
         public virtual async Task<ActionResult> Index()
         {
             var settings = _settingService.LoadSetting<SiteSettings>();
@@ -185,106 +187,105 @@ namespace Devesprit.DigiCommerce.Controllers
                 .OrderByDescending(p => p.DisplayOrder).ToList();
 
             var defaultLanguage = await _languagesService.GetDefaultLanguageAsync();
-            
-            items.Add(new SitemapItem(
-                GenerateUrl("Index", "Home", new { lang = defaultLanguage.IsoCode }),
-                DateTime.Now,
-                SitemapChangeFrequency.Daily,
-                1,
-                GenerateAlternateUrls(languagesList, "Index", "Home", null)
-            ));
-
-            items.AddRange((await _pagesService.GetAsEnumerableAsync()).Where(p => p.Published).Select(page =>
-                new SitemapItem(
-                    GenerateUrl("Index", "Page", new { slug = page.Slug, lang = defaultLanguage.IsoCode }),
-                    DateTime.Now,
-                    SitemapChangeFrequency.Daily,
-                    0.7,
-                    GenerateAlternateUrls(languagesList, "Index", "Page", new { slug = page.Slug })
-                )));
-
-
-            items.AddRange((await _tagsService.GetAsEnumerableAsync()).Select(tag =>
-                new SitemapItem(
-                    GenerateUrl("Tag", "Search",
-                        new { tag = tag.Tag, lang = defaultLanguage.IsoCode }),
-                    DateTime.Now,
-                    SitemapChangeFrequency.Daily,
-                    0.8,
-                    GenerateAlternateUrlsForTags(languagesList, tag)
-                )));
-
-
-            items.AddRange((await _categoriesService.GetAsEnumerableAsync())
-                .Where(p => p.DisplayArea == DisplayArea.Both ||
-                            p.DisplayArea == DisplayArea.ProductsSection)
-                .Select(category =>
-                new SitemapItem(
-                    GenerateUrl("FilterByCategory", "Product", new { slug = category.Slug, lang = defaultLanguage.IsoCode }),
-                    DateTime.Now,
-                    SitemapChangeFrequency.Daily,
-                    0.9,
-                    GenerateAlternateUrls(languagesList, "FilterByCategory", "Product", new { slug = category.Slug })
-                )));
-
-            if (settings.EnableBlog)
+            foreach (var lang in languagesList)
             {
-                items.AddRange((await _categoriesService.GetAsEnumerableAsync())
-                    .Where(p => p.DisplayArea == DisplayArea.Both || p.DisplayArea == DisplayArea.BlogSection)
-                    .Select(category =>
+                items.Add(new SitemapItem(
+                    GenerateUrl("Index", "Home", new { lang = lang.IsoCode }),
+                    DateTime.Now,
+                    SitemapChangeFrequency.Daily,
+                    1,
+                    GenerateAlternateUrls(languagesList, "Index", "Home", null)
+                ));
+
+                items.AddRange((await _pagesService.GetAsEnumerableAsync()).Where(p => p.Published).Select(page =>
                     new SitemapItem(
-                        GenerateUrl("FilterByCategory", "Blog",
-                            new { slug = category.Slug, lang = defaultLanguage.IsoCode }),
+                        GenerateUrl("Index", "Page", new { slug = page.Slug, lang = lang.IsoCode }),
+                        DateTime.Now,
+                        SitemapChangeFrequency.Daily,
+                        0.7,
+                        GenerateAlternateUrls(languagesList, "Index", "Page", new { slug = page.Slug })
+                    )));
+
+                items.AddRange((await _tagsService.GetAsEnumerableAsync()).Select(tag =>
+                    new SitemapItem(
+                        GenerateUrl("Tag", "Search",
+                            new { tag = tag.GetLocalized(p=> p.Tag, lang.Id), lang = lang.IsoCode }),
                         DateTime.Now,
                         SitemapChangeFrequency.Daily,
                         0.8,
-                        GenerateAlternateUrls(languagesList, "FilterByCategory", "Blog", new { slug = category.Slug })
+                        GenerateAlternateUrlsForTags(languagesList, tag)
                     )));
-            }
 
+                items.AddRange((await _categoriesService.GetAsEnumerableAsync())
+                    .Where(p => p.DisplayArea == DisplayArea.Both ||
+                                p.DisplayArea == DisplayArea.ProductsSection)
+                    .Select(category =>
+                        new SitemapItem(
+                            GenerateUrl("FilterByCategory", "Product", new { slug = category.Slug, lang = lang.IsoCode }),
+                            DateTime.Now,
+                            SitemapChangeFrequency.Daily,
+                            0.9,
+                            GenerateAlternateUrls(languagesList, "FilterByCategory", "Product", new { slug = category.Slug })
+                        )));
 
-            foreach (var post in _postService.GetNewItemsForSiteMap())
-            {
-                if (post.PostType == PostType.BlogPost && settings.EnableBlog)
+                if (settings.EnableBlog)
                 {
-                    items.Add(new SitemapItem(
-                        GenerateUrl("Post", "Blog", new { id = post.Id, slug = post.Slug, lang = defaultLanguage.IsoCode }),
-                        post.LastUpDate ?? post.PublishDate,
-                        SitemapChangeFrequency.Weekly,
-                        0.9,
-                        GenerateAlternateUrls(languagesList, "Post", "Blog", new { id = post.Id, slug = post.Slug })
-                    ));
+                    items.AddRange((await _categoriesService.GetAsEnumerableAsync())
+                        .Where(p => p.DisplayArea == DisplayArea.Both || p.DisplayArea == DisplayArea.BlogSection)
+                        .Select(category =>
+                            new SitemapItem(
+                                GenerateUrl("FilterByCategory", "Blog",
+                                    new { slug = category.Slug, lang = lang.IsoCode }),
+                                DateTime.Now,
+                                SitemapChangeFrequency.Daily,
+                                0.8,
+                                GenerateAlternateUrls(languagesList, "FilterByCategory", "Blog", new { slug = category.Slug })
+                            )));
                 }
-                else if (post.PostType == PostType.Product)
+
+                foreach (var post in _postService.GetNewItemsForSiteMap())
                 {
-                    items.Add(new SitemapItem(
-                        GenerateUrl("Index", "Product", new { id = post.Id, slug = post.Slug, lang = defaultLanguage.IsoCode }),
-                        post.LastUpDate ?? post.PublishDate,
-                        SitemapChangeFrequency.Weekly,
-                        1,
-                        GenerateAlternateUrls(languagesList, "Index", "Product", new { id = post.Id, slug = post.Slug })
-                    ));
-                }
-                else
-                {
-                    items.Add(new SitemapItem(
-                        GenerateUrl("Index", "Search", new
-                        {
-                            lang = defaultLanguage.IsoCode,
-                            OrderBy = SearchResultSortType.Score,
-                            SearchPlace = SearchPlace.Title,
-                            Query = post.Title
-                        }),
-                        post.LastUpDate ?? post.PublishDate,
-                        SitemapChangeFrequency.Weekly,
-                        0.9,
-                        GenerateAlternateUrls(languagesList, "Index", "Search", new
-                        {
-                            OrderBy = SearchResultSortType.Score,
-                            SearchPlace = SearchPlace.Title,
-                            Query = post.Title
-                        })
-                    ));
+                    if (post.PostType == PostType.BlogPost && settings.EnableBlog)
+                    {
+                        items.Add(new SitemapItem(
+                            GenerateUrl("Post", "Blog", new { id = post.Id, slug = post.Slug, lang = lang.IsoCode }),
+                            post.LastUpDate ?? post.PublishDate,
+                            SitemapChangeFrequency.Weekly,
+                            0.9,
+                            GenerateAlternateUrls(languagesList, "Post", "Blog", new { id = post.Id, slug = post.Slug })
+                        ));
+                    }
+                    else if (post.PostType == PostType.Product)
+                    {
+                        items.Add(new SitemapItem(
+                            GenerateUrl("Index", "Product", new { id = post.Id, slug = post.Slug, lang = lang.IsoCode }),
+                            post.LastUpDate ?? post.PublishDate,
+                            SitemapChangeFrequency.Weekly,
+                            1,
+                            GenerateAlternateUrls(languagesList, "Index", "Product", new { id = post.Id, slug = post.Slug })
+                        ));
+                    }
+                    else
+                    {
+                        items.Add(new SitemapItem(
+                            GenerateUrl("Index", "Search", new
+                            {
+                                lang = lang.IsoCode,
+                                OrderBy = SearchResultSortType.Score,
+                                SearchPlace = SearchPlace.Title,
+                                Query = post.Title
+                            }),
+                            post.LastUpDate ?? post.PublishDate,
+                            SitemapChangeFrequency.Weekly,
+                            0.9,
+                            GenerateAlternateUrls(languagesList, "Index", "Search", new
+                            {
+                                OrderBy = SearchResultSortType.Score,
+                                SearchPlace = SearchPlace.Title,
+                                Query = post.Title
+                            })
+                        ));
+                    }
                 }
             }
 

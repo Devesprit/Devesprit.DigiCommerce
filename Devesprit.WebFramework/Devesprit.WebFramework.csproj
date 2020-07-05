@@ -207,6 +207,7 @@
     <Compile Include="Localization\Localizer.cs" />
     <Compile Include="Localization\LocalizedMVCString.cs" />
     <Compile Include="MemoryPostedFile.cs" />
+    <Compile Include="ModelBinder\DateTimeModelBinder.cs" />
     <Compile Include="ModelBinder\LocalizedStringModelBinder.cs" />
     <Compile Include="ResourceBundler\IResourceBundler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -247,7 +248,7 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties BuildVersion_BuildVersioningStyle="YearStamp.MonthStamp.DayStamp.Increment" BuildVersion_UpdateAssemblyVersion="True" BuildVersion_UpdateFileVersion="True" BuildVersion_StartDate="2018/10/14" BuildVersion_AssemblyInfoFilename="Properties\AssemblyInfo.cs" BuildVersion_UseGlobalSettings="True" />
+      <UserProperties BuildVersion_UseGlobalSettings="True" BuildVersion_AssemblyInfoFilename="Properties\AssemblyInfo.cs" BuildVersion_StartDate="2018/10/14" BuildVersion_UpdateFileVersion="True" BuildVersion_UpdateAssemblyVersion="True" BuildVersion_BuildVersioningStyle="YearStamp.MonthStamp.DayStamp.Increment" />
     </VisualStudio>
   </ProjectExtensions>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

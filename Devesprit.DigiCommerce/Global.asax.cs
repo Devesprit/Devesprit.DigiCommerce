@@ -57,6 +57,8 @@ namespace Devesprit.DigiCommerce
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleTable.EnableOptimizations = true;
             ModelBinders.Binders.Add(typeof(LocalizedString), new LocalizedStringModelBinder());
+            ModelBinders.Binders.Add(typeof(DateTime), new DateTimeModelBinder());
+            ModelBinders.Binders.Add(typeof(DateTime?), new DateTimeModelBinder());
             ViewEngines.Engines.Clear();
             ViewEngines.Engines.Add(new RazorThemeViewEngine());
 

@@ -70,7 +70,7 @@
     </div>
 
     <div class="col-12 col-lg-8 col-xl-9 order-1 order-lg-4">
-        <div class="panel b-mar-20">
+        <article class="panel b-mar-20">
             <div class="panel-title">
                 @if (settings.Wishlist || settings.LikePosts)
                 {
@@ -87,7 +87,7 @@
             @{Html.RenderPartial("Partials/_ProductDescriptionsSection", Model.Descriptions);}
 
             <div id="shareIconsCountInside" class="fs-16 mar-v-20 text-center"></div>
-        </div>
+        </article>
 
         @if (settings.AllowUsersToWriteComment && Model.AllowCustomerReviews)
         {

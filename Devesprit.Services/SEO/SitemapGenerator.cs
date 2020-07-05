@@ -41,7 +41,7 @@ namespace Devesprit.Services.SEO
             // all other elements are optional
 
             if (item.LastModified.HasValue)
-                itemElement.Add(new XElement(Xmlns + "lastmod", item.LastModified.Value.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)));
+                itemElement.Add(new XElement(Xmlns + "lastmod", item.LastModified.Value.ConvertTimeToUtc().ToString("yyyy-MM-ddTHH:mm:ssZ", CultureInfo.InvariantCulture)));
 
             if (item.ChangeFrequency.HasValue)
                 itemElement.Add(new XElement(Xmlns + "changefreq", item.ChangeFrequency.Value.ToString().ToLower()));

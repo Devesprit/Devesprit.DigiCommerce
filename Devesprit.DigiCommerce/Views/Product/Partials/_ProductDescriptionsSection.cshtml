@@ -30,9 +30,9 @@
         @{counter = 0;}
         @foreach (var desc in Model)
         {
-            <article class="tab-pane pad-30 fade @Html.Raw(desc.IsRtl ? "rtl-dir text-right" : "ltr-dir text-left") @Html.Raw(counter == 0 ? "show active" : "")" id="nav-@counter" role="tabpanel" aria-labelledby="nav-@counter-tab">
+            <div class="tab-pane pad-30 fade @Html.Raw(desc.IsRtl ? "rtl-dir text-right" : "ltr-dir text-left") @Html.Raw(counter == 0 ? "show active" : "")" id="nav-@counter" role="tabpanel" aria-labelledby="nav-@counter-tab">
                 @Html.Raw(desc.Description)
-            </article>
+            </div>
             counter++;
         }
     </div>
