@@ -5,57 +5,19 @@
 @model Devesprit.DigiCommerce.Models.Products.ProductCardViewModel
 @{
     Layout = null;
-    var counter = 0;
-    var settings = DependencyResolver.Current.GetService<ISettingService>().LoadSetting<SiteSettings>();
 }
-<div class="card border-0 h-100">
-    @if (Model.IsFeatured)
-    {
-        <p class="post-card-ribbon bg-danger" title="@T("Featured")"><i class="fa fa-star"></i></p>
-    }
-    <a href="@Model.PostUrl">
-        <img class="card-img-top lazy" src="~/Content/img/Loading.gif" data-src="@Model.MainImageUrl" alt="@Model.Title" title="@Model.DescriptionTruncated.ConvertHtmlToText().TruncateText(140)">
+<div class="pro-content" title="@Html.Raw(Model.Title)">
+    <a href="@Model.PostUrl" class="box-pro-logo">
+        <img alt="@Model.Title" src="@(string.IsNullOrWhiteSpace(Model.IconImageUrl) ? Model.MainImageUrl : Model.IconImageUrl)">
     </a>
-    <div class="card-body">
-        <h6 class="card-title text-center @Html.Raw(Model.Title.IsRtlLanguage() ? "rtl-dir" : "ltr-dir") mb-5">
-            <a href="@Model.PostUrl">
-                @Html.Raw(Model.Title)
+    <span class="pro-content-desc">
+        <h3>
+            <a href="@Model.PostUrl" class="@Html.Raw(Model.Title.IsRtlLanguage() ? "rtl-dir text-right" : "ltr-dir  text-left")">
+                @Html.Raw(Model.Title.Truncate(50, " ..."))
             </a>
-        </h6>
-        <div class="card-attr text-muted fs-10">
-            @{ counter = 0;}
-            @foreach (var cat in Model.Categories)
-            {
-                <a href="@cat.CategoryUrl" target="_blank">@cat.CategoryName</a>
-                if (counter < Model.Categories.Count - 1)
-                {
-                    counter++;
-                    @Html.Raw(", ")
-                }
-                else
-                {
-                    <br />
-                }
-            }
-            <span title="@T("Downloads") : @Model.NumberOfDownloads.ToString("##,###")">
-                <i class="fa fa-download"></i> @Model.NumberOfDownloadsStr
-            </span>
-            <span title="@T("Visits") : @Model.NumberOfViews.ToString("##,###")">
-                <i class="fa fa-eye"></i> @Model.NumberOfViews.FormatNumber()
-            </span>
-            <span title="@T("LastUpdate", Model.LastUpDate.TimeAgo())">
-                <i class="fa fa-clock-o"></i> @Model.LastUpDate.ToString("yyyy/MM/dd")
-            </span>
-            @if (settings.LikePosts)
-            {
-                <span title="@T("Likes") : @Model.NumberOfLikes.ToString("##,###")">
-                    <i class="fa fa-heart"></i> @Model.NumberOfLikes.FormatNumber()
-                </span>
-            }
-
-            <span class="float-end fs-14">
-                @{Html.RenderAction("LikeWishlistButtonsPartialView", "Post", new { model = Model.LikeWishlistButtonsModel });}
-            </span>
-        </div>
-    </div>
+        </h3>
+        <span class="pro-desc-items">
+            <a href="@Model.PostUrl">@T("ReadMore")</a>
+        </span>
+    </span>
 </div>

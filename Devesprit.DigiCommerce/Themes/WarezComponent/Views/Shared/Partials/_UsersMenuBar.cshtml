@@ -13,15 +13,15 @@
          Request.Url.PathAndQuery : Request.QueryString["returnUrl"];
 }
 
-<div class="top-menu">
+<div class="top-menu persiaNumber">
     <div class="container">
         <div class="top-menu-items">
             <ul class="list-top-menu">
-                <li><a href="@Url.Action("Index", "Home", new { area = "" })"><i class="fa fa-home"></i> @T("Home")</a></li>
+                <li><a href="@Url.Action("Index", "Home", new { area = "" })"><i class="fas fa-home"></i> @T("Home")</a></li>
                 @if (settings.EnableBlog)
                 {
                     <li>
-                        <a href="@Url.Action("Index", "Blog", new {area = ""})"><i class="fa fa-globe"></i> @T("Blog")</a>
+                        <a href="@Url.Action("Index", "Blog", new {area = ""})"><i class="fas fa-blog"></i> @T("Blog")</a>
                     </li>
                 }
                 @foreach (var page in pagesService.GetPagesMustShowInUserMenuBar().OrderBy(p => p.GetLocalized(x => x.Title)))
@@ -30,10 +30,10 @@
                         <a href="@Url.Action("Index", "Page", new {slug=page.Slug, area = ""})">@page.GetLocalized(p => p.Title)</a>
                     </li>
                 }
-                <li><a href="@Url.Action("Index", "ContactUs", new {area = ""})"><i class="fa fa-phone"></i> @T("ContactUs")</a></li>
+                <li><a href="@Url.Action("Index", "ContactUs", new {area = ""})"><i class="fas fa-phone"></i> @T("ContactUs")</a></li>
                 <li>
                     <a href="@Url.Action("Index", "RssFeed", new {listType = PostsListType.Newest, area = ""})" target="_blank" title="@T("RSSFeed")">
-                        <i class="fa fa-rss"></i> @T("RSSFeed")
+                        <i class="fas fa-rss"></i> @T("RSSFeed")
                     </a>
                 </li>
             </ul>
@@ -42,7 +42,7 @@
                 {
                     <li>
                         <a href="@Url.Action("Index", "Administration", new { area = "Admin" })">
-                            <i class="fa fa-cog"></i> @T("Administration")
+                            <i class="fas fa-user-cog"></i> @T("Administration")
                             @{ Html.RenderAction("GetAdminUnreadedNotificationsCount", "Notifications", new { area = "Admin" }); }
                         </a>
                     </li>
@@ -50,7 +50,7 @@
                     {
                         <li>
                             <a onclick="@ViewBag.AdminEditCurrentPage" href="#">
-                                <i class="fa fa-pencil-square-o"></i> @T("EditCurrentPage")
+                                <i class="fas fa-edit"></i> @T("EditCurrentPage")
                             </a>
                         </li>
                     }
@@ -59,14 +59,14 @@
                 {
                     <li>
                         <a href="@Url.Action("Index", "Profile", new {area = ""})">
-                            <i class="fa fa-user-circle-o"></i> @T("MyProfile")
+                            <i class="fas fa-user-circle"></i> @T("MyProfile")
                         </a>
                     </li>
                     using (Html.BeginForm("LogOff", "User", new { area = "" }, FormMethod.Post, new { id = "userMenuBarLogoutForm", @class = "d-inline" }))
                     {
                         <li>
                             <a href="javascript:document.getElementById('userMenuBarLogoutForm').submit()">
-                                <i class="fa fa-sign-out"></i> @T("Logout")
+                                <i class="fas fa-sign-out-alt"></i> @T("Logout")
                             </a>
                         </li>
                     }
@@ -75,12 +75,12 @@
                 {
                     <li>
                         <a href="@Url.Action("Login", "User", new {returnUrl = retUrl, area = ""})">
-                            <i class="fa fa-sign-in"></i> @T("Login")
+                            <i class="fas fa-sign-in-alt"></i> @T("Login")
                         </a>
                     </li>
                     <li>
                         <a href="@Url.Action("SignUp", "User", new {area = ""})">
-                            <i class="fa fa-user-plus"></i> @T("Signup")
+                            <i class="fas fa-user-plus"></i> @T("Signup")
                         </a>
                     </li>
                 }

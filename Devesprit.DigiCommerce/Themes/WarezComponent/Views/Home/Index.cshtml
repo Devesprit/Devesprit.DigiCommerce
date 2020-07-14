@@ -1,0 +1,324 @@
+﻿@using System.Web.Mvc.Html
+@using Devesprit.Core
+@using Devesprit.Core.Settings
+@using Devesprit.DigiCommerce.Models
+@using Devesprit.DigiCommerce.Models.Post
+@using Devesprit.DigiCommerce.Models.Products
+@using Devesprit.Services
+@using Devesprit.Services.Localization
+@using Devesprit.Services.Posts
+@using Devesprit.Services.SocialAccounts
+@using Devesprit.Utilities.Extensions
+@using Schema.NET
+@{
+    Layout = "~/Themes/WarezComponent/Views/Shared/_Layout-HomePage.cshtml";
+
+    var settings = DependencyResolver.Current.GetService<ISettingService>().LoadSetting<SiteSettings>();
+    var socialAccounts = DependencyResolver.Current.GetService<ISocialAccountsService>().GetAsEnumerable();
+    var webSiteSchema = new WebSite()
+    {
+        Url = new Uri(settings.SiteUrl),
+        Headline = settings.SiteName.ToString(),
+        PotentialAction = new OneOrMany<IAction>(new SearchAction()
+        {
+            Target = new Uri(Url.Action("Index", "Search", new { Query = "{search_term_string}" }).GetAbsoluteUrl().UrlDecode()),
+            QueryInput = "required name=search_term_string"
+        }),
+        Description = settings.SiteDescription.ToString(),
+        Keywords = settings.MetaKeyWords.ToString(),
+    };
+    var organizationSchema = new Organization()
+    {
+        Url = new Uri(settings.SiteUrl),
+        Description = settings.SiteDescription.ToString(),
+        Name = settings.SiteName.ToString(),
+        Email = settings.SiteEmailAddress,
+        Logo = new Uri(settings.SiteLogoHeader.ToString().GetAbsoluteUrl()),
+        SameAs = new OneOrMany<Uri>(socialAccounts.Select(p => new Uri(p.YourAccountUrl)).ToList()),
+
+    };
+    Html.AddHeadCustomParts("<meta name=\"robots\" content=\"index,follow\">");
+
+    //Add Canonical Url
+    var workContext = DependencyResolver.Current.GetService<IWorkContext>();
+    var pageMainUrl = Url.Action("Index", "Home", new { lang = workContext.CurrentLanguage.IsoCode }, Request.Url.Scheme);
+    Html.AppendCanonicalUrlParts(pageMainUrl);
+
+    var categoriesService = DependencyResolver.Current.GetService<IPostCategoriesService>();
+    var catList = categoriesService.GetAsEnumerable();
+    var delphiCat = catList.FirstOrDefault(p => p.CategoryName == "Delphi");
+    var dotNetCat = catList.FirstOrDefault(p => p.CategoryName == ".Net");
+}
+@Html.Widget("home_page_start")
+
+
+<!-- Latest products slider -->
+<div class="products-slider">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <h2 class="pro-slider-title">@T("NewestProductsWithoutPage")</h2>
+            </div>
+            <div class="col-12">
+                <div class="pro-slider-desc">
+                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit duis nec fringilla nibh pellentesque finibus</p>
+                </div>
+            </div>
+        </div>
+        <div class="slider-irdev-wrap">
+            <div class="swiper-container main-swiper">
+                <div class="swiper-wrapper">
+                    @{
+                        Html.RenderAction("GetProductsList", "Product", new
+                        {
+                            listType = ProductsListType.Newest,
+                            pageSize = 12,
+                            wrapperStart = "<div class='swiper-slide'>",
+                            showPager = false
+                        });
+                    }
+                </div>
+            </div>
+            <div class="swiper-button-next"></div>
+            <div class="swiper-button-prev"></div>
+        </div>
+        <div class="col-12 d-flex justify-content-center">
+            <a href="@Url.Action("ProductsExplorer", "Product", new {listType = ProductsListType.Newest})" class="btn-more-pro-sec">@T("SeeMore")</a>
+        </div>
+    </div>
+</div>
+
+<!-- Advertising -->
+<div class="container">
+    <div class="parallax">
+        <div class="parallax-layer">
+            <div class="row">
+                <div class="col-sm-12 col-md-10 offset-md-1">
+                    <h2 class="parallax-title">irDevelopers</h2>
+                </div>
+                <div class="col-sm-12 col-md-6 offset-md-1 col-lg-4 offset-lg-1">
+                    <div class="parallax-desc">
+                        <p>
+                            Become a member of Unlimited Planet and
+                            download everything for free forever
+                        </p>
+                    </div>
+                </div>
+                <div class="col-sm-12 col-md-10 offset-md-1">
+                    <a href="#" title="" class="btn-parallax">Learn more</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Most Downloaded & Hot List -->
+<div class="products">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 d-flex justify-content-center">
+                <h2 class="box-title">Products</h2>
+            </div>
+            <div class="col-12 d-flex justify-content-center">
+                <p class="pro-desc">
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit duis nec fringilla
+                    nibh pellentesque finibus
+                </p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12 col-md-6">
+                <div class="pro-box-details">
+                    <h3 class="pro-box-title">@T("HotProductsWithoutPage")</h3>
+                    <div class="pro-body">
+                        <div class="row">
+                            @{Html.RenderAction("GetProductsList", "Product", new
+                                {
+                                    listType = ProductsListType.HotList,
+                                    pageSize = 12,
+                                    showPager = false,
+                                    wrapperStart = "<div class='col-sm-12 col-xl-6'>",
+                                    style = ViewStyles.Small
+                                });}
+                            <div class="col-sm-12 b-mar-20 text-center">
+                                <a href="@Url.Action("ProductsExplorer", "Product", new {listType = ProductsListType.HotList})" class="btn-more-pro-sec">@T("SeeMore")</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-12 col-md-6">
+                <div class="pro-box-details">
+                    <h3 class="pro-box-title">@T("MostDownloadedProductsWithoutPage")</h3>
+                    <div class="pro-body">
+                        <div class="row">
+                            @{Html.RenderAction("GetProductsList", "Product", new
+                                {
+                                    listType = ProductsListType.MostDownloaded,
+                                    pageSize = 12,
+                                    showPager = false,
+                                    wrapperStart = "<div class='col-sm-12 col-xl-6'>",
+                                    style = ViewStyles.Small
+                                });}
+                            <div class="col-sm-12 b-mar-20 text-center">
+                                <a href="@Url.Action("ProductsExplorer", "Product", new {listType = ProductsListType.MostDownloaded})" class="btn-more-pro-sec">@T("SeeMore")</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- .Net products slider -->
+<div class="products-slider">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <h2 class="pro-slider-title">@dotNetCat.GetLocalized(p=> p.CategoryName)</h2>
+            </div>
+            <div class="col-12">
+                <div class="pro-slider-desc">
+                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit duis nec fringilla nibh pellentesque finibus</p>
+                </div>
+            </div>
+        </div>
+        <div class="slider-irdev-wrap">
+            <div class="swiper-container main-swiper">
+                <div class="swiper-wrapper">
+                    @{
+                        Html.RenderAction("GetProductsList", "Product", new
+                        {
+                            listType = ProductsListType.Newest,
+                            pageSize = 12,
+                            catId = dotNetCat.Id,
+                            showPager = false
+                        });
+                    }
+                </div>
+            </div>
+            <div class="swiper-button-next"></div>
+            <div class="swiper-button-prev"></div>
+        </div>
+        <div class="col-12 d-flex justify-content-center">
+            <a href="@Url.Action("FilterByCategory", "Product", new {slug = dotNetCat.Slug})" class="btn-more-pro-sec">@T("SeeMore")</a>
+        </div>
+    </div>
+</div>
+
+<!-- Free products slider -->
+<div class="parallax-pro-slider">
+    <div class="parallax-pro-content-box">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <h2 class="pro-slider-title pro-parallax-title">@T("FreeProducts")</h2>
+                </div>
+                <div class="col-12">
+                    <div class="pro-slider-desc pro-parallax-desc">
+                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit duis nec fringilla nibh pellentesque finibus</p>
+                    </div>
+                </div>
+            </div>
+            <div class="slider-irdev-wrap">
+                <div class="swiper-container main-swiper">
+                    <div class="swiper-wrapper">
+                        @{
+                            Html.RenderAction("GetProductsList", "Product", new
+                            {
+                                listType = ProductsListType.FreeProducts,
+                                pageSize = 12,
+                                showPager = false
+                            });
+                        }
+                    </div>
+                </div>
+                <div class="swiper-button-next"></div>
+                <div class="swiper-button-prev"></div>
+            </div>
+            <div class="col-12 d-flex justify-content-center">
+                <a href="@Url.Action("ProductsExplorer", "Product", new {listType = ProductsListType.FreeProducts})" class="btn-parallax">@T("SeeMore")</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delphi products slider -->
+<div class="products-slider">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <h2 class="pro-slider-title">@delphiCat.GetLocalized(p => p.CategoryName)</h2>
+            </div>
+            <div class="col-12">
+                <div class="pro-slider-desc">
+                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit duis nec fringilla nibh pellentesque finibus</p>
+                </div>
+            </div>
+        </div>
+        <div class="slider-irdev-wrap">
+            <div class="swiper-container main-swiper">
+                <div class="swiper-wrapper">
+                    @{
+                        Html.RenderAction("GetProductsList", "Product", new
+                        {
+                            listType = ProductsListType.Newest,
+                            pageSize = 12,
+                            catId = delphiCat.Id,
+                            showPager = false
+                        });
+                    }
+                </div>
+            </div>
+            <div class="swiper-button-next"></div>
+            <div class="swiper-button-prev"></div>
+        </div>
+        <div class="col-12 d-flex justify-content-center">
+            <a href="@Url.Action("FilterByCategory", "Product", new {slug = delphiCat.Slug})" class="btn-more-pro-sec">@T("SeeMore")</a>
+        </div>
+    </div>
+</div>
+
+
+@*<div class="row t-pad-20">
+    <div class="col-12 col-md-4 col-lg-4 col-xl-3 b-mar-70">
+        <div class="text-center mb-3">
+            <h2 class="mb-0">@T("HotProductsWithoutPage")</h2>
+            <a class="text-warning fs-12" href="@Url.Action("ProductsExplorer", "Product", new {listType = ProductsListType.HotList})">@T("SeeMore")</a>
+        </div>
+        @{Html.RenderAction("GetProductsList", "Product", new
+            {
+                listType = ProductsListType.HotList,
+                pageSize = 9,
+                showPager = false,
+                numberOfCol = NumberOfCol.One,
+                style = ViewStyles.Small
+            });}
+        <a class="btn btn-sm btn-secondary btn-block mt-2" href="@Url.Action("ProductsExplorer", "Product", new {listType = ProductsListType.HotList})"><i class="fa fa-list"></i> @T("SeeMore")</a>
+    </div>
+    <div class="col b-mar-70">
+        <div class="text-center mb-3">
+            <h2 class="mb-0">@T("MostDownloadedProductsWithoutPage")</h2>
+            <a class="text-warning fs-12" href="@Url.Action("ProductsExplorer", "Product", new {listType = ProductsListType.MostDownloaded})">@T("SeeMore")</a>
+        </div>
+        @{Html.RenderAction("GetProductsList", "Product", new
+            {
+                listType = ProductsListType.MostDownloaded,
+                pageSize = 5,
+                showPager = false,
+                numberOfCol = NumberOfCol.One,
+                style = ViewStyles.Large
+            });}
+        <a class="btn btn-sm btn-secondary btn-block mt-2" href="@Url.Action("ProductsExplorer", "Product", new {listType = ProductsListType.MostDownloaded})"><i class="fa fa-list"></i> @T("SeeMore")</a>
+    </div>
+</div>*@
+<script type="application/ld+json">
+    @Html.Raw(webSiteSchema.ToHtmlEscapedString())
+</script>
+<script type="application/ld+json">
+    @Html.Raw(organizationSchema.ToHtmlEscapedString())
+</script>
+
+@Html.Widget("home_page_end")
+

@@ -112,7 +112,7 @@ namespace Devesprit.DigiCommerce.Controllers
 
         [ChildActionOnly]
         [MethodCache(Tags = new[] { nameof(TblProducts) }, VaryByCustom = "lang" /*"lang,user"*/)]
-        public virtual ActionResult GetProductsList(ProductsListType listType, int? page, int? pageSize, int? catId, DateTime? fromDate, ViewStyles? style, NumberOfCol? numberOfCol, bool? showPager)
+        public virtual ActionResult GetProductsList(ProductsListType listType, int? page, int? pageSize, int? catId, DateTime? fromDate, ViewStyles? style, string wrapperStart, string wrapperEnd, bool? showPager)
         {
             var currentUser = UserManager.FindById(User.Identity.GetUserId());
             IPagedList<TblProducts> products = null;
@@ -136,6 +136,9 @@ namespace Devesprit.DigiCommerce.Controllers
                 case ProductsListType.MostDownloaded:
                     products = _productService.GetMostDownloadedItems(page ?? 1, pageSize ?? 24, catId, fromDate);
                     break;
+                case ProductsListType.FreeProducts:
+                    products = _productService.GetFreeItems(page ?? 1, pageSize ?? 24, catId, fromDate);
+                    break;
             }
             var model = new ProductsListModel()
             {
@@ -147,7 +150,8 @@ namespace Devesprit.DigiCommerce.Controllers
                 FromDate = fromDate,
                 FilterByCategoryId = catId,
                 ShowPager = showPager ?? true,
-                NumberOfCol = numberOfCol ?? NumberOfCol.Four
+                ItemWrapperStart = string.IsNullOrWhiteSpace(wrapperStart) ? "<div class='col-12 col-sm-6 col-lg-4 col-xl-3 py-2'>" : wrapperStart,
+                ItemWrapperEnd = string.IsNullOrWhiteSpace(wrapperEnd) ? "</div>" : wrapperEnd
             };
             
             return View("Partials/_ProductsList", model);

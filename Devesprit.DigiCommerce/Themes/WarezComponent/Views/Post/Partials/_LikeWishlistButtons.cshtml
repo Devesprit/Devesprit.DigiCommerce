@@ -1,0 +1,28 @@
+﻿@using System.Web.Mvc
+@using Devesprit.Core.Settings
+@using Devesprit.Services
+@using Devesprit.WebFramework.Helpers
+@model Devesprit.DigiCommerce.Models.Post.LikeWishlistButtonsModel
+@{
+    var settings = DependencyResolver.Current.GetService<ISettingService>().LoadSetting<SiteSettings>();
+    Layout = null;
+}
+
+@if (settings.Wishlist)
+{
+    <button type="button"
+            class="like-btn btnAddedToWishlist_@Model.PostId @(Model.AlreadyAddedToWishlist ? "like-btn-active" : "")"
+            title="@Html.Raw(Model.AlreadyAddedToWishlist ? T("RemoveFromWishlist") : T("AddToWishlist"))"
+            onclick="OnAddPostToWishlistButtonClick(event, @Model.PostId, @(Model.AlreadyAddedToWishlist ? "true" : "false"))">
+        @Html.Raw(Model.AlreadyAddedToWishlist ? "<i class='fas fa-bookmark'></i>" : "<i class='far fa-bookmark'></i>")
+    </button>
+}
+@if (settings.LikePosts)
+{
+    <button type="button"
+            class="like-btn btnLike_@Model.PostId @(Model.AlreadyLiked ? "like-btn-active" : "")"
+            title="@Html.Raw(Model.AlreadyLiked ? T("Unlike") : T("Like"))"
+            onclick="OnLikeButtonClick(event, @Model.PostId, @(Model.AlreadyLiked ? "true" : "false"))">
+        @Html.Raw(Model.AlreadyLiked ? "<i class='fas fa-heart'></i>" : "<i class='far fa-heart'></i>")
+    </button>
+}

@@ -6,7 +6,7 @@
     var settings = DependencyResolver.Current.GetService<ISettingService>().LoadSetting<SiteSettings>();
 }
 <!-- Head slider -->
-<div class="head-slider" style="background-image: url('/Themes/WarezComponent/Content/LTR/img/slider-app.jpg');">
+<div class="head-slider persiaNumber">
     <div class="head-slider-layer">
         <div class="container">
             <h1 class="head-title">@settings.GetLocalized(p => p.SiteName)</h1>

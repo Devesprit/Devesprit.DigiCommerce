@@ -1364,6 +1364,7 @@
     <Content Include="Scripts\tinymce-5.0.15\js\tinymce\themes\mobile\theme.min.js" />
     <Content Include="Scripts\tinymce-5.0.15\js\tinymce\themes\silver\theme.min.js" />
     <Content Include="Scripts\tinymce-5.0.15\js\tinymce\tinymce.min.js" />
+    <Content Include="Themes\WarezComponent\Content\HelperStyles.css" />
     <Content Include="Themes\WarezComponent\Content\LTR\all.css" />
     <Content Include="Themes\WarezComponent\Content\LTR\fontiran.css" />
     <Content Include="Themes\WarezComponent\Content\LTR\img\bitcoin.png" />
@@ -1568,6 +1569,10 @@
     <Content Include="Areas\Admin\Views\Shared\Partials\_CurrentCurrencyDropDown.cshtml" />
     <Content Include="Areas\Admin\Views\Shared\Partials\_LanguageDropDown.cshtml" />
     <Content Include="Areas\Admin\Views\Shared\Partials\_UsersMenuBar.cshtml" />
+    <Content Include="Themes\WarezComponent\Views\Post\Partials\_LikeWishlistButtons.cshtml" />
+    <Content Include="Themes\WarezComponent\Views\Post\Partials\_PostLargeCardView.cshtml" />
+    <Content Include="Themes\WarezComponent\Views\Post\Partials\_PostNormalCardView.cshtml" />
+    <Content Include="Themes\WarezComponent\Views\Post\Partials\_PostSmallCardView.cshtml" />
     <None Include="Themes\WarezComponent\Scripts\jquery-3.4.1.intellisense.js" />
     <Content Include="Themes\WarezComponent\Scripts\jquery-3.4.1.js" />
     <Content Include="Themes\WarezComponent\Scripts\jquery-3.4.1.min.js" />
@@ -2094,7 +2099,6 @@
     <Compile Include="Models\Download\DownloadModel.cs" />
     <Compile Include="Models\Download\FileGroup.cs" />
     <Compile Include="Models\Post\LikeWishlistButtonsModel.cs" />
-    <Compile Include="Models\Post\NumberOfCol.cs" />
     <Compile Include="Models\Post\PostCardViewModel.cs" />
     <Compile Include="Models\Post\PostCategoriesModel.cs" />
     <Compile Include="Models\Post\PostModel.cs" />
@@ -2273,7 +2277,7 @@
     <Content Include="Views\Shared\Partials\_AccessPermissionError.cshtml" />
     <Content Include="Themes\WarezComponent\Views\_ViewStart.cshtml" />
     <Content Include="Themes\WarezComponent\Views\Shared\_BaseLayout.cshtml" />
-    <Content Include="Themes\WarezComponent\Views\Shared\_Layout.cshtml" />
+    <Content Include="Themes\WarezComponent\Views\Shared\_Layout-HomePage.cshtml" />
     <Content Include="Themes\WarezComponent\Views\web.config" />
     <Content Include="Themes\WarezComponent\theme.config" />
     <Content Include="Themes\WarezComponent\Views\Product\Index.cshtml" />
@@ -2328,6 +2332,9 @@
     <Content Include="Themes\WarezComponent\Views\Shared\AccessPermissionError.cshtml" />
     <Content Include="Themes\WarezComponent\Views\Shared\Error.cshtml" />
     <Content Include="Themes\WarezComponent\Views\Shared\PageNotFound.cshtml" />
+    <Content Include="Themes\WarezComponent\Views\Home\Index.cshtml" />
+    <Content Include="Themes\WarezComponent\Views\Home\TermsAndConditions.cshtml" />
+    <Content Include="Themes\WarezComponent\Views\Shared\_Layout.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

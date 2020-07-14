@@ -13,7 +13,7 @@
             class="like-btn btnAddedToWishlist_@Model.PostId"
             rel="nofollow, noindex"
             title="@Html.Raw(Model.AlreadyAddedToWishlist ? T("RemoveFromWishlist") : T("AddToWishlist"))"
-            onclick="OnAddPostToWishlistButtonClick(@Model.PostId, @Model.AlreadyAddedToWishlist)">
+            onclick="OnAddPostToWishlistButtonClick(event, @Model.PostId, @Model.AlreadyAddedToWishlist)">
         @Html.Raw(Model.AlreadyAddedToWishlist ? "<i class='fa fa-bookmark'></i>" : "<i class='fa fa-bookmark-o'></i>")
     </button>
 }
@@ -23,93 +23,7 @@
             class="like-btn btnLike_@Model.PostId"
             rel="nofollow, noindex"
             title="@Html.Raw(Model.AlreadyLiked ? T("Unlike") : T("Like"))"
-            onclick="OnLikeButtonClick(@Model.PostId, @Model.AlreadyLiked)">
+            onclick="OnLikeButtonClick(event, @Model.PostId, @Model.AlreadyLiked)">
         @Html.Raw(Model.AlreadyLiked ? "<i class='fa fa-heart'></i>" : "<i class='fa fa-heart-o'></i>")
     </button>
-}
-
-@{
-    Html.AddInlineScript(ResourceLocation.Footer,
-        @<script>
-             function OnAddPostToWishlistButtonClick(postId, alreadyAddedToWishlist) {
-                 $.ajax({
-                     type: 'POST',
-                     url: '@Url.Action("AddPostToWishlist", "Post")',
-                     data: {
-                         postId: postId
-                     },
-                     error: function(xhr, status, error) {
-                         ErrorAlert('@T("Error")', '@T("ServerConnectionError")');
-                         if (alreadyAddedToWishlist === true) {
-                             $('.btnAddedToWishlist_'+postId).html('<i class="fa fa-bookmark"></i>');
-                         } else {
-                             $('.btnAddedToWishlist_'+postId).html('<i class="fa fa-bookmark-o"></i>');
-                         }
-                     },
-                     success: function (data) {
-                         if (data.response === 'add') {
-                             $('.btnAddedToWishlist_' + postId).html('<i class="fa fa-bookmark"></i>');
-                             return;
-                         }
-                         else if (data.response === 'remove') {
-                             $('.btnAddedToWishlist_' + postId).html('<i class="fa fa-bookmark-o"></i>');
-                             return;
-                         }
-                         else if (data.response === 'mustLogin') {
-                             ErrorAlert('@T("Error")', '@T("ToPerformOperationPleaseLogin")');
-                         }
-
-                         if (alreadyAddedToWishlist === true) {
-                             $('.btnAddedToWishlist_' + postId).html('<i class="fa fa-bookmark"></i>');
-                         } else {
-                             $('.btnAddedToWishlist_' + postId).html('<i class="fa fa-bookmark-o"></i>');
-                         }
-                     },
-                     beforeSend: function() {
-                         $('.btnAddedToWishlist_'+postId).html('<i class="fa fa-spinner fa-spin"></i>');
-                     }
-                 });
-             }
-
-
-             function OnLikeButtonClick(postId, alreadyLiked) {
-                 $.ajax({
-                     type: 'POST',
-                     url: '@Url.Action("LikePost", "Post")',
-                     data: {
-                         postId: postId
-                     },
-                     error: function(xhr, status, error) {
-                         ErrorAlert('@T("Error")', '@T("ServerConnectionError")');
-                         if (alreadyLiked === true) {
-                             $('.btnLike_'+postId).html('<i class="fa fa-heart"></i>');
-                         } else {
-                             $('.btnLike_'+postId).html('<i class="fa fa-heart-o"></i>');
-                         }
-                     },
-                     success: function (data) {
-                         if (data.response === 'add') {
-                             $('.btnLike_' + postId).html('<i class="fa fa-heart"></i>');
-                             return;
-                         }
-                         else if (data.response === 'remove') {
-                             $('.btnLike_' + postId).html('<i class="fa fa-heart-o"></i>');
-                             return;
-                         }
-                         else if (data.response === 'mustLogin') {
-                             ErrorAlert('@T("Error")', '@T("ToPerformOperationPleaseLogin")');
-                         }
-
-                         if (alreadyLiked === true) {
-                             $('.btnLike_' + postId).html('<i class="fa fa-heart"></i>');
-                         } else {
-                             $('.btnLike_' + postId).html('<i class="fa fa-heart-o"></i>');
-                         }
-                     },
-                     beforeSend: function() {
-                         $('.btnLike_'+postId).html('<i class="fa fa-spinner fa-spin"></i>');
-                     }
-                 });
-             }
-         </script>, true);
 }

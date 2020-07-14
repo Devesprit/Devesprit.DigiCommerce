@@ -52,7 +52,7 @@
             {
                 listType = ProductsListType.Newest,
                 pageSize = 12,
-                numberOfCol = NumberOfCol.Three,
+                wrapperStart = "<div class='col-12 col-sm-6 col-lg-4 py-2'>",
                 showPager = false
             });}
         <a class="btn btn-sm btn-secondary btn-block mt-2" href="@Url.Action("ProductsExplorer", "Product", new {listType = ProductsListType.Newest})"><i class="fa fa-list"></i> @T("SeeMore")</a>
@@ -67,7 +67,7 @@
                 listType = ProductsListType.HotList,
                 pageSize = 9,
                 showPager = false,
-                numberOfCol = NumberOfCol.One,
+                wrapperStart = "<div class='col-12 py-2'>",
                 style = ViewStyles.Small
             });}
         <a class="btn btn-sm btn-secondary btn-block mt-2" href="@Url.Action("ProductsExplorer", "Product", new {listType = ProductsListType.HotList})"><i class="fa fa-list"></i> @T("SeeMore")</a>
@@ -82,7 +82,7 @@
                 listType = ProductsListType.MostDownloaded,
                 pageSize = 5,
                 showPager = false,
-                numberOfCol = NumberOfCol.One,
+                wrapperStart = "<div class='col-12 py-2'>",
                 style = ViewStyles.Large
             });}
         <a class="btn btn-sm btn-secondary btn-block mt-2" href="@Url.Action("ProductsExplorer", "Product", new {listType = ProductsListType.MostDownloaded})"><i class="fa fa-list"></i> @T("SeeMore")</a>
@@ -100,7 +100,7 @@
             listType = PostsListType.Newest,
             pageSize = 4,
             showPager = false,
-            numberOfCol = NumberOfCol.Four,
+            wrapperStart = "<div class='col-12 col-sm-6 col-lg-4 col-xl-3 py-2'>",
             style = ViewStyles.Small
         }); }
     <a class="btn btn-sm btn-secondary btn-block mt-2" href="@Url.Action("Index", "Blog")"><i class="fa fa-list"></i> @T("SeeMore")</a>

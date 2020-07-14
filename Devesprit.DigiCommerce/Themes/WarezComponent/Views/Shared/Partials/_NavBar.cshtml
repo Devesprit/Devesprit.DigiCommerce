@@ -5,17 +5,19 @@
 @using Devesprit.Core.Settings
 @using Devesprit.Data.Enums
 @using Devesprit.Services
+@using Devesprit.Services.Invoice
 @using Devesprit.Services.Languages
 @using Devesprit.Utilities.Extensions
 @{
     Layout = null;
-    var currentLang = DependencyResolver.Current.GetService<IWorkContext>().CurrentLanguage;
+    var workContext = DependencyResolver.Current.GetService<IWorkContext>();
+    var currentLang = workContext.CurrentLanguage;
     var settings = DependencyResolver.Current.GetService<ISettingService>().LoadSetting<SiteSettings>();
     var langsList = DependencyResolver.Current.GetService<ILanguagesService>().GetAllLanguagesIsoList();
     List<TblNavBarItems> navbarItems;
     if (Request.RequestContext.RouteData.Values["controller"].ToString().ToLower().Trim().Contains("blog"))
     {
-        navbarItems = DependencyResolver.Current.GetService<INavBarService>().GetAsEnumerable().Where(p=> p.DisplayArea == DisplayArea.Both ||
+        navbarItems = DependencyResolver.Current.GetService<INavBarService>().GetAsEnumerable().Where(p => p.DisplayArea == DisplayArea.Both ||
                                                                                                           p.DisplayArea == DisplayArea.BlogSection).ToList();
     }
     else
@@ -23,11 +25,16 @@
         navbarItems = DependencyResolver.Current.GetService<INavBarService>().GetAsEnumerable().Where(p => p.DisplayArea == DisplayArea.Both ||
                                                                                                            p.DisplayArea == DisplayArea.ProductsSection).ToList();
     }
+
+    //Send current invoice items count to view
+    var currency = workContext.CurrentCurrency;
+    var invoice = DependencyResolver.Current.GetService<IInvoiceService>().GetUserCurrentInvoice(false);
+    var invoiceItemsCount = invoice?.InvoiceDetails?.Count ?? 0;
 }
 
 @functions
 {
-    string GenerateMenu(List<TblNavBarItems> navbarItems, int? currentParentId, string currentLangIso, List<string> allLangsIso)
+    string GenerateMenu(List<TblNavBarItems> navbarItems, int? currentParentId, string currentLangIso, List<string> allLangsIso, bool isFirstLevel)
     {
         var result = "";
         foreach (var navbarItem in navbarItems.Where(p => p.ParentItemId == currentParentId).OrderBy(p => p.Index))
@@ -44,35 +51,69 @@
                 url = uri.SetLangIso(currentLangIso, allLangsIso).ToString();
             }
 
-            if (navbarItems.Any(p => p.ParentItemId == navbarItem.Id))
+            if (isFirstLevel)
             {
-                result += $@"<li class='nav-item'>
-                                <a class='nav-link'
-                                   href='{url}'
-                                   target='{navbarItem.Target}'
-                                   title='{navbarItem.GetLocalized(p => p.Tooltip)}'
-                                   {onClickScript}>
-                                    {iconTag}
-                                    {navbarItem.GetLocalized(p => p.InnerHtml)}
-                                    <i class='fas fa-chevron-down'></i>
-                                </a>
-                                <ul class='sub-menu'>
-                                    {GenerateMenu(navbarItems, navbarItem.Id, currentLangIso, allLangsIso)}
-                                </ul>
-                            </li>";
+                if (navbarItems.Any(p => p.ParentItemId == navbarItem.Id))
+                {
+                    result += $@"<li class='nav-item'>
+                        <a class='nav-link'
+                           href='{url}'
+                           target='{navbarItem.Target}'
+                           title='{navbarItem.GetLocalized(p => p.Tooltip)}'
+                           {onClickScript}>
+                            {iconTag}
+                            {navbarItem.GetLocalized(p => p.InnerHtml)}
+                        </a>
+                        <span class='arrow-menu-id'></span>
+                        <ul class='sub-menu'>
+                            {GenerateMenu(navbarItems, navbarItem.Id, currentLangIso, allLangsIso, false)}
+                        </ul>
+                    </li>";
+                }
+                else
+                {
+                    result += $@"<li class='nav-item'>
+                        <a class='nav-link'
+                           href='{url}'
+                           target='{navbarItem.Target}'
+                           title='{navbarItem.GetLocalized(p => p.Tooltip)}'
+                           {onClickScript}>
+                            {iconTag}
+                            {navbarItem.GetLocalized(p => p.InnerHtml)}
+                        </a>
+                     </li>";
+                }
             }
             else
             {
-                result += $@"<li class='nav-item'>
-                                <a class='nav-link'
-                                   href='{url}'
-                                   target='{navbarItem.Target}'
-                                   title='{navbarItem.GetLocalized(p => p.Tooltip)}'
-                                   {onClickScript}>
-                                    {iconTag}
-                                    {navbarItem.GetLocalized(p => p.InnerHtml)}
-                                </a>
-                             </li>";
+                if (navbarItems.Any(p => p.ParentItemId == navbarItem.Id))
+                {
+                    result += $@"<li>
+                        <a href='{url}'
+                           target='{navbarItem.Target}'
+                           title='{navbarItem.GetLocalized(p => p.Tooltip)}'
+                           {onClickScript}>
+                            {iconTag}
+                            {navbarItem.GetLocalized(p => p.InnerHtml)}
+                        </a>
+                        <span class='arrow-menu-id'></span>
+                        <ul>
+                            {GenerateMenu(navbarItems, navbarItem.Id, currentLangIso, allLangsIso, false)}
+                        </ul>
+                    </li>";
+                }
+                else
+                {
+                    result += $@"<li>
+                        <a href='{url}'
+                           target='{navbarItem.Target}'
+                           title='{navbarItem.GetLocalized(p => p.Tooltip)}'
+                           {onClickScript}>
+                            {iconTag}
+                            {navbarItem.GetLocalized(p => p.InnerHtml)}
+                        </a>
+                     </li>";
+                }
             }
         }
 
@@ -80,7 +121,7 @@
     }
 }
 
-<div class="main-menu">
+<div class="main-menu persiaNumber">
     <div class="container">
         <nav class="navbar navbar-expand-lg navbar-light main-menu-nav">
             <a class="navbar-brand" href="@Url.Action("Index", "Home")">
@@ -95,15 +136,40 @@
 
             <div class="collapse navbar-collapse navbar-custom-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav list-main-menu">
-                    @Html.Raw(GenerateMenu(navbarItems, null, currentLang.IsoCode, langsList))
+                    @Html.Raw(GenerateMenu(navbarItems, null, currentLang.IsoCode, langsList, true))
                 </ul>
             </div>
             <div class="shopping-bag">
-                <span class="icon-shopping-bag"></span>
-                <span class="count-shopping-bag" id="lblNumberOfItemsInShoppingCart">@ViewData["InvoiceItemsCount"]</span>
-                <div class="details-shopping-bag">
-                    @T("MyShoppingCart")
-                    <span class="shopping-bag-cost">$0.00</span>
+                <div class="shopping-bag-btn">
+                    <span class="icon-shopping-bag"></span>
+                    <span class="count-shopping-bag">@invoiceItemsCount</span>
+                    <div class="details-shopping-bag">
+                        @T("MyShoppingCart")
+                        <span class="shopping-bag-cost">@string.Format(currency.DisplayFormat, invoice?.ComputeInvoiceTotalAmount() ?? 0)</span>
+                    </div>
+                </div>
+                <div class="list-card-info">
+                    @if (invoice != null && invoice.InvoiceDetails != null && invoice.InvoiceDetails.Count > 0)
+                    {
+                        <ul class="list-card-items">
+
+                            @foreach (var item in invoice.InvoiceDetails)
+                            {
+                                <li class="mb-3">
+                                    <a href="@item.ItemHomePage" target="_blank">
+                                        <i class="fas fa-check-circle fs-12 text-warning"></i>
+                                        <span class="list-card-item-name">@Html.Raw(item.ItemName)</span>
+                                    </a>
+                                </li>
+                            }
+
+                        </ul>
+                        <a href="@Url.Action("Index", "Invoice")" class="btn-card-info-detail">@T("Checkout")</a>
+                    }
+                    else
+                    {
+                        <a href="@Url.Action("Index", "Invoice")" class="btn-card-info-detail">@T("GotoShoppingCart")</a>
+                    }
                 </div>
             </div>
         </nav>

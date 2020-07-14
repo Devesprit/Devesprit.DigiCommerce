@@ -34,6 +34,9 @@ namespace Devesprit.Services.Products
         [MethodCache(Tags = new[] { nameof(TblProducts) }, VaryByCustom = "lang")]
         IPagedList<TblProducts> GetMostDownloadedItems(int pageIndex = 1, int pageSize = int.MaxValue, int? filterByCategory = null, DateTime? fromDate = null);
 
+        [MethodCache(Tags = new[] { nameof(TblProducts) }, VaryByCustom = "lang")]
+        IPagedList<TblProducts> GetFreeItems(int pageIndex = 1, int pageSize = int.MaxValue, int? filterByCategory = null, DateTime? fromDate = null);
+
         [MethodCache(Tags = new[] { nameof(TblProducts) }, VaryByCustom = "lang", DoNotCacheForAdminUser = true)]
         Task<TblProducts> FindByIdAsync(int id);
 

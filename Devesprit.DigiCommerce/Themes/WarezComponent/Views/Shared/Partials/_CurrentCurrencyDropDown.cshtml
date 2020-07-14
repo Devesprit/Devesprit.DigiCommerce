@@ -11,42 +11,25 @@
     var allCurrencies = currencyService.GetAsEnumerable().ToList();
 
     var curCurrency = workContext.CurrentCurrency;
-
-    var jsCurrencyArray = "'" + string.Join("','", allCurrencies.Select(p => p.IsoCode)) + "'";
 }
 
 @if (allCurrencies.Count > 1)
 {
-    <div class="select_mate select-arz" data-mate-select="active">
-        <select name="" onclick="return false;" id="">
-            @foreach (var item in allCurrencies)
-            {
-                <option value="@item.IsoCode" @Html.Raw(curCurrency.IsoCode == item.IsoCode ? "selected" : "")>
-                    @Html.Raw(item.GetLocalized(x => x.ShortName))
-                </option>
-            }
-        </select>
-        <p class="selecionado_opcion" onclick="open_select(this)"></p>
-        <span onclick="open_select(this)" class="icon_select_mate">
-            <svg fill="#000000" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
-                <path d="M7.41 7.84L12 12.42l4.59-4.58L18 9.25l-6 6-6-6z" />
-                <path d="M0-.75h24v24H0z" fill="none" />
-            </svg>
-        </span>
-        <div class="cont_list_select_mate">
-            <ul class="cont_select_int" onclick="ChangeCurrency($(this).children('li.active').attr('data-index'));"></ul>
-        </div>
-    </div>
+    <select class="custom-select custom-select-pay" placeholder="<i class='fas fa-dollar-sign mar-h-5'></i> @curCurrency.GetLocalized(p=> p.ShortName)">
+        @foreach (var item in allCurrencies)
+        {
+            <option value="@item.IsoCode" onclick="ChangeCurrency('@item.IsoCode', '@Request.RawUrl');">
+                @Html.Raw(item.GetLocalized(x => x.ShortName))
+            </option>
+        }
+    </select>
 
     Html.AddInlineScript(ResourceLocation.Footer,
         @<script>
-             function ChangeCurrency(idx) {
-                 var currencyList = [@Html.Raw(jsCurrencyArray)];
-                 var selectedCurrency = currencyList[idx];
-
+             function ChangeCurrency(selectedCurrency, returnUrl) {
                  $.ajax({
                      type: "POST",
-                     url: "@Request.RawUrl",
+                     url: returnUrl,
                      data: { usc: selectedCurrency },
                      success: function() {
                          location.reload();

@@ -24,7 +24,7 @@ namespace Devesprit.DigiCommerce.Controllers
             _postService = postService;
             _userLikesService = userLikesService;
             _userWishlistService = userWishlistService;
-        }
+        } 
 
         [HttpPost]
         public virtual async Task<ActionResult> LikePost(int postId)
@@ -62,7 +62,7 @@ namespace Devesprit.DigiCommerce.Controllers
         [ChildActionOnly]
         public virtual ActionResult LikeWishlistButtonsPartialView(LikeWishlistButtonsModel model)
         {
-            return View("Partials/_LikeWishlistButtons", model);
+            return View("Partials/_LikeWishlistButtons", model); 
         }
 
         public virtual ActionResult PostCardViewPartialView(PostCardViewModel model, ViewStyles style = ViewStyles.Large)

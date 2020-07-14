@@ -15,6 +15,8 @@ namespace Devesprit.DigiCommerce.Models.Products
         [Description("FeaturedProducts")]
         Featured,
         [Description("BestSellingProducts")]
-        BestSelling
+        BestSelling,
+        [Description("FreeProducts")]
+        FreeProducts
     }
 }

@@ -33,11 +33,470 @@
 
     //Add Canonical Url
     var workContext = DependencyResolver.Current.GetService<IWorkContext>();
-    var pageMainUrl = Url.Action("Index", "Product", new {id = Model.Id, slug = Model.Slug, lang = workContext.CurrentLanguage.IsoCode}, Request.Url.Scheme);
+    var pageMainUrl = Url.Action("Index", "Product", new { id = Model.Id, slug = Model.Slug, lang = workContext.CurrentLanguage.IsoCode }, Request.Url.Scheme);
     Html.AppendCanonicalUrlParts(pageMainUrl);
+
+    var postFirstCategory = Model.Categories.FirstOrDefault();
 }
 
-@Html.Widget("product_page_start")
+<article>
+    <!-- pro head slider -->
+    <header class="pro-head-slider">
+        <div class="pro-head-slider-layer">
+            <div class="container">
+                <div class="row">
+                    <div class="col-12 d-flex justify-content-center">
+                        <h1 class="pro-head-title pro-head-title-single @Html.Raw(Model.TitleIsRtl ? "rtl-dir" : "ltr-dir")">
+                            @Html.Raw(Model.Title.Trim())
+                        </h1>
+                    </div>
+                    <div class="col-12">
+                        <ul class="breadcrumbs">
+                            <li><a href="@Url.Action("Index", "Home")">@T("Home")</a></li>
+                            @if (postFirstCategory != null)
+                            {
+                                <li>/</li>
+                                <li><a href="@postFirstCategory.CategoryUrl">@postFirstCategory.CategoryName</a></li>
+                            }
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    @Html.Widget("product_page_start")
+
+    <!-- product single body -->
+    <div class="container">
+        <div class="row">
+            <!-- single product content -->
+            <div class="col-sm-12 col-lg-8">
+                <div class="single-product-content">
+                    <div class="pro-cover">
+                        @{Html.RenderPartial("Partials/_ProductImagesSection", Model.Images);}
+                        <div class="action-pro">
+                            @if (settings.Wishlist || settings.LikePosts)
+                            {
+                                <span class="fs-25 rate">
+                                    @{Html.RenderAction("LikeWishlistButtonsPartialView", "Post", Model.LikeWishlistButtonsModel);}
+                                </span>
+                            }
+                        </div>
+                    </div>
+                    <section id="tabs" class="project-tab">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <nav>
+                                    <div class="nav nav-tabs nav-fill tab-menu" id="nav-tab" role="tablist">
+                                        <a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-selected="true">Item Details</a>
+                                        <a class="nav-item nav-link" id="nav-profile-tab" data-toggle="tab" href="#nav-profile" role="tab" aria-controls="nav-profile" aria-selected="false">Reviews</a>
+                                        <a class="nav-item nav-link" id="nav-contact-tab" data-toggle="tab" href="#nav-contact" role="tab" aria-controls="nav-contact" aria-selected="false"> FAQ</a>
+                                    </div>
+                                </nav>
+                                <div class="tab-content" id="nav-tabContent">
+                                    <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
+                                        <div class="tab-body-box">
+                                            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Haec quo modo conveniant, non sane intellego. Hanc ergo intuens debet institutum illud quasi signum absolvere. Et ille ridens: Video, inquit, quid agas; Duo Reges: constructio interrete. Ad eos igitur converte te, quaeso. Atque haec ita iustitiae propria sunt, ut sint virtutum reliquarum communia.</p>
+                                            <p>It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using ‘Content here, content here’, making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for ‘lorem ipsum’ will uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes by accident, sometimes on purpose.</p>
+                                            <h2 class="tab-body-tile">Features</h2>
+                                            <ul class="list-features">
+                                                <li>by accident, sometimes o</li>
+                                                <li>by accident</li>
+                                                <li>sometimes o</li>
+                                                <li>Lorem Ipsum </li>
+                                                <li>by accident, sometimes o</li>
+                                            </ul>
+                                            <p>It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using ‘Content here, content here’, making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for ‘lorem ipsum’ will uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes by accident, sometimes on purpose.</p>
+                                            <h2 class="tab-body-tile">Ability</h2>
+                                            <ul class="list-features">
+                                                <li>by accident, sometimes o</li>
+                                                <li>by accident</li>
+                                                <li>sometimes o</li>
+                                                <li>Lorem Ipsum </li>
+                                                <li>by accident, sometimes o</li>
+                                            </ul>
+                                            <p>In this example we have added a "plus" sign to each button. When the user clicks on the button, the "plus" sign is replaced with a "minus" sign.</p>
+                                            <div id="accordion" class="accordion">
+                                                <div class="card mb-0 acc-pro-single-card">
+                                                    <div class="card-faq-irdev">
+                                                        <div class="card-header collapsed acc-title-pro-single" data-toggle="collapse" href="#collapseOne">
+                                                            <a class="card-title">It is a long established fact that a reader will be distracted by the readable content</a>
+                                                        </div>
+                                                        <div id="collapseOne" class="card-body collapse" data-parent="#accordion">
+                                                            <p>Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using ‘Content here, content here’, making it look like readable English. Many deskLorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using ‘Content here, content here’, making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default mtop publishing packages and web page editors now use Lorem Ipsum as their default m</p>
+                                                        </div>
+                                                    </div>
+                                                    <div class="card-faq-irdev">
+                                                        <div class="card-header collapsed acc-title-pro-single" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo">
+                                                            <a class="card-title">It is a long established fact that a reader will be distracted by the readable content</a>
+                                                        </div>
+                                                        <div id="collapseTwo" class="card-body collapse" data-parent="#accordion">
+                                                            <p>Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using ‘Content here, content here’, making it look like readable English. Many deskLorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using ‘Content here, content here’, making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default mtop publishing packages and web page editors now use Lorem Ipsum as their default m</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <p>It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using ‘Content here, content here’, making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for ‘lorem ipsum’ will uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes by accident, sometimes on purpose.</p>
+                                            <p class="not-desc-pro">
+                                                NOT :  will uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes
+                                                by accident, sometimes on purpose.
+                                            </p>
+                                            <footer class="pro-single-desc-footer">
+                                                <a href="#" class="pro-single-dl-btn" title="">Download</a>
+                                                <div class="share-box-pro">
+                                                    <span class="share-title">Share :</span>
+                                                    <ul class="single-pro-share-social">
+                                                        <li><a href="#" title=""><i class="fab fa-facebook-f"></i></a></li>
+                                                        <li><a href="#" title=""><i class="fab fa-twitter"></i></a></li>
+                                                        <li><a href="#" title=""><i class="fab fa-instagram"></i></a></li>
+                                                        <li><a href="#" title=""><i class="fab fa-slack"></i></a></li>
+                                                    </ul>
+                                                </div>
+                                            </footer>
+                                        </div>
+                                    </div>
+                                    <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
+                                        <div class="tab-body-box">
+                                            <article class="pro-cmnt-box">
+                                                <header class="pro-cmnt-header">
+                                                    <div class="pro-head-cmnt-name">
+                                                        Hanieh Sadeghzadeh
+                                                        <span class="ability-user-cmnt">August 17, 2019</span>
+                                                    </div>
+                                                    <ul class="rate-pro-slider rate-cmnt-head">
+                                                        <li class="checked-cmnt-rate"><i class="fas fa-star"></i></li>
+                                                        <li class="checked-cmnt-rate"><i class="fas fa-star"></i></li>
+                                                        <li class="checked-cmnt-rate"><i class="fas fa-star"></i></li>
+                                                        <li><i class="fas fa-star"></i></li>
+                                                        <li><i class="fas fa-star"></i></li>
+                                                    </ul>
+                                                </header>
+                                                <div class="content-cmnt-irdev">
+                                                    <p>Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using ‘Content here, content here’, making it look like readable English. Many deskLorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using ‘Content here, content here’, making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default mtop publishing packages and web page editors now use Lorem Ipsum as their default m</p>
+                                                </div>
+                                            </article>
+                                            <article class="pro-cmnt-box">
+                                                <header class="pro-cmnt-header">
+                                                    <div class="pro-head-cmnt-name">
+                                                        Salva Foroghiazar
+                                                        <span class="ability-user-cmnt">August 17, 2019</span>
+                                                    </div>
+                                                    <ul class="rate-pro-slider rate-cmnt-head">
+                                                        <li class="checked-cmnt-rate"><i class="fas fa-star"></i></li>
+                                                        <li class="checked-cmnt-rate"><i class="fas fa-star"></i></li>
+                                                        <li class="checked-cmnt-rate"><i class="fas fa-star"></i></li>
+                                                        <li><i class="fas fa-star"></i></li>
+                                                        <li><i class="fas fa-star"></i></li>
+                                                    </ul>
+                                                </header>
+                                                <div class="content-cmnt-irdev">
+                                                    <p>Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using ‘Content here, content here’, making it look like readable English. Many deskLorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using ‘Content here, content here’, making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default mtop publishing packages and web page editors now use Lorem Ipsum as their default m</p>
+                                                </div>
+                                            </article>
+                                            <h4 class="add-cmnt">Add comment</h4>
+                                            <form class="add-cmnt-form">
+                                                <div class="row">
+                                                    <div class="col-sm-12 col-lg-6">
+                                                        <input class="add-cmnt-input" type="text" placeholder="Name">
+                                                    </div>
+                                                    <div class="col-sm-12 col-lg-6">
+                                                        <input class="add-cmnt-input" type="email" placeholder="Email">
+                                                    </div>
+                                                    <div class="col-12">
+                                                        <textarea class="add-cmnt-desc add-cmnt-input" placeholder="Comment"></textarea>
+                                                        <button class="add-cmnt-btn" type="submit">Submit</button>
+                                                    </div>
+
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                    <div class="tab-pane fade" id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab">
+                                        <div class="tab-body-box">
+                                            <div id="accordion" class="accordion">
+                                                <div class="card mb-0 acc-pro-single-card">
+                                                    <div class="card-faq-irdev">
+                                                        <div class="card-header collapsed acc-title-pro-single" data-toggle="collapse" href="#collapseOne">
+                                                            <a class="card-title">It is a long established fact that a reader will be distracted by the readable content</a>
+                                                        </div>
+                                                        <div id="collapseOne" class="card-body collapse" data-parent="#accordion">
+                                                            <p>Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using ‘Content here, content here’, making it look like readable English. Many deskLorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using ‘Content here, content here’, making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default mtop publishing packages and web page editors now use Lorem Ipsum as their default m</p>
+                                                        </div>
+                                                    </div>
+                                                    <div class="card-faq-irdev">
+                                                        <div class="card-header collapsed acc-title-pro-single" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo">
+                                                            <a class="card-title">It is a long established fact that a reader will be distracted by the readable content</a>
+                                                        </div>
+                                                        <div id="collapseTwo" class="card-body collapse" data-parent="#accordion">
+                                                            <p>Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using ‘Content here, content here’, making it look like readable English. Many deskLorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using ‘Content here, content here’, making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default mtop publishing packages and web page editors now use Lorem Ipsum as their default m</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+
+            <!-- single product sidebar -->
+            <div class="col-sm-12 col-lg-4">
+                <div class="pro-category-sidebar">
+                    <div class="unlimited-box">
+                        <span class="icon-forever"></span>
+                        <h3 class="unlimited-title">Unlimited</h3>
+                        <p class="unlimited-desc">Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod</p>
+                    </div>
+
+                </div>
+                <div class="item-info-pro-box">
+                    <div class="head-sidebar-single">
+                        <h3 class="title-sideber-single text-center">Item Information</h3>
+                    </div>
+                    <div class="content-sidebar-single d-flex justify-content-center flex-wrap">
+                        <ul class="list-item-info-pro">
+                            <li>Last Update:<span>August 17, 2019</span></li>
+                            <li>Released:<span>May 13, 2019</span></li>
+                            <li>Version:<span>1.0.2</span></li>
+                            <li>File Size:<span>58MB</span></li>
+                            <li>Views:<span>132K</span></li>
+                            <li>Download:<span>142</span></li>
+                            <li>Category:<span>Delphi</span></li>
+                        </ul>
+                        <a href="#" title="" class="cta-pro-dl">Download</a>
+                    </div>
+                </div>
+                <div class="item-info-pro-box">
+                    <div class="head-sidebar-single">
+                        <h3 class="title-sideber-single">Tag :</h3>
+                    </div>
+                    <div class="content-sidebar-single d-flex justify-content-center flex-wrap">
+                        <ul class="list-pro-sidebar-tags">
+                            <li><a href="#" title="">Aspose.Tasks for .Net</a></li>
+                            <li><a href="#" title="">Aspose.Tasks</a></li>
+                            <li><a href="#" title="">Aspose.Tasks</a></li>
+                            <li><a href="#" title="">Aspose.Tasks</a></li>
+                            <li><a href="#" title="">Aspose.Tasks for .Net</a></li>
+                            <li><a href="#" title="">Aspose.Tasks</a></li>
+                            <li><a href="#" title="">Aspose.Tasks for .Net</a></li>
+                            <li><a href="#" title="">Aspose.Tasks</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</article>
+<!-- product slider -->
+<div class="products-slider">
+    <div class="container">
+        <div class="head-related-single-irdev">
+            <div class="row">
+                <div class="col-12">
+                    <h2 class="pro-slider-title">Related items may you also like</h2>
+                </div>
+            </div>
+        </div>
+        <div class="slider-irdev-wrap">
+            <div class="swiper-container main-swiper">
+                <div class="swiper-wrapper">
+                    <div class="swiper-slide">
+                        <article class="pro-slider-content">
+                            <div class="pro-slider-logo">
+                                <img alt="" src="img/zero.jpg">
+                                <a href="#" title="" class="pro-slider-logo-layer">
+                                    <i class="fas fa-plus"></i>
+                                </a>
+                            </div>
+                            <div class="rate-level d-flex justify-content-between align-items-center">
+                                <ul class="rate-pro-slider">
+                                    <li><i class="fas fa-star"></i></li>
+                                    <li><i class="fas fa-star"></i></li>
+                                    <li><i class="fas fa-star"></i></li>
+                                    <li><i class="far fa-star"></i></li>
+                                    <li><i class="far fa-star"></i></li>
+                                </ul>
+                                <span class="level-pro-irdev">Silver</span>
+                            </div>
+                            <h3><a href="#" title="" class="slider-pro-items-name">ASP.NET ZERO Core v8.2.0 </a></h3>
+                        </article>
+                    </div>
+                    <div class="swiper-slide">
+                        <article class="pro-slider-content">
+                            <div class="pro-slider-logo">
+                                <img alt="" src="img/redis.jpg">
+                                <a href="#" title="" class="pro-slider-logo-layer">
+                                    <i class="fas fa-plus"></i>
+                                </a>
+                            </div>
+                            <div class="rate-level d-flex justify-content-between align-items-center">
+                                <ul class="rate-pro-slider">
+                                    <li><i class="fas fa-star"></i></li>
+                                    <li><i class="fas fa-star"></i></li>
+                                    <li><i class="fas fa-star"></i></li>
+                                    <li><i class="far fa-star"></i></li>
+                                    <li><i class="far fa-star"></i></li>
+                                </ul>
+                            </div>
+                            <h3><a href="#" title="" class="slider-pro-items-name">ASP.NET ZERO Core v8.2.0 </a></h3>
+                        </article>
+                    </div>
+                    <div class="swiper-slide">
+                        <article class="pro-slider-content">
+                            <div class="pro-slider-logo">
+                                <img alt="" src="img/saleforce.jpg">
+                                <a href="#" title="" class="pro-slider-logo-layer">
+                                    <i class="fas fa-plus"></i>
+                                </a>
+                            </div>
+                            <div class="rate-level d-flex justify-content-between align-items-center">
+                                <ul class="rate-pro-slider">
+                                    <li><i class="fas fa-star"></i></li>
+                                    <li><i class="fas fa-star"></i></li>
+                                    <li><i class="fas fa-star"></i></li>
+                                    <li><i class="far fa-star"></i></li>
+                                    <li><i class="far fa-star"></i></li>
+                                </ul>
+                            </div>
+                            <h3><a href="#" title="" class="slider-pro-items-name">ASP.NET ZERO Core v8.2.0 </a></h3>
+                        </article>
+                    </div>
+                    <div class="swiper-slide">
+                        <article class="pro-slider-content">
+                            <div class="pro-slider-logo">
+                                <img alt="" src="img/visual.jpg">
+                                <a href="#" title="" class="pro-slider-logo-layer">
+                                    <i class="fas fa-plus"></i>
+                                </a>
+                            </div>
+                            <div class="rate-level d-flex justify-content-between align-items-center">
+                                <ul class="rate-pro-slider">
+                                    <li><i class="fas fa-star"></i></li>
+                                    <li><i class="fas fa-star"></i></li>
+                                    <li><i class="fas fa-star"></i></li>
+                                    <li><i class="far fa-star"></i></li>
+                                    <li><i class="far fa-star"></i></li>
+                                </ul>
+                            </div>
+                            <h3><a href="#" title="" class="slider-pro-items-name">ASP.NET ZERO Core v8.2.0 </a></h3>
+                        </article>
+                    </div>
+                    <div class="swiper-slide">
+                        <article class="pro-slider-content">
+                            <div class="pro-slider-logo">
+                                <img alt="" src="img/paypal.jpg">
+                                <a href="#" title="" class="pro-slider-logo-layer">
+                                    <i class="fas fa-plus"></i>
+                                </a>
+                            </div>
+                            <div class="rate-level d-flex justify-content-between align-items-center">
+                                <ul class="rate-pro-slider">
+                                    <li><i class="fas fa-star"></i></li>
+                                    <li><i class="fas fa-star"></i></li>
+                                    <li><i class="fas fa-star"></i></li>
+                                    <li><i class="far fa-star"></i></li>
+                                    <li><i class="far fa-star"></i></li>
+                                </ul>
+                            </div>
+                            <h3><a href="#" title="" class="slider-pro-items-name">ASP.NET ZERO Core v8.2.0 </a></h3>
+                        </article>
+                    </div>
+                    <div class="swiper-slide">
+                        <article class="pro-slider-content">
+                            <div class="pro-slider-logo">
+                                <img alt="" src="img/xamarin.jpg">
+                                <a href="#" title="" class="pro-slider-logo-layer">
+                                    <i class="fas fa-plus"></i>
+                                </a>
+                            </div>
+                            <div class="rate-level d-flex justify-content-between align-items-center">
+                                <ul class="rate-pro-slider">
+                                    <li><i class="fas fa-star"></i></li>
+                                    <li><i class="fas fa-star"></i></li>
+                                    <li><i class="fas fa-star"></i></li>
+                                    <li><i class="far fa-star"></i></li>
+                                    <li><i class="far fa-star"></i></li>
+                                </ul>
+                            </div>
+                            <h3><a href="#" title="" class="slider-pro-items-name">ASP.NET ZERO Core v8.2.0 </a></h3>
+                        </article>
+                    </div>
+                    <div class="swiper-slide">
+                        <article class="pro-slider-content">
+                            <div class="pro-slider-logo">
+                                <img alt="" src="img/zero.jpg">
+                                <a href="#" title="" class="pro-slider-logo-layer">
+                                    <i class="fas fa-plus"></i>
+                                </a>
+                            </div>
+                            <div class="rate-level d-flex justify-content-between align-items-center">
+                                <ul class="rate-pro-slider">
+                                    <li><i class="fas fa-star"></i></li>
+                                    <li><i class="fas fa-star"></i></li>
+                                    <li><i class="fas fa-star"></i></li>
+                                    <li><i class="far fa-star"></i></li>
+                                    <li><i class="far fa-star"></i></li>
+                                </ul>
+                            </div>
+                            <h3><a href="#" title="" class="slider-pro-items-name">ASP.NET ZERO Core v8.2.0 </a></h3>
+                        </article>
+                    </div>
+                    <div class="swiper-slide">
+                        <article class="pro-slider-content">
+                            <div class="pro-slider-logo">
+                                <img alt="" src="img/zero.jpg">
+                                <a href="#" title="" class="pro-slider-logo-layer">
+                                    <i class="fas fa-plus"></i>
+                                </a>
+                            </div>
+                            <div class="rate-level d-flex justify-content-between align-items-center">
+                                <ul class="rate-pro-slider">
+                                    <li><i class="fas fa-star"></i></li>
+                                    <li><i class="fas fa-star"></i></li>
+                                    <li><i class="fas fa-star"></i></li>
+                                    <li><i class="far fa-star"></i></li>
+                                    <li><i class="far fa-star"></i></li>
+                                </ul>
+                            </div>
+                            <h3><a href="#" title="" class="slider-pro-items-name">ASP.NET ZERO Core v8.2.0 </a></h3>
+                        </article>
+                    </div>
+                    <div class="swiper-slide">
+                        <article class="pro-slider-content">
+                            <div class="pro-slider-logo">
+                                <img alt="" src="img/zero.jpg">
+                                <a href="#" title="" class="pro-slider-logo-layer">
+                                    <i class="fas fa-plus"></i>
+                                </a>
+                            </div>
+                            <div class="rate-level d-flex justify-content-between align-items-center">
+                                <ul class="rate-pro-slider">
+                                    <li><i class="fas fa-star"></i></li>
+                                    <li><i class="fas fa-star"></i></li>
+                                    <li><i class="fas fa-star"></i></li>
+                                    <li><i class="far fa-star"></i></li>
+                                    <li><i class="far fa-star"></i></li>
+                                </ul>
+                            </div>
+                            <h3><a href="#" title="" class="slider-pro-items-name">ASP.NET ZERO Core v8.2.0 </a></h3>
+                        </article>
+                    </div>
+
+
+                </div>
+
+            </div>
+            <div class="swiper-button-next"></div>
+            <div class="swiper-button-prev"></div>
+        </div>
+    </div>
+</div>
 
 <div class="row t-mar-20">
     <div class="col-12 col-lg-4 col-xl-3 order-2 order-lg-1">

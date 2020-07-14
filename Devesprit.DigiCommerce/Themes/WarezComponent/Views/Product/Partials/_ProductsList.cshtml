@@ -9,39 +9,23 @@
 }
 @if (Model.PostsList.Any())
 {
-    <div class="row">
-        @foreach (var post in Model.PostsList)
+    foreach (var post in Model.PostsList)
+    {
+        @Html.Raw(Model.ItemWrapperStart)
+        switch (Model.ViewStyle)
         {
-            switch (Model.NumberOfCol)
-            {
-                case NumberOfCol.One:
-                    @Html.Raw("<div class='col-12 py-2'>")
-                    break;
-                case NumberOfCol.Two:
-                    @Html.Raw("<div class='col-12 col-sm-6 py-2'>")
-                    break;
-                case NumberOfCol.Three:
-                    @Html.Raw("<div class='col-12 col-sm-6 col-lg-4 py-2'>")
-                    break;
-                case NumberOfCol.Four:
-                    @Html.Raw("<div class='col-12 col-sm-6 col-lg-4 col-xl-3 py-2'>")
-                    break;
-            }
-            switch (Model.ViewStyle)
-            {
-                case ViewStyles.Large:
-                       Html.RenderPartial("Partials/_ProductLargeCardView", post);
-                    break;
-                case ViewStyles.Normal:
-                    Html.RenderPartial("Partials/_ProductNormalCardView", post);
-                    break;
-                case ViewStyles.Small:
-                    Html.RenderPartial("Partials/_ProductSmallCardView", post);
-                    break;
-            }
-            @Html.Raw("</div>")
+            case ViewStyles.Large:
+                Html.RenderPartial("Partials/_ProductLargeCardView", post);
+                break;
+            case ViewStyles.Normal:
+                Html.RenderPartial("Partials/_ProductNormalCardView", post);
+                break;
+            case ViewStyles.Small:
+                Html.RenderPartial("Partials/_ProductSmallCardView", post);
+                break;
         }
-    </div>
+        @Html.Raw(Model.ItemWrapperEnd)
+    }
     if (Model.ShowPager)
     {
         <div class="row">

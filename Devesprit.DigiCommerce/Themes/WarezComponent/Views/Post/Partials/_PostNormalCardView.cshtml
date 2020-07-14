@@ -1,0 +1,75 @@
+﻿@using Devesprit.Core.Settings
+@using Devesprit.Services
+@using Devesprit.Utilities
+@using Devesprit.Utilities.Extensions
+@model Devesprit.DigiCommerce.Models.Post.PostCardViewModel
+@{
+    var counter = 0;
+    var settings = DependencyResolver.Current.GetService<ISettingService>().LoadSetting<SiteSettings>();
+    Layout = null;
+}
+
+<div class="card border-0">
+    @if (Model.IsFeatured)
+    {
+        <p class="post-card-ribbon bg-danger" title="@T("Featured")"><i class="fa fa-star"></i></p>
+    }
+    <div class="row no-gutters">
+        @if (!string.IsNullOrWhiteSpace(Model.MainImageUrl))
+        {
+            <div class="col-12 col-md-6 col-lg-4">
+                <a href="@Model.PostUrl">
+                    <img class="card-img-top lazy" src="~/Content/img/Loading.gif" data-src="@Model.MainImageUrl" alt="@Model.Title.ConvertHtmlToText()" title="@Model.DescriptionTruncated.ConvertHtmlToText()">
+                </a>
+            </div>
+        }
+        <div class="col">
+            <div class="p-3">
+                <h5 class="card-title @Html.Raw(Model.Title.IsRtlLanguage() ? "rtl-dir text-right" : "ltr-dir text-left") mb-0">
+                    <a href="@Model.PostUrl">
+                        @Html.Raw(Model.Title)
+                    </a>
+                </h5>
+                <div class="card-attr text-muted fs-12">
+                    <span title="@T("Visits") : @Model.NumberOfViews.ToString("##,###")">
+                        <i class="fa fa-eye"></i> @Model.NumberOfViews.FormatNumber()
+                    </span>
+                    <span title="@T("LastUpdate", Model.LastUpDate.TimeAgo())">
+                        <i class="fa fa-clock-o"></i> @Model.LastUpDate.ToString("yyyy/MM/dd")
+                    </span>
+                    @if (settings.LikePosts)
+                    {
+                        <span title="@T("Likes") : @Model.NumberOfLikes.ToString("##,###")">
+                            <i class="fa fa-heart"></i> @Model.NumberOfLikes.FormatNumber()
+                        </span>
+                    }
+                    @if (Model.Categories.Any())
+                    {
+                        <span title="@T("Categories", Model.LastUpDate.TimeAgo())">
+                            <i class="fa fa-bars" aria-hidden="true"></i>
+                            @{ counter = 0;}
+                            @foreach (var cat in Model.Categories)
+                            {
+                                <a href="@cat.CategoryUrl" target="_blank">@cat.CategoryName</a>
+                                if (counter < Model.Categories.Count - 1)
+                                {
+                                    counter++;
+                                    @Html.Raw(", ")
+                                }
+                            }
+                        </span>
+                    }
+                </div>
+
+                <p class="fs-12 pt-2 @Html.Raw(Model.DescriptionTruncated.IsRtlLanguage() ? "rtl-dir text-right" : "ltr-dir text-left")">@Html.Raw(Model.DescriptionTruncated)</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="card-footer text-muted">
+        <span class="float-start fs-20">
+            @{Html.RenderAction("LikeWishlistButtonsPartialView", "Post", new { model = Model.LikeWishlistButtonsModel });}
+        </span>
+        <a href="@Model.PostUrl" class="btn btn-sm btn-outline-secondary float-end"><i class="fa fa-chevron-down"></i> @T("ReadMore")</a>
+    </div>
+</div>

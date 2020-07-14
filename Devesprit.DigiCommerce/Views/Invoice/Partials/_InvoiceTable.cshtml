@@ -131,34 +131,34 @@
                             <div class="input-group input-group-sm">
                                 @if (Model.Status == InvoiceStatus.Pending || isAdmin)
                                 {
-                                <div class="input-group-prepend no-pad">
-                                    @Ajax.HtmlActionLink("<i class='fa fa-minus'></i>", "DecreaseInvoiceItemQty", "Invoice",
-                                        new {invoiceId = item.InvoiceId, detailId = item.Id},
-                                        new AjaxOptions()
-                                        {
-                                            HttpMethod = "POST",
-                                            LoadingElementId = "LoadingPanel",
-                                            OnFailure = "ErrorAlert('" + T("Error") + "', '" + T("ServerConnectionError") + "');",
-                                            InsertionMode = InsertionMode.Replace,
-                                            UpdateTargetId = "InvoiceTblHolder",
-                                        }, new {@class = "btn btn-xs text-dark"})
-                                </div>
+                                    <div class="input-group-prepend no-pad">
+                                        @Ajax.HtmlActionLink("<i class='fa fa-minus'></i>", "DecreaseInvoiceItemQty", "Invoice",
+                                            new { invoiceId = item.InvoiceId, detailId = item.Id },
+                                            new AjaxOptions()
+                                            {
+                                                HttpMethod = "POST",
+                                                LoadingElementId = "LoadingPanel",
+                                                OnFailure = "ErrorAlert('" + T("Error") + "', '" + T("ServerConnectionError") + "');",
+                                                InsertionMode = InsertionMode.Replace,
+                                                UpdateTargetId = "InvoiceTblHolder",
+                                            }, new { @class = "btn btn-xs text-dark" })
+                                    </div>
                                 }
                                 <input type="text" class="form-control invoice-qty-input-width" disabled="disabled" title="@item.Qty.ToString("N0")" value="@item.Qty">
                                 @if (Model.Status == InvoiceStatus.Pending || isAdmin)
                                 {
-                                <div class="input-group-append no-pad">
-                                    @Ajax.HtmlActionLink("<i class='fa fa-plus'></i>", "IncreaseInvoiceItemQty", "Invoice",
-                                        new {invoiceId = item.InvoiceId, detailId = item.Id},
-                                        new AjaxOptions()
-                                        {
-                                            HttpMethod = "POST",
-                                            LoadingElementId = "LoadingPanel",
-                                            OnFailure = "ErrorAlert('" + T("Error") + "', '" + T("ServerConnectionError") + "');",
-                                            InsertionMode = InsertionMode.Replace,
-                                            UpdateTargetId = "InvoiceTblHolder",
-                                        }, new {@class = "btn btn-xs text-dark"})
-                                </div>
+                                    <div class="input-group-append no-pad">
+                                        @Ajax.HtmlActionLink("<i class='fa fa-plus'></i>", "IncreaseInvoiceItemQty", "Invoice",
+                                            new { invoiceId = item.InvoiceId, detailId = item.Id },
+                                            new AjaxOptions()
+                                            {
+                                                HttpMethod = "POST",
+                                                LoadingElementId = "LoadingPanel",
+                                                OnFailure = "ErrorAlert('" + T("Error") + "', '" + T("ServerConnectionError") + "');",
+                                                InsertionMode = InsertionMode.Replace,
+                                                UpdateTargetId = "InvoiceTblHolder",
+                                            }, new { @class = "btn btn-xs text-dark" })
+                                    </div>
                                 }
                             </div>
                         }
@@ -306,9 +306,7 @@
 
 @Html.MinifyInlineScript(
                     @<script>
-    UpdateNumberOfItemsInShoppingCard('@Url.Action("GetUserShoppingCartItemsCount", "Invoice")');
-
-    if (@Model.InvoiceDetails.Count === 0) {
-        $('#checkoutSection').empty();
-    }
-                    </script>)
+                         if (@Model.InvoiceDetails.Count === 0) {
+                             $('#checkoutSection').empty();
+                         }
+                     </script>)

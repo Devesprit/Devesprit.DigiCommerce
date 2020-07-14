@@ -1,43 +1,3 @@
-// var swiper = new Swiper('.swiper-container', {
-//     slidesPerView: 5,
-//     spaceBetween: 30,
-//     pagination: {
-//       el: '.swiper-pagination',
-//       clickable: true,
-//     },
-//     navigation: {
-//         nextEl: '.swiper-button-next',
-//         prevEl: '.swiper-button-prev',
-//     },
-//     breakpoints: {
-//     // when window width is >= 320px
-//     340: {
-//         slidesPerView: 1,
-//         spaceBetween: 20
-//     },
-//     // when window width is >= 480px
-//     600: {
-//         slidesPerView: 2,
-//         spaceBetween: 30
-//     },
-//     800: {
-//         slidesPerView: 3,
-//         spaceBetween: 30
-//     },
-//     // when window width is >= 640px
-//     1000: {
-//         slidesPerView: 4,
-//         spaceBetween: 40
-//     },
-//     1200: {
-//         slidesPerView: 5,
-//         spaceBetween: 40
-//     }
-// }
-
-// });
-
-
 var x = document.getElementsByClassName("slider-irdev-wrap");
 
 for (var i = 0; i < x.length; i++) {
@@ -49,7 +9,7 @@ for (var i = 0; i < x.length; i++) {
     var pr = el.getElementsByClassName("swiper-button-prev")[0];
 
     new Swiper(swiper, {
-        slidesPerView: 5,
+        slidesPerView: 4,
         spaceBetween: 30,
         navigation: {
             nextEl: nx,
@@ -63,20 +23,20 @@ for (var i = 0; i < x.length; i++) {
             },
             // when window width is >= 480px
             600: {
-                slidesPerView: 2,
+                slidesPerView: 1,
                 spaceBetween: 30
             },
             800: {
-                slidesPerView: 3,
+                slidesPerView: 2,
                 spaceBetween: 30
             },
             // when window width is >= 640px
             1000: {
-                slidesPerView: 4,
+                slidesPerView: 3,
                 spaceBetween: 40
             },
             1200: {
-                slidesPerView: 5,
+                slidesPerView: 4,
                 spaceBetween: 40
             }
         }
@@ -85,18 +45,17 @@ for (var i = 0; i < x.length; i++) {
 
 
 
-$(document).ready(function () {
-    if ($(window).width() > 992) {
-        $(".list-main-menu li").hover(function () {
-            $(".sub-menu", this).slideToggle();
-        });
-    }
 
-    if ($(window).width() < 992) {
-        $(".list-main-menu li").click(function () {
-            $(".sub-menu", this).slideToggle();
+
+$(document).ready(function () {
+
+    if($(window).width() < 992) {
+        $(".list-main-menu li").click(function(e){
+          e.stopPropagation();
+          $(this).children("ul").slideToggle();
+          $(this).children("span").toggleClass("arrow-rotate-menu-id");
         });
-    }
+    } 
 
 });
 
@@ -209,6 +168,55 @@ function _select_option(indx, selc) {
 }
 
 
+$(".shopping-bag").click(function () {
+    $(".list-card-info").slideToggle();
+});
+
+$(".custom-select").each(function () {
+    var classes = $(this).attr("class"),
+        id = $(this).attr("id"),
+        name = $(this).attr("name");
+    var template = '<div class="' + classes + '">';
+    template += '<span class="custom-select-trigger">' + $(this).attr("placeholder") + '</span>';
+    template += '<div class="custom-options">';
+    $(this).find("option").each(function () {
+        template += '<span class="custom-option ' + $(this).attr("class") + '" onclick="' + $(this).attr("onclick") + '" data-value="' + $(this).attr("value") + '">' + $(this).html() + '</span>';
+    });
+    template += '</div></div>';
+
+    $(this).wrap('<div class="custom-select-wrapper"></div>');
+    $(this).hide();
+    $(this).after(template);
+});
+$(".custom-option:first-of-type").hover(function () {
+    $(this).parents(".custom-options").addClass("option-hover");
+}, function () {
+    $(this).parents(".custom-options").removeClass("option-hover");
+});
+$(".custom-select-trigger").on("click", function () {
+    $('html').one('click', function () {
+        $(".custom-select").removeClass("opened");
+    });
+    $(this).parents(".custom-select").toggleClass("opened");
+    event.stopPropagation();
+});
+$(".custom-option").on("click", function () {
+    $(this).parents(".custom-select-wrapper").find("select").val($(this).data("value"));
+    $(this).parents(".custom-options").find(".custom-option").removeClass("selection");
+    $(this).addClass("selection");
+    $(this).parents(".custom-select").removeClass("opened");
+    $(this).parents(".custom-select").find(".custom-select-trigger").text($(this).text());
+});
+var btn = $('.main-menu');
+$(window).scroll(function () {
+    if ($(window).scrollTop() > 100) {
+        btn.addClass('show-sticky');
+    } else {
+        btn.removeClass('show-sticky');
+    }
+});
+
+
 
 
 
@@ -244,11 +252,6 @@ jQuery('.quantity-id').each(function () {
     });
 
 });
-
-
-
-
-
 
 
 

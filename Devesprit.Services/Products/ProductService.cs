@@ -134,6 +134,46 @@ namespace Devesprit.Services.Products
             return result;
         }
 
+        public virtual IPagedList<TblProducts> GetFreeItems(int pageIndex = 1, int pageSize = Int32.MaxValue, int? filterByCategory = null,
+            DateTime? fromDate = null)
+        {
+            var query = _dbContext.Products.Where(p =>
+                p.Published && p.Price <= 0 && p.DownloadLimitedToUserGroupId == null);
+            if (fromDate != null)
+            {
+                query = query.Where(p => p.PublishDate >= fromDate);
+            }
+
+            if (filterByCategory != null)
+            {
+                var subCategories = _categoriesService.GetSubCategories(filterByCategory.Value);
+                query = query.Where(p => p.Categories.Any(x => subCategories.Contains(x.Id)));
+            }
+
+            var result = new StaticPagedList<TblProducts>(
+                query
+                    .OrderByDescending(p => p.PinToTop)
+                    .ThenByDescending(p => p.LastUpDate)
+                    .ThenByDescending(p => p.PublishDate)
+                    .Include(p => p.Descriptions)
+                    .Include(p => p.Images)
+                    .Include(p => p.Categories)
+                    .AsNoTracking()
+                    .Skip(pageSize * (pageIndex - 1))
+                    .Take(pageSize)
+                    .FromCache(_cacheKey,
+                        CacheTags.PostCategory,
+                        CacheTags.PostDescription,
+                        CacheTags.PostImage),
+                pageIndex,
+                pageSize,
+                query
+                    .DeferredCount()
+                    .FromCache(_cacheKey));
+
+            return result;
+        }
+
         public override async Task<TblProducts> FindByIdAsync(int id)
         {
             var result = await _dbContext.Products

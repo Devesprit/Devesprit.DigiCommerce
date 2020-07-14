@@ -125,7 +125,7 @@ namespace Devesprit.DigiCommerce.Controllers
 
         [ChildActionOnly]
         [MethodCache(Tags = new[] { nameof(TblBlogPosts) }, VaryByCustom = "lang")]
-        public virtual ActionResult GetBlogPostsList(PostsListType listType, int? page, int? pageSize, int? catId, DateTime? fromDate, ViewStyles? style, NumberOfCol? numberOfCol, bool? showPager)
+        public virtual ActionResult GetBlogPostsList(PostsListType listType, int? page, int? pageSize, int? catId, DateTime? fromDate, ViewStyles? style, string wrapperStart, string wrapperEnd, bool? showPager)
         {
             if (!CurrentSettings.EnableBlog)
             {
@@ -159,7 +159,8 @@ namespace Devesprit.DigiCommerce.Controllers
                 FromDate = fromDate,
                 FilterByCategoryId = catId,
                 ShowPager = showPager ?? true,
-                NumberOfCol = numberOfCol ?? NumberOfCol.Four
+                ItemWrapperStart = string.IsNullOrWhiteSpace(wrapperStart) ? "<div class='col-12 col-sm-6 col-lg-4 col-xl-3 py-2'>" : wrapperStart,
+                ItemWrapperEnd = string.IsNullOrWhiteSpace(wrapperEnd) ? "</div>" : wrapperEnd
             };
 
             return View("Partials/_PostsList", model);

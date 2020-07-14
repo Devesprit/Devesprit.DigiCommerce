@@ -22,15 +22,15 @@ using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 
 namespace Devesprit.DigiCommerce.Controllers
-{
-    public abstract class BaseController : Controller
-    {
+{ 
+    public abstract class BaseController : Controller 
+    {  
         private IWorkContext _workContext;
-        private SiteSettings _settings;
-        private ILanguagesService _languagesService;
+        private SiteSettings _settings;     
+        private ILanguagesService _languagesService; 
         private ICurrencyService _currencyService;  
         private IEventPublisher _eventPublisher; 
-
+         
         public ApplicationUserManager UserManager => HttpContext.GetOwinContext().Get<ApplicationUserManager>();
         public ApplicationSignInManager SignInManager => HttpContext.GetOwinContext().Get<ApplicationSignInManager>();
         public IAuthenticationManager AuthenticationManager => HttpContext.GetOwinContext().Authentication;
@@ -146,10 +146,6 @@ namespace Devesprit.DigiCommerce.Controllers
                     }
                 }
             }
-
-            //Send current invoice items count to view
-            //var invoice = DependencyResolver.Current.GetService<IInvoiceService>().GetUserCurrentInvoice(false);
-            //ViewData["InvoiceItemsCount"] = invoice?.InvoiceDetails?.Count ?? 0;
 
             base.OnActionExecuting(filterContext);
         }

@@ -30,7 +30,7 @@
     }
     else
     {
-        Html.AppendScriptParts(ResourceLocation.Footer, "~/Themes/WarezComponent/Scripts/LTR/main.js");   
+        Html.AppendScriptParts(ResourceLocation.Footer, "~/Themes/WarezComponent/Scripts/LTR/main.js");
     }
     Html.AppendScriptParts(ResourceLocation.Footer, "~/Themes/WarezComponent/Scripts/swiper.min.js");
     Html.AppendScriptParts(ResourceLocation.Footer, "~/Themes/WarezComponent/Scripts/jquery.unobtrusive-ajax.js");
@@ -55,6 +55,7 @@
         Html.AppendCssFileParts(ResourceLocation.Header, "~/Themes/WarezComponent/Content/LTR/fontiran.css");
         Html.AppendCssFileParts(ResourceLocation.Header, "~/Themes/WarezComponent/Content/LTR/all.css");
     }
+    Html.AppendCssFileParts(ResourceLocation.Header, "~/Themes/WarezComponent/Content/HelperStyles.css");
     Html.AppendCssFileParts(ResourceLocation.Header, "~/Themes/WarezComponent/Content/swiper.min.css");
     Html.AppendCssFileParts(ResourceLocation.Header, "~/Themes/WarezComponent/Content/jstree.min.css");
     Html.AppendCssFileParts(ResourceLocation.Header, "~/Themes/WarezComponent/Content/iziToast.min.css");
@@ -121,6 +122,106 @@
     @Html.Partial("Partials/_LoadingPanel")
 
     @Html.Partial("Partials/_Notifications")
+
+    @{
+        Html.AddInlineScript(ResourceLocation.Footer,
+@<script>
+    function OnAddPostToWishlistButtonClick(event, postId, alreadyAddedToWishlist) {
+        event.preventDefault();
+                 $.ajax({
+                     type: 'POST',
+                     url: '@Url.Action("AddPostToWishlist", "Post")',
+                     data: {
+                         postId: postId
+                     },
+                     error: function(xhr, status, error) {
+                         ErrorAlert('@T("Error")', '@T("ServerConnectionError")');
+                         if (alreadyAddedToWishlist === true) {
+                             $('.btnAddedToWishlist_' + postId).html('<i class="fas fa-bookmark"></i>');
+                             $('.btnAddedToWishlist_' + postId).addClass('like-btn-active');
+                         } else {
+                             $('.btnAddedToWishlist_' + postId).html('<i class="far fa-bookmark"></i>');
+                             $('.btnAddedToWishlist_' + postId).removeClass('like-btn-active');
+                         }
+                     },
+                     success: function (data) {
+                         if (data.response === 'add') {
+                             $('.btnAddedToWishlist_' + postId).html('<i class="fas fa-bookmark"></i>');
+                             $('.btnAddedToWishlist_' + postId).addClass('like-btn-active');
+                             return;
+                         }
+                         else if (data.response === 'remove') {
+                             $('.btnAddedToWishlist_' + postId).html('<i class="far fa-bookmark"></i>');
+                             $('.btnAddedToWishlist_' + postId).removeClass('like-btn-active');
+                             return;
+                         }
+                         else if (data.response === 'mustLogin') {
+                             ErrorAlert('@T("Error")', '@T("ToPerformOperationPleaseLogin")');
+                         }
+
+                         if (alreadyAddedToWishlist === true) {
+                             $('.btnAddedToWishlist_' + postId).html('<i class="fas fa-bookmark"></i>');
+                             $('.btnAddedToWishlist_' + postId).addClass('like-btn-active');
+                         } else {
+                             $('.btnAddedToWishlist_' + postId).html('<i class="far fa-bookmark"></i>');
+                             $('.btnAddedToWishlist_' + postId).removeClass('like-btn-active');
+                         }
+                     },
+                     beforeSend: function() {
+                         $('.btnAddedToWishlist_'+postId).html('<i class="fa fa-spinner fa-spin"></i>');
+                     }
+                 });
+             }
+
+
+    function OnLikeButtonClick(event, postId, alreadyLiked) {
+        event.preventDefault();
+                 $.ajax({
+                     type: 'POST',
+                     url: '@Url.Action("LikePost", "Post")',
+                     data: {
+                         postId: postId
+                     },
+                     error: function(xhr, status, error) {
+                         ErrorAlert('@T("Error")', '@T("ServerConnectionError")');
+                         if (alreadyLiked === true) {
+                             $('.btnLike_' + postId).html('<i class="fas fa-heart"></i>');
+                             $('.btnLike_' + postId).addClass('like-btn-active');
+                         } else {
+                             $('.btnLike_' + postId).html('<i class="far fa-heart"></i>');
+                             $('.btnLike_' + postId).removeClass('like-btn-active');
+                         }
+                     },
+                     success: function (data) {
+                         if (data.response === 'add') {
+                             $('.btnLike_' + postId).html('<i class="fas fa-heart"></i>');
+                             $('.btnLike_' + postId).addClass('like-btn-active');
+                             return;
+                         }
+                         else if (data.response === 'remove') {
+                             $('.btnLike_' + postId).html('<i class="far fa-heart"></i>');
+                             $('.btnLike_' + postId).removeClass('like-btn-active');
+                             return;
+                         }
+                         else if (data.response === 'mustLogin') {
+                             ErrorAlert('@T("Error")', '@T("ToPerformOperationPleaseLogin")');
+                         }
+
+                         if (alreadyLiked === true) {
+                             $('.btnLike_' + postId).html('<i class="fas fa-heart"></i>');
+                             $('.btnLike_' + postId).addClass('like-btn-active');
+                         } else {
+                             $('.btnLike_' + postId).html('<i class="far fa-heart"></i>');
+                             $('.btnLike_' + postId).removeClass('like-btn-active');
+                         }
+                     },
+                     beforeSend: function() {
+                         $('.btnLike_'+postId).html('<i class="fa fa-spinner fa-spin"></i>');
+                     }
+                 });
+             }
+</script>, true);
+    }
 
     @Html.GenerateCssFiles(Url, ResourceLocation.FooterBeforeOther)
     @Html.GenerateCssFiles(Url, ResourceLocation.Footer)

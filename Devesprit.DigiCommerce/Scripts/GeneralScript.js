@@ -184,21 +184,6 @@ function randomPassword(length) {
     return pass;
 }
 
-function UpdateNumberOfItemsInShoppingCard(url) {
-    var label = $('#lblNumberOfItemsInShoppingCart');
-    if (label.length) {
-        $.ajax({
-            type: "GET",
-            url: url,
-            error: function (xhr, status, error) {
-                $(label).text('0');
-            },
-            success: function (data) {
-                $(label).text(data);
-            }
-        });
-    }
-}
 
 function ShowProductPurchaseWizard(prodId, invId) {
     var modal = $('#dlgProductPurchaseWizard');

@@ -14,7 +14,8 @@ namespace Devesprit.DigiCommerce.Models.Post
         public virtual int? PageSize { get; set; }
         public virtual int? FilterByCategoryId { get; set; }
         public virtual DateTime? FromDate { get; set; }
-        public virtual NumberOfCol NumberOfCol { get; set; } = NumberOfCol.Four;
+        public virtual string ItemWrapperStart { get; set; }
+        public virtual string ItemWrapperEnd { get; set; }
     }
 
     public class PostsListModel : PostsListModel<PostCardViewModel, PostsListType>

@@ -121,6 +121,9 @@ namespace Devesprit.DigiCommerce.Controllers
                 case ProductsListType.MostDownloaded:
                     products = _productService.GetMostDownloadedItems(page ?? 1, pageSize ?? 50, catId, fromDate);
                     break;
+                case ProductsListType.FreeProducts:
+                    products = _productService.GetFreeItems(page ?? 1, pageSize ?? 50, catId, fromDate);
+                    break;
             }
 
             var feed = new SyndicationFeed(CurrentSettings.GetLocalized(x=> x.SiteName), CurrentSettings.GetLocalized(x => x.SiteDescription),
