@@ -1,0 +1,119 @@
+﻿@using System.Web.Mvc.Html
+@using Devesprit.DigiCommerce.Models
+@using Devesprit.Utilities
+@using X.PagedList.Mvc
+@model Devesprit.DigiCommerce.Models.Search.SearchResultModel
+@{
+    ViewBag.Title = Model != null ? T("SearchFor", Model.SearchTerm.Query, Model.SearchTerm.Page ?? 1) : T("NoItemFound");
+    Html.AddHeadCustomParts("<meta name=\"robots\" content=\"index,follow\">");
+    if (ViewBag.CanonicalUrl != null)
+    {
+        string url = ViewBag.CanonicalUrl.ToString();
+        Html.AddCanonicalUrlParts(url);
+    }
+}
+@Html.Raw(ViewBag.MetaDescription2)
+@if (Model == null || Model.NumberOfItemsFound == 0)
+{
+    <div class="row justify-content-center">
+        <div class="col-12 col-lg-6">
+            <div class="panel">
+                <div class="panel-title pad-10">
+                    <h5 class="no-mar">@ViewBag.Title</h5>
+                </div>
+                <div class="fs-14 pad-20">
+                    <img class="m-auto d-block" src="~/Content/img/NotFound_256px.png" alt="No Item Found" />
+                    <h4 class="text-center">@T("ThereAreNoResults")</h4>
+                    @if (Model == null)
+                    {
+                        <p class="fs-16 fw-bold text-center">@T("YouNotEnteredAnySearchTerms")</p>
+                    }
+                    else
+                    {
+                        <div class="m-auto d-table">
+                            @Html.Raw(T("SearchNotMatchAnyDocuments", Model.SearchTerm.Query))
+                        </div>
+                    }
+                    <hr />
+                    @if (Model?.SuggestSimilar?.Any() == true)
+                    {
+                        <small>
+                            @T("Suggestions") :
+                            @foreach (var suggest in Model.SuggestSimilar)
+                            {
+                                @:&#9679; <a href="@Url.Action("Index", new {query = suggest})">@suggest</a>
+                            }
+                        </small>
+                    }
+                    @using (Html.BeginForm("Index", "Search", FormMethod.Get, new { @class = "text-center", novalidate = "novalidate" }))
+                    {
+                        <input type="text" name="query" class="form-control form-control-sm" value="@(Model?.SearchTerm.Query)" placeholder="@T("Search")" data-val="true" data-val-required="" />
+                        <button type="submit" class="btn btn-sm btn-secondary t-mar-10"><i class="fa fa-search"></i> @T("Search")</button>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <div class="row t-pad-20">
+        <div class="col-12">
+            <h1 class="fs-18 text-muted">
+                <i class="fa fa-search"></i> @Html.Raw(T("SearchResult", Model.SearchTerm.Query, Model.SearchTerm.Page ?? 1, Model.NumberOfItemsFound.ToString("N0"), Model.TimeElapsed.ToString("N0")))
+                @if (Model.SuggestSimilar?.Any() == true)
+                {
+                    <br />
+                    <small>
+                        @T("Suggestions") :
+                        @foreach (var suggest in Model.SuggestSimilar)
+                        {
+                            @:&#9679; <a href="@Url.Action("Index", new {query = suggest})">@suggest</a>
+                        }
+                    </small>
+                }
+            </h1>
+            <hr />
+            <div class="row">
+                @if (Model.ShowAdvancedSearchPanel)
+                {
+                    <div class="col-12 col-lg-3 mar-v-10">
+                        @{Html.RenderPartial("Partials/_AdvancedSearchPanel", Model.SearchTerm);}
+                    </div>
+                }
+
+                <div class="col-12 @Html.Raw(Model.ShowAdvancedSearchPanel ? "col-lg-9" : "")">
+                    <div class="row">
+                        @foreach (var post in Model.SearchResult)
+                        {
+                            switch (Model.CardViewStyles)
+                            {
+                                case ViewStyles.Large:
+                                    @Html.Raw("<div class='col-12 py-2'>")
+                                    break;
+                                case ViewStyles.Normal:
+                                    @Html.Raw("<div class='col-12 py-2'>")
+                                    break;
+                                case ViewStyles.Small:
+                                    @Html.Raw("<div class='col-12 col-sm-6 col-lg-4 col-xl-3 py-2'>")
+                                    break;
+                            }
+                            {
+                                Html.RenderAction("PostCardViewPartialView", "Post", new { model = post, style = Model.CardViewStyles });
+                            }
+                            @Html.Raw("</div>")
+                        }
+                    </div>
+
+
+                    <div class="row">
+                        <div class="col-12 t-mar-30">
+                            @Html.PagedListPager(Model.SearchResult, page => Request.Url.ToString().BuildQueryStringUrl(new[] { "Page=" + page }).RemoveEmptyParametersFromQueryString(), new TwitterBootstrap4Pager())
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+

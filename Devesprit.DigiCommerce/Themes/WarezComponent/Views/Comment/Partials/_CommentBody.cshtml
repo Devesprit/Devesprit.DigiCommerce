@@ -1,0 +1,105 @@
+﻿
+@using Devesprit.Utilities.Extensions
+@using Devesprit.Core.Settings
+@using Devesprit.Services
+@model Devesprit.DigiCommerce.Models.Comment.CommentBodyModel
+@{
+    Layout = null;
+    var settings = DependencyResolver.Current.GetService<ISettingService>().LoadSetting<SiteSettings>();
+}
+    <article class="pro-cmnt-box" id="comment_@Model.Id">
+        <header class="pro-cmnt-header">
+            <div class="pro-head-cmnt-name">
+                <img class="user-img @Html.Raw(!string.IsNullOrWhiteSpace(Model.UserAvatar) ? "rounded-circle" : "")"
+                     src="@Html.Raw(!string.IsNullOrWhiteSpace(Model.UserAvatar) ? Model.UserAvatar : "/Content/img/User_150px.png")"
+                     alt="User Avatar"/>
+                <span class="font-weight-bold mar-h-10 t-mar-5">
+                    @Model.UserName
+                    <br />
+                    <span class="ability-user-cmnt">
+                        @Model.CommentDate
+
+                        @if (Model.CurrentUserIsAdmin)
+                        {
+                            if (Model.Published)
+                            {
+                                <span class="text-success fs-12">@T("Published")</span>
+                            }
+                            else
+                            {
+                                <span class="text-danger fs-12">@T("UnPublished")</span>
+                            }
+                        }
+                    </span>
+                </span>
+            </div>
+        </header>
+        <div class="content-cmnt-irdev">
+            @if (!string.IsNullOrWhiteSpace(Model.Quote))
+            {
+                <div class="quote">
+                    <i class="fa fa-quote-left"></i>
+                    @if (Model.ParentCommentId > 0)
+                    {
+                        <a href="javascript:FindComment(@Model.PostId, @Model.ParentCommentId)"><b>@Model.ParentCommentUserName</b> <small>@Model.ParentCommentDate</small></a>
+                    }
+
+                    <p class="@(Model.Quote.IsRtlLanguage() ? "rtl-dir text-right" : "ltr-dir text-left")">
+                        @Html.Raw(Model.Quote)
+                    </p>
+                </div>
+                <br />
+            }
+            <p id="comment_text_@Model.Id" class="@(Model.Comment.IsRtlLanguage() ? "rtl-dir text-right" : "ltr-dir text-left")">
+                @Html.Raw(Model.Comment)
+            </p>
+        </div>
+        <footer>
+            @if (settings.AllowGuestUsersToWriteComment || User.Identity.IsAuthenticated)
+            {
+                <button type="button" onclick="ReplyToComment(@Model.Id)" class="btn btn-xs btn-outline-secondary mx-1">@T("Reply")</button>
+            }
+            @if (Model.CurrentUserIsAdmin)
+            {
+                @Ajax.ActionLink(T("Delete").ToString(), "DeleteComment",
+                    new { commentId = Model.Id },
+                    new AjaxOptions()
+                    {
+                        HttpMethod = "POST",
+                        OnFailure = "ErrorAlert('" + T("Error") + "', '" + T("ServerConnectionError") + "');",
+                        LoadingElementId = "LoadingPanel",
+                        OnSuccess = "if(data.response === 'OK'){$('#comment_" + Model.Id + "').remove();}else{ErrorAlert('" + T("Error") + "', '" + T("AnServerErrorOccurred") + "');}"
+                    },
+                    new { @class = "btn btn-xs btn-outline-danger mx-1 font-weight-normal" })
+
+                if (Model.Published)
+                {
+                    @Ajax.ActionLink(T("SetAsUnPublished").ToString(), "SetCommentStatus",
+                        new { commentId = Model.Id, published = false },
+                        new AjaxOptions()
+                        {
+                            HttpMethod = "POST",
+                            InsertionMode = InsertionMode.ReplaceWith,
+                            UpdateTargetId = "comment_" + Model.Id,
+                            OnFailure = "ErrorAlert('" + T("Error") + "', '" + T("ServerConnectionError") + "');",
+                            LoadingElementId = "LoadingPanel"
+                        },
+                        new { @class = "btn btn-xs btn-outline-warning mx-1 font-weight-normal" })
+                }
+                else
+                {
+                    @Ajax.ActionLink(T("SetAsPublished").ToString(), "SetCommentStatus",
+                        new { commentId = Model.Id, published = true },
+                        new AjaxOptions()
+                        {
+                            HttpMethod = "POST",
+                            InsertionMode = InsertionMode.ReplaceWith,
+                            UpdateTargetId = "comment_" + Model.Id,
+                            OnFailure = "ErrorAlert('" + T("Error") + "', '" + T("ServerConnectionError") + "');",
+                            LoadingElementId = "LoadingPanel"
+                        },
+                        new { @class = "btn btn-xs btn-outline-success mx-1 font-weight-normal" })
+                }
+            }
+        </footer>
+    </article>

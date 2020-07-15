@@ -37,6 +37,7 @@
     Html.AppendCanonicalUrlParts(pageMainUrl);
 
     var postFirstCategory = Model.Categories.FirstOrDefault();
+    var counter = 0;
 }
 
 <article>
@@ -89,153 +90,69 @@
                             <div class="col-md-12">
                                 <nav>
                                     <div class="nav nav-tabs nav-fill tab-menu" id="nav-tab" role="tablist">
-                                        <a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-selected="true">Item Details</a>
-                                        <a class="nav-item nav-link" id="nav-profile-tab" data-toggle="tab" href="#nav-profile" role="tab" aria-controls="nav-profile" aria-selected="false">Reviews</a>
-                                        <a class="nav-item nav-link" id="nav-contact-tab" data-toggle="tab" href="#nav-contact" role="tab" aria-controls="nav-contact" aria-selected="false"> FAQ</a>
+                                        @foreach (var desc in Model.Descriptions)
+                                        {
+                                            <a class="nav-item nav-link @Html.Raw(counter == 0 ? "active" : "")"
+                                               id="nav-@counter-tab" data-toggle="tab" href="#nav-@counter" role="tab" aria-controls="nav-@counter"
+                                               @Html.Raw(counter == 0 ? "aria-selected=\"true\"" : "")>
+                                                @Html.Raw(desc.Title)
+                                            </a>
+                                            counter++;
+                                        }
+                                        @if (settings.AllowUsersToWriteComment && Model.AllowCustomerReviews)
+                                        {
+                                            <a class="nav-item nav-link" id="nav-comment-tab" data-toggle="tab" href="#nav-comment" role="tab" aria-controls="nav-comment" aria-selected="false">@T("Comments")</a>
+                                        }
                                     </div>
                                 </nav>
                                 <div class="tab-content" id="nav-tabContent">
-                                    <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
-                                        <div class="tab-body-box">
-                                            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Haec quo modo conveniant, non sane intellego. Hanc ergo intuens debet institutum illud quasi signum absolvere. Et ille ridens: Video, inquit, quid agas; Duo Reges: constructio interrete. Ad eos igitur converte te, quaeso. Atque haec ita iustitiae propria sunt, ut sint virtutum reliquarum communia.</p>
-                                            <p>It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using ‘Content here, content here’, making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for ‘lorem ipsum’ will uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes by accident, sometimes on purpose.</p>
-                                            <h2 class="tab-body-tile">Features</h2>
-                                            <ul class="list-features">
-                                                <li>by accident, sometimes o</li>
-                                                <li>by accident</li>
-                                                <li>sometimes o</li>
-                                                <li>Lorem Ipsum </li>
-                                                <li>by accident, sometimes o</li>
-                                            </ul>
-                                            <p>It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using ‘Content here, content here’, making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for ‘lorem ipsum’ will uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes by accident, sometimes on purpose.</p>
-                                            <h2 class="tab-body-tile">Ability</h2>
-                                            <ul class="list-features">
-                                                <li>by accident, sometimes o</li>
-                                                <li>by accident</li>
-                                                <li>sometimes o</li>
-                                                <li>Lorem Ipsum </li>
-                                                <li>by accident, sometimes o</li>
-                                            </ul>
-                                            <p>In this example we have added a "plus" sign to each button. When the user clicks on the button, the "plus" sign is replaced with a "minus" sign.</p>
-                                            <div id="accordion" class="accordion">
-                                                <div class="card mb-0 acc-pro-single-card">
-                                                    <div class="card-faq-irdev">
-                                                        <div class="card-header collapsed acc-title-pro-single" data-toggle="collapse" href="#collapseOne">
-                                                            <a class="card-title">It is a long established fact that a reader will be distracted by the readable content</a>
-                                                        </div>
-                                                        <div id="collapseOne" class="card-body collapse" data-parent="#accordion">
-                                                            <p>Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using ‘Content here, content here’, making it look like readable English. Many deskLorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using ‘Content here, content here’, making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default mtop publishing packages and web page editors now use Lorem Ipsum as their default m</p>
-                                                        </div>
-                                                    </div>
-                                                    <div class="card-faq-irdev">
-                                                        <div class="card-header collapsed acc-title-pro-single" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo">
-                                                            <a class="card-title">It is a long established fact that a reader will be distracted by the readable content</a>
-                                                        </div>
-                                                        <div id="collapseTwo" class="card-body collapse" data-parent="#accordion">
-                                                            <p>Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using ‘Content here, content here’, making it look like readable English. Many deskLorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using ‘Content here, content here’, making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default mtop publishing packages and web page editors now use Lorem Ipsum as their default m</p>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <p>It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using ‘Content here, content here’, making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for ‘lorem ipsum’ will uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes by accident, sometimes on purpose.</p>
-                                            <p class="not-desc-pro">
-                                                NOT :  will uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes
-                                                by accident, sometimes on purpose.
-                                            </p>
-                                            <footer class="pro-single-desc-footer">
-                                                <a href="#" class="pro-single-dl-btn" title="">Download</a>
+                                    @{counter = 0;}
+                                    @foreach (var desc in Model.Descriptions)
+                                    {
+                                        <div class="tab-pane fade @Html.Raw(desc.IsRtl ? "rtl-dir text-right" : "ltr-dir text-left") @Html.Raw(counter == 0 ? "show active" : "")" id="nav-@counter" role="tabpanel" aria-labelledby="nav-@counter-tab">
+                                            <div class="tab-body-box">
+                                                @Html.Raw(desc.Description)
+                                                <footer class="pro-single-desc-footer">
+                                                    @if (Model.DownloadModel.ShowDownloadFullVersionBtn)
+                                                    {
+                                                        <a href="@Url.Action("DownloadProduct", "Download", new {productId = Model.Id, demoFiles = false})"
+                                                           target="_blank"
+                                                           class="pro-single-dl-btn">
+                                                            @Html.Raw(T("DownloadNow"))
+                                                        </a>
+                                                    }
                                                 <div class="share-box-pro">
                                                     <span class="share-title">Share :</span>
                                                     <ul class="single-pro-share-social">
-                                                        <li><a href="#" title=""><i class="fab fa-facebook-f"></i></a></li>
-                                                        <li><a href="#" title=""><i class="fab fa-twitter"></i></a></li>
-                                                        <li><a href="#" title=""><i class="fab fa-instagram"></i></a></li>
-                                                        <li><a href="#" title=""><i class="fab fa-slack"></i></a></li>
+                                                        <li><a href="javascript:void(0);" onclick="window.open('https://www.facebook.com/sharer/sharer.php?u=@pageMainUrl', '_blank', 'width=600,height=600');"><i class="fab fa-facebook-f"></i></a></li>
+                                                        <li><a href="javascript:void(0);" onclick="window.open('https://twitter.com/share?url=@pageMainUrl', '_blank', 'width=600,height=600');"><i class="fab fa-twitter"></i></a></li>
+                                                        <li><a href="javascript:void(0);" onclick="window.open('https://www.linkedin.com/shareArticle?mini=true&url=@pageMainUrl', '_blank', 'width=600,height=600');"><i class="fab fa-linkedin"></i></a></li>
+                                                        <li><a href="#" title=""><i class="fab fa-whatsapp"></i></a></li>
+                                                        <li><a href="#" title=""><i class="fab fa-telegram"></i></a></li>
+                                                        <li><a href="#" title=""><i class="fab fa-facebook-messenger"></i></a></li>
                                                     </ul>
                                                 </div>
-                                            </footer>
+                                                </footer>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
-                                        <div class="tab-body-box">
-                                            <article class="pro-cmnt-box">
-                                                <header class="pro-cmnt-header">
-                                                    <div class="pro-head-cmnt-name">
-                                                        Hanieh Sadeghzadeh
-                                                        <span class="ability-user-cmnt">August 17, 2019</span>
-                                                    </div>
-                                                    <ul class="rate-pro-slider rate-cmnt-head">
-                                                        <li class="checked-cmnt-rate"><i class="fas fa-star"></i></li>
-                                                        <li class="checked-cmnt-rate"><i class="fas fa-star"></i></li>
-                                                        <li class="checked-cmnt-rate"><i class="fas fa-star"></i></li>
-                                                        <li><i class="fas fa-star"></i></li>
-                                                        <li><i class="fas fa-star"></i></li>
-                                                    </ul>
-                                                </header>
-                                                <div class="content-cmnt-irdev">
-                                                    <p>Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using ‘Content here, content here’, making it look like readable English. Many deskLorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using ‘Content here, content here’, making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default mtop publishing packages and web page editors now use Lorem Ipsum as their default m</p>
+                                        counter++;
+                                    }
+                                    @if (settings.AllowUsersToWriteComment && Model.AllowCustomerReviews)
+                                    {
+                                        <div class="tab-pane fade" id="nav-comment" role="tabpanel" aria-labelledby="nav-comment-tab">
+                                            <div class="tab-body-box">
+                                                <div id="commentsListPlaceholder">
+                                                    @{ Html.RenderAction("CommentsList", "Comment", new { postId = Model.Id }); }
                                                 </div>
-                                            </article>
-                                            <article class="pro-cmnt-box">
-                                                <header class="pro-cmnt-header">
-                                                    <div class="pro-head-cmnt-name">
-                                                        Salva Foroghiazar
-                                                        <span class="ability-user-cmnt">August 17, 2019</span>
-                                                    </div>
-                                                    <ul class="rate-pro-slider rate-cmnt-head">
-                                                        <li class="checked-cmnt-rate"><i class="fas fa-star"></i></li>
-                                                        <li class="checked-cmnt-rate"><i class="fas fa-star"></i></li>
-                                                        <li class="checked-cmnt-rate"><i class="fas fa-star"></i></li>
-                                                        <li><i class="fas fa-star"></i></li>
-                                                        <li><i class="fas fa-star"></i></li>
-                                                    </ul>
-                                                </header>
-                                                <div class="content-cmnt-irdev">
-                                                    <p>Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using ‘Content here, content here’, making it look like readable English. Many deskLorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using ‘Content here, content here’, making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default mtop publishing packages and web page editors now use Lorem Ipsum as their default m</p>
-                                                </div>
-                                            </article>
-                                            <h4 class="add-cmnt">Add comment</h4>
-                                            <form class="add-cmnt-form">
-                                                <div class="row">
-                                                    <div class="col-sm-12 col-lg-6">
-                                                        <input class="add-cmnt-input" type="text" placeholder="Name">
-                                                    </div>
-                                                    <div class="col-sm-12 col-lg-6">
-                                                        <input class="add-cmnt-input" type="email" placeholder="Email">
-                                                    </div>
-                                                    <div class="col-12">
-                                                        <textarea class="add-cmnt-desc add-cmnt-input" placeholder="Comment"></textarea>
-                                                        <button class="add-cmnt-btn" type="submit">Submit</button>
-                                                    </div>
-
-                                                </div>
-                                            </form>
-                                        </div>
-                                    </div>
-                                    <div class="tab-pane fade" id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab">
-                                        <div class="tab-body-box">
-                                            <div id="accordion" class="accordion">
-                                                <div class="card mb-0 acc-pro-single-card">
-                                                    <div class="card-faq-irdev">
-                                                        <div class="card-header collapsed acc-title-pro-single" data-toggle="collapse" href="#collapseOne">
-                                                            <a class="card-title">It is a long established fact that a reader will be distracted by the readable content</a>
-                                                        </div>
-                                                        <div id="collapseOne" class="card-body collapse" data-parent="#accordion">
-                                                            <p>Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using ‘Content here, content here’, making it look like readable English. Many deskLorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using ‘Content here, content here’, making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default mtop publishing packages and web page editors now use Lorem Ipsum as their default m</p>
-                                                        </div>
-                                                    </div>
-                                                    <div class="card-faq-irdev">
-                                                        <div class="card-header collapsed acc-title-pro-single" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo">
-                                                            <a class="card-title">It is a long established fact that a reader will be distracted by the readable content</a>
-                                                        </div>
-                                                        <div id="collapseTwo" class="card-body collapse" data-parent="#accordion">
-                                                            <p>Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using ‘Content here, content here’, making it look like readable English. Many deskLorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using ‘Content here, content here’, making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default mtop publishing packages and web page editors now use Lorem Ipsum as their default m</p>
-                                                        </div>
-                                                    </div>
+                                                <h4 class="add-cmnt">@T("WriteYourComment")</h4>
+                                                <div id="CommentEditor">
+                                                    @{
+                                                        Html.RenderAction("CommentEditor", "Comment", new { postId = Model.Id });
+                                                    }
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
+                                    }
                                 </div>
                             </div>
                         </div>
@@ -245,330 +162,30 @@
 
             <!-- single product sidebar -->
             <div class="col-sm-12 col-lg-4">
-                <div class="pro-category-sidebar">
-                    <div class="unlimited-box">
-                        <span class="icon-forever"></span>
-                        <h3 class="unlimited-title">Unlimited</h3>
-                        <p class="unlimited-desc">Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod</p>
-                    </div>
+                @{Html.RenderPartial("Partials/_ProductDownloadView", Model.DownloadModel);}
 
-                </div>
-                <div class="item-info-pro-box">
-                    <div class="head-sidebar-single">
-                        <h3 class="title-sideber-single text-center">Item Information</h3>
-                    </div>
-                    <div class="content-sidebar-single d-flex justify-content-center flex-wrap">
-                        <ul class="list-item-info-pro">
-                            <li>Last Update:<span>August 17, 2019</span></li>
-                            <li>Released:<span>May 13, 2019</span></li>
-                            <li>Version:<span>1.0.2</span></li>
-                            <li>File Size:<span>58MB</span></li>
-                            <li>Views:<span>132K</span></li>
-                            <li>Download:<span>142</span></li>
-                            <li>Category:<span>Delphi</span></li>
-                        </ul>
-                        <a href="#" title="" class="cta-pro-dl">Download</a>
-                    </div>
-                </div>
-                <div class="item-info-pro-box">
-                    <div class="head-sidebar-single">
-                        <h3 class="title-sideber-single">Tag :</h3>
-                    </div>
-                    <div class="content-sidebar-single d-flex justify-content-center flex-wrap">
-                        <ul class="list-pro-sidebar-tags">
-                            <li><a href="#" title="">Aspose.Tasks for .Net</a></li>
-                            <li><a href="#" title="">Aspose.Tasks</a></li>
-                            <li><a href="#" title="">Aspose.Tasks</a></li>
-                            <li><a href="#" title="">Aspose.Tasks</a></li>
-                            <li><a href="#" title="">Aspose.Tasks for .Net</a></li>
-                            <li><a href="#" title="">Aspose.Tasks</a></li>
-                            <li><a href="#" title="">Aspose.Tasks for .Net</a></li>
-                            <li><a href="#" title="">Aspose.Tasks</a></li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-    </div>
-
-</article>
-<!-- product slider -->
-<div class="products-slider">
-    <div class="container">
-        <div class="head-related-single-irdev">
-            <div class="row">
-                <div class="col-12">
-                    <h2 class="pro-slider-title">Related items may you also like</h2>
-                </div>
-            </div>
-        </div>
-        <div class="slider-irdev-wrap">
-            <div class="swiper-container main-swiper">
-                <div class="swiper-wrapper">
-                    <div class="swiper-slide">
-                        <article class="pro-slider-content">
-                            <div class="pro-slider-logo">
-                                <img alt="" src="img/zero.jpg">
-                                <a href="#" title="" class="pro-slider-logo-layer">
-                                    <i class="fas fa-plus"></i>
-                                </a>
-                            </div>
-                            <div class="rate-level d-flex justify-content-between align-items-center">
-                                <ul class="rate-pro-slider">
-                                    <li><i class="fas fa-star"></i></li>
-                                    <li><i class="fas fa-star"></i></li>
-                                    <li><i class="fas fa-star"></i></li>
-                                    <li><i class="far fa-star"></i></li>
-                                    <li><i class="far fa-star"></i></li>
-                                </ul>
-                                <span class="level-pro-irdev">Silver</span>
-                            </div>
-                            <h3><a href="#" title="" class="slider-pro-items-name">ASP.NET ZERO Core v8.2.0 </a></h3>
-                        </article>
-                    </div>
-                    <div class="swiper-slide">
-                        <article class="pro-slider-content">
-                            <div class="pro-slider-logo">
-                                <img alt="" src="img/redis.jpg">
-                                <a href="#" title="" class="pro-slider-logo-layer">
-                                    <i class="fas fa-plus"></i>
-                                </a>
-                            </div>
-                            <div class="rate-level d-flex justify-content-between align-items-center">
-                                <ul class="rate-pro-slider">
-                                    <li><i class="fas fa-star"></i></li>
-                                    <li><i class="fas fa-star"></i></li>
-                                    <li><i class="fas fa-star"></i></li>
-                                    <li><i class="far fa-star"></i></li>
-                                    <li><i class="far fa-star"></i></li>
-                                </ul>
-                            </div>
-                            <h3><a href="#" title="" class="slider-pro-items-name">ASP.NET ZERO Core v8.2.0 </a></h3>
-                        </article>
-                    </div>
-                    <div class="swiper-slide">
-                        <article class="pro-slider-content">
-                            <div class="pro-slider-logo">
-                                <img alt="" src="img/saleforce.jpg">
-                                <a href="#" title="" class="pro-slider-logo-layer">
-                                    <i class="fas fa-plus"></i>
-                                </a>
-                            </div>
-                            <div class="rate-level d-flex justify-content-between align-items-center">
-                                <ul class="rate-pro-slider">
-                                    <li><i class="fas fa-star"></i></li>
-                                    <li><i class="fas fa-star"></i></li>
-                                    <li><i class="fas fa-star"></i></li>
-                                    <li><i class="far fa-star"></i></li>
-                                    <li><i class="far fa-star"></i></li>
-                                </ul>
-                            </div>
-                            <h3><a href="#" title="" class="slider-pro-items-name">ASP.NET ZERO Core v8.2.0 </a></h3>
-                        </article>
-                    </div>
-                    <div class="swiper-slide">
-                        <article class="pro-slider-content">
-                            <div class="pro-slider-logo">
-                                <img alt="" src="img/visual.jpg">
-                                <a href="#" title="" class="pro-slider-logo-layer">
-                                    <i class="fas fa-plus"></i>
-                                </a>
-                            </div>
-                            <div class="rate-level d-flex justify-content-between align-items-center">
-                                <ul class="rate-pro-slider">
-                                    <li><i class="fas fa-star"></i></li>
-                                    <li><i class="fas fa-star"></i></li>
-                                    <li><i class="fas fa-star"></i></li>
-                                    <li><i class="far fa-star"></i></li>
-                                    <li><i class="far fa-star"></i></li>
-                                </ul>
-                            </div>
-                            <h3><a href="#" title="" class="slider-pro-items-name">ASP.NET ZERO Core v8.2.0 </a></h3>
-                        </article>
-                    </div>
-                    <div class="swiper-slide">
-                        <article class="pro-slider-content">
-                            <div class="pro-slider-logo">
-                                <img alt="" src="img/paypal.jpg">
-                                <a href="#" title="" class="pro-slider-logo-layer">
-                                    <i class="fas fa-plus"></i>
-                                </a>
-                            </div>
-                            <div class="rate-level d-flex justify-content-between align-items-center">
-                                <ul class="rate-pro-slider">
-                                    <li><i class="fas fa-star"></i></li>
-                                    <li><i class="fas fa-star"></i></li>
-                                    <li><i class="fas fa-star"></i></li>
-                                    <li><i class="far fa-star"></i></li>
-                                    <li><i class="far fa-star"></i></li>
-                                </ul>
-                            </div>
-                            <h3><a href="#" title="" class="slider-pro-items-name">ASP.NET ZERO Core v8.2.0 </a></h3>
-                        </article>
-                    </div>
-                    <div class="swiper-slide">
-                        <article class="pro-slider-content">
-                            <div class="pro-slider-logo">
-                                <img alt="" src="img/xamarin.jpg">
-                                <a href="#" title="" class="pro-slider-logo-layer">
-                                    <i class="fas fa-plus"></i>
-                                </a>
-                            </div>
-                            <div class="rate-level d-flex justify-content-between align-items-center">
-                                <ul class="rate-pro-slider">
-                                    <li><i class="fas fa-star"></i></li>
-                                    <li><i class="fas fa-star"></i></li>
-                                    <li><i class="fas fa-star"></i></li>
-                                    <li><i class="far fa-star"></i></li>
-                                    <li><i class="far fa-star"></i></li>
-                                </ul>
-                            </div>
-                            <h3><a href="#" title="" class="slider-pro-items-name">ASP.NET ZERO Core v8.2.0 </a></h3>
-                        </article>
-                    </div>
-                    <div class="swiper-slide">
-                        <article class="pro-slider-content">
-                            <div class="pro-slider-logo">
-                                <img alt="" src="img/zero.jpg">
-                                <a href="#" title="" class="pro-slider-logo-layer">
-                                    <i class="fas fa-plus"></i>
-                                </a>
-                            </div>
-                            <div class="rate-level d-flex justify-content-between align-items-center">
-                                <ul class="rate-pro-slider">
-                                    <li><i class="fas fa-star"></i></li>
-                                    <li><i class="fas fa-star"></i></li>
-                                    <li><i class="fas fa-star"></i></li>
-                                    <li><i class="far fa-star"></i></li>
-                                    <li><i class="far fa-star"></i></li>
-                                </ul>
-                            </div>
-                            <h3><a href="#" title="" class="slider-pro-items-name">ASP.NET ZERO Core v8.2.0 </a></h3>
-                        </article>
-                    </div>
-                    <div class="swiper-slide">
-                        <article class="pro-slider-content">
-                            <div class="pro-slider-logo">
-                                <img alt="" src="img/zero.jpg">
-                                <a href="#" title="" class="pro-slider-logo-layer">
-                                    <i class="fas fa-plus"></i>
-                                </a>
-                            </div>
-                            <div class="rate-level d-flex justify-content-between align-items-center">
-                                <ul class="rate-pro-slider">
-                                    <li><i class="fas fa-star"></i></li>
-                                    <li><i class="fas fa-star"></i></li>
-                                    <li><i class="fas fa-star"></i></li>
-                                    <li><i class="far fa-star"></i></li>
-                                    <li><i class="far fa-star"></i></li>
-                                </ul>
-                            </div>
-                            <h3><a href="#" title="" class="slider-pro-items-name">ASP.NET ZERO Core v8.2.0 </a></h3>
-                        </article>
-                    </div>
-                    <div class="swiper-slide">
-                        <article class="pro-slider-content">
-                            <div class="pro-slider-logo">
-                                <img alt="" src="img/zero.jpg">
-                                <a href="#" title="" class="pro-slider-logo-layer">
-                                    <i class="fas fa-plus"></i>
-                                </a>
-                            </div>
-                            <div class="rate-level d-flex justify-content-between align-items-center">
-                                <ul class="rate-pro-slider">
-                                    <li><i class="fas fa-star"></i></li>
-                                    <li><i class="fas fa-star"></i></li>
-                                    <li><i class="fas fa-star"></i></li>
-                                    <li><i class="far fa-star"></i></li>
-                                    <li><i class="far fa-star"></i></li>
-                                </ul>
-                            </div>
-                            <h3><a href="#" title="" class="slider-pro-items-name">ASP.NET ZERO Core v8.2.0 </a></h3>
-                        </article>
-                    </div>
-
-
-                </div>
-
-            </div>
-            <div class="swiper-button-next"></div>
-            <div class="swiper-button-prev"></div>
-        </div>
-    </div>
-</div>
-
-<div class="row t-mar-20">
-    <div class="col-12 col-lg-4 col-xl-3 order-2 order-lg-1">
-        @if (User.IsInRole("Admin"))
-        {
-            if (Model.Published)
-            {
-                <div class="alert alert-success p-1 fs-12 text-center" role="alert">
-                    @T("Published")
-                </div>
-            }
-            else
-            {
-                <div class="alert alert-danger p-1 fs-12 text-center" role="alert">
-                    @T("UnPublished")
-                </div>
-            }
-        }
-        @{Html.RenderPartial("Partials/_ProductDownloadView", Model.DownloadModel);}
-        @{Html.RenderPartial("Partials/_ProductAttributesSection", Model);}
-        @{Html.RenderPartial("Partials/_ProductTagsSection", Model.TagsList);}
-        @if (Model.ShowSimilarCases)
-        {
-            Html.RenderAction("MoreLikeThis", "Search", new { postId = Model.Id, postType = PostType.Product });
-        }
-        @if (Model.ShowKeywords)
-        {
-            Html.RenderPartial("Partials/_ProductKeywordsSection", Model.MetaKeyWords);
-        }
-    </div>
-
-    <div class="col-12 col-lg-8 col-xl-9 order-1 order-lg-4">
-        <article class="panel b-mar-20">
-            <div class="panel-title">
-                @if (settings.Wishlist || settings.LikePosts)
+                @if (User.IsInRole("Admin") && Model.Published == false)
                 {
-                    <span class="fs-18 btn btn-warning btn-sm float-end line-height-1 mar-h-5">
-                        @{Html.RenderAction("LikeWishlistButtonsPartialView", "Post", Model.LikeWishlistButtonsModel);}
-                    </span>
+                    <div class="alert alert-danger fs-12 text-center mar-v-20" role="alert">
+                        @T("UnPublished")
+                    </div>
                 }
-                <h1 class="no-b-mar fs-25 @Html.Raw(Model.TitleIsRtl ? "rtl-dir text-right" : "ltr-dir text-left")">
-                    @Html.Raw(Model.Title.Trim())
-                </h1>
+                @{Html.RenderPartial("Partials/_ProductAttributesSection", Model);}
+                @{Html.RenderPartial("Partials/_ProductTagsSection", Model.TagsList);}
+                @if (Model.ShowKeywords)
+                {
+                    Html.RenderPartial("Partials/_ProductKeywordsSection", Model.MetaKeyWords);
+                }
             </div>
-
-            @{Html.RenderPartial("Partials/_ProductImagesSection", Model.Images);}
-            @{Html.RenderPartial("Partials/_ProductDescriptionsSection", Model.Descriptions);}
-
-            <div id="shareIconsCountInside" class="fs-16 mar-v-20 text-center"></div>
-        </article>
-
-        @if (settings.AllowUsersToWriteComment && Model.AllowCustomerReviews)
-        {
-            <div class="panel fs-13 b-mar-20">
-                <div class="panel-title pad-10"><b>@T("Comments")</b></div>
-                <div class="pad-15">
-                    <div id="commentsListPlaceholder">
-                        @{ Html.RenderAction("CommentsList", "Comment", new { postId = Model.Id }); }
-                    </div>
-
-                    <h4>@T("WriteYourComment")</h4>
-                    <div id="CommentEditor">
-                        @{
-                            Html.RenderAction("CommentEditor", "Comment", new { postId = Model.Id });
-                        }
-                    </div>
-                </div>
-            </div>
-        }
-
+        </div>
     </div>
-</div>
+</article>
+
+@if (Model.ShowSimilarCases)
+{
+    Html.RenderAction("MoreLikeThis", "Search", new { postId = Model.Id, postType = PostType.Product, numberOfSimilarityPosts = 8 });
+}
+
 
 <script type="application/ld+json">
     @Html.Raw(GenerateSchema())
@@ -576,20 +193,6 @@
 
 @Html.Widget("product_page_end")
 
-@{
-    Html.AddInlineScript(ResourceLocation.Footer,
-@<script>
-     $("#shareIconsCountInside").jsSocials({
-         showLabel: false,
-         shareIn: "popup",
-         showCount: false,
-         shares: [
-             "email", "twitter", "facebook", "linkedin", "pinterest", "stumbleupon", "pocket", "whatsapp", "viber",
-             "messenger", "vkontakte", "telegram", "line"
-         ]
-     });
-</script>);
-}
 
 @functions
 {

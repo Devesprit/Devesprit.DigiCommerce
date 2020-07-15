@@ -1,0 +1,35 @@
+﻿@using System.Web.Mvc.Html
+@using Devesprit.DigiCommerce.Models
+@using Devesprit.DigiCommerce.Models.Post
+@model X.PagedList.IPagedList<PostCardViewModel>
+@{
+    Layout = null;
+}
+@if (Model.Any())
+{
+    <div class="products-slider">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <h2 class="pro-slider-title">@T("SimilarCases")</h2>
+                </div>
+            </div>
+            <div class="slider-irdev-wrap">
+                <div class="swiper-container main-swiper">
+                    <div class="swiper-wrapper">
+                        @foreach (var post in Model)
+                        {
+                            <div class='swiper-slide'>
+                                @{
+                                    Html.RenderAction("PostCardViewPartialView", "Post", new { model = post, style = ViewStyles.Small });
+                                }
+                            </div>
+                        }
+                    </div>
+                </div>
+                <div class="swiper-button-next"></div>
+                <div class="swiper-button-prev"></div>
+            </div>
+        </div>
+    </div>
+}

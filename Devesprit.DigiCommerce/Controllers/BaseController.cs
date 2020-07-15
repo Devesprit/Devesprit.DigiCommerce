@@ -30,11 +30,11 @@ namespace Devesprit.DigiCommerce.Controllers
         private ILanguagesService _languagesService; 
         private ICurrencyService _currencyService;  
         private IEventPublisher _eventPublisher; 
-         
+            
         public ApplicationUserManager UserManager => HttpContext.GetOwinContext().Get<ApplicationUserManager>();
         public ApplicationSignInManager SignInManager => HttpContext.GetOwinContext().Get<ApplicationSignInManager>();
         public IAuthenticationManager AuthenticationManager => HttpContext.GetOwinContext().Authentication;
-
+         
         public ILanguagesService LanguagesService => _languagesService ?? (_languagesService =
                                                          DependencyResolver.Current.GetService<ILanguagesService>());  
         public ICurrencyService CurrencyService => _currencyService ?? (_currencyService =

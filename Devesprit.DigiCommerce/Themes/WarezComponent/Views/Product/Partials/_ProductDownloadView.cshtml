@@ -24,7 +24,7 @@
         {
             <a href="@Url.Action("UpgradeAccount", "Purchase")"
                target="_blank"
-               class="btn btn-sm btn-secondary fs-12 p-0">
+               class="btn btn-sm btn-secondary fs-12 p-0 m-0">
                 <div class="container">
                     <div class="row">
                         <div class="col-3 py-2">
@@ -50,64 +50,66 @@
         <img src="@Model.DownloadLimitedToUserGroup.GetLocalized(p => p.GroupLargeIcon)"
              alt="@Model.DownloadLimitedToUserGroup.GetLocalized(p => p.GroupName)" class="d-block mx-auto b-mar-5 mw-100" />
         @Html.Raw(T("SubscribeToPlan",
-            "<span style='color: " + Model.DownloadLimitedToUserGroup.GetLocalized(p => p.GroupTextColor) + " !important;'> " +
+            "<span> " +
             Model.DownloadLimitedToUserGroup.GetLocalized(p => p.GroupName) + "</span>"))
         <hr class="my-1" />
         <small>
             @Html.Raw(string.Format(Model.HigherUserGroupsCanDownload ?
                 T("ForDownloadSubscribeToPlanOrHigher").ToString()
                 : T("ForDownloadSubscribeToPlan").ToString(),
-                "<span style='color: " + Model.DownloadLimitedToUserGroup.GetLocalized(p => p.GroupTextColor) + " !important;'>" +
+                "<span>" +
                 Model.DownloadLimitedToUserGroup.GetLocalized(p => p.GroupName) + "</span>"))
         </small>
     }
 }
 
 @{
-    //Subscribe to a plan
-    if (Model.ShowUpgradeUserAccountBtn)
-    {
-        <a href="@Url.Action("UpgradeAccount", "Purchase")"
-           target="_blank"
-           class="btn btn-lg text-light fs-16 d-block white-space-initial b-mar-20"
-           style="background-color: @Model.DownloadLimitedToUserGroup.GetLocalized(p => p.GroupBackgroundColor);">
-            @UpgradeUserAccountBtnInnerHtml()
-        </a>
-    }
+    <div class="pro-category-sidebar">
+        @*Purchase button*@
+        @if (Model.ShowPurchaseBtn)
+        {
+            <div class="btn-group-vertical d-block b-mar-20">
+                <button class="btn btn-success shadow text-light fs-25 d-block white-space-initial pad-v-20"
+                        type="button"
+                        onclick="ShowProductPurchaseWizard(@Model.ProductId, null);">
+                    @PurchaseBtnInnerHtml()
+                </button>
 
-    //Purchase button
-    if (Model.ShowPurchaseBtn)
-    {
-        <div class="btn-group-vertical d-block b-mar-20">
-            <button class="btn btn-success shadow text-light fs-25 d-block white-space-initial"
-                    type="button"
-                    onclick="ShowProductPurchaseWizard(@Model.ProductId, null);">
-                @PurchaseBtnInnerHtml()
-            </button>
+                @UserGroupDiscountsBtnInnerHtml()
+            </div>
+        }
 
-            @UserGroupDiscountsBtnInnerHtml()
-        </div>
-    }
+        @*Subscribe to a plan*@
+        @if (Model.ShowUpgradeUserAccountBtn)
+        {
+            <a href="@Url.Action("UpgradeAccount", "Purchase")"
+               target="_blank"
+               class="subscribe-plan-box shadow"
+               style="background-color: @Model.DownloadLimitedToUserGroup.GetLocalized(p => p.GroupBackgroundColor);">
+                @UpgradeUserAccountBtnInnerHtml()
+            </a>
+        }
 
-    //Full version download button
-    if (Model.ShowDownloadFullVersionBtn)
-    {
-        <a href="@Url.Action("DownloadProduct", "Download", new {productId = Model.ProductId, demoFiles = false})"
-           target="_blank"
-           class="btn btn-warning btn-lg fs-20 d-block white-space-initial b-mar-20">
-            <i class="fa fa-download fa-2x"></i>
-            <br />
-            @Html.Raw(T("DownloadNow"))
-        </a>
-    }
+        @*Full version download button*@
+        @if (Model.ShowDownloadFullVersionBtn)
+        {
+            <a href="@Url.Action("DownloadProduct", "Download", new {productId = Model.ProductId, demoFiles = false})"
+               target="_blank"
+               class="cta-pro-dl fs-20 d-block white-space-initial b-mar-30 shadow">
+                <i class="fa fa-download fa-2x"></i>
+                <br />
+                @Html.Raw(T("DownloadNow"))
+            </a>
+        }
 
-    //Demo version download button
-    if (Model.ShowDownloadDemoVersionBtn)
-    {
-        <a href="@Url.Action("DownloadProduct", "Download", new {productId = Model.ProductId, demoFiles = true})"
-           target="_blank"
-           class="btn btn-warning btn-lg fs-16 d-block b-mar-20 white-space-initial">
-            @Html.Raw(T("DownloadDemo"))
-        </a>
-    }
+        @*Demo version download button*@
+        @if (Model.ShowDownloadDemoVersionBtn)
+        {
+            <a href="@Url.Action("DownloadProduct", "Download", new {productId = Model.ProductId, demoFiles = true})"
+               target="_blank"
+               class="cta-pro-demo-dl fs-20 d-block white-space-initial b-mar-30 shadow">
+                @Html.Raw(T("DownloadDemo"))
+            </a>
+        }
+    </div>
 }

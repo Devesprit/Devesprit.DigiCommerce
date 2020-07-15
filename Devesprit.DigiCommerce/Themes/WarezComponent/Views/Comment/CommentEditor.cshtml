@@ -1,0 +1,157 @@
+﻿
+@using Devesprit.Core
+@using Devesprit.Core.Settings
+@using Devesprit.Services
+@using reCaptcha
+@model Devesprit.DigiCommerce.Models.Comment.CommentEditorModel
+@{
+    Layout = null;
+
+    var currentLang = DependencyResolver.Current.GetService<IWorkContext>().CurrentLanguage;
+    var settings = DependencyResolver.Current.GetService<ISettingService>().LoadSetting<SiteSettings>();
+    var retUrl = string.IsNullOrWhiteSpace(Request.QueryString["returnUrl"]) ?
+        Request.Url.PathAndQuery : Request.QueryString["returnUrl"];
+}
+
+@if (!settings.AllowGuestUsersToWriteComment && !User.Identity.IsAuthenticated)
+{
+    <p class="fw-bold text-center">
+        @T("LoginToWriteComment")
+        <br />
+        <a class="btn btn-primary text-light font-wight-normal t-mar-20" href="@Url.Action("Login", "User", new { returnUrl = retUrl, area = "" })">@T("ClickToLogin")</a>
+    </p>
+}
+else
+{
+    <div id="ReplyToComment" class="alert alert-warning alert-dismissible fade show t-mar-10 d-none">
+        <p class="alert-heading fw-bold">@T("YouAreReplyingTo")</p>
+        <div id="ReplyToCommentText"></div>
+        <button type="button" class="close" onclick="$('#ReplyToCommentId').val(''); $('#ReplyToComment').addClass('d-none');">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+
+    using (Ajax.BeginForm("CommentEditor", null, new AjaxOptions()
+    {
+        UpdateTargetId = "CommentEditor",
+        InsertionMode = InsertionMode.Replace,
+        OnFailure = "ErrorAlert('" + T("Error") + "', '" + T("ServerConnectionError") + "');",
+        LoadingElementId = "LoadingPanel",
+        OnSuccess = "LoadCommentsList(" + Model.PostId + ")"
+    }, new {@class="add-cmnt-form"}))
+    {
+        @Html.AntiForgeryToken()
+        @Html.HiddenFor(p => p.PostId)
+        <input type="hidden" id="ReplyToCommentId" name="ReplyToCommentId" />
+
+        <div class="row">
+            <div class="col-sm-12 col-lg-6">
+                @Html.LabelFor(p => p.UserName)
+                @Html.ValidationMessageFor(p => p.UserName, "", new { @class = "form-text text-danger fs-12" })
+                @(Model.GuestUser ? Html.TextBoxFor(p => p.UserName, new { @class = "add-cmnt-input" }) : Html.TextBoxFor(p => p.UserName, new { @class = "add-cmnt-input", @readonly = "readonly" }))
+            </div>
+            <div class="col-sm-12 col-lg-6">
+                @Html.LabelFor(p => p.UserEmail)
+                @Html.ValidationMessageFor(p => p.UserEmail, "", new { @class = "form-text text-danger fs-12" })
+                @(Model.GuestUser ? Html.TextBoxFor(p => p.UserEmail, new { @class = "add-cmnt-input" }) : Html.TextBoxFor(p => p.UserEmail, new { @class = "add-cmnt-input", @readonly = "readonly" }))
+            </div>
+            <div class="col-12">
+                @Html.LabelFor(p => p.Comment)
+                @Html.ValidationMessageFor(p => p.Comment, "", new { @class = "form-text text-danger fs-12" })
+                @Html.TextAreaFor(p => p.Comment, new { @class = "add-cmnt-desc add-cmnt-input" })
+            </div>
+
+        </div>
+        <div class="row">
+            @if (User.Identity.IsAuthenticated)
+            {
+                <div class="col-12 col-md-6 ">
+                    <div class="form-group">
+                        <div class="custom-control custom-checkbox">
+                            @Html.CheckBoxFor(p => p.NotifyWhenReply, new { @class = "custom-control-input" })
+                            @Html.LabelFor(p => p.NotifyWhenReply, new { @class = "custom-control-label" })
+                        </div>
+                        @Html.ValidationMessageFor(p => p.NotifyWhenReply, "", new { @class = "form-text text-danger fs-12" })
+                    </div>
+                </div>
+                <div class="col-12 col-md-6 ">
+                    <div class="form-group">
+                        <div class="custom-control custom-checkbox">
+                            @Html.CheckBoxFor(p => p.NotifyWhenNewComment, new { @class = "custom-control-input" })
+                            @Html.LabelFor(p => p.NotifyWhenNewComment, new { @class = "custom-control-label" })
+                        </div>
+                        @Html.ValidationMessageFor(p => p.NotifyWhenNewComment, "", new { @class = "form-text text-danger fs-12" })
+                    </div>
+                </div>
+            }
+            @if (Model.UserIsAdmin)
+            {
+                <div class="col-12 col-md-6 ">
+                    <div class="form-group">
+                        <div class="custom-control custom-checkbox">
+                            @Html.CheckBoxFor(p => p.Published, new { @class = "custom-control-input" })
+                            @Html.LabelFor(p => p.Published, new { @class = "custom-control-label" })
+                        </div>
+                        @Html.ValidationMessageFor(p => p.Published, "", new { @class = "form-text text-danger fs-12" })
+                    </div>
+                </div>
+            }
+
+            @if (ViewBag.publicKey != null)
+            {
+                <div class="col-12">
+                    <div class="d-block b-mar-5">
+                        @ReCaptcha.GetHtml(ViewBag.publicKey, lang: currentLang.IsoCode)
+                    </div>
+
+                    @if (ViewBag.RecaptchaLastErrors != null)
+                    {
+                        <small class="form-text text-danger fs-12">@T("InvalidCaptcha")</small>
+                    }
+                </div>
+            }
+        </div>
+
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" }).ToMvcHtmlString()
+
+        <div class="text-center t-mar-10">
+            <button type="submit" class="add-cmnt-btn">@T("SubmitYourComment")</button>
+        </div>
+    }
+}
+
+@{
+    Html.AddInlineScript(ResourceLocation.Footer,
+@<script>
+
+             function ReplyToComment(parentCommentId) {
+                 $("#ReplyToCommentId").val(parentCommentId);
+                 $("#ReplyToCommentText").html($("#comment_text_" + parentCommentId).html());
+                 $("#ReplyToComment").removeClass("d-none");
+                 $('html, body').animate({
+                         scrollTop: $("#CommentEditor").offset().top - 50
+                     },
+                     1000);
+             }
+
+             function LoadCommentsList(postId) {
+                 $("#commentsListPlaceholder").html('@Html.Raw(T("LoadingPanelHtml"))').load(
+                     '@Url.Action("CommentsList", "Comment")?postId=' + postId);
+             }
+
+             function FindComment(postId, commentId) {
+                 $("#commentsListPlaceholder").html('@Html.Raw(T("LoadingPanelHtml"))').load(
+                     '@Url.Action("FindComment", "Comment")?postId=' +
+                     postId +
+                     '&commentId=' +
+                     commentId);
+             }
+</script>);
+}
+
+@if (TempData["SuccessNotification"] != null)
+{
+    <script type="text/javascript">
+        SuccessAlert('@T("Successful")', '@TempData["SuccessNotification"].ToString()');
+    </script>
+}

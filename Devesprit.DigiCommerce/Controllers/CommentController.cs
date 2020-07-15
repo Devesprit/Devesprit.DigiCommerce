@@ -62,6 +62,7 @@ namespace Devesprit.DigiCommerce.Controllers
         public virtual async Task<ActionResult> CommentEditor(CommentEditorModel model)
         {
             var isAdmin = HttpContext.User.IsInRole("Admin");
+            model.UserIsAdmin = isAdmin;
             var currentUser = await UserManager.FindByIdAsync(User.Identity.GetUserId());
             var currentUserId = currentUser?.Id ?? "";
 

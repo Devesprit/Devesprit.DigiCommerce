@@ -1,0 +1,50 @@
+﻿@using System.Web.Mvc.Html
+@using X.PagedList.Mvc
+@using X.PagedList.Mvc.Common
+@model Devesprit.DigiCommerce.Models.Comment.CommentsListModel
+@{
+    Layout = null;
+}
+@foreach (var comment in Model.CommentsList)
+{
+    if (comment.Id == Model.HighlightComment)
+    {
+        <div class="highlight-comment">
+            @{ Html.RenderPartial("Partials/_CommentBody", comment); }
+        </div>
+    }
+    else
+    {
+        Html.RenderPartial("Partials/_CommentBody", comment);
+    }
+}
+
+@if (Model.CommentsList.Any())
+{
+    <div class="row t-mar-20">
+        <div class="col-12">
+            @Html.PagedListPager(Model.CommentsList,
+                page => Url.Action("CommentsList", "Comment", new { page, postId = Model.PostId }),
+                PagedListRenderOptions.EnableUnobtrusiveAjaxReplacing(
+                    new TwitterBootstrap4Pager(),
+                    new AjaxOptions()
+                    {
+                        UpdateTargetId = "commentsListPlaceholder",
+                        InsertionMode = InsertionMode.Replace,
+                        OnFailure = "ErrorAlert('" + T("Error") + "', '" + T("ServerConnectionError") + "');",
+                        LoadingElementId = "LoadingPanel"
+                    }))
+        </div>
+    </div>
+
+    
+}
+
+@if (Model.HighlightComment > 0)
+{
+    <script type="text/javascript">
+        $('html, body').animate({
+            scrollTop: $("#comment_@Model.HighlightComment").offset().top - 50
+        }, 1000);
+    </script>
+}

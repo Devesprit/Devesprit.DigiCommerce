@@ -89,7 +89,7 @@ This set of fonts are used in this project under the license: (.....)
 @font-face {
 	font-family: iranyekan-exblack;
 	font-style: normal;
-	font-weight: 900;
+	font-weight: 950;
 	src: url('fonts/eot/iranyekanwebextrablack.eot');
 	src: url('fonts/eot/iranyekanwebextrablack.eot?#iefix') format('embedded-opentype'),  /* IE6-8 */
 		 url('fonts/woff/iranyekanwebextrablack.woff') format('woff'),  /* FF3.6+, IE9, Chrome6+, Saf5.1+*/
