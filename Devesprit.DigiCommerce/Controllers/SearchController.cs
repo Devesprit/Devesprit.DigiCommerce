@@ -202,7 +202,7 @@ namespace Devesprit.DigiCommerce.Controllers
         {
             var result = _searchEngine.MoreLikeThis(postId, null, 0, postType,
                 SearchPlace.Title | SearchPlace.Description | SearchPlace.Tags,
-                numberOfSimilarityPosts ?? 20);
+                numberOfSimilarityPosts ?? 5);
             if (result.HasError)
             {
                 var errorCode = ErrorLog.GetDefault(System.Web.HttpContext.Current).Log(new Error(result.Error, System.Web.HttpContext.Current));
@@ -211,7 +211,7 @@ namespace Devesprit.DigiCommerce.Controllers
             }
 
             var currentUser = UserManager.FindById(User.Identity.GetUserId());
-            var posts = _postService.GetItemsById(result.Documents.Select(p => p.DocumentId).Take(5).ToList(), 1,
+            var posts = _postService.GetItemsById(result.Documents.Select(p => p.DocumentId).Take(numberOfSimilarityPosts ?? 5).ToList(), 1,
                 numberOfSimilarityPosts ?? 5);
             return PartialView("Partials/_MoreLikeThis", _postModelFactory.PreparePostCardViewModel(posts, currentUser, Url));
         }
