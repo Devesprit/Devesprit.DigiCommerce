@@ -34,13 +34,13 @@ namespace Devesprit.DigiCommerce.Controllers
         public ApplicationUserManager UserManager => HttpContext.GetOwinContext().Get<ApplicationUserManager>();
         public ApplicationSignInManager SignInManager => HttpContext.GetOwinContext().Get<ApplicationSignInManager>();
         public IAuthenticationManager AuthenticationManager => HttpContext.GetOwinContext().Authentication;
-         
+          
         public ILanguagesService LanguagesService => _languagesService ?? (_languagesService =
-                                                         DependencyResolver.Current.GetService<ILanguagesService>());  
+                                                         DependencyResolver.Current.GetService<ILanguagesService>());    
         public ICurrencyService CurrencyService => _currencyService ?? (_currencyService =
-                                                         DependencyResolver.Current.GetService<ICurrencyService>());
+                                                         DependencyResolver.Current.GetService<ICurrencyService>()); 
         public IWorkContext WorkContext => _workContext ?? (_workContext =
-                                                       DependencyResolver.Current.GetService<IWorkContext>());
+                                                       DependencyResolver.Current.GetService<IWorkContext>()); 
         public SiteSettings CurrentSettings => _settings ?? (_settings =
                                                        DependencyResolver.Current.GetService<ISettingService>().LoadSetting<SiteSettings>());
         public IEventPublisher EventPublisher => _eventPublisher ?? (_eventPublisher =

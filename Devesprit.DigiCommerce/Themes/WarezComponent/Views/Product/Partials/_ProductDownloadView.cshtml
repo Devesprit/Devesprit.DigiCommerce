@@ -68,8 +68,8 @@
         @*Purchase button*@
         @if (Model.ShowPurchaseBtn)
         {
-            <div class="btn-group-vertical d-block b-mar-20">
-                <button class="btn btn-success shadow text-light fs-25 d-block white-space-initial pad-v-20"
+            <div class="btn-group-vertical d-block b-mar-20 shadow" style="border-radius: 12px; overflow: hidden">
+                <button class="btn btn-success text-light fs-25 d-block white-space-initial pad-v-20"
                         type="button"
                         onclick="ShowProductPurchaseWizard(@Model.ProductId, null);">
                     @PurchaseBtnInnerHtml()

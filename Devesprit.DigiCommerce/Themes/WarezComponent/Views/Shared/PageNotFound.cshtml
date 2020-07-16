@@ -1,12 +1,15 @@
 ﻿
-
 @{
     ViewBag.Title = T("PageNotFound");
+    Layout = "~/Themes/WarezComponent/Views/Shared/_BaseLayout.cshtml";
 }
 
-
-@{
-    Html.RenderPartial("Partials/_PageNotFound");
-}
-
-
+<div class="log-reg-bg d-flex align-items-center">
+    <div class="container">
+        <div class="container">
+            @{
+                Html.RenderPartial("Partials/_PageNotFound");
+            }
+        </div>
+    </div>
+</div>

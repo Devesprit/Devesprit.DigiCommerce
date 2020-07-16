@@ -824,13 +824,8 @@ ul {
 .action-pro {
     position: absolute;
     top: 20px;
-    left: 20px;
+    right: 7px;
 }
-
-    .action-pro form {
-        display: flex;
-        align-items: flex-start;
-    }
 
 .rate-level {
     width: 100%;
@@ -1110,7 +1105,7 @@ span.bookmark-checked {
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    height: 300px;
+    height: 280px;
     background-image: url('img/slider-app.jpg');
 }
 
@@ -1145,7 +1140,7 @@ span.bookmark-checked {
 .breadcrumbs {
     display: flex;
     justify-content: center;
-    margin-top: 25px;
+    margin-bottom: 25px;
 }
 
     .breadcrumbs li, .breadcrumbs li a {
@@ -1190,7 +1185,7 @@ span.bookmark-checked {
     }
 
 .subscribe-plan-box {
-    border-radius: .25rem;
+    border-radius: 12px;
     padding: 30px 40px;
     display: block;
     margin-bottom: 25px;
@@ -1226,10 +1221,10 @@ span.bookmark-checked {
 }
 
 .cta-pro-dl {
-    border-radius: .25rem;
+    border-radius: 12px;
     background-color: #ffbb00;
     border: 2px solid #ffbb00;
-    padding: 12px 30px; 
+    padding: 12px 30px;
     font-size: 16px;
     color: #fff;
     transition: all 0.3s;
@@ -1245,7 +1240,7 @@ span.bookmark-checked {
     }
 
 .cta-pro-demo-dl {
-    border-radius: .25rem;
+    border-radius: 12px;
     background-color: #ff7b2d;
     border: 2px solid #ff7b2d;
     padding: 12px 30px;
@@ -4523,7 +4518,7 @@ span.bookmark-checked {
     color: #fff;
     font-size: x-small;
     text-align: center;
-    z-index: 999;
+    z-index: 995;
 }
 
     .post-card-ribbon:before {
@@ -4601,3 +4596,33 @@ span.bookmark-checked {
     padding-left: unset;
 }
 /* ------------Bootstrap CheckBox */
+
+#back-to-top {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    z-index: 9999;
+    width: 50px;
+    height: 50px;
+    text-align: center;
+    line-height: 50px;
+    background: rgba(0, 0, 0, 0.35);
+    color: #fff;
+    cursor: pointer;
+    border: 0;
+    border-radius: 5px;
+    text-decoration: none;
+    opacity: 0;
+    -webkit-transition: all .15s ease-in-out;
+    transition: all .15s ease-in-out;
+}
+
+#back-to-top:hover {
+    background: #2d2d2d;
+    -webkit-transition: all .15s ease-in-out;
+    transition: all .15s ease-in-out;
+}
+
+#back-to-top.show {
+    opacity: 1;
+}

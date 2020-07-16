@@ -11,8 +11,6 @@
 @using Devesprit.Utilities.Extensions
 @using Schema.NET
 @{
-    Layout = "~/Themes/WarezComponent/Views/Shared/_Layout-HomePage.cshtml";
-
     var settings = DependencyResolver.Current.GetService<ISettingService>().LoadSetting<SiteSettings>();
     var socialAccounts = DependencyResolver.Current.GetService<ISocialAccountsService>().GetAsEnumerable();
     var webSiteSchema = new WebSite()
@@ -49,6 +47,18 @@
     var delphiCat = catList.FirstOrDefault(p => p.CategoryName == "Delphi");
     var dotNetCat = catList.FirstOrDefault(p => p.CategoryName == ".Net");
 }
+
+<!-- Head slider -->
+<div class="head-slider persiaNumber">
+    <div class="head-slider-layer">
+        <div class="container">
+            <h1 class="head-title">@settings.GetLocalized(p => p.SiteName)</h1>
+            <p class="desc-header">@settings.GetLocalized(p => p.SiteDescription)</p>
+            @{Html.RenderPartial("Partials/_SearchBox");}
+        </div>
+    </div>
+</div>
+
 @Html.Widget("home_page_start")
 
 
@@ -176,7 +186,7 @@
     <div class="container">
         <div class="row">
             <div class="col-12">
-                <h2 class="pro-slider-title">@dotNetCat.GetLocalized(p=> p.CategoryName)</h2>
+                <h2 class="pro-slider-title">@dotNetCat.GetLocalized(p => p.CategoryName)</h2>
             </div>
             <div class="col-12">
                 <div class="pro-slider-desc">
@@ -213,7 +223,7 @@
         <div class="container">
             <div class="row">
                 <div class="col-12">
-                    <h2 class="pro-slider-title pro-parallax-title">@T("FreeProducts")</h2>
+                    <h2 class="pro-slider-title pro-parallax-title">@T("FreeProductsWithoutPage")</h2>
                 </div>
                 <div class="col-12">
                     <div class="pro-slider-desc pro-parallax-desc">
@@ -282,37 +292,37 @@
 
 
 @*<div class="row t-pad-20">
-    <div class="col-12 col-md-4 col-lg-4 col-xl-3 b-mar-70">
-        <div class="text-center mb-3">
-            <h2 class="mb-0">@T("HotProductsWithoutPage")</h2>
-            <a class="text-warning fs-12" href="@Url.Action("ProductsExplorer", "Product", new {listType = ProductsListType.HotList})">@T("SeeMore")</a>
+        <div class="col-12 col-md-4 col-lg-4 col-xl-3 b-mar-70">
+            <div class="text-center mb-3">
+                <h2 class="mb-0">@T("HotProductsWithoutPage")</h2>
+                <a class="text-warning fs-12" href="@Url.Action("ProductsExplorer", "Product", new {listType = ProductsListType.HotList})">@T("SeeMore")</a>
+            </div>
+            @{Html.RenderAction("GetProductsList", "Product", new
+                {
+                    listType = ProductsListType.HotList,
+                    pageSize = 9,
+                    showPager = false,
+                    numberOfCol = NumberOfCol.One,
+                    style = ViewStyles.Small
+                });}
+            <a class="btn btn-sm btn-secondary btn-block mt-2" href="@Url.Action("ProductsExplorer", "Product", new {listType = ProductsListType.HotList})"><i class="fa fa-list"></i> @T("SeeMore")</a>
         </div>
-        @{Html.RenderAction("GetProductsList", "Product", new
-            {
-                listType = ProductsListType.HotList,
-                pageSize = 9,
-                showPager = false,
-                numberOfCol = NumberOfCol.One,
-                style = ViewStyles.Small
-            });}
-        <a class="btn btn-sm btn-secondary btn-block mt-2" href="@Url.Action("ProductsExplorer", "Product", new {listType = ProductsListType.HotList})"><i class="fa fa-list"></i> @T("SeeMore")</a>
-    </div>
-    <div class="col b-mar-70">
-        <div class="text-center mb-3">
-            <h2 class="mb-0">@T("MostDownloadedProductsWithoutPage")</h2>
-            <a class="text-warning fs-12" href="@Url.Action("ProductsExplorer", "Product", new {listType = ProductsListType.MostDownloaded})">@T("SeeMore")</a>
+        <div class="col b-mar-70">
+            <div class="text-center mb-3">
+                <h2 class="mb-0">@T("MostDownloadedProductsWithoutPage")</h2>
+                <a class="text-warning fs-12" href="@Url.Action("ProductsExplorer", "Product", new {listType = ProductsListType.MostDownloaded})">@T("SeeMore")</a>
+            </div>
+            @{Html.RenderAction("GetProductsList", "Product", new
+                {
+                    listType = ProductsListType.MostDownloaded,
+                    pageSize = 5,
+                    showPager = false,
+                    numberOfCol = NumberOfCol.One,
+                    style = ViewStyles.Large
+                });}
+            <a class="btn btn-sm btn-secondary btn-block mt-2" href="@Url.Action("ProductsExplorer", "Product", new {listType = ProductsListType.MostDownloaded})"><i class="fa fa-list"></i> @T("SeeMore")</a>
         </div>
-        @{Html.RenderAction("GetProductsList", "Product", new
-            {
-                listType = ProductsListType.MostDownloaded,
-                pageSize = 5,
-                showPager = false,
-                numberOfCol = NumberOfCol.One,
-                style = ViewStyles.Large
-            });}
-        <a class="btn btn-sm btn-secondary btn-block mt-2" href="@Url.Action("ProductsExplorer", "Product", new {listType = ProductsListType.MostDownloaded})"><i class="fa fa-list"></i> @T("SeeMore")</a>
-    </div>
-</div>*@
+    </div>*@
 <script type="application/ld+json">
     @Html.Raw(webSiteSchema.ToHtmlEscapedString())
 </script>

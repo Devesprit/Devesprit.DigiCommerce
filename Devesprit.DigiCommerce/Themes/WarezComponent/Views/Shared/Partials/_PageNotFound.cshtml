@@ -1,25 +1,38 @@
-﻿@{Layout = null;}
+﻿@using Devesprit.Core
+@{
+    Layout = null;
+    var isRtl = DependencyResolver.Current.GetService<IWorkContext>().CurrentLanguage.IsRtl;
+}
+
 <div class="row justify-content-center">
-    <div class="col-12 col-lg-6">
-        <div class="panel">
-            <div class="panel-title pad-10">
-                <h5 class="no-mar">@T("PageNotFound")</h5>
-            </div>
-            <div class="fs-14 pad-20 text-center">
-                <img src="~/Content/img/404_250px.png" alt="Error" />
+    <div class="col-12 col-sm-10 col-md-9 col-lg-7 col-xl-6">
+        <div class="login-reg-box text-center">
+            <div class="login-reg-head">
                 <h1>@T("Error404")</h1>
                 <h5>@T("PageNotFound")</h5>
-                <p>@Html.Raw(T("Error404Desc"))</p>
-                <button class="btn btn-outline-secondary btn-sm" role="button" onclick="window.history.go(-1); return false;">@T("ReturnPrevious")</button>
-                <a class="btn btn-outline-secondary btn-sm" href="@Url.Action("Index", "Home", new { area = "" }, null)">@T("ReturnHome")</a>
-                @if (User.Identity.IsAuthenticated && User.IsInRole("Admin") && !string.IsNullOrWhiteSpace(ViewBag.ErrorCode))
-                {
-                    <a class="btn btn-danger btn-sm" target="_blank" href="/elmah.axd/detail?id=@ViewBag.ErrorCode">@T("SeeDetails")</a>
-                }
+                <i class="fas fa-unlink text-warning mar-v-50" style="font-size: 200px;"></i>
+                <p class="login-info">@Html.Raw(T("Error404Desc"))</p>
             </div>
+            <button class="btn btn-warning btn-sm" role="button" onclick="window.history.go(-1);return false;">
+                @if (isRtl)
+                {
+                    <i class="fas fa-chevron-circle-right"></i>
+                }
+                else
+                {
+                    <i class="fas fa-chevron-circle-left"></i>
+                }
+                @T("ReturnPrevious")
+            </button>
+            <a class="btn btn-warning btn-sm" href="@Url.Action("Index", "Home", new {area = ""}, null)">
+                <i class="fas fa-home"></i>
+                @T("ReturnHome")
+            </a>
+            @if (User != null && User.Identity.IsAuthenticated && User.IsInRole("Admin") && !string.IsNullOrWhiteSpace(ViewBag.ErrorCode))
+            {
+                <a class="btn btn-danger btn-sm" target="_blank" href="/elmah.axd/detail?id=@ViewBag.ErrorCode">@T("SeeDetails")</a>
+            }
         </div>
     </div>
 </div>
-
-
 

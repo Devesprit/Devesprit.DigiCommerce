@@ -1,0 +1,147 @@
+﻿@using System.Web.Mvc.Html
+@using Devesprit.Core
+@using Devesprit.DigiCommerce.Models
+@using Devesprit.DigiCommerce.Models.Post
+@using Devesprit.DigiCommerce.Models.Products
+@using Devesprit.Utilities
+@model Devesprit.DigiCommerce.Models.Products.ProductsExplorerModel
+
+@{
+    ViewBag.Title = T("NewestProductsIn", Model.CategoryName, Model.PageIndex);
+    ViewBag.MetaDescription = ViewBag.Title;
+    Html.AddHeadCustomParts("<meta name=\"robots\" content=\"index,follow\">");
+    var workContext = DependencyResolver.Current.GetService<IWorkContext>();
+    var pageMainUrl = Url.Action("FilterByCategory", "Product", new { page = Model.PageIndex, slug = Model.CategorySlug, lang = workContext.CurrentLanguage.IsoCode }, Request.Url.Scheme);
+    Html.AddCanonicalUrlParts(pageMainUrl);
+}
+
+<!-- pro head slider -->
+<header class="pro-head-slider">
+    <div class="pro-head-slider-layer">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 d-flex justify-content-center">
+                    <h1 class="pro-head-title pro-head-title-archive">
+                        <a href="@Url.Action("Products", "RssFeed", new {listType = Model.PostsListType, catId = Model.FilterByCategoryId, fromDate = Model.FromDate}).RemoveEmptyParametersFromQueryString()" target="_blank" title="@T("RSSFeed")" class="text-warning"><i class="fa fa-rss"></i></a>
+                        @Html.Raw(ViewBag.Title)
+                    </h1>
+                </div>
+                <div class="col-12">
+                    <ul class="breadcrumbs">
+                        <li><a href="@Url.Action("Index", "Home")">@T("Home")</a></li>
+                        <li>/</li>
+                        <li><a href="@Url.Action("FilterByCategory", "Product", new {slug = Model.CategorySlug, lang = workContext.CurrentLanguage.IsoCode}, Request.Url.Scheme)">@Html.Raw(Model.CategoryName.Trim())</a></li>
+                        <li>/</li>
+                        <li><span>@Model.PageIndex</span></li>
+                    </ul>
+                </div>
+                <div class="col-12 d-flex justify-content-center">
+                    @{Html.RenderPartial("Partials/_SearchBox");}
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- category body -->
+<div class="container">
+    <div class="row">
+        <div class="col-sm-12 col-md-5 col-lg-4">
+            <div class="sidebar-pro-category">
+                <div class="item-info-pro-box">
+                    <div class="item-info-pro-title">
+                        <h3>Categories</h3>
+                    </div>
+                    <div class="item-info-pro-content">
+                        <form class="list-category-items">
+                            <span class="filter-target-item">
+                                <label class="checkbox-filter-ir-login checkbox-filter-ir-category">
+                                    <input type="checkbox" name="web" value="web">
+                                    <span class="checkbox-custom-ir-login rectangular"></span>
+                                    <span class="text-category-checkbox">Web<span class="category-item-count">(25)</span></span>
+                                </label>
+                            </span>
+                            <span class="filter-target-item">
+                                <label class="checkbox-filter-ir-login checkbox-filter-ir-category">
+                                    <input type="checkbox" name="net" value="net">
+                                    <span class="checkbox-custom-ir-login rectangular"></span>
+                                    <span class="text-category-checkbox">.Net<span class="category-item-count">(25)</span></span>
+                                </label>
+                            </span>
+                            <span class="filter-target-item">
+                                <label class="checkbox-filter-ir-login checkbox-filter-ir-category">
+                                    <input type="checkbox" name="Delphi" value="Delphi">
+                                    <span class="checkbox-custom-ir-login rectangular"></span>
+                                    <span class="text-category-checkbox">Delphi<span class="category-item-count">(25)</span></span>
+                                </label>
+                            </span>
+
+                            <button type="submit" href="#" class="btn-apply-sort">Apply</button>
+                        </form>
+                        <!-- <ul class="list-category-items">
+                    <li><a href="#" title="">Delphi<span class="category-item-count">(4)</span></a></li>
+                    <li><a href="#" title="" class="active-category">.Net<span class="category-item-count">(20)</span></a></li>
+                    <li><a href="#" title="">Database<span class="category-item-count">(17)</span></a></li>
+                    <li><a href="#" title="">More<span class="category-item-count">(18)</span></a></li>
+                </ul> -->
+                    </div>
+                </div>
+                <div class="item-info-pro-box">
+                    <div class="item-info-pro-title">
+                        <h3>Sort By :</h3>
+                    </div>
+                    <div class="item-info-pro-content">
+                        <form class="sort-pro-sidebar">
+                            <span class="filter-target-item">
+                                <label class="checkbox-filter-ir">
+                                    <input type="radio" name="sort" value="newest">
+                                    <span class="checkbox-custom-ir rectangular"></span>
+                                    <span class="text-filter-checkbox">The Newest</span>
+                                </label>
+                            </span>
+                            <span class="filter-target-item">
+                                <label class="checkbox-filter-ir">
+                                    <input type="radio" name="sort" value="downloaded">
+                                    <span class="checkbox-custom-ir rectangular"></span>
+                                    <span class="text-filter-checkbox">Most Downloaded</span>
+                                </label>
+                            </span>
+                            <button type="submit" href="#" class="btn-apply-sort">Apply</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <h3 class="fs-18">
+                <a href="@Url.Action("Products", "RssFeed", new {listType = ProductsListType.MostPopular, catId = Model.FilterByCategoryId, fromDate = Model.FromDate}).RemoveEmptyParametersFromQueryString()" target="_blank" title="@T("RSSFeed")" class="text-warning"><i class="fa fa-rss"></i></a>
+                <span>@Html.Raw(T("MostPopularProductsIn", Model.CategoryName))</span>
+            </h3>
+
+            @{Html.RenderAction("GetProductsList", "Product", new
+              {
+                  listType = ProductsListType.MostPopular,
+                  page = Model.PageIndex,
+                  pageSize = 15,
+                  catId = Model.FilterByCategoryId,
+                  fromDate = Model.FromDate,
+                  wrapperStart = "<div class='col-12'>",
+                  style = ViewStyles.Small,
+                  showPager = false
+              });}
+        </div>
+        <div class="col-sm-12 col-md-7 col-lg-8">
+            <div class="row">
+                @{Html.RenderAction("GetProductsList", "Product", new
+                  {
+                      listType = Model.PostsListType,
+                      page = Model.PageIndex,
+                      pageSize = Model.PageSize,
+                      catId = Model.FilterByCategoryId,
+                      fromDate = Model.FromDate,
+                      wrapperStart = "<div class='col-12 col-sm-6 col-lg-4 d-sm-flex justify-content-sm-center'>",
+                      showPager = true
+                  });}
+            </div>
+        </div>
+
+    </div>
+</div>

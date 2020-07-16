@@ -28,19 +28,19 @@
     }
     if (Model.ShowPager)
     {
-        <div class="row">
-            <div class="col-12 t-mar-30">
-                @Html.PagedListPager(Model.PostsList, page => Request.Url.ToString().BuildQueryStringUrl(new[] { "Page=" + page }).RemoveEmptyParametersFromQueryString(), new TwitterBootstrap4Pager())
-            </div>
+        <div class="col-12 t-mar-30">
+            @Html.PagedListPager(Model.PostsList, page => Request.Url.ToString().BuildQueryStringUrl(new[] { "Page=" + page }).RemoveEmptyParametersFromQueryString(), new TwitterBootstrap4Pager())
         </div>
     }
 }
 else
 {
-    <h5 class="text-center text-muted mar-v-150">
-        <i class="fa fa-frown-o fa-2x" aria-hidden="true"></i>
-        <br />
-        <br />
-        @T("NoItemsToShow")
-    </h5>
+    <div class="col-12">
+        <h5 class="text-center text-muted mar-v-150">
+            <i class="fa fa-frown-o fa-2x" aria-hidden="true"></i>
+            <br />
+            <br />
+            @T("NoItemsToShow")
+        </h5>
+    </div>
 }

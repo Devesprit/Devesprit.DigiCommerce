@@ -1,0 +1,11 @@
+﻿@using Devesprit.Core.Settings
+@using Devesprit.Services
+@using Devesprit.Services.Localization
+@{
+    Layout = null;
+}
+@using (Html.BeginForm("Index", "Search", FormMethod.Get, new { @class = "header-form", novalidate = "novalidate" }))
+{
+    <input id="txtSearch" type="text" name="query" class="header-form-input" placeholder="@T("Search")" data-val="true" data-val-required="" />
+    <button type="submit" class="btn-header-form btn"><i class="fas fa-search"></i></button>
+}

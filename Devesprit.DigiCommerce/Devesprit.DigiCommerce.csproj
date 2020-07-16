@@ -2312,7 +2312,6 @@
     <Content Include="Views\Shared\Partials\_AccessPermissionError.cshtml" />
     <Content Include="Themes\WarezComponent\Views\_ViewStart.cshtml" />
     <Content Include="Themes\WarezComponent\Views\Shared\_BaseLayout.cshtml" />
-    <Content Include="Themes\WarezComponent\Views\Shared\_Layout-HomePage.cshtml" />
     <Content Include="Themes\WarezComponent\Views\web.config" />
     <Content Include="Themes\WarezComponent\theme.config" />
     <Content Include="Themes\WarezComponent\Views\Product\Index.cshtml" />
@@ -2322,7 +2321,6 @@
     <Content Include="Themes\WarezComponent\Views\Product\Partials\_ProductKeywordsSection.cshtml" />
     <Content Include="Themes\WarezComponent\Views\Product\Partials\_ProductLargeCardDownloadView.cshtml" />
     <Content Include="Themes\WarezComponent\Views\Product\Partials\_ProductLargeCardView.cshtml" />
-    <Content Include="Themes\WarezComponent\Views\Product\Partials\_ProductNormalCardDownloadView.cshtml" />
     <Content Include="Themes\WarezComponent\Views\Product\Partials\_ProductNormalCardView.cshtml" />
     <Content Include="Themes\WarezComponent\Views\Product\Partials\_ProductsList.cshtml" />
     <Content Include="Themes\WarezComponent\Views\Product\Partials\_ProductSmallCardView.cshtml" />
@@ -2356,7 +2354,6 @@
     <Content Include="Themes\WarezComponent\Views\Shared\Partials\_CurrentCurrencyDropDown.cshtml" />
     <Content Include="Themes\WarezComponent\Views\Shared\Partials\_Error.cshtml" />
     <Content Include="Themes\WarezComponent\Views\Shared\Partials\_Footer.cshtml" />
-    <Content Include="Themes\WarezComponent\Views\Shared\Partials\_Header.cshtml" />
     <Content Include="Themes\WarezComponent\Views\Shared\Partials\_LanguageDropDown.cshtml" />
     <Content Include="Themes\WarezComponent\Views\Shared\Partials\_LoadingPanel.cshtml" />
     <Content Include="Themes\WarezComponent\Views\Shared\Partials\_NavBar.cshtml" />
@@ -2375,6 +2372,9 @@
     <Content Include="Themes\WarezComponent\Views\Comment\CommentEditor.cshtml" />
     <Content Include="Themes\WarezComponent\Views\Comment\CommentsList.cshtml" />
     <Content Include="Themes\WarezComponent\Views\Comment\Partials\_CommentBody.cshtml" />
+    <Content Include="Themes\WarezComponent\Views\Product\FilterByCategory.cshtml" />
+    <Content Include="Themes\WarezComponent\Views\Product\ProductsExplorer.cshtml" />
+    <Content Include="Themes\WarezComponent\Views\Shared\Partials\_SearchBox.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -2449,7 +2449,7 @@
           <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
         </WebProjectProperties>
       </FlavorProperties>
-      <UserProperties BuildVersion_StartDate="2018/10/14" BuildVersion_UpdateAssemblyVersion="True" BuildVersion_UpdateFileVersion="True" BuildVersion_AssemblyInfoFilename="Properties\AssemblyInfo.cs" BuildVersion_UseGlobalSettings="True" BuildVersion_BuildVersioningStyle="YearStamp.MonthStamp.DayStamp.Increment" />
+      <UserProperties BuildVersion_BuildVersioningStyle="YearStamp.MonthStamp.DayStamp.Increment" BuildVersion_UseGlobalSettings="True" BuildVersion_AssemblyInfoFilename="Properties\AssemblyInfo.cs" BuildVersion_UpdateFileVersion="True" BuildVersion_UpdateAssemblyVersion="True" BuildVersion_StartDate="2018/10/14" />
     </VisualStudio>
   </ProjectExtensions>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

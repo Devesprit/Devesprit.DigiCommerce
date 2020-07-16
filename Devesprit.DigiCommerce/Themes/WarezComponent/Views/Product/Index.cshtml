@@ -47,7 +47,7 @@
             <div class="container">
                 <div class="row">
                     <div class="col-12 d-flex justify-content-center">
-                        <h1 class="pro-head-title pro-head-title-single @Html.Raw(Model.TitleIsRtl ? "rtl-dir" : "ltr-dir")">
+                        <h1 class="pro-head-title pro-head-title-single no-t-mar @Html.Raw(Model.TitleIsRtl ? "rtl-dir" : "ltr-dir")">
                             @Html.Raw(Model.Title.Trim())
                         </h1>
                     </div>
@@ -60,6 +60,9 @@
                                 <li><a href="@postFirstCategory.CategoryUrl">@postFirstCategory.CategoryName</a></li>
                             }
                         </ul>
+                    </div>
+                    <div class="col-12 d-flex justify-content-center">
+                        @{Html.RenderPartial("Partials/_SearchBox");}
                     </div>
                 </div>
             </div>

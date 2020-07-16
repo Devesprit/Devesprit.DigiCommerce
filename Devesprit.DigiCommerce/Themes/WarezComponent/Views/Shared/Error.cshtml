@@ -1,11 +1,15 @@
 ﻿
 @{
     ViewBag.Title = T("Error");
+    Layout = "~/Themes/WarezComponent/Views/Shared/_BaseLayout.cshtml";
 }
 
-
-@{
-    Html.RenderPartial("Partials/_Error");
-}
-
-
+<div class="log-reg-bg d-flex align-items-center">
+    <div class="container">
+        <div class="container">
+            @{
+                Html.RenderPartial("Partials/_Error");
+            }
+        </div>
+    </div>
+</div>

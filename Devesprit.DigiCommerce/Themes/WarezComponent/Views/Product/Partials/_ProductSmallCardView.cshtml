@@ -13,11 +13,8 @@
     <span class="pro-content-desc">
         <h3>
             <a href="@Model.PostUrl" class="@Html.Raw(Model.Title.IsRtlLanguage() ? "rtl-dir text-right" : "ltr-dir  text-left")">
-                @Html.Raw(Model.Title.Truncate(50, " ..."))
+                @Html.Raw(Model.Title.Truncate(65, " ..."))
             </a>
         </h3>
-        <span class="pro-desc-items">
-            <a href="@Model.PostUrl">@T("ReadMore")</a>
-        </span>
     </span>
 </div>

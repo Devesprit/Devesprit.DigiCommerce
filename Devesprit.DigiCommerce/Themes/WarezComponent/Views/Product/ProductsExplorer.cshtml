@@ -1,0 +1,48 @@
+﻿@using System.Web.Mvc.Html
+@using Devesprit.Core
+@using Devesprit.DigiCommerce.Models.Post
+@using Devesprit.Services.Localization
+@using Devesprit.Utilities
+@using Devesprit.Utilities.Extensions
+@model Devesprit.DigiCommerce.Models.Products.ProductsExplorerModel
+
+@{
+
+    ViewBag.Title = string.Format(Model.PostsListType.GetLocalized(), Model.PageIndex);
+    ViewBag.MetaDescription = ViewBag.Title;
+    Html.AddHeadCustomParts("<meta name=\"robots\" content=\"index,follow\">");
+    var workContext = DependencyResolver.Current.GetService<IWorkContext>();
+    Html.AddCanonicalUrlParts(Url.Action("ProductsExplorer", "Product", new { page = Model.PageIndex, listType = Model.PostsListType, catId = Model.FilterByCategoryId, fromDate = Model.FromDate, lang = workContext.CurrentLanguage.IsoCode }, Request.Url.Scheme));
+}
+
+<!-- pro head slider -->
+<div class="pro-head-slider">
+    <div class="pro-head-slider-layer">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 d-flex justify-content-center">
+                    <h1 class="pro-head-title pro-head-title-archive no-t-mar">
+                        <a href="@Url.Action("Products", "RssFeed", new {listType = Model.PostsListType, catId = Model.FilterByCategoryId, fromDate = Model.FromDate}).RemoveEmptyParametersFromQueryString()" target="_blank" title="@T("RSSFeed")" class="text-warning"><i class="fa fa-rss"></i></a>
+                        @Html.Raw(ViewBag.Title)
+                    </h1>
+                </div>
+                <div class="col-12 d-flex justify-content-center">
+                    @{Html.RenderPartial("Partials/_SearchBox");}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container t-pad-50">
+    <div class="row">
+        @{Html.RenderAction("GetProductsList", "Product", new
+            {
+                listType = Model.PostsListType,
+                page = Model.PageIndex,
+                pageSize = Model.PageSize,
+                catId = Model.FilterByCategoryId,
+                wrapperStart = "<div class='col-12 col-sm-6 col-lg-3 d-sm-flex justify-content-sm-center'>",
+                fromDate = Model.FromDate
+            });}
+    </div>
+</div>

@@ -11,7 +11,7 @@ for (var i = 0; i < x.length; i++) {
     new Swiper(swiper, {
         slidesPerView: 4,
         spaceBetween: 30,
-        loop: true,
+        loop: false,
         navigation: {
             nextEl: nx,
             prevEl: pr
