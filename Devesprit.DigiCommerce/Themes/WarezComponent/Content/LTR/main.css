@@ -395,7 +395,7 @@ ul {
 }
 
     .main-menu.show-sticky {
-        box-shadow: 0 0 10px rgba(0,0,0,0.05);
+        box-shadow: 0 0 10px rgba(0,0,0,0.15);
     }
 
 .shopping-bag {
@@ -429,6 +429,7 @@ ul {
         border-radius: 0 0 5px 5px;
         min-width: 150px;
         display: none;
+        box-shadow: 0 0 10px rgba(0,0,0,0.15);
     }
 
     .list-main-menu li:hover .sub-menu {
@@ -1106,7 +1107,6 @@ span.bookmark-checked {
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    height: 280px;
     background-image: url('img/slider-app.jpg');
 }
 
@@ -1119,6 +1119,8 @@ span.bookmark-checked {
     display: flex;
     align-items: center;
     justify-content: center;
+    padding-top: 50px;
+    padding-bottom: 60px;
 }
 
 .pro-head-title {
@@ -1986,7 +1988,7 @@ span.bookmark-checked {
     flex-direction: column;
 }
 
-    .main-loginform input {
+    .main-loginform input, .main-loginform select {
         width: 100%;
         background-color: #fff;
         padding: 15px;
@@ -1998,15 +2000,15 @@ span.bookmark-checked {
         border: 1px solid transparent;
     }
 
-        .main-loginform input::placeholder {
+        .main-loginform input::placeholder, .main-loginform select::placeholder {
             font-size: 16px;
             color: #aeaeae;
             opacity: 1;
         }
 
-        .main-loginform input:focus {
-            border: 1px solid #ccc;
-        }
+            .main-loginform input:focus, .main-loginform select:focus {
+                border: 1px solid #ccc;
+            }
 
 .filter-target-item {
     position: relative;
@@ -2502,7 +2504,6 @@ span.bookmark-checked {
 
 .main-loginform textarea {
     margin-bottom: 25px;
-    height: 100px;
     resize: none;
     border: 1px solid #fff;
     border-radius: 12px;
@@ -4419,8 +4420,8 @@ span.bookmark-checked {
     width: 100%;
     height: 100%;
     z-index: 100000;
-    padding-top: 10%;
-    background-color: rgba(0, 0, 0, 0.35);
+    padding-top: 15%;
+    background-color: rgba(0, 0, 0, 0.5);
 }
 
 
@@ -4478,31 +4479,31 @@ span.bookmark-checked {
     box-shadow: none;
 }
 
-.post-card-ribbon {
-    position: absolute;
-    top: 25px;
-    left: -9px;
-    padding: 5px 30px;
-    margin: 0;
-    color: #fff;
-    font-size: x-small;
-    text-align: center;
-    z-index: 995;
+@keyframes post-card-ribbon-blinking {
+    0% {
+        opacity: 0;
+    }
+
+    75% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+    }
 }
 
-    .post-card-ribbon:before {
-        content: '';
-        position: absolute;
-        height: 0;
-        width: 0;
-        top: 100%;
-        border-top: 10px solid #343a40;
-    }
-
-    .post-card-ribbon:before {
-        left: 0px;
-        border-left: 10px solid transparent;
-    }
+.post-card-ribbon {
+    position: absolute;
+    top: 18px;
+    left: 7px;
+    margin: 0;
+    color: #e40000;
+    font-size: x-large;
+    text-align: center;
+    z-index: 995;
+    animation: post-card-ribbon-blinking 1.5s infinite;
+}
 
 .btn-group-xs > .btn, .btn-xs {
     padding: .1rem .5rem;
@@ -4518,7 +4519,7 @@ span.bookmark-checked {
     display: inline;
 }
 
-@keyframes blinking {
+@keyframes highlight-comment-blinking {
     0% {
         background-color: #ffffff;
     }
@@ -4533,7 +4534,7 @@ span.bookmark-checked {
 }
 
 .highlight-comment {
-    animation: blinking 2s ease-in;
+    animation: highlight-comment-blinking 2s ease-in;
 }
 
 .pro-cmnt-box .quote {

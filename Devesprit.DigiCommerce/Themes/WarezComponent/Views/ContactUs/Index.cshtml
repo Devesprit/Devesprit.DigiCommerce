@@ -1,0 +1,126 @@
+﻿@using Devesprit.Core
+@using Devesprit.Core.Settings
+@using Devesprit.Services
+@using Devesprit.Services.Localization
+@using Devesprit.Services.SocialAccounts
+@using reCaptcha
+@model Devesprit.DigiCommerce.Models.ContactUs.ContactUsModel
+@{
+    ViewBag.Title = T("ContactUs");
+    var currentLang = DependencyResolver.Current.GetService<IWorkContext>().CurrentLanguage;
+    var currentSettings = DependencyResolver.Current.GetService<ISettingService>().LoadSetting<SiteSettings>();
+    Html.AddHeadCustomParts("<meta name=\"robots\" content=\"index,follow\">");
+    var socialAccountsService = DependencyResolver.Current.GetService<ISocialAccountsService>();
+}
+
+<!-- Head slider -->
+<header class="pro-head-slider">
+    <div class="pro-head-slider-layer">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 d-flex justify-content-center">
+                    <h1 class="pro-head-title pro-head-title-single no-t-mar">
+                        @T("ContactUs")
+                    </h1>
+                </div>
+                <div class="col-12">
+                    <ul class="breadcrumbs">
+                        <li><a href="@Url.Action("Index", "Home")">@T("Home")</a></li>
+                        <li>/</li>
+                        <li>@T("ContactUs")</li>
+                    </ul>
+                </div>
+                <div class="col-12 d-flex justify-content-center">
+                    @{Html.RenderPartial("Partials/_SearchBox");}
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<div class="container">
+    <div class="contact-page">
+        <div class="row">
+            <div class="col-12">
+                <div class="contact-us-text">
+                    @Html.Raw(currentSettings.GetLocalized(p => p.ContactUsDescription))
+                </div>
+            </div>
+        </div>
+        <div class="contact-us-form">
+            <div class="row justify-content-md-center justify-content-center">
+                <div class="col-lg-6 col-md-9 col-12">
+                    @using (Html.BeginForm("Index", "ContactUs", FormMethod.Post, new {@class="main-loginform main-contact-us-form"}))
+                    {
+                        @Html.AntiForgeryToken()
+
+                        <div class="row">
+                            <div class="col-12 col-md-6">
+                                <div class="form-group">
+                                    @Html.LabelFor(p => p.Name)
+                                    @Html.TextBoxFor(p => p.Name, null, null)
+                                    @Html.ValidationMessageFor(p => p.Name, "", new { @class = "form-text text-danger fs-12" })
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <div class="form-group">
+                                    @Html.LabelFor(p => p.Email)
+                                    @Html.TextBoxFor(p => p.Email, null, new { @class = "ltr-dir" })
+                                    @Html.ValidationMessageFor(p => p.Email, "", new { @class = "form-text text-danger fs-12" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="form-group">
+                                    @Html.LabelFor(p => p.Subject)
+                                    @Html.TextBoxFor(p => p.Subject, null, null)
+                                    @Html.ValidationMessageFor(p => p.Subject, "", new { @class = "form-text text-danger fs-12" })
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-group">
+                                    @Html.LabelFor(p => p.Message)
+                                    @Html.TextAreaFor(p => p.Message, new { @class = "form-control", rows = 5 })
+                                    @Html.ValidationMessageFor(p => p.Message, "", new { @class = "form-text text-danger fs-12" })
+                                </div>
+                            </div>
+                        </div>
+
+                        if (ViewBag.publicKey != null)
+                        {
+                            <div class="d-block">
+                                @ReCaptcha.GetHtml(ViewBag.publicKey, lang: currentLang.IsoCode)
+                            </div>
+
+                            if (ViewBag.RecaptchaLastErrors != null)
+                            {
+                                <small class="form-text text-danger fs-12">@T("InvalidCaptcha")</small>
+                            }
+                        }
+                        <button type="submit" name="submit" class="signin-btn t-mar-20">@T("Submit")</button>
+                    }
+                </div>
+                <div class="col-lg-6 col-md-9 col-12">
+                    <div class="contact-us-link d-flex flex-wrap">
+                        <div class="contact-us-info">
+                            <a href="mailto:@currentSettings.SiteEmailAddress"><i class="fas fa-envelope"></i><span>@T("EmailAddress") :</span> @currentSettings.SiteEmailAddress</a>
+                        </div>
+                        <div class="contact-us-social">
+                            <ul class="contact-us-social-list">
+                                @foreach (var socialAccount in socialAccountsService.GetAsEnumerable())
+                                {
+                                    <li>
+                                        <a href="@socialAccount.GetLocalized(x => x.YourAccountUrl)" target="_blank" title="@socialAccount.GetLocalized(x => x.SocialNetworkName)">
+                                            @Html.Raw(socialAccount.GetLocalized(x => x.SocialNetworkLargeIconUrl))
+                                        </a>
+                                    </li>
+                                }
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

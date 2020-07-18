@@ -2375,6 +2375,30 @@
     <Content Include="Themes\WarezComponent\Views\Product\FilterByCategory.cshtml" />
     <Content Include="Themes\WarezComponent\Views\Product\ProductsExplorer.cshtml" />
     <Content Include="Themes\WarezComponent\Views\Shared\Partials\_SearchBox.cshtml" />
+    <Content Include="Themes\WarezComponent\Views\ContactUs\Index.cshtml" />
+    <Content Include="Themes\WarezComponent\Views\Download\DownloadProduct.cshtml" />
+    <Content Include="Themes\WarezComponent\Views\Profile\ChangePassword.cshtml" />
+    <Content Include="Themes\WarezComponent\Views\Profile\Index.cshtml" />
+    <Content Include="Themes\WarezComponent\Views\Profile\Partials\_UserComments.cshtml" />
+    <Content Include="Themes\WarezComponent\Views\Profile\Partials\_UserDownloadsLog.cshtml" />
+    <Content Include="Themes\WarezComponent\Views\Profile\Partials\_UserInfo.cshtml" />
+    <Content Include="Themes\WarezComponent\Views\Profile\Partials\_UserInvoices.cshtml" />
+    <Content Include="Themes\WarezComponent\Views\Profile\Partials\_UserLikes.cshtml" />
+    <Content Include="Themes\WarezComponent\Views\Profile\Partials\_UserNotifications.cshtml" />
+    <Content Include="Themes\WarezComponent\Views\Profile\Partials\_UserWishlist.cshtml" />
+    <Content Include="Themes\WarezComponent\Views\Profile\UpdateProfile.cshtml" />
+    <Content Include="Themes\WarezComponent\Views\User\AccountDisabled.cshtml" />
+    <Content Include="Themes\WarezComponent\Views\User\DisplayEmailConfirm.cshtml" />
+    <Content Include="Themes\WarezComponent\Views\User\ExternalLoginConfirmation.cshtml" />
+    <Content Include="Themes\WarezComponent\Views\User\ExternalLoginFailure.cshtml" />
+    <Content Include="Themes\WarezComponent\Views\User\ForgotPassword.cshtml" />
+    <Content Include="Themes\WarezComponent\Views\User\ForgotPasswordConfirmation.cshtml" />
+    <Content Include="Themes\WarezComponent\Views\User\Lockout.cshtml" />
+    <Content Include="Themes\WarezComponent\Views\User\Login.cshtml" />
+    <Content Include="Themes\WarezComponent\Views\User\RegistrationCompleted.cshtml" />
+    <Content Include="Themes\WarezComponent\Views\User\ResetPassword.cshtml" />
+    <Content Include="Themes\WarezComponent\Views\User\ResetPasswordConfirmation.cshtml" />
+    <Content Include="Themes\WarezComponent\Views\User\SignUp.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -2449,7 +2473,7 @@
           <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
         </WebProjectProperties>
       </FlavorProperties>
-      <UserProperties BuildVersion_BuildVersioningStyle="YearStamp.MonthStamp.DayStamp.Increment" BuildVersion_UseGlobalSettings="True" BuildVersion_AssemblyInfoFilename="Properties\AssemblyInfo.cs" BuildVersion_UpdateFileVersion="True" BuildVersion_UpdateAssemblyVersion="True" BuildVersion_StartDate="2018/10/14" />
+      <UserProperties BuildVersion_StartDate="2018/10/14" BuildVersion_UpdateAssemblyVersion="True" BuildVersion_UpdateFileVersion="True" BuildVersion_AssemblyInfoFilename="Properties\AssemblyInfo.cs" BuildVersion_UseGlobalSettings="True" BuildVersion_BuildVersioningStyle="YearStamp.MonthStamp.DayStamp.Increment" />
     </VisualStudio>
   </ProjectExtensions>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

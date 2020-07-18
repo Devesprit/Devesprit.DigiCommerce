@@ -1,0 +1,29 @@
+﻿
+
+@{
+    ViewBag.Title = T("RegistrationCompleted");
+
+    Html.AddHeadCustomParts("<meta name=\"robots\" content=\"noindex,nofollow\">");
+}
+
+<div class="container t-mar-35">
+    <div class="row justify-content-center">
+        <div class="col-12 col-lg-6">
+            <div class="panel">
+                <div class="panel-title pad-10">
+                    <h5 class="no-mar">@T("RegistrationCompleted")</h5>
+                </div>
+                <div class="fs-14 pad-20 text-center">
+                    <img src="~/Content/img/Approval_150px.png" alt="Ok" />
+                    
+                    <h4>@T("ThanksRegistering")</h4>
+                    <p>
+                        @T("RegistrationCompletedDesc")
+                    </p>
+                    <a class="btn btn-outline-success btn-sm" href="@Url.Action("Login", "User")">@T("ClickToLogin")</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

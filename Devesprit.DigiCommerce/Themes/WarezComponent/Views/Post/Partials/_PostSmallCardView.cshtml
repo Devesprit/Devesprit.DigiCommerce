@@ -12,7 +12,7 @@
 <article class="pro-slider-content archive-post-item">
     @if (Model.IsFeatured)
     {
-        <p class="post-card-ribbon bg-danger" title="@T("Featured")"><i class="fas fa-star"></i></p>
+        <p class="post-card-ribbon" title="@T("Featured")"><i class="fas fa-star"></i></p>
     }
     <div class="pro-slider-logo b-mar-5">
         <img alt="@Model.Title" src="@(string.IsNullOrWhiteSpace(Model.IconImageUrl) ? Model.MainImageUrl : Model.IconImageUrl)">

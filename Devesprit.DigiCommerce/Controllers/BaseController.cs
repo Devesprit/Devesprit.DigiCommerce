@@ -44,21 +44,21 @@ namespace Devesprit.DigiCommerce.Controllers
         public SiteSettings CurrentSettings => _settings ?? (_settings =
                                                        DependencyResolver.Current.GetService<ISettingService>().LoadSetting<SiteSettings>());
         public IEventPublisher EventPublisher => _eventPublisher ?? (_eventPublisher =
-                                                       DependencyResolver.Current.GetService<IEventPublisher>());
-
+            DependencyResolver.Current.GetService<IEventPublisher>());
+          
         protected override void OnActionExecuting(ActionExecutingContext filterContext)
         {
             Response.BufferOutput = true;
-
+             
             if (!filterContext.IsChildAction)
             {
-                //Save user latest IP address
+                //Save user latest IP address 
                 if (User.Identity.IsAuthenticated)
                 {
                     DependencyResolver.Current.GetService<IUsersService>()
                         .SetUserLatestIpAndLoginDate(User.Identity.GetUserId(), HttpContext.GetClientIpAddress());
-                }
-
+                } 
+                 
                 //If user disabled
                 var accountDisabledUrl = Url.Action("AccountDisabled", "User");
                 if (User.Identity.IsAuthenticated && filterContext.HttpContext?.Request.Url?.LocalPath != accountDisabledUrl)

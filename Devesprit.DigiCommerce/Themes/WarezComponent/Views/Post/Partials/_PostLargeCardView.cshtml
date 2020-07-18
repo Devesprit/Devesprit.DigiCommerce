@@ -11,7 +11,7 @@
 <div class="card border-0">
     @if (Model.IsFeatured)
     {
-        <p class="post-card-ribbon bg-danger" title="@T("Featured")"><i class="fa fa-star"></i></p>
+        <p class="post-card-ribbon" title="@T("Featured")"><i class="fa fa-star"></i></p>
     }
     <div class="card-header">
         <h4 class="card-title m-2 @Html.Raw(Model.Title.IsRtlLanguage() ? "rtl-dir text-right" : "ltr-dir text-left")">

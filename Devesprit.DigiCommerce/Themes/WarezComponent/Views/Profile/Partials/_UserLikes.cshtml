@@ -1,0 +1,61 @@
+﻿@using X.PagedList.Mvc
+@using X.PagedList.Mvc.Common
+@model X.PagedList.IPagedList<Devesprit.DigiCommerce.Models.Profile.UserLikeWishlistModel>
+@{
+    int counter = Model.FirstItemOnPage;
+    Layout = null;
+}
+<h4>@T("ProductsYouLike"):</h4>
+<div class="row">
+    <div class="col">
+        <div class="table-responsive">
+            <table class="table table-hover table-sm fs-14">
+                <thead>
+                    <tr>
+                        <th class="text-center">#</th>
+                        <th class="text-center">@T("Title")</th>
+                        <th class="text-center">@T("Date")</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <th scope="row" class="text-center">
+                                @counter
+                            </th>
+                            <td>
+                                <a target="_blank"
+                                   href="@item.PostHomePageUrl">
+                                    @item.PostTitle
+                                </a>
+                            </td>
+                            <td class="text-center" title="@item.Date.ToString("F")">
+                                @item.Date.ToString("d")
+                            </td>
+                        </tr>
+                        {
+                            counter++;
+                        }
+                    }
+                </tbody>
+            </table>
+            @if (!Model.Any())
+            {
+                <h4 class="text-muted text-center my-5">@T("EmptyRecord")</h4>
+            }
+        </div>
+    </div>
+</div>
+@if (Model.Any())
+{
+    <div class="row">
+        <div class="col-12">
+            @Html.PagedListPager(Model,
+                page => Url.Action("UserLikes", "Profile", new {pageNumber = page, userId = Request.QueryString["userId"] }),
+                PagedListRenderOptions.EnableUnobtrusiveAjaxReplacing(
+                    new TwitterBootstrap4Pager(),
+                    new AjaxOptions() {HttpMethod = "POST", UpdateTargetId = "placeholder"}))
+        </div>
+    </div>
+}

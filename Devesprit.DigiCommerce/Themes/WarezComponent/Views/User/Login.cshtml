@@ -1,0 +1,91 @@
+﻿@using Devesprit.Core
+@using reCaptcha
+
+@model Devesprit.DigiCommerce.Models.Users.LoginModel
+@{
+    Layout = "~/Themes/WarezComponent/Views/Shared/_BaseLayout.cshtml";
+    ViewBag.Title = T("Login");
+    bool showSocialsPanel = Model.ExternalLoginProviders?.Any() == true;
+    var workContext = DependencyResolver.Current.GetService<IWorkContext>();
+    var currentLang = workContext.CurrentLanguage;
+    Html.AddCanonicalUrlParts(Url.Action("Login", "User", new { lang = workContext.CurrentLanguage.IsoCode }, Request.Url.Scheme));
+    Html.AddHeadCustomParts("<meta name=\"robots\" content=\"index,follow\">");
+}
+
+<div class="log-reg-bg d-flex align-items-center">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-12 col-sm-10 col-md-9 col-lg-7 col-xl-6">
+                <div class="login-reg-box mar-v-80">
+                    <div class="login-reg-head">
+                        <h1 class="no-b-mar">@T("Login")</h1>
+                        <a class="fs-10 text-muted" href="@Url.Action("Index", "Home")"><i class="far fa-arrow-alt-circle-@Html.Raw(currentLang.IsRtl ? "right" : "left")"></i> @T("ReturnHome")</a>
+                    </div>
+                    @using (Html.BeginForm("Login", "User", FormMethod.Post, new { @class = "main-loginform" }))
+                    {
+                        @Html.HiddenFor(p => p.ReturnUrl)
+                        @Html.AntiForgeryToken()
+
+                        @Html.ValidationMessageFor(p => p.Email, "", new { @class = "form-text text-danger fs-12" })
+                        @Html.TextBoxFor(p => p.Email, new { @class = "ltr-dir", placeholder = T("Email") })
+
+                        @Html.ValidationMessageFor(p => p.Password, "", new { @class = "form-text text-danger fs-12" })
+                        <div class="psssword-box">
+                            @Html.PasswordFor(p => p.Password, new { placeholder = T("Password") })
+                            <span toggle="#Password" class="fa fa-fw icon-visibility field-icon toggle-password"></span>
+                        </div>
+
+                        <div class="b-mar-15 fs-12">
+                            @T("ForgotPassword") <a href="@Url.Action("ForgotPassword")">@T("ClickHere")</a>
+                        </div>
+
+                        <div class="remember-box">
+
+                            <span class="filter-target-item">
+                                <label class="checkbox-filter-ir-login">
+                                    @Html.CheckBoxFor(p => p.RememberMe)
+                                    <span class="checkbox-custom-ir-login rectangular"></span>
+                                    <span class="text-filter-checkbox-login">@T("RememberMe")</span>
+                                </label>
+                            </span>
+                        </div>
+                        if (ViewBag.publicKey != null)
+                        {
+                            <div class="d-block b-mar-5">
+                                @ReCaptcha.GetHtml(ViewBag.publicKey, lang: Model.CurrentLanguage.IsoCode)
+                            </div>
+
+                            if (ViewBag.RecaptchaLastErrors != null)
+                            {
+                                <small class="form-text text-danger fs-12">@T("InvalidCaptcha")</small>
+                            }
+                        }
+
+                        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                        <button type="submit" name="submit" class="signin-btn">@T("Login")</button>
+                    }
+                    <div class="register-info-box">
+                        <p class="register-info">@T("NotRegistered") <a href="@Url.Action("SignUp")">@T("ClickHere")</a></p>
+                    </div>
+                    <div class="middle-or"><span>Or</span></div>
+                    <h2 class="fs-18 b-mar-15 text-center">@T("SocialsLogin")</h2>
+                    @*Login/SignUp With Socials*@
+                    @if (showSocialsPanel)
+                    {
+                        using (Html.BeginForm("ExternalLogin", "User"))
+                        {
+                            <div class="text-center">
+                                @Html.AntiForgeryToken()
+
+                                @foreach (var loginProvider in Model.ExternalLoginProviders.OrderByDescending(p => p.Order))
+                                {
+                                    Html.RenderPartial(loginProvider.ProviderLoginBtnPartialUrl);
+                                }
+                            </div>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

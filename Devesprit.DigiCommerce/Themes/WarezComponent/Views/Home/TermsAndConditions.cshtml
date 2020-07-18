@@ -1,15 +1,39 @@
-﻿@{
+﻿@using Devesprit.Core.Settings
+@using Devesprit.Services
+@using Devesprit.Services.Localization
+@{
     ViewBag.Title = T("TermsAndConditions");
     Html.AddHeadCustomParts("<meta name=\"robots\" content=\"index,follow\">");
+    var settings = DependencyResolver.Current.GetService<ISettingService>().LoadSetting<SiteSettings>();
 }
 
-<div class="panel">
-    <div class="panel-title">
-        <h4 class="no-mar">
-            @T("TermsAndConditions")
-        </h4>
+<!-- Head slider -->
+<header class="pro-head-slider">
+    <div class="pro-head-slider-layer">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 d-flex justify-content-center">
+                    <h1 class="pro-head-title pro-head-title-single no-t-mar">
+                        @T("TermsAndConditions")
+                    </h1>
+                </div>
+                <div class="col-12">
+                    <ul class="breadcrumbs">
+                        <li><a href="@Url.Action("Index", "Home")">@T("Home")</a></li>
+                        <li>/</li>
+                        <li>@T("TermsAndConditions")</li>
+                    </ul>
+                </div>
+                <div class="col-12 d-flex justify-content-center">
+                    @{Html.RenderPartial("Partials/_SearchBox");}
+                </div>
+            </div>
+        </div>
     </div>
-    <div class="pad-25">
+</header>
+
+<div class="container">
+    <div class="mar-v-150">
         @Html.Raw(ViewBag.TermsHtml)
     </div>
 </div>

@@ -1,0 +1,54 @@
+﻿@using System.Globalization
+
+@model Devesprit.DigiCommerce.Models.Profile.UserInfoModel
+@{
+    Layout = null;
+}
+<div class="row">
+    <div class="col">
+        <div class="panel pad-30">
+            <div class="row">
+                <div class="col-12 col-md-3 text-center">
+                    <img class="d-inline-block @Html.Raw(!string.IsNullOrWhiteSpace(Model.Avatar) ? "rounded-circle": "")" 
+                         src="@Html.Raw(!string.IsNullOrWhiteSpace(Model.Avatar) ? Model.Avatar : "/Content/img/User_150px.png")" 
+                         alt="User Avatar" style="max-width: 150px;" />
+                </div>
+                <div class="col-12 col-md-4 t-pad-20">
+                    <h4 class="no-b-mar">
+                        @Model.FirstName @Model.LastName
+                    </h4>
+                    <p class="fs-12">
+                        @Model.EMail<br />
+                        @T("Country"): @Model.Country<br />
+                        @T("RegistrationDate"): @Model.RegisterDate.ToString("D", CultureInfo.CurrentUICulture)<br />
+                        @T("DownloadLimit"): @Model.DownloadLimit
+                    </p>
+                    <a href="@Url.Action("UpdateProfile", "Profile", new {userId = Model.Id})" class="btn btn-outline-success btn-sm d-inline-block my-1">@T("Edit")</a>
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <a href="#" onclick="PopupWindows('@Url.Action("Editor", "ManageUsers", new{area = "Admin"})', 'UserEditor', 1200, 700, { id: '@Model.Id' }, 'get')" class="btn btn-outline-success btn-sm d-inline-block my-1">@T("ManageUsers")</a>
+                        <a href="#" onclick="PopupWindows('@Url.Action("SendMessageToUser", "Notifications", new{area = "Admin"})', 'NotificationEditor', 800, 400, { userEmail: '@Model.EMail'}, 'get')" class="btn btn-outline-primary btn-sm d-inline-block my-1"><i class="fa fa-envelope-o"></i> @T("SendMessage")</a>
+                    }
+                </div>
+                @if (Model.ShowUserSubscriptionInfo)
+                {
+                    <div class="col-12 col-md-4 t-pad-20">
+                        <p class="fs-14">
+                            @T("YourCurrentPlan"): @Html.Raw(Model.UserGroup)
+                            <br />
+                            @T("SubscriptionDate"): @Html.Raw(Model.SubscriptionDate?.ToString("D", CultureInfo.CurrentUICulture) ?? " - ")
+                            <br />
+                            @T("ExpiryDate"): @Html.Raw(Model.SubscriptionExpireDate?.ToString("D", CultureInfo.CurrentUICulture) ?? " - ")
+                            <br />
+                            @T("DownloadLimit"): @Model.UserGroupDownloadLimit
+                        </p>
+                        @if (!Model.UserSubscribedToHighestPlan || (Model.SubscriptionExpireDate != null && Model.SubscriptionExpireDate < DateTime.Now.AddDays(Model.WhenExtendCurrentPlanBtnShown)))
+                        {
+                            <a href="@Url.Action("UpgradeAccount", "Purchase")" class="btn btn-danger btn-sm d-inline-block my-1">@T("UpgradeAccount")</a>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
