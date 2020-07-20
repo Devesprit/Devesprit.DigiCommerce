@@ -4,51 +4,65 @@
 @{
     Layout = null;
 }
-<div class="row">
-    <div class="col">
-        <div class="panel pad-30">
-            <div class="row">
-                <div class="col-12 col-md-3 text-center">
-                    <img class="d-inline-block @Html.Raw(!string.IsNullOrWhiteSpace(Model.Avatar) ? "rounded-circle": "")" 
-                         src="@Html.Raw(!string.IsNullOrWhiteSpace(Model.Avatar) ? Model.Avatar : "/Content/img/User_150px.png")" 
-                         alt="User Avatar" style="max-width: 150px;" />
-                </div>
-                <div class="col-12 col-md-4 t-pad-20">
-                    <h4 class="no-b-mar">
-                        @Model.FirstName @Model.LastName
-                    </h4>
-                    <p class="fs-12">
-                        @Model.EMail<br />
-                        @T("Country"): @Model.Country<br />
-                        @T("RegistrationDate"): @Model.RegisterDate.ToString("D", CultureInfo.CurrentUICulture)<br />
-                        @T("DownloadLimit"): @Model.DownloadLimit
-                    </p>
-                    <a href="@Url.Action("UpdateProfile", "Profile", new {userId = Model.Id})" class="btn btn-outline-success btn-sm d-inline-block my-1">@T("Edit")</a>
-                    @if (User.IsInRole("Admin"))
-                    {
-                        <a href="#" onclick="PopupWindows('@Url.Action("Editor", "ManageUsers", new{area = "Admin"})', 'UserEditor', 1200, 700, { id: '@Model.Id' }, 'get')" class="btn btn-outline-success btn-sm d-inline-block my-1">@T("ManageUsers")</a>
-                        <a href="#" onclick="PopupWindows('@Url.Action("SendMessageToUser", "Notifications", new{area = "Admin"})', 'NotificationEditor', 800, 400, { userEmail: '@Model.EMail'}, 'get')" class="btn btn-outline-primary btn-sm d-inline-block my-1"><i class="fa fa-envelope-o"></i> @T("SendMessage")</a>
-                    }
-                </div>
-                @if (Model.ShowUserSubscriptionInfo)
+<div class="user-info-sidebar-db">
+    <div class="user-details">
+        <span class="user-img">
+            <img src="@Html.Raw(!string.IsNullOrWhiteSpace(Model.Avatar) ? Model.Avatar : "/Content/img/User_150px.png")">
+        </span>
+        <div class="user-name-info">
+            <h2>@Model.FirstName @Model.LastName</h2>
+            <span>@Model.EMail</span>
+        </div>
+        <a href="@Url.Action("UpdateProfile", "Profile", new {userId = Model.Id})" class="edit-db-btn"><i class="far fa-edit"></i></a>
+    </div>
+    @if (User.IsInRole("Admin"))
+    {
+        <div class="text-center">
+            <a href="#" onclick="PopupWindows('@Url.Action("Editor", "ManageUsers", new{area = "Admin"})', 'UserEditor', 1200, 700, { id: '@Model.Id' }, 'get')" class="btn btn-outline-success btn-xs d-inline-block my-1">@T("ManageUsers")</a>
+            <a href="#" onclick="PopupWindows('@Url.Action("SendMessageToUser", "Notifications", new{area = "Admin"})', 'NotificationEditor', 800, 400, { userEmail: '@Model.EMail'}, 'get')" class="btn btn-outline-primary btn-xs d-inline-block my-1"><i class="fa fa-envelope-o"></i> @T("SendMessage")</a>
+        </div>
+    }
+    @if (Model.ShowUserSubscriptionInfo)
+    {
+        <div class="user-acc-info">
+            <div class="user-plan-info">
+                @T("YourCurrentPlan")
+                <span class="text-center">
+                    @Html.Raw(Model.UserGroup)
+                </span>
+                @if (Model.SubscriptionDate != null)
                 {
-                    <div class="col-12 col-md-4 t-pad-20">
-                        <p class="fs-14">
-                            @T("YourCurrentPlan"): @Html.Raw(Model.UserGroup)
-                            <br />
-                            @T("SubscriptionDate"): @Html.Raw(Model.SubscriptionDate?.ToString("D", CultureInfo.CurrentUICulture) ?? " - ")
-                            <br />
-                            @T("ExpiryDate"): @Html.Raw(Model.SubscriptionExpireDate?.ToString("D", CultureInfo.CurrentUICulture) ?? " - ")
-                            <br />
-                            @T("DownloadLimit"): @Model.UserGroupDownloadLimit
-                        </p>
-                        @if (!Model.UserSubscribedToHighestPlan || (Model.SubscriptionExpireDate != null && Model.SubscriptionExpireDate < DateTime.Now.AddDays(Model.WhenExtendCurrentPlanBtnShown)))
-                        {
-                            <a href="@Url.Action("UpgradeAccount", "Purchase")" class="btn btn-danger btn-sm d-inline-block my-1">@T("UpgradeAccount")</a>
-                        }
-                    </div>
+                    <ul>
+                        <li>@T("SubscriptionDate"): @Html.Raw(Model.SubscriptionDate?.ToString("MMMM dd, yyyy", CultureInfo.CurrentUICulture) ?? " - ")</li>
+                        <li>@T("ExpiryDate"): @Html.Raw(Model.SubscriptionExpireDate?.ToString("MMMM dd, yyyy", CultureInfo.CurrentUICulture) ?? " - ")</li>
+                        <li>@T("DownloadLimit"): @Model.UserGroupDownloadLimit</li>
+                    </ul>
                 }
             </div>
+            @if (!Model.UserSubscribedToHighestPlan || (Model.SubscriptionExpireDate != null && Model.SubscriptionExpireDate < DateTime.Now.AddDays(Model.WhenExtendCurrentPlanBtnShown)))
+            {
+                <div class="user-acc-upgrade">
+                    <a href="@Url.Action("UpgradeAccount", "Purchase")">@T("UpgradeAccount")</a>
+                </div>
+            }
         </div>
+    }
+    <div class="user-acc-desc">
+        <ul class="user-acc-desc-list">
+            <li>@T("Country"): @Model.Country</li>
+            <li>@T("RegistrationDate"): @Model.RegisterDate.ToString("MMMM dd, yyyy", CultureInfo.CurrentUICulture)</li>
+            <li>@T("DownloadLimit"): @Model.DownloadLimit</li>
+        </ul>
+        <button class="btn-more-acc-desc">@T("SeeMore")<i class="fas fa-chevron-down"></i></button>
     </div>
 </div>
+@{
+    Html.AddInlineScript(ResourceLocation.FooterAfterOther,
+@<script>
+     $(".btn-more-acc-desc").click(function () {
+         $(".user-acc-desc-list").slideToggle();
+         $(this).find("i")
+             .toggleClass("btn-more-acc-desc-active");
+     });
+</script>);
+}

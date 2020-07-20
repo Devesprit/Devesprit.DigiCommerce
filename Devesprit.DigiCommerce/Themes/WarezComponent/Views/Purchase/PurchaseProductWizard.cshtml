@@ -1,0 +1,399 @@
+﻿@using Devesprit.Core
+@using Devesprit.Data.Enums
+
+@using Devesprit.Services.Currency
+@using Devesprit.Utilities.Extensions
+@using Devesprit.Services.Localization
+@model Devesprit.DigiCommerce.Models.Products.ProductModel
+@{
+    int counter = 0;
+    var productImage = Model.Images.OrderByDescending(p => p.DisplayOrder).FirstOrDefault();
+    var currentLangIsRTL = DependencyResolver.Current.GetService<IWorkContext>().CurrentLanguage.IsRtl;
+    Layout = null;
+}
+
+<div id="dlgPurchase_@Model.Id" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <form id="frmPurchaseProduct" class="panel">
+                <div id="smartwizard">
+                    <ul>
+                        <li><a href="#step-1">@T("StepOne")<br /><small>@T("ProductDetails")</small></a></li>
+                        @if (Model.CheckoutAttributes.Any())
+                        {
+                            <li><a href="#step-2">@T("StepTwo")<br /><small>@T("SelectDesiredOptions")</small></a></li>
+                        }
+                    </ul>
+
+                    <div>
+                        <div id="step-1" class="@(currentLangIsRTL ? "text-right" : "text-left")">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" value="@Model.Id" name="productId" />
+                            @if (ViewBag.InvoiceId != null)
+                            {
+                                <input type="hidden" value="@ViewBag.InvoiceId" name="invoiceId" />
+                            }
+                            @if (!string.IsNullOrWhiteSpace(productImage?.ImageUrl))
+                            {
+                                <img src="@productImage.ImageUrl" title="@productImage.Title" alt="@productImage.Alt" class="m-auto d-block b-mar-30" style="max-height: 250px; max-width: 250px;" />
+                            }
+                            <div class="alert alert-secondary pad-10">
+                                <span class="fs-14">
+                                    <b>@T("ProductName"):</b> @Model.Title
+                                    <br />
+                                    <b>@T("Price"):</b> @Model.Price.ExchangeCurrencyStr()
+                                    <br />
+                                    <b>@T("ExpirationDate"):</b> @Model.PurchaseExpirationTimeType.TimePeriodToString(Model.PurchaseExpiration)
+                                    <br />
+                                    <b>@T("RenewalPrice"):</b> @Model.RenewalPrice.ExchangeCurrencyStr()
+                                </span>
+                                @if (Model.PriceForCurrentUser != Model.Price)
+                                {
+                                    <br />
+                                    <b>@T("PriceForYou"): <span class="text-success fs-18">@Model.PriceForCurrentUser.ExchangeCurrencyStr()</span></b>
+                                }
+
+                                @if (Model.CurrentUserHasAlreadyPurchasedThisProduct && Model.CheckoutAttributes.Any())
+                                {
+                                    <div class="text-center my-2">
+                                        <h5 class="text-danger">@T("YouAlreadyPurchasedThisProductWantUpgrade")</h5>
+                                        <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                                            <label class="btn btn-success active">
+                                                <input type="radio" name="upgradeAttributes" value="false" id="optIWantToBuyAgain" autocomplete="off" checked> <i class="fa fa-shopping-cart"></i> @T("IWantToBuyAgain")
+                                            </label>
+                                            <label class="btn btn-success">
+                                                <input type="radio" name="upgradeAttributes" value="true" id="optIWantToUpgrade" autocomplete="off"> <i class="fa fa-arrow-circle-o-up"></i> @T("IWantToUpgrade")
+                                            </label>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+
+                            @if (Model.DownloadLimitedToUserGroup != null)
+                            {
+                                <div class="alert alert-warning pad-h-10">
+                                    <h6 class="alert-heading my-0">
+                                        <img src="~/Content/img/Error_250px.png" width="25" style="margin-top: -8px;" />
+                                        @T("Note")
+                                    </h6>
+                                    <hr class="my-1" />
+                                    <small class="my-0">
+                                        @Html.Raw(string.Format(Model.HigherUserGroupsCanDownload ?
+                                            T("DownloadLimitedToAUserGroupOrHigher").ToString()
+                                            : T("DownloadLimitedToAUserGroup").ToString(),
+                                            Url.Action("UpgradeAccount", "Purchase"),
+                                            Model.DownloadLimitedToUserGroup.GetLocalized(p => p.GroupName)))
+                                    </small>
+                                </div>
+                            }
+
+                            @if (Model.DownloadModel.DiscountForUserGroupsDescription != null && Model.DownloadModel.DiscountForUserGroupsDescription.Any())
+                            {
+                                <div class="alert alert-warning pad-10">
+                                    <h6 class="alert-heading my-0">
+                                        <img src="~/Content/img/Discount_25px.png" width="25" style="margin-top: -6px;" />
+                                        @Html.Raw(T("SpecialDiscountsForVIPUsers"))
+                                    </h6>
+                                    <br />
+                                    <ul class="list-group">
+                                        @foreach (var discount in Model.DownloadModel.DiscountForUserGroupsDescription.Where(p => p.Item1 != null && !string.IsNullOrWhiteSpace(p.Item2)))
+                                        {
+                                            <li class="list-group-item py-2">
+                                                <span class="badge badge-pill" style="background-color: @discount.Item1.GetLocalized(p => p.GroupBackgroundColor);">
+                                                    <img src="@discount.Item1.GetLocalized(p => p.GroupSmallIcon)"
+                                                         class="pad-5" style="max-height: 25px" />
+                                                </span>
+                                                &nbsp;
+                                                <a href="@Url.Action("UpgradeAccount", "Purchase")" target="_blank">
+                                                    @Html.Raw(discount.Item2)
+                                                </a>
+                                            </li>
+                                        }
+                                    </ul>
+                                </div>
+                            }
+                        </div>
+                        @if (Model.CheckoutAttributes.Any())
+                        {
+                            <div id="step-2" class="@(currentLangIsRTL ? "text-right" : "text-left")">
+                                <div class="alert alert-secondary pad-10">
+                                    @foreach (var attribute in Model.CheckoutAttributes.OrderByDescending(p => p.DisplayOrder))
+                                    {
+                                        <div class="row">
+                                            <div class="col-12">
+                                                <div class="form-group">
+                                                    <Label class="fw-bold">
+                                                        @Html.Raw(attribute.Required ? "<span class='text-danger'>*</span>" : "")
+                                                        @Html.Raw(attribute.Name) :
+                                                    </Label>
+                                                    <span class="field-validation-valid form-text text-danger fs-12" data-valmsg-for="attr-@attribute.Id" data-valmsg-replace="true"></span>
+
+                                                    @switch (attribute.AttributeType)
+                                                    {
+                                                        case ProductCheckoutAttributeType.DropDownList:
+                                                            <select name="attr-@attribute.Id" id="attr-@attribute.Id" class="form-control form-control-sm"
+                                                                    @Html.Raw(attribute.Required ? "data-val='true' data-val-required='" + T("FieldRequired", attribute.Name) + "'" : "")>
+                                                                <option value="">@T("SelectAnItem")</option>
+                                                                @foreach (var option in attribute.Options.OrderByDescending(p => p.DisplayOrder))
+                                                                {
+                                                                    <option value="@option.Id">
+                                                                        @option.GetLocalized(p => p.Name)
+                                                                        -
+                                                                        @option.Price.ExchangeCurrencyStr()
+                                                                        @if (option.DownloadLimitedToUserGroupId != null)
+                                                                        {
+                                                                            <small>
+                                                                                <b>
+                                                                                    [@Html.Raw(string.Format(option.HigherUserGroupsCanDownload ?
+                                                                                 T("DownloadLimitedToAUserGroupOrHigher").ToString()
+                                                                                 : T("DownloadLimitedToAUserGroup").ToString(),
+                                                                                 Url.Action("UpgradeAccount", "Purchase"),
+                                                                                 option.DownloadLimitedToUserGroup.GetLocalized(p => p.GroupName)))]
+                                                                                </b>
+                                                                            </small>
+                                                                        }
+                                                                    </option>
+                                                                }
+                                                            </select>
+                                                            @Html.Raw(attribute.Description)
+                                                            break;
+                                                        case ProductCheckoutAttributeType.CheckBoxList:
+                                                            foreach (var option in attribute.Options.OrderByDescending(p => p.DisplayOrder))
+                                                            {
+                                                                <div class="custom-control custom-checkbox">
+                                                                    <input name="attr-@attribute.Id" value="@option.Id" type="checkbox" class="form-check-input @Html.Raw(attribute.Required ? "CheckListRequired" : "")" id="opt-@option.Id"
+                                                                           @Html.Raw(attribute.Required ? "data-val='true' data-val-required='" + T("FieldRequired", attribute.Name) + "'" : "")>
+                                                                    <label class="custom-control-label" for="opt-@option.Id">
+                                                                        @option.GetLocalized(p => p.Name)
+                                                                        -
+                                                                        @option.Price.ExchangeCurrencyStr()
+                                                                        @if (option.DownloadLimitedToUserGroupId != null)
+                                                                        {
+                                                                            <small>
+                                                                                <b>
+                                                                                    [@Html.Raw(string.Format(option.HigherUserGroupsCanDownload ?
+                                                                              T("DownloadLimitedToAUserGroupOrHigher").ToString()
+                                                                              : T("DownloadLimitedToAUserGroup").ToString(),
+                                                                              Url.Action("UpgradeAccount", "Purchase"),
+                                                                              option.DownloadLimitedToUserGroup.GetLocalized(p => p.GroupName)))]
+                                                                                </b>
+                                                                            </small>
+                                                                        }
+                                                                    </label>
+                                                                </div>
+                                                            }
+                                                            @Html.Raw(attribute.Description)
+                                                            break;
+                                                        case ProductCheckoutAttributeType.RadioButtonList:
+                                                            foreach (var option in attribute.Options.OrderByDescending(p => p.DisplayOrder))
+                                                            {
+                                                                <div class="custom-control custom-checkbox">
+                                                                    <input name="attr-@attribute.Id" value="@option.Id" type="radio" class="custom-control-input" id="opt-@option.Id"
+                                                                           @Html.Raw(attribute.Required ? "data-val='true' data-val-required='" + T("FieldRequired", attribute.Name) + "'" : "")>
+                                                                    <label class="custom-control-label" for="opt-@option.Id">
+                                                                        @option.GetLocalized(p => p.Name)
+                                                                        -
+                                                                        @option.Price.ExchangeCurrencyStr()
+                                                                        @if (option.DownloadLimitedToUserGroupId != null)
+                                                                        {
+                                                                            <small>
+                                                                                <b>
+                                                                                    [@Html.Raw(string.Format(option.HigherUserGroupsCanDownload ?
+                                                                              T("DownloadLimitedToAUserGroupOrHigher").ToString()
+                                                                              : T("DownloadLimitedToAUserGroup").ToString(),
+                                                                              Url.Action("UpgradeAccount", "Purchase"),
+                                                                              option.DownloadLimitedToUserGroup.GetLocalized(p => p.GroupName)))]
+                                                                                </b>
+                                                                            </small>
+                                                                        }
+                                                                    </label>
+                                                                </div>
+                                                            }
+                                                            @Html.Raw(attribute.Description)
+                                                            break;
+                                                        case ProductCheckoutAttributeType.NumberBox:
+
+                                                            <input type="number" name="attr-@attribute.Id" id="attr-@attribute.Id" class="form-control form-control-sm" data-val-number="@T("EnterValidNumber")"
+                                                                   @Html.Raw(attribute.Required || attribute.MaxRange != null || attribute.MinRange != null ? " data-val='true'" : "")
+                                                                   @Html.Raw(attribute.Required ? $" data-val-required='{T("FieldRequired", attribute.Name)}'" : "")
+                                                                   @Html.Raw(attribute.MaxRange != null ? $" data-rule-maxValue='{attribute.MaxRange.Value}'" : "")
+                                                                   @Html.Raw(attribute.MinRange != null ? $" data-rule-minValue='{attribute.MinRange.Value}'" : "") />
+                                                            @Html.Raw(attribute.Description)
+                                                            break;
+                                                        case ProductCheckoutAttributeType.TextBox:
+                                                            <input type="text" name="attr-@attribute.Id" id="attr-@attribute.Id" class="form-control form-control-sm"
+                                                                   @Html.Raw(attribute.Required || attribute.MaxRange != null || attribute.MinRange != null ? " data-val='true'" : "")
+                                                                   @Html.Raw(attribute.Required ? $" data-val-required='{T("FieldRequired", attribute.Name)}'" : "")
+                                                                   @Html.Raw(attribute.MaxRange != null ? $" data-val-maxlength-maxallowedlength='{attribute.MaxRange.Value}' data-val-maxlength='{T("FieldMaxLength", "", attribute.MaxRange.Value)}' maxlength='{attribute.MaxRange.Value}'" : "")
+                                                                   @Html.Raw(attribute.MinRange != null ? $" data-val-minlength-min='{attribute.MinRange.Value}' data-val-minlength='{T("FieldMinLength", "", attribute.MinRange.Value)}'" : "") />
+                                                            @Html.Raw(attribute.Description)
+                                                            break;
+                                                        case ProductCheckoutAttributeType.TextArea:
+                                                            <textarea name="attr-@attribute.Id" id="attr-@attribute.Id" rows="5" class="form-control form-control-sm"
+                                                                      @Html.Raw(attribute.Required || attribute.MaxRange != null || attribute.MinRange != null ? " data-val='true'" : "")
+                                                                      @Html.Raw(attribute.Required ? $" data-val-required='{T("FieldRequired", attribute.Name)}'" : "")
+                                                                      @Html.Raw(attribute.MaxRange != null ? $" data-val-maxlength-maxallowedlength='{attribute.MaxRange.Value}' data-val-maxlength='{T("FieldMaxLength", "", attribute.MaxRange.Value)}' maxlength='{attribute.MaxRange.Value}'" : "")
+                                                                      @Html.Raw(attribute.MinRange != null ? $" data-val-minlength-min='{attribute.MinRange.Value}' data-val-minlength='{T("FieldMinLength", "", attribute.MinRange.Value)}'" : "")></textarea>
+                                                            @Html.Raw(attribute.Description)
+                                                            break;
+                                                    }
+                                                </div>
+                                            </div>
+                                        </div>
+                                        if (counter < Model.CheckoutAttributes.Count - 1)
+                                        {
+                                            <hr class="my-3" />
+                                        }
+                                        counter++;
+                                    }
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@Html.MinifyInlineScript(
+    @<script>
+         $(function() {
+             //Check Box List Validation
+             $.validator.addMethod("checkAtLeastOne",
+                 function(value, elem, param) {
+                     return $(".CheckListRequired[name=" + elem.name + "]:checkbox:checked").length > 0;
+                 },
+                 "@T("YouMustSelectAtLeastOne")");
+             $.validator.addClassRules("CheckListRequired", { checkAtLeastOne: true });
+
+             $.validator.addMethod("minValue",
+                 function (value, elem, param) {
+                     if( $(elem).val().length === 0 ) {
+                         return true;
+                     }
+                     return value >= param;
+                 },
+                 "@T("FieldMinValue")");
+
+             $.validator.addMethod("maxValue",
+                 function (value, elem, param) {
+                     if( $(elem).val().length === 0 ) {
+                         return true;
+                     }
+                     return value <= param;
+                 },
+                 "@T("FieldMaxValue")");
+         });
+
+         function submitForm() {
+
+             //Add to shopping cart
+             $.validator.unobtrusive.parse($('#frmPurchaseProduct'));
+             if ($("#frmPurchaseProduct").valid()) {
+
+                 $('#btnFinish').addClass("disabled");
+                 $('#btnFinish').prop("disabled", true);
+                 $('#btnFinish').html('<i class="fas fa-spinner fa-spin fa-fw"></i>');
+
+                 $.ajax({
+                     type: "POST",
+                     url: '@Url.Action("AddProductToInvoice")',
+                     data: $("#frmPurchaseProduct").serialize(),
+                     error: function(xhr, status, error) {
+                         ErrorAlert('@T("Error")', '@T("ServerConnectionError")');
+                     },
+                     success: function(data) {
+                         if (data === 'OK') {
+                             @if (ViewBag.InvoiceId == null)
+                             {
+                                 @Html.Raw("ShowAddToCartMsg();$('#dlgPurchase_" + Model.Id + "').modal('hide');");
+                             }
+                             else
+                             {
+                                 @Html.Raw("window.location.href = '" + Url.Action("Index", "Invoice", new {id = ViewBag.InvoiceId}) + "';");
+                             }
+                         } else {
+                             ErrorAlert('@T("Error")', data);
+                         }
+                     },
+                     complete: function() {
+                         $('#btnFinish').removeClass("disabled");
+                         $('#btnFinish').prop("disabled", false);
+                         $('#btnFinish').text('@T("Finish")');
+                     }
+                 });
+             }
+         }
+
+         function ShowAddToCartMsg() {
+             iziToast.success({
+                 title: '@T("Successful")',
+                 titleColor: "white",
+                 messageColor: "white",
+                 iconColor: "white",
+                 icon: "fa fa-check-circle-o",
+                 rtl: RtlLanguage,
+                 position: 'center',
+                 message: '@T("ItemAddedToCart")',
+                 titleSize: 17,
+                 color: '#119830',
+                 buttons: [
+                     [
+                         '<button class="text-light">@T("GotoShoppingCart")</button>', function(instance, toast) {
+                             var url = '@Url.Action("Index", "Invoice")';
+                             var win = window.open(url, '_blank');
+                             win.focus();
+                             iziToast.hide(toast);
+                         }, true
+                     ]
+                 ]
+             });
+         }
+
+         $('#smartwizard').smartWizard({
+             selected: 0,
+             autoAdjustHeight: true,
+             keyNavigation: false,
+             useURLhash: false,
+             showStepURLhash: false,
+             transitionEffect: 'slide',
+             transitionSpeed: '500',
+             toolbarSettings: {
+                 toolbarExtraButtons: [
+                     $('<button id="btnFinish" type="button"></button>')
+                     .html('<i class="fa fa-shopping-cart"></i> @T("AddToCart")')
+                     .addClass('btn btn-success')
+                     .on('click',
+                         function() {
+                             submitForm();
+                         })
+                 ]
+             },
+             lang: {
+                 next: '@T("Next")',
+                 previous: '@T("Previous")'
+             }
+         });
+
+        @if (Model.CheckoutAttributes.Any())
+        {
+            <text>
+            $('#btnFinish').addClass("disabled");
+            $('#btnFinish').prop("disabled", true);
+            </text>
+        }
+
+         $("#smartwizard").on("showStep",
+             function(e, anchorObject, stepNumber, stepDirection) {
+                 if (stepDirection === 'forward' && stepNumber === 1) {
+                     $('#btnFinish').removeClass("disabled");
+                     $('#btnFinish').prop("disabled", false);
+                 } else {
+                     $('#btnFinish').addClass("disabled");
+                     $('#btnFinish').prop("disabled", true);
+                 }
+             });
+
+         $('#dlgPurchase_@Model.Id').modal('show');
+    </script>)

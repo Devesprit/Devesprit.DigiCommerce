@@ -8,62 +8,61 @@
     var settings = DependencyResolver.Current.GetService<ISettingService>().LoadSetting<SiteSettings>();
 }
 
-<div class="panel">
-    <p class="panel-title pad-10 no-mar fs-14">
-        <i class="fa fa-search"></i> @T("AdvancedSearch")
-    </p>
-    <div class="pad-10">
-    @using (Html.BeginForm("Index", "Search", FormMethod.Get))
-    {
-        <div class="row fs-14">
-            <div class="col-12">
-                <div class="form-group">
-                    @Html.LabelFor(p => p.Query, new { @class = "my-1" })
-                    @Html.TextBoxFor(p => p.Query, null, new { @class = "form-control form-control-sm" })
-                    @Html.ValidationMessageFor(p => p.Query, "", new { @class = "form-text text-danger fs-12" })
-                </div>
-            </div>
-            <div class="col-12">
-                <div class="form-group">
-                    @Html.LabelFor(p => p.SearchPlace, new { @class = "my-1" })
-                    @if (settings.EnableBlog)
-                    {
-                        @Html.LocalizedEnumDropDownListFor(p => p.PostType, T("SelectAnItem").ToString(), new { @class = "form-control custom-select form-control-sm" })
-                    }
-                    @Html.LocalizedEnumDropDownListFor(p => p.SearchPlace, new { @class = "form-control custom-select form-control-sm t-mar-5" })
-                </div>
-            </div>
-            <div class="col-12">
-                <div class="form-group">
-                    @Html.LabelFor(p => p.OrderBy, new { @class = "my-1" })
-                    @Html.LocalizedEnumDropDownListFor(p => p.OrderBy, new { @class = "form-control custom-select form-control-sm" })
-                </div>
-            </div>
-            <div class="col-12">
-                <div class="form-group">
-                    @Html.LabelFor(p => p.LanguageId, new { @class = "my-1" })
-                    @Html.DropDownListFor(p => p.LanguageId, SearchTermModel.LanguagesList, T("SelectAnItem").ToString(), new { @class = "form-control custom-select form-control-sm" })
-                </div>
-            </div>
-            <div class="col-12">
-                <div class="form-group">
-                    @Html.LabelFor(p => p.FilterByCategory, new { @class = "my-1" })
-                    @Html.DropDownListFor(p => p.FilterByCategory, SearchTermModel.CategoriesList, T("SelectAnItem").ToString(), new { @class = "form-control custom-select form-control-sm" })
-                </div>
-            </div>
-            <div class="col-12">
-                <div class="form-group">
-                    @Html.LabelFor(p => p.PageSize, new { @class = "my-1" })
-                    @Html.DropDownListFor(p => p.PageSize, SearchTermModel.PageSizesList, new { @class = "form-control custom-select form-control-sm" })
-                </div>
-            </div>
+<div class="sidebar-search-result">
+    <div class="item-info-pro-box">
+        <div class="item-info-pro-title b-mar-25">
+            <h3><i class="fa fa-search"></i> @T("AdvancedSearch")</h3>
         </div>
+        @using (Html.BeginForm("Index", "Search", FormMethod.Get))
+        {
+            <div class="row fs-14">
+                <div class="col-12">
+                    <div class="form-group">
+                        @Html.TextBoxFor(p => p.Query, null, new { @class = "form-control form-control-sm" })
+                        @Html.ValidationMessageFor(p => p.Query, "", new { @class = "form-text text-danger fs-12" })
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="form-group">
+                        @Html.LabelFor(p => p.SearchPlace, new { @class = "my-1" })
+                        @if (settings.EnableBlog)
+                        {
+                            @Html.LocalizedEnumDropDownListFor(p => p.PostType, T("SelectAnItem").ToString(), new { @class = "form-control form-control-sm" })
+                        }
+                        @Html.LocalizedEnumDropDownListFor(p => p.SearchPlace, new { @class = "form-control form-control-sm t-mar-5" })
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="form-group">
+                        @Html.LabelFor(p => p.OrderBy, new { @class = "my-1" })
+                        @Html.LocalizedEnumDropDownListFor(p => p.OrderBy, new { @class = "form-control form-control-sm", placeholder = T("OrderBy") })
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="form-group">
+                        @Html.LabelFor(p => p.LanguageId, new { @class = "my-1" })
+                        @Html.DropDownListFor(p => p.LanguageId, SearchTermModel.LanguagesList, T("SelectAnItem").ToString(), new { @class = "form-control form-control-sm", placeholder = T("Language") })
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="form-group">
+                        @Html.LabelFor(p => p.FilterByCategory, new { @class = "my-1" })
+                        @Html.DropDownListFor(p => p.FilterByCategory, SearchTermModel.CategoriesList, T("SelectAnItem").ToString(), new { @class = "form-control form-control-sm", placeholder = T("FilterByCategory") })
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="form-group">
+                        @Html.LabelFor(p => p.PageSize, new { @class = "my-1" })
+                        @Html.DropDownListFor(p => p.PageSize, SearchTermModel.PageSizesList, new { @class = "form-control form-control-sm", placeholder = T("PageSize") })
+                    </div>
+                </div>
+            </div>
 
-        @Html.ValidationSummary(true, "", new {@class = "text-danger"}).ToMvcHtmlString()
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" }).ToMvcHtmlString()
 
-        <div class="text-center t-mar-20">
-            <button type="submit" class="btn btn-sm btn-warning"><i class="fa fa-search"></i> @T("Search")</button>
-        </div>
-    }
+            <div class="text-center t-mar-20">
+                <button type="submit" class="btn-apply-sort">@T("Apply")</button>
+            </div>
+        }
     </div>
 </div>

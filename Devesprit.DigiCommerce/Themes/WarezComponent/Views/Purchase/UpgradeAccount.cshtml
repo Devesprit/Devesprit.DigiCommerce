@@ -1,0 +1,86 @@
+﻿
+@using Devesprit.Services.Currency
+@using Devesprit.Services.Localization
+@model Devesprit.DigiCommerce.Models.Profile.UpgradeAccountModel
+@{
+    ViewBag.Title = T("UpgradeAccount");
+    var currentUserGroupPriority = Model.CurrentUser?.SubscriptionExpireDate > DateTime.Now ?
+        Model.CurrentUser?.UserGroup?.GroupPriority ?? int.MinValue : int.MinValue;
+
+    Html.AddHeadCustomParts("<meta name=\"robots\" content=\"index,follow\">");
+    var upgradePlanNotes = T("UpgradePlanNotes");
+}
+
+<!-- pro head slider -->
+<div class="pro-head-slider">
+    <div class="pro-head-slider-layer">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 d-flex justify-content-center">
+                    <h1 class="pro-head-title pro-head-title-archive">@T("UpgradeAccount").ToHtmlString().Replace(" Now!", "")</h1>
+                </div>
+                <div class="col-12">
+                    <ul class="breadcrumbs">
+                        <li><a href="@Url.Action("Index", "Home")">@T("Home")</a></li>
+                        <li>/</li>
+                        <li>@T("UpgradeAccount").ToHtmlString().Replace(" Now!", "")</li>
+                    </ul>
+                </div>
+                <div class="col-12 d-flex justify-content-center">
+                    @{Html.RenderPartial("Partials/_SearchBox");}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="content-plan-irdev">
+        <div class="row">
+            <div class="col-12">
+                <h2 class="title-content-plan-irdev">@Html.Raw(T("SelectDesiredUserGroup"))</h2>
+                <p class="text-dark fs-16">@Html.Raw(T("SelectDesiredUserGroupDesc"))</p>
+                @if (!string.IsNullOrWhiteSpace(upgradePlanNotes.Text))
+                {
+                    <div class="mar-v-20 alert alert-warning fs-14 pad-20">
+                        @Html.Raw(upgradePlanNotes)
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="buy-plans-box">
+        <div class="row justify-content-center">
+            @foreach (var group in Model.UserGroupsList.OrderBy(p=> p.GroupDisplayOrder))
+            {
+                <div class="col-lg-4 col-md-8 col-sm-10 col-12" @Html.Raw(currentUserGroupPriority >= group.GroupPriority ? "style='opacity: 0.5;'" : "")>
+                    <article class="buy-plans">
+                        @using (Html.BeginForm("UpgradeAccount", "Purchase", FormMethod.Post))
+                        {
+                            @Html.AntiForgeryToken()
+                            @Html.Hidden("selectedUserGroupId", group.Id)
+
+                            <img class="img-responsive m-auto d-block" src="@group.GetLocalized(x => x.GroupLargeIcon)" />
+                            <h3 class="title-buy-plans">@group.GetLocalized(p => p.GroupName)</h3>
+                            @Html.Raw(group.GetLocalized(p => p.GroupDescription))
+                    <div class="price-plans">
+                        @if (group.SubscriptionDiscountPercentage > 0)
+                        {
+                            <div class="badge badge-pill badge-danger fs-16">%@group.SubscriptionDiscountPercentage @T("Off")</div>
+                            <del>@group.SubscriptionFee.ExchangeCurrencyStr()</del>
+                            @((group.SubscriptionFee - ((group.SubscriptionFee * group.SubscriptionDiscountPercentage) / 100)).ExchangeCurrencyStr())
+                        }
+                        else
+                        {
+                            @group.SubscriptionFee.ExchangeCurrencyStr()
+                        }
+                    </div>
+                            <button type="submit" class="buy-btn-plan">@Html.Raw(T("JoinNow"))</button>
+                        }
+                    </article>
+                </div>
+            }
+        </div>
+    </div>
+</div>

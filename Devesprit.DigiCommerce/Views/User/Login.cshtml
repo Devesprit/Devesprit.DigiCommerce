@@ -6,7 +6,7 @@
     ViewBag.Title = T("Login");
     bool showSocialsPanel = Model.ExternalLoginProviders?.Any() == true;
     var workContext = DependencyResolver.Current.GetService<IWorkContext>();
-    Html.AddCanonicalUrlParts(Url.Action("Login", "User", new {lang = workContext.CurrentLanguage.IsoCode}, Request.Url.Scheme));
+    Html.AddCanonicalUrlParts(Url.Action("Login", "User", new { lang = workContext.CurrentLanguage.IsoCode }, Request.Url.Scheme));
     Html.AddHeadCustomParts("<meta name=\"robots\" content=\"index,follow\">");
 }
 
@@ -15,7 +15,7 @@
         <div class="col-12 @(showSocialsPanel ? "col-lg-10" : "col-lg-6")">
             <div class="panel">
                 <div class="panel-title pad-10">
-                    <h1 class="no-mar">@T("Login")</h1>
+                    <h1 class="no-mar fs-18">@T("Login")</h1>
                 </div>
                 <div class="row no-gutters">
 
@@ -32,7 +32,9 @@
                                         <div class="row">
                                             @foreach (var loginProvider in Model.ExternalLoginProviders.OrderByDescending(p => p.Order))
                                             {
-                                                Html.RenderPartial(loginProvider.ProviderLoginBtnPartialUrl);
+                                                <div class="col-12">
+                                                    @{ Html.RenderPartial(loginProvider.ProviderLoginBtnPartialUrl); }
+                                                </div>
                                             }
                                         </div>
                                     }

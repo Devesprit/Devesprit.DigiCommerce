@@ -1510,7 +1510,6 @@
     <Content Include="Areas\Admin\Views\Shared\Partials\_LanguageDropDown.cshtml" />
     <Content Include="Areas\Admin\Views\Shared\Partials\_UsersMenuBar.cshtml" />
     <Content Include="Themes\WarezComponent\Views\Post\Partials\_LikeWishlistButtons.cshtml" />
-    <Content Include="Themes\WarezComponent\Views\Post\Partials\_PostLargeCardView.cshtml" />
     <Content Include="Themes\WarezComponent\Views\Post\Partials\_PostNormalCardView.cshtml" />
     <Content Include="Themes\WarezComponent\Views\Post\Partials\_PostSmallCardView.cshtml" />
     <Content Include="Themes\WarezComponent\Content\LTR\fonts\.DS_Store" />
@@ -2319,8 +2318,6 @@
     <Content Include="Themes\WarezComponent\Views\Product\Partials\_ProductDownloadView.cshtml" />
     <Content Include="Themes\WarezComponent\Views\Product\Partials\_ProductImagesSection.cshtml" />
     <Content Include="Themes\WarezComponent\Views\Product\Partials\_ProductKeywordsSection.cshtml" />
-    <Content Include="Themes\WarezComponent\Views\Product\Partials\_ProductLargeCardDownloadView.cshtml" />
-    <Content Include="Themes\WarezComponent\Views\Product\Partials\_ProductLargeCardView.cshtml" />
     <Content Include="Themes\WarezComponent\Views\Product\Partials\_ProductNormalCardView.cshtml" />
     <Content Include="Themes\WarezComponent\Views\Product\Partials\_ProductsList.cshtml" />
     <Content Include="Themes\WarezComponent\Views\Product\Partials\_ProductSmallCardView.cshtml" />
@@ -2399,6 +2396,17 @@
     <Content Include="Themes\WarezComponent\Views\User\ResetPassword.cshtml" />
     <Content Include="Themes\WarezComponent\Views\User\ResetPasswordConfirmation.cshtml" />
     <Content Include="Themes\WarezComponent\Views\User\SignUp.cshtml" />
+    <Content Include="Themes\WarezComponent\Views\Page\Index.cshtml" />
+    <Content Include="Themes\WarezComponent\Views\Purchase\PurchaseProductWizard.cshtml" />
+    <Content Include="Themes\WarezComponent\Views\Purchase\UpgradeAccount.cshtml" />
+    <Content Include="Themes\WarezComponent\Views\Invoice\Index.cshtml" />
+    <Content Include="Themes\WarezComponent\Views\Invoice\Partials\_AddNewItemToInvoiceManually.cshtml" />
+    <Content Include="Themes\WarezComponent\Views\Invoice\Partials\_AddNewItemToInvoiceWizard.cshtml" />
+    <Content Include="Themes\WarezComponent\Views\Invoice\Partials\_AdminInvoiceEditor.cshtml" />
+    <Content Include="Themes\WarezComponent\Views\Invoice\Partials\_InvoiceBillingAddress.cshtml" />
+    <Content Include="Themes\WarezComponent\Views\Invoice\Partials\_InvoiceTable.cshtml" />
+    <Content Include="Themes\WarezComponent\Views\Invoice\Print.cshtml" />
+    <Content Include="Themes\WarezComponent\Views\Invoice\VerifyPayment.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -2473,7 +2481,7 @@
           <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
         </WebProjectProperties>
       </FlavorProperties>
-      <UserProperties BuildVersion_StartDate="2018/10/14" BuildVersion_UpdateAssemblyVersion="True" BuildVersion_UpdateFileVersion="True" BuildVersion_AssemblyInfoFilename="Properties\AssemblyInfo.cs" BuildVersion_UseGlobalSettings="True" BuildVersion_BuildVersioningStyle="YearStamp.MonthStamp.DayStamp.Increment" />
+      <UserProperties BuildVersion_BuildVersioningStyle="YearStamp.MonthStamp.DayStamp.Increment" BuildVersion_UseGlobalSettings="True" BuildVersion_AssemblyInfoFilename="Properties\AssemblyInfo.cs" BuildVersion_UpdateFileVersion="True" BuildVersion_UpdateAssemblyVersion="True" BuildVersion_StartDate="2018/10/14" />
     </VisualStudio>
   </ProjectExtensions>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

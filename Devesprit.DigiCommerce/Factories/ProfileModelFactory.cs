@@ -55,6 +55,7 @@ namespace Devesprit.DigiCommerce.Factories
         public virtual async Task<UserInfoModel> PrepareUserInfoModelAsync(TblUsers user)
         {
             var result = user.Adapt<UserInfoModel>();
+            result.EMail = user.Email;
             result.ShowUserSubscriptionInfo = (await _userGroupsService.GetAsEnumerableAsync()).Any();
 
             if (user.UserCountry != null)

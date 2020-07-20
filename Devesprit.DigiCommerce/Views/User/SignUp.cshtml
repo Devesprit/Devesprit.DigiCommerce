@@ -5,39 +5,41 @@
     ViewBag.Title = T("Signup");
     bool showSocialsPanel = Model.ExternalLoginProviders?.Any() == true;
     var workContext = DependencyResolver.Current.GetService<IWorkContext>();
-    Html.AddCanonicalUrlParts(Url.Action("SignUp", "User", new {lang = workContext.CurrentLanguage.IsoCode}, Request.Url.Scheme));
+    Html.AddCanonicalUrlParts(Url.Action("SignUp", "User", new { lang = workContext.CurrentLanguage.IsoCode }, Request.Url.Scheme));
     Html.AddHeadCustomParts("<meta name=\"robots\" content=\"index,follow\">");
 }
 
 <div class="container t-mar-35">
-    <div class="row justify-content-center"> 
+    <div class="row justify-content-center">
         <div class="col-12 @(showSocialsPanel ? "col-lg-10" : "col-lg-6")">
             <div class="panel">
                 <div class="panel-title pad-10">
-                    <h1 class="no-mar fs-22">@T("Signup")</h1>
+                    <h1 class="no-mar fs-18">@T("Signup")</h1>
                 </div>
                 <div class="row no-gutters">
 
                     @*Login/SignUp With Socials*@
                     @if (showSocialsPanel)
                     {
-                    <div class="col-12 col-md-6 col-lg-4 bg-light rounded p-3">
-                        <div class="row b-mar-20">
-                            <div class="col-12 text-center">
-                                <p class="b-mar-20 text-muted">@T("SocialsSignup")</p>
-                                @using (Html.BeginForm("ExternalLogin", "User"))
-                                {
-                                    @Html.AntiForgeryToken()
-                                    <div class="row">
-                                        @foreach (var loginProvider in Model.ExternalLoginProviders.OrderByDescending(p => p.Order))
-                                        {
-                                            Html.RenderPartial(loginProvider.ProviderLoginBtnPartialUrl);
-                                        }
-                                    </div>
-                                }
+                        <div class="col-12 col-md-6 col-lg-4 bg-light rounded p-3">
+                            <div class="row b-mar-20">
+                                <div class="col-12 text-center">
+                                    <p class="b-mar-20 text-muted">@T("SocialsSignup")</p>
+                                    @using (Html.BeginForm("ExternalLogin", "User"))
+                                    {
+                                        @Html.AntiForgeryToken()
+                                        <div class="row">
+                                            @foreach (var loginProvider in Model.ExternalLoginProviders.OrderByDescending(p => p.Order))
+                                            {
+                                                <div class="col-12">
+                                                    @{ Html.RenderPartial(loginProvider.ProviderLoginBtnPartialUrl); }
+                                                </div>
+                                            }
+                                        </div>
+                                    }
+                                </div>
                             </div>
                         </div>
-                    </div>
                     }
 
                     @*Login/SignUp With Form*@
@@ -80,7 +82,7 @@
                                 <div class="form-group b-mar-5">
                                     <div class="custom-control custom-checkbox">
                                         @Html.CheckBoxFor(p => p.AcceptTerms, new { @class = "custom-control-input" })
-                                        @Html.Raw(Server.HtmlDecode(Html.LabelFor(p => p.AcceptTerms, new { @class = "custom-control-label" }).ToString().FormatWith(Url.Action("TermsAndConditions", "Home", new {area = ""}))))
+                                        @Html.Raw(Server.HtmlDecode(Html.LabelFor(p => p.AcceptTerms, new { @class = "custom-control-label" }).ToString().FormatWith(Url.Action("TermsAndConditions", "Home", new { area = "" }))))
                                     </div>
                                     @Html.ValidationMessageFor(p => p.AcceptTerms, "", new { @class = "form-text text-danger fs-12" })
                                 </div>

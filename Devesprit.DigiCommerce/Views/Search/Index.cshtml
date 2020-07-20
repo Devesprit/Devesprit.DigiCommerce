@@ -12,7 +12,7 @@
         Html.AddCanonicalUrlParts(url);
     }
 }
-@Html.Raw(ViewBag.MetaDescription2)
+
 @if (Model == null || Model.NumberOfItemsFound == 0)
 {
     <div class="row justify-content-center">
@@ -95,7 +95,7 @@ else
                                     @Html.Raw("<div class='col-12 py-2'>")
                                     break;
                                 case ViewStyles.Small:
-                                    @Html.Raw("<div class='col-12 col-sm-6 col-lg-4 col-xl-3 py-2'>")
+                                    @Html.Raw("<div class='col-12 col-sm-6 col-lg-4 py-2'>")
                                     break;
                             }
                             {

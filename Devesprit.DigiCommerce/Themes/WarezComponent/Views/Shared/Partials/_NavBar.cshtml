@@ -155,7 +155,7 @@
 
                             @foreach (var item in invoice.InvoiceDetails)
                             {
-                                <li class="mb-3">
+                                <li>
                                     <a href="@item.ItemHomePage" target="_blank">
                                         <i class="fas fa-check-circle fs-12 text-warning"></i>
                                         <span class="list-card-item-name">@Html.Raw(item.ItemName)</span>

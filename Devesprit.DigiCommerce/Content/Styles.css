@@ -693,12 +693,6 @@ button {
     min-width: 100% !important;
 }
 
-.invoice-itemname-col-width {
-    max-width: 100% !important;
-    width: 100% !important;
-    min-width: 100% !important;
-}
-
 .invoice-price-col-width {
     max-width: 150px !important;
     width: 150px !important;

@@ -1,0 +1,105 @@
+﻿
+@using Devesprit.Core.Settings
+@using Devesprit.Data.Enums
+@using Devesprit.Services
+@model Devesprit.DigiCommerce.Models.Invoice.InvoiceBillingAddressModel
+@{
+    Layout = null;
+    var readOnly = Model.InvoiceStatus == InvoiceStatus.Paid && !User.IsInRole("Admin");
+    var settings = DependencyResolver.Current.GetService<ISettingService>().LoadSetting<SiteSettings>();
+}
+
+@if (!(!User.IsInRole("Admin") && !settings.GetBillingAddressForInvoice))
+{
+    <p class="fs-22 pad-v-5 text-center fw-200 mar-v-50" style="color: #9a9a9a">
+        <strong>@Html.Raw(T("YourBillingAddress").ToString().Replace("fa-map-marker", " fa-map-marker-alt"))</strong>
+    </p>
+
+    <div class="row">
+        <div class="col-12 col-lg-4">
+            <div class="form-group">
+                @Html.ValidationMessageFor(p => p.FirstName, "", new { @class = "form-text text-danger fs-12" })
+                @(readOnly ? Html.TextBoxFor(p => p.FirstName, new { placeholder = T("FirstName").ToString(), @readonly = "" }) :
+                    Html.TextBoxFor(p => p.FirstName, new { placeholder = T("FirstName").ToString() }))
+            </div>
+        </div>
+        <div class="col-12 col-lg-4">
+            <div class="form-group">
+                @Html.ValidationMessageFor(p => p.LastName, "", new { @class = "form-text text-danger fs-12" })
+                @(readOnly ?
+                    Html.TextBoxFor(p => p.LastName, new { placeholder = T("LastName").ToString(), @readonly = "" }) :
+                    Html.TextBoxFor(p => p.LastName, new { placeholder = T("LastName").ToString() }))
+            </div>
+        </div>
+        <div class="col-12 col-lg-4">
+            <div class="form-group">
+                @Html.ValidationMessageFor(p => p.CompanyName, "", new { @class = "form-text text-danger fs-12" })
+                @(readOnly ?
+                    Html.TextBoxFor(p => p.CompanyName, new { placeholder = T("CompanyName").ToString(), @readonly = "" }) :
+                    Html.TextBoxFor(p => p.CompanyName, new { placeholder = T("CompanyName").ToString() }))
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12 col-lg-4">
+            <div class="form-group">
+                @Html.ValidationMessageFor(p => p.Email, "", new { @class = "form-text text-danger fs-12" })
+                @(readOnly ?
+                    Html.TextBoxFor(p => p.Email, new { placeholder = T("EmailAddress").ToString(), type = "email", @readonly = "" }) :
+                    Html.TextBoxFor(p => p.Email, new { placeholder = T("EmailAddress").ToString(), type = "email" }))
+            </div>
+        </div>
+        <div class="col-12 col-lg-4">
+            <div class="form-group">
+                @Html.ValidationMessageFor(p => p.PhoneNumber, "", new { @class = "form-text text-danger fs-12" })
+                @(readOnly ?
+                    Html.TextBoxFor(p => p.PhoneNumber, new { placeholder = T("PhoneNumber").ToString(), type = "tel", @readonly = "" }) :
+                    Html.TextBoxFor(p => p.PhoneNumber, new { placeholder = T("PhoneNumber").ToString(), type = "tel" }))
+            </div>
+        </div>
+        <div class="col-12 col-lg-4">
+            <div class="form-group">
+                @Html.ValidationMessageFor(p => p.ZipCode, "", new { @class = "form-text text-danger fs-12" })
+                @(readOnly ?
+                    Html.TextBoxFor(p => p.ZipCode, new { placeholder = T("ZipCode").ToString(), @readonly = "" }) :
+                    Html.TextBoxFor(p => p.ZipCode, new { placeholder = T("ZipCode").ToString() }))
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12 col-lg-4">
+            <div class="form-group">
+                @Html.ValidationMessageFor(p => p.CountryId, "", new { @class = "form-text text-danger fs-12" })
+                @(readOnly ?
+                    Html.DropDownListFor(p => p.CountryId, Model.CountriesList, T("SelectCountry").ToString(), new { disabled = "" }) :
+                    Html.DropDownListFor(p => p.CountryId, Model.CountriesList, T("SelectCountry").ToString(), null))
+            </div>
+        </div>
+        <div class="col-12 col-lg-4">
+            <div class="form-group">
+                @Html.ValidationMessageFor(p => p.State, "", new { @class = "form-text text-danger fs-12" })
+                @(readOnly ?
+                    Html.TextBoxFor(p => p.State, new { placeholder = T("StateProvince").ToString(), @readonly = "" }) :
+                    Html.TextBoxFor(p => p.State, new { placeholder = T("StateProvince").ToString() }))
+            </div>
+        </div>
+        <div class="col-12 col-lg-4">
+            <div class="form-group">
+                @Html.ValidationMessageFor(p => p.City, "", new { @class = "form-text text-danger fs-12" })
+                @(readOnly ?
+                    Html.TextBoxFor(p => p.City, new { placeholder = T("City").ToString(), @readonly = "" }) :
+                    Html.TextBoxFor(p => p.City, new { placeholder = T("City").ToString() }))
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <div class="form-group">
+                @Html.ValidationMessageFor(p => p.StreetAddress, "", new { @class = "form-text text-danger fs-12" })
+                @(readOnly ?
+                    Html.TextBoxFor(p => p.StreetAddress, new { placeholder = T("StreetAddress").ToString(), @readonly = "" }) :
+                    Html.TextBoxFor(p => p.StreetAddress, new { placeholder = T("StreetAddress").ToString() }))
+            </div>
+        </div>
+    </div>
+}

@@ -9,63 +9,63 @@
     Layout = null;
     var settings = DependencyResolver.Current.GetService<ISettingService>().LoadSetting<SiteSettings>();
 }
-    <article class="pro-slider-content archive-post-item">
-        @if (Model.IsFeatured)
-        {
-            <p class="post-card-ribbon" title="@T("Featured")"><i class="fas fa-star"></i></p>
-        }
-        <div class="pro-slider-logo b-mar-5">
-            <img alt="@Model.Title" src="@(string.IsNullOrWhiteSpace(Model.IconImageUrl) ? Model.MainImageUrl : Model.IconImageUrl)">
-            <a href="@Model.PostUrl" class="pro-slider-logo-layer">
-                <div class="text-center">
-                    @if (settings.Wishlist || settings.LikePosts)
-                    {
-                        Html.RenderAction("LikeWishlistButtonsPartialView", "Post", new { model = Model.LikeWishlistButtonsModel });
-                    }
-                    else
-                    {
-                        <i class="fas fa-plus text-light"></i>
-                    }
+<article class="pro-slider-content archive-post-item">
+    @if (Model.IsFeatured)
+    {
+        <p class="post-card-ribbon" title="@T("Featured")"><i class="fas fa-star"></i></p>
+    }
+    <div class="pro-slider-logo b-mar-5">
+        <img alt="@Model.Title" src="@(string.IsNullOrWhiteSpace(Model.IconImageUrl) ? Model.MainImageUrl : Model.IconImageUrl)">
+        <a href="@Model.PostUrl" class="pro-slider-logo-layer">
+            <div class="text-center">
+                @if (settings.Wishlist || settings.LikePosts)
+                {
+                    Html.RenderAction("LikeWishlistButtonsPartialView", "Post", new { model = Model.LikeWishlistButtonsModel });
+                }
+                else
+                {
+                    <i class="fas fa-plus text-light"></i>
+                }
 
-                    <ul class="rate-pro-slider persiaNumber">
-                        <li title="@T("Downloads"): @Model.NumberOfDownloads.ToString("##,###")">
-                            <i class="fa fa-download"></i> @Model.NumberOfDownloadsStr
+                <ul class="rate-pro-slider persiaNumber">
+                    <li title="@T("Downloads"): @Model.NumberOfDownloads.ToString("##,###")">
+                        <i class="fa fa-download"></i> @Model.NumberOfDownloadsStr
+                    </li>
+                    <li title="@T("Visits"): @Model.NumberOfViews.ToString("##,###")">
+                        <i class="fa fa-eye"></i> @Model.NumberOfViews.FormatNumber()
+                    </li>
+                    <li title="@T("LastUpdate", Model.LastUpDate.TimeAgo())">
+                        <i class="fa fa-clock"></i> @Model.LastUpDate.ToString("yyyy/MM/dd")
+                    </li>
+                    @if (settings.LikePosts)
+                    {
+                        <li title="@T("Likes"): @Model.NumberOfLikes.ToString("##,###")">
+                            <i class="fa fa-heart"></i> @Model.NumberOfLikes.FormatNumber()
                         </li>
-                        <li title="@T("Visits"): @Model.NumberOfViews.ToString("##,###")">
-                            <i class="fa fa-eye"></i> @Model.NumberOfViews.FormatNumber()
-                        </li>
-                        <li title="@T("LastUpdate", Model.LastUpDate.TimeAgo())">
-                            <i class="fa fa-clock"></i> @Model.LastUpDate.ToString("yyyy/MM/dd")
-                        </li>
-                        @if (settings.LikePosts)
-                        {
-                            <li title="@T("Likes"): @Model.NumberOfLikes.ToString("##,###")">
-                                <i class="fa fa-heart"></i> @Model.NumberOfLikes.FormatNumber()
-                            </li>
-                        }
-                    </ul>
-                </div>
-            </a>
-        </div>
-        @if (Model.DownloadModel?.DownloadLimitedToUserGroup != null)
-        {
-            <a href="@Url.Action("UpgradeAccount", "Purchase")" target="_blank" class="level-pro-irdev" style="background-color: @Model.DownloadModel.DownloadLimitedToUserGroup.GetLocalized(p => p.GroupBackgroundColor)">
-                @Model.DownloadModel.DownloadLimitedToUserGroup.GetLocalized(p => p.GroupName)
-            </a>
-        }
-        else if (Model.DownloadModel?.PriceForCurrentUser <= 0)
-        {
-            <span class="level-pro-irdev" style="background-color: #ff5f13">
-                @T("Free")
-            </span>
-        }
-        <span class='slider-pro-items-category'>
-            <i class="fas fa-th-list" title="@T("Categories")"></i>
-            @Html.Raw(string.Join(", ",
-                Model.Categories.Select(p =>
-                    "<a href=" + p.CategoryUrl + " target='_blank'>" + p.CategoryName + "</a>").ToList()))
+                    }
+                </ul>
+            </div>
+        </a>
+    </div>
+    @if (Model.DownloadModel?.DownloadLimitedToUserGroup != null)
+    {
+        <a href="@Url.Action("UpgradeAccount", "Purchase")" target="_blank" class="level-pro-irdev" style="background-color: @Model.DownloadModel.DownloadLimitedToUserGroup.GetLocalized(p => p.GroupBackgroundColor)">
+            @Model.DownloadModel.DownloadLimitedToUserGroup.GetLocalized(p => p.GroupName)
+        </a>
+    }
+    else if (Model.DownloadModel?.PriceForCurrentUser <= 0)
+    {
+        <span class="level-pro-irdev" style="background-color: #00a5bf">
+            @T("Free")
         </span>
-        <h3 class="@Html.Raw(Model.Title.IsRtlLanguage() ? "rtl-dir text-right" : "ltr-dir text-left") t-mar-5">
-            <a href="@Model.PostUrl" title="@Model.DescriptionTruncated.ConvertHtmlToText()" class="slider-pro-items-name">@Html.Raw(Model.Title)</a>
-        </h3>
-    </article>
+    }
+    <span class='slider-pro-items-category'>
+        <i class="fas fa-th-list" title="@T("Categories")"></i>
+        @Html.Raw(string.Join(", ",
+            Model.Categories.Select(p =>
+                "<a href=" + p.CategoryUrl + " target='_blank'>" + p.CategoryName + "</a>").ToList()))
+    </span>
+    <h3 class="@Html.Raw(Model.Title.IsRtlLanguage() ? "rtl-dir text-right" : "ltr-dir text-left") t-mar-5">
+        <a href="@Model.PostUrl" title="@Model.DescriptionTruncated.ConvertHtmlToText()" class="slider-pro-items-name">@Html.Raw(Model.Title)</a>
+    </h3>
+</article>

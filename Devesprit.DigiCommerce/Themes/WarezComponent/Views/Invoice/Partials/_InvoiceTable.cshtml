@@ -1,0 +1,314 @@
+﻿@using System.Globalization
+@using Devesprit.Utilities.Extensions
+@using Devesprit.Services.Currency
+@using Devesprit.Core.Settings
+@using Devesprit.Data.Enums
+@using Devesprit.Services
+@using Devesprit.WebFramework.Helpers
+@model Devesprit.DigiCommerce.Models.Invoice.InvoiceModel
+@{
+    Layout = null;
+    var settings = DependencyResolver.Current.GetService<ISettingService>().LoadSetting<SiteSettings>();
+    var isAdmin = User.IsInRole("Admin");
+}
+
+
+<table class="table table-hover table-responsive no-mar border" style="border-radius: 12px">
+    <thead>
+        <tr>
+            <th class="text-center text-uppercase invoice-rownumber-col-width">#</th>
+            @if (Model.Status == InvoiceStatus.Pending || isAdmin)
+            {
+                <th class="text-center text-uppercase invoice-remove-col-width">@T("Remove")</th>
+            }
+            <th class="text-uppercase invoice-itemname-col-width">@T("Name")</th>
+            @if (Model.Status == InvoiceStatus.Paid)
+            {
+                <th class="text-center text-uppercase invoice-price-col-width">@T("ExpiryDate")</th>
+            }
+            <th class="text-center text-uppercase invoice-price-col-width">@T("Price")</th>
+
+            @if (settings.ShowQtyColInInvoice)
+            {
+                <th class="text-center text-uppercase invoice-qty-col-width">@T("Qty")</th>
+                <th class="text-center text-uppercase invoice-price-col-width">@T("Total")</th>
+            }
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.InvoiceDetails.OrderBy(p => p.Id))
+        {
+            <tr>
+                <th scope="row" class="text-center">@item.RowNumber</th>
+
+                @if (Model.Status == InvoiceStatus.Pending || isAdmin)
+                {
+                    <td class="text-center">
+                        @Ajax.HtmlActionLink(T("Remove").ToString(), "RemoveInvoiceItem", "Invoice",
+                                                                             new { invoiceId = item.InvoiceId, detailId = item.Id },
+                                                                             new AjaxOptions()
+                                                                             {
+                                                                                 HttpMethod = "POST",
+                                                                                 LoadingElementId = "LoadingPanel",
+                                                                                 OnFailure = "ErrorAlert('" + T("Error") + "', '" + T("ServerConnectionError") + "');",
+                                                                                 InsertionMode = InsertionMode.Replace,
+                                                                                 UpdateTargetId = "InvoiceTblHolder",
+                                                                             }, new { @class = "btn btn-outline-danger btn-xs" })
+                    </td>
+                }
+                <td @(item.ItemName.IsRtlLanguage() ? "class=rtl-dir" : "class=ltr-dir")>
+                    @if (item.ItemType != InvoiceDetailsItemType.ProductAttribute &&
+                         item.ItemType != InvoiceDetailsItemType.ProductAttributeOption &&
+                         item.ItemHomePage.IsValidUrl())
+                    {
+                        <a target="_blank" href="@item.ItemHomePage">
+                            @Html.Raw(item.ItemName.Replace(Environment.NewLine, "<br>"))
+                        </a>
+                    }
+                    else
+                    {
+                        @Html.Raw(item.ItemName.Replace(Environment.NewLine, "<br>"))
+                    }
+                </td>
+                @if (Model.Status == InvoiceStatus.Paid)
+                {
+                    <td class="text-center fs-12">
+                        @if (isAdmin)
+                        {
+                            using (Ajax.BeginForm("SetInvoiceItemExpirationDate", null, new AjaxOptions()
+                            {
+                                LoadingElementId = "LoadingPanel",
+                                OnFailure = "ErrorAlert('" + T("Error") + "', '" + T("ServerConnectionError") + "');",
+                                OnSuccess = "if(data.response === 'OK'){SuccessAlert('" + T("Successful") + "', '" + T("SuccessfullySaved") + "');}else{ErrorAlert('" + T("Error") + "', data.response);}"
+                            }, new { @class = "form-inline" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                @Html.Hidden("itemId", item.Id)
+                                <input type="text" name="expDate" value="@(item.PurchaseExpiration?.ToString("yyyy/MM/dd HH:mm:ss") ?? "")" class="form-control form-control-sm ltr-dir" />
+                                <small class="form-text text-muted">@T("EG"): @DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss", CultureInfo.CurrentUICulture)</small>
+                            }
+                        }
+                        else
+                        {
+                            @(item.PurchaseExpiration?.ToString("D") ?? "-")
+                        }
+
+                    </td>
+                }
+                <td class="text-center">
+                    @if (isAdmin)
+                    {
+                        using (Ajax.BeginForm("SetInvoiceItemUnitPrice", new AjaxOptions()
+                        {
+                            LoadingElementId = "LoadingPanel",
+                            OnFailure = "ErrorAlert('" + T("Error") + "', '" + T("ServerConnectionError") + "');",
+                            InsertionMode = InsertionMode.Replace,
+                            UpdateTargetId = "InvoiceTblHolder",
+                        }))
+                        {
+                            @Html.AntiForgeryToken()
+                            @Html.Hidden("invoiceId", Model.Id)
+                            @Html.Hidden("itemId", item.Id)
+                            <input class="form-control form-control-sm" name="itemUnitPrice" id="@item.Id" value="@item.UnitPrice.ExchangeCurrency()" />
+                        }
+                    }
+                    else
+                    {
+                        @item.UnitPrice.ExchangeCurrencyStr(true)
+                    }
+                </td>
+
+                @if (settings.ShowQtyColInInvoice)
+                {
+                    <td class="text-center">
+
+                        @if (item.ItemType == InvoiceDetailsItemType.SubscriptionPlan || item.UnitPrice <= 0)
+                        {
+                            @Html.Raw("-")
+                        }
+                        else
+                        {
+                            <div class="input-group input-group-sm">
+                                @if (Model.Status == InvoiceStatus.Pending || isAdmin)
+                                {
+                                    <div class="input-group-prepend no-pad">
+                                        @Ajax.HtmlActionLink("<i class='fa fa-minus'></i>", "DecreaseInvoiceItemQty", "Invoice",
+                                            new { invoiceId = item.InvoiceId, detailId = item.Id },
+                                            new AjaxOptions()
+                                            {
+                                                HttpMethod = "POST",
+                                                LoadingElementId = "LoadingPanel",
+                                                OnFailure = "ErrorAlert('" + T("Error") + "', '" + T("ServerConnectionError") + "');",
+                                                InsertionMode = InsertionMode.Replace,
+                                                UpdateTargetId = "InvoiceTblHolder",
+                                            }, new { @class = "btn btn-xs text-dark" })
+                                    </div>
+                                }
+                                <input type="text" class="form-control invoice-qty-input-width" disabled="disabled" title="@item.Qty.ToString("N0")" value="@item.Qty">
+                                @if (Model.Status == InvoiceStatus.Pending || isAdmin)
+                                {
+                                    <div class="input-group-append no-pad">
+                                        @Ajax.HtmlActionLink("<i class='fa fa-plus'></i>", "IncreaseInvoiceItemQty", "Invoice",
+                                            new { invoiceId = item.InvoiceId, detailId = item.Id },
+                                            new AjaxOptions()
+                                            {
+                                                HttpMethod = "POST",
+                                                LoadingElementId = "LoadingPanel",
+                                                OnFailure = "ErrorAlert('" + T("Error") + "', '" + T("ServerConnectionError") + "');",
+                                                InsertionMode = InsertionMode.Replace,
+                                                UpdateTargetId = "InvoiceTblHolder",
+                                            }, new { @class = "btn btn-xs text-dark" })
+                                    </div>
+                                }
+                            </div>
+                        }
+
+                    </td>
+                    <td class="text-center">
+                        @item.TotalPrice.ExchangeCurrencyStr(true)
+                    </td>
+                }
+            </tr>
+            if (Model.Status == InvoiceStatus.Paid && (!string.IsNullOrWhiteSpace(item.ItemLicenseCode) || isAdmin))
+            {
+                <tr>
+                    <td class="border-0" colspan="1"></td>
+                    <td class="border-0" colspan="11">
+                        <span class="badge badge-warning b-mar-5">@T("Description"):</span>
+                        @if (isAdmin)
+                        {
+                            using (Ajax.BeginForm("SetInvoiceItemLicenseCode", new AjaxOptions()
+                            {
+                                LoadingElementId = "LoadingPanel",
+                                OnFailure = "ErrorAlert('" + T("Error") + "', '" + T("ServerConnectionError") + "');",
+                                OnSuccess = "if(data.response === 'OK'){SuccessAlert('" + T("Successful") + "', '" + T("SuccessfullySaved") + "');}else{ErrorAlert('" + T("Error") + "', data.response);}"
+                            }))
+                            {
+                                @Html.AntiForgeryToken()
+                                @Html.Hidden("itemId", item.Id)
+                                <textarea name="license" class="form-control form-control-sm">@item.ItemLicenseCode</textarea>
+                                <button class="btn btn-sm btn-success float-end t-mar-5" type="submit"><i class="fa fa-check"></i></button>
+                            }
+                        }
+                        else
+                        {
+                            <textarea class="form-control form-control-sm" readonly="readonly">@item.ItemLicenseCode</textarea>
+                        }
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+@if (!Model.InvoiceDetails.Any())
+{
+    <div class="pad-v-30 text-center text-muted">
+        <strong>@T("ShoppingCartEmpty")</strong>
+    </div>
+}
+<div class="row justify-content-end">
+    <div class="col-12 col-md-6 col-lg-4 fs-12">
+        <div class="panel-box t-mar-20">
+            @Html.Widget("Invoice_Table_Summary_Start", Model)
+            <div class="pad-5">
+                @T("SubTotal"): <b>@Model.InvoiceSubTotal.ExchangeCurrencyStr(true)</b>
+            </div>
+
+            @if (isAdmin)
+            {
+                <div class="pad-5">
+                    @using (Ajax.BeginForm("SetInvoiceDiscount", new AjaxOptions()
+                    {
+                        LoadingElementId = "LoadingPanel",
+                        OnFailure = "ErrorAlert('" + T("Error") + "', '" + T("ServerConnectionError") + "');",
+                        InsertionMode = InsertionMode.Replace,
+                        UpdateTargetId = "InvoiceTblHolder",
+                    }))
+                    {
+                        @Html.AntiForgeryToken()
+                        @Html.Hidden("invoiceId", Model.Id)
+                        <span>@T("YourDiscount"):</span>
+                        <div class="input-group input-group-sm">
+                            @Html.TextBox("discountAmount", Model.DiscountAmount.ExchangeCurrency(), new { @class = "form-control form-control-sm" })
+                            <div class="input-group-append">
+                                <button class="btn btn-secondary btn-sm" type="submit">@T("Apply")</button>
+                            </div>
+                        </div>
+                        <span>@T("Description"):</span>
+                        <div class="input-group input-group-sm">
+                            @Html.TextBox("discountDescription", Model.DiscountDescription, new { @class = "form-control form-control-sm" })
+                            <div class="input-group-append">
+                                <button class="btn btn-secondary btn-sm" type="submit">@T("Apply")</button>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+            else
+            {
+                if (Model.DiscountAmount > 0)
+                {
+                    <div class="pad-5">
+                        <span>@T("YourDiscount"):</span>
+                        <span class="@Html.Raw(Model.DiscountAmount > 0 ? "text-danger" : "") fw-bold">@Model.DiscountAmount.ExchangeCurrencyStr(true)</span>
+                        <small class="text-muted">@Model.DiscountDescription</small>
+                    </div>
+                }
+            }
+
+            @if (isAdmin)
+            {
+                <div class="pad-5">
+                    @using (Ajax.BeginForm("SetInvoiceTax", new AjaxOptions()
+                    {
+                        LoadingElementId = "LoadingPanel",
+                        OnFailure = "ErrorAlert('" + T("Error") + "', '" + T("ServerConnectionError") + "');",
+                        InsertionMode = InsertionMode.Replace,
+                        UpdateTargetId = "InvoiceTblHolder",
+                    }))
+                    {
+                        @Html.AntiForgeryToken()
+                        @Html.Hidden("invoiceId", Model.Id)
+                        <span>@T("Tax"):</span>
+                        <div class="input-group input-group-sm">
+                            @Html.TextBox("taxAmount", Model.TotalTaxAmount.ExchangeCurrency(), new { @class = "form-control form-control-sm" })
+                            <div class="input-group-append">
+                                <button class="btn btn-secondary btn-sm" type="submit">@T("Apply")</button>
+                            </div>
+                        </div>
+                        <span>@T("Description"):</span>
+                        <div class="input-group input-group-sm">
+                            @Html.TextBox("taxDescription", Model.TaxDescription, new { @class = "form-control form-control-sm" })
+                            <div class="input-group-append">
+                                <button class="btn btn-secondary btn-sm" type="submit">@T("Apply")</button>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+            else
+            {
+                if (Model.TotalTaxAmount > 0)
+                {
+                    <div class="pad-5">
+                        @T("Tax"): <b>@Model.TotalTaxAmount.ExchangeCurrencyStr(true)</b>
+                        <small class="text-muted">@Model.TaxDescription</small>
+                    </div>
+                }
+            }
+
+            @Html.Widget("Invoice_Table_Summary_Before_Total", Model)
+            <div class="text-success fs-16 fw-bold pad-5">
+                @T("Total"): @Model.InvoiceTotal.ExchangeCurrencyStr(true)
+            </div>
+            @Html.Widget("Invoice_Table_Summary_End", Model)
+        </div>
+    </div>
+</div>
+
+@Html.MinifyInlineScript(
+                    @<script>
+                         if (@Model.InvoiceDetails.Count === 0) {
+                             $('#checkoutSection').empty();
+                         }
+                     </script>)

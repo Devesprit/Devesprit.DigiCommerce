@@ -6,15 +6,15 @@
 @{
     Layout = null;
 }
-<div class="pro-content" title="@Html.Raw(Model.Title)">
+<article class="pro-content" title="@Html.Raw(Model.Title)">
     <a href="@Model.PostUrl" class="box-pro-logo">
         <img alt="@Model.Title" src="@(string.IsNullOrWhiteSpace(Model.IconImageUrl) ? Model.MainImageUrl : Model.IconImageUrl)">
     </a>
-    <span class="pro-content-desc">
+    <div class="pro-content-desc">
         <h3>
             <a href="@Model.PostUrl" class="@Html.Raw(Model.Title.IsRtlLanguage() ? "rtl-dir text-right" : "ltr-dir  text-left")">
                 @Html.Raw(Model.Title.Truncate(65, " ..."))
             </a>
         </h3>
-    </span>
-</div>
+    </div>
+</article>

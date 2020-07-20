@@ -1,30 +1,39 @@
 ﻿@using Devesprit.Core.Settings
 @using Devesprit.Services
+@using reCaptcha
 @{
     Layout = Html.GetCurrentThemeLayoutAddress(true);
     var setting = DependencyResolver.Current.GetService<ISettingService>().LoadSetting<SiteSettings>();
-
     Html.AddHeadCustomParts("<meta name=\"robots\" content=\"noindex,nofollow\">");
+    ViewBag.Title = T("YourAccountDisabled");
 }
 
-<div class="container mt-5">
-    <div class="panel p-3">
-        <h3 class="text-center mb-4">
-            <img src="/Content/img/user-forbidden_256px.png" class="mb-3" />
-            <br />
-            @T("YourAccountDisabled")
-        </h3>
-        @if (!string.IsNullOrWhiteSpace(ViewBag.DisableReason))
-        {
-            <div class="jumbotron py-4">
-                <p class="no-mar">
-                    @Html.Raw(ViewBag.DisableReason)
-                </p>
+<div class="log-reg-bg d-flex justify-content-center align-items-center">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-12 col-sm-10 col-md-9 col-lg-7 col-xl-6">
+                    <div class="login-reg-box">
+                        <div class="login-reg-head text-center">
+                            <h1>
+                                <i class="fas fa-ban text-warning" style="font-size: 150px;"></i>
+                                <br />
+                                <br />
+                                @T("YourAccountDisabled")
+                            </h1>
+                            @if (!string.IsNullOrWhiteSpace(ViewBag.DisableReason))
+                            {
+                                <div class="jumbotron py-4">
+                                    <p class="no-mar">
+                                        @Html.Raw(ViewBag.DisableReason)
+                                    </p>
+                                </div>
+                            }
+                            <p class="login-info-forgot-pass fs-14">
+                                @T("ForMoreInformationContactWithUs", $"<a href='mailto:{setting.SiteEmailAddress}'>{setting.SiteEmailAddress}</a>")
+                            </p>
+                        </div>
+                    </div>
+                </div>
             </div>
-        }
-        <hr/>
-        <p class="text-center">
-            @T("ForMoreInformationContactWithUs", $"<a href='mailto:{setting.SiteEmailAddress}'>{setting.SiteEmailAddress}</a>")
-        </p>
+        </div>
     </div>
-</div>

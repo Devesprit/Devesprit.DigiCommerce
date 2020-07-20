@@ -9,8 +9,8 @@
         <div class="login-reg-box text-center">
             <div class="login-reg-head">
                 <h1>@T("ServerError")</h1>
-                <i class="fab fa-500px text-warning mar-v-50" style="font-size: 200px;"></i>
-                <p class="login-info">@Html.Raw(T("ErrorDesc"))</p>
+                <i class="fab fa-500px text-warning mar-v-50" style="font-size: 150px;"></i>
+                <p class="text-dark fs-14">@Html.Raw(T("ErrorDesc"))</p>
             </div>
             <button class="btn btn-warning btn-sm" role="button" onclick="window.history.go(-1);return false;">
                 @if (isRtl)

@@ -1,0 +1,49 @@
+﻿@using Devesprit.Services.Localization
+@model Devesprit.Data.Domain.TblPages
+@{
+    ViewBag.Title = Model.GetLocalized(p => p.Title);
+    ViewBag.MetaKeyword = Model.GetLocalized(p => p.MetaKeyword);
+    ViewBag.MetaDescription = Model.GetLocalized(p => p.MetaDescription);
+
+    Html.AddHeadCustomParts("<meta name=\"robots\" content=\"index,follow\">");
+}
+
+<!-- Head slider -->
+<header class="pro-head-slider">
+    <div class="pro-head-slider-layer">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 d-flex justify-content-center">
+                    <h1 class="pro-head-title pro-head-title-single no-t-mar">
+                        @Html.Raw(Model.GetLocalized(p => p.Title))
+                    </h1>
+                </div>
+                <div class="col-12">
+                    <ul class="breadcrumbs">
+                        <li><a href="@Url.Action("Index", "Home")">@T("Home")</a></li>
+                        <li>/</li>
+                        <li><span>@Html.Raw(Model.GetLocalized(p => p.Title))</span></li>
+                    </ul>
+                </div>
+                <div class="col-12 d-flex justify-content-center">
+                    @{Html.RenderPartial("Partials/_SearchBox");}
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+@if (Model.ShowInPanel)
+{
+<div class="container">
+    <div class="mar-v-150">
+        <h1 class="text-center">@Html.Raw(Model.GetLocalized(p => p.PanelTitle))</h1>
+        @Html.Raw(Model.GetLocalized(p => p.Html))
+    </div>
+    
+</div>
+}
+else
+{
+    @Html.Raw(Model.GetLocalized(p => p.Html))
+}

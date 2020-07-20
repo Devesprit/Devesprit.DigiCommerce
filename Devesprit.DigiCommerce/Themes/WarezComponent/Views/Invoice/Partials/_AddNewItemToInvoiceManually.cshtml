@@ -1,0 +1,39 @@
+﻿@model Guid
+@{
+    Layout = null;
+}
+@using (Html.BeginForm("AddNewItemToInvoiceManually", "Invoice", FormMethod.Post, new { id = "frmAddNewItemToInvoiceManually", novalidate = "novalidate" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.Hidden("invoiceId", Model)
+
+    <div class="row">
+        <div class="col-12 col-lg-6">
+            <div class="form-group">
+                <label>@T("ItemTitle"):</label>
+                <input name="itemName" type="text" class="form-control form-control-sm" data-val="true" data-val-required="@T("FieldRequired", T("ItemTitle"))" />
+                <span class="form-text text-danger fs-12" data-valmsg-for="itemName" data-valmsg-replace="true"></span>
+            </div>
+        </div>
+        <div class="col-12 col-lg-6">
+            <div class="form-group">
+                <label>@T("ItemPageUrl"):</label>
+                <input name="itemHomePage" type="text" class="form-control form-control-sm" />
+            </div>
+        </div>
+        <div class="col-12 col-lg-6">
+            <div class="form-group">
+                <label>@T("Quantity"):</label>
+                <input name="qty" type="number" class="form-control form-control-sm" data-val="true" data-val-required="@T("FieldRequired", T("Quantity"))" />
+                <span class="form-text text-danger fs-12" data-valmsg-for="qty" data-valmsg-replace="true"></span>
+            </div>
+        </div>
+        <div class="col-12 col-lg-6">
+            <div class="form-group">
+                <label>@T("UnitPrice"):</label>
+                <input name="unitPrice" type="text" class="form-control form-control-sm" data-val="true" data-val-required="@T("FieldRequired", T("UnitPrice"))" />
+                <span class="form-text text-danger fs-12" data-valmsg-for="unitPrice" data-valmsg-replace="true"></span>
+            </div>
+        </div>
+    </div>
+}

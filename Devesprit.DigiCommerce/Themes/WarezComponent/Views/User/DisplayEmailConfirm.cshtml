@@ -1,27 +1,23 @@
-﻿
-
-@{
+﻿@{
+    Layout = Html.GetCurrentThemeLayoutAddress(true);
     ViewBag.Title = T("ConfirmAccount");
-    Html.AddHeadCustomParts("<meta name=\"robots\" content=\"noindex,nofollow\">");
+    Html.AddHeadCustomParts("<meta name=\"robots\" content=\"noindex, nofollow\">");
 }
 
-<div class="container t-mar-35">
-    <div class="row justify-content-center">
-        <div class="col-12 col-lg-6">
-            <div class="panel">
-                <div class="panel-title pad-10">
-                    <h5 class="no-mar">@T("ConfirmAccount")</h5>
-                </div>
-                <div class="fs-14 pad-20">
-                    <div class="text-center">
-                        <img src="~/Content/img/ConfirmEmail_200px.png" alt="Check your Email" />
+<div class="log-reg-bg d-flex justify-content-center align-items-center">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-12 col-sm-10 col-md-9 col-lg-7 col-xl-6">
+                <div class="login-reg-box mar-v-80">
+                    <div class="text-center pad-v-30">
+                        <i class="fas fa-mail-bulk" style="font-size: 150px;color: #7ad600;"></i>
                     </div>
                     <h4 class="text-center">@T("ConfirmEmail")</h4>
-                    <p class="text-justify">
+                    <p class="fs-14">
                         @Html.Raw(T("ConfirmAccountDesc"))
                     </p>
                     <div class="text-center">
-                        <a class="btn btn-outline-secondary btn-sm" href="@Url.Action("Index", "Home")">@T("ReturnHome")</a>
+                        <a class="signin-btn d-block" href="@Url.Action("Index", "Home")">@T("ReturnHome")</a>
                     </div>
                 </div>
             </div>

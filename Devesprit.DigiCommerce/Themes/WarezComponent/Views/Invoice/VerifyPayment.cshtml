@@ -1,0 +1,51 @@
+﻿@{
+    ViewBag.Title = T("PaymentResult");
+    Layout = Html.GetCurrentThemeLayoutAddress(true);
+}
+
+<div class="log-reg-bg d-flex align-items-center">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-12 col-sm-10 col-md-9 col-lg-7 col-xl-6">
+                <div class="login-reg-box text-center">
+                    <div class="login-reg-head">
+                        <h1>@T("PaymentResult")</h1>
+                        @if (ViewBag.Error == null) // On Success
+                        {
+                            @*Animated CheckMark*@
+                            <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+                                <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none" />
+                                <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8" />
+                            </svg>
+
+                            <p class="text-success text-center t-mar-30">
+                                @Html.Raw(T("SuccessPayment"))
+                            </p>
+                        }
+                        else //On Error
+                        {
+                            <i class="far fa-frown text-warning mar-v-50" style="font-size: 150px;"></i>
+
+                            <div class="text-danger text-center mar-v-30">
+                                <b>@T("FailedPayment")</b><br />
+
+                                @Html.Raw(ViewBag.Error)
+                            </div>
+                        }
+                    </div>
+                    <div class="text-center">
+                        <a class="btn btn-warning btn-sm" href="@Url.Action("Index", "Home", new {area = ""}, null)">
+                            <i class="fas fa-home"></i> @T("ReturnHome")
+                        </a>
+                        <a href="@Url.Action("Index", "Profile")" class="btn btn-warning btn-sm">
+                            <i class="fas fa-user"></i> @T("GotoMyProfile")
+                        </a>
+                        <a href="@Url.Action("Index", "Invoice", new {id = ViewBag.InvoiceId})" class="btn btn-success btn-sm">
+                            <i class="far fa-file-alt"></i> @T("SeeMyInvoice")
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

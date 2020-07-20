@@ -3,7 +3,7 @@
 
 @model Devesprit.DigiCommerce.Models.Users.LoginModel
 @{
-    Layout = "~/Themes/WarezComponent/Views/Shared/_BaseLayout.cshtml";
+    Layout = Html.GetCurrentThemeLayoutAddress(true);
     ViewBag.Title = T("Login");
     bool showSocialsPanel = Model.ExternalLoginProviders?.Any() == true;
     var workContext = DependencyResolver.Current.GetService<IWorkContext>();
@@ -12,14 +12,14 @@
     Html.AddHeadCustomParts("<meta name=\"robots\" content=\"index,follow\">");
 }
 
-<div class="log-reg-bg d-flex align-items-center">
+<div class="log-reg-bg d-flex align-items-center"> 
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-12 col-sm-10 col-md-9 col-lg-7 col-xl-6">
                 <div class="login-reg-box mar-v-80">
                     <div class="login-reg-head">
                         <h1 class="no-b-mar">@T("Login")</h1>
-                        <a class="fs-10 text-muted" href="@Url.Action("Index", "Home")"><i class="far fa-arrow-alt-circle-@Html.Raw(currentLang.IsRtl ? "right" : "left")"></i> @T("ReturnHome")</a>
+                        <a class="fs-12 text-warning" href="@Url.Action("Index", "Home")"><i class="far fa-arrow-alt-circle-@Html.Raw(currentLang.IsRtl ? "right" : "left")"></i> @T("ReturnHome")</a>
                     </div>
                     @using (Html.BeginForm("Login", "User", FormMethod.Post, new { @class = "main-loginform" }))
                     {

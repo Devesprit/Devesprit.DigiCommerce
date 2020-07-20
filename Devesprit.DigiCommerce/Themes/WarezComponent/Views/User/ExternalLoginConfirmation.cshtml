@@ -1,88 +1,96 @@
-﻿@using reCaptcha
+﻿@using Devesprit.Core
+@using reCaptcha
 @model Devesprit.DigiCommerce.Models.Users.ExternalLoginConfirmationModel
 @{
+    Layout = Html.GetCurrentThemeLayoutAddress(true);
     ViewBag.Title = T("Signup");
+    var workContext = DependencyResolver.Current.GetService<IWorkContext>();
+    var currentLang = workContext.CurrentLanguage;
     Html.AddHeadCustomParts("<meta name=\"robots\" content=\"noindex,nofollow\">");
 }
 
-<div class="container t-mar-35">
-    <div class="row justify-content-center">
-        <div class="col-12 col-lg-6">
-            <div class="panel">
-                <div class="panel-title pad-10">
-                    <h5 class="no-mar">@T("Signup")</h5>
-                </div>
-                <div class="row pad-20">
-                    @*SignUp Form*@
-                    <div class="col-12 t-mar-20 fs-14">
-                        <img src="@Html.Raw(string.IsNullOrWhiteSpace(Model.Avatar) ? "/Content/img/Signup_180px.png": Model.Avatar)" class="d-block m-auto @Html.Raw(string.IsNullOrWhiteSpace(Model.Avatar) ? "": "rounded-circle")" style="max-width: 180px;"/>
-                        <br/>
-                        <p class="text-success">
-                            @Html.Raw(T("SignupSocialDesc", Model.LoginProvider))
-                        </p>
+<div class="log-reg-bg d-flex align-items-center">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-12 col-sm-10 col-md-9 col-lg-7 col-xl-6">
+                <div class="login-reg-box mar-v-80">
+                    <div class="login-reg-head">
+                        <h1 class="no-b-mar">@T("Signup")</h1>
+                        <a class="fs-12 text-warning" href="@Url.Action("Index", "Home")"><i class="far fa-arrow-alt-circle-@Html.Raw(currentLang.IsRtl ? "right" : "left")"></i> @T("ReturnHome")</a>
+                    </div>
+                    <div class="row pad-20">
+                        @*SignUp Form*@
+                        <div class="col-12 t-mar-20 fs-14">
+                            <img src="@Html.Raw(string.IsNullOrWhiteSpace(Model.Avatar) ? "/Content/img/Signup_180px.png": Model.Avatar)" class="d-block m-auto b-mar-30 shadow @Html.Raw(string.IsNullOrWhiteSpace(Model.Avatar) ? "": "rounded-circle")" style="max-width: 150px;" />
+                            <br />
+                            <p class="text-success">
+                                @Html.Raw(T("SignupSocialDesc", Model.LoginProvider))
+                            </p>
 
-                        @using (Html.BeginForm("ExternalLoginConfirmation", "User", FormMethod.Post))
-                        {
-                            @Html.AntiForgeryToken()
-                            @Html.HiddenFor(p => p.LoginProvider)
-                            @Html.HiddenFor(p => p.ReturnUrl)
-                            @Html.HiddenFor(p => p.Avatar)
-                            <div class="form-group b-mar-5">
-                                @Html.LabelFor(p => p.FName)
-                                @Html.TextBoxFor(p => p.FName, new {@class = "form-control form-control-sm"})
-                                @Html.ValidationMessageFor(p => p.FName, "", new {@class = "form-text text-danger fs-12"})
-                            </div>
-                            <div class="form-group b-mar-5">
-                                @Html.LabelFor(p => p.LName)
-                                @Html.TextBoxFor(p => p.LName, new {@class = "form-control form-control-sm"})
-                                @Html.ValidationMessageFor(p => p.LName, "", new {@class = "form-text text-danger fs-12"})
-                            </div>
-                            <div class="form-group b-mar-5">
-                                @Html.LabelFor(p => p.Email)
-                                @Html.TextBoxFor(p => p.Email, new {@class = "form-control form-control-sm", @readonly= "readonly"})
-                                @Html.ValidationMessageFor(p => p.Email, "", new {@class = "form-text text-danger fs-12"})
-                            </div>
-                            <div class="form-group b-mar-5">
-                                @Html.LabelFor(p => p.Password)
-                                @Html.PasswordFor(p => p.Password, new {@class = "form-control form-control-sm"})
-                                @Html.ValidationMessageFor(p => p.Password, "", new {@class = "form-text text-danger fs-12"})
-                            </div>
-                            <div class="form-group b-mar-5">
-                                @Html.LabelFor(p => p.PasswordConfirm)
-                                @Html.PasswordFor(p => p.PasswordConfirm, new {@class = "form-control form-control-sm"})
-                                @Html.ValidationMessageFor(p => p.PasswordConfirm, "", new {@class = "form-text text-danger fs-12"})
-                            </div>
-                            <div class="form-group b-mar-10">
-                                @Html.LabelFor(p => p.Country)
-                                @Html.DropDownListFor(p => p.Country, Model.CountriesList, T("SelectCountry").ToString(), new {@class = "form-control custom-select form-control-sm" })
-                                @Html.ValidationMessageFor(p => p.Country, "", new {@class = "form-text text-danger fs-12"})
-                            </div>
-                            if (Model.UserMustAcceptTerms)
+                            @using (Html.BeginForm("ExternalLoginConfirmation", "User", FormMethod.Post, FormMethod.Post, new { @class = "main-loginform" }))
                             {
-                                <div class="form-group b-mar-5">
-                                    <div class="custom-control custom-checkbox">
-                                        @Html.CheckBoxFor(p => p.AcceptTerms, new { @class = "custom-control-input" })
-                                        @Html.Raw(Server.HtmlDecode(Html.LabelFor(p => p.AcceptTerms, new { @class = "custom-control-label" }).ToString().FormatWith(Url.Action("TermsAndConditions", "Home", new { area = "" }))))
-                                    </div>
-                                    @Html.ValidationMessageFor(p => p.AcceptTerms, "", new {@class = "form-text text-danger fs-12"})
-                                </div>
-                            }
-                            if (ViewBag.publicKey != null)
-                            {
-                                <div class="d-block b-mar-10 t-mar-10">
-                                    @ReCaptcha.GetHtml(ViewBag.publicKey, lang: Model.CurrentLanguage.IsoCode)
+                                @Html.AntiForgeryToken()
+                                @Html.HiddenFor(p => p.LoginProvider)
+                                @Html.HiddenFor(p => p.ReturnUrl)
+                                @Html.HiddenFor(p => p.Avatar)
+
+                                @Html.ValidationMessageFor(p => p.FName, "", new { @class = "form-text text-danger fs-12" })
+                                @Html.TextBoxFor(p => p.FName, new { placeholder = T("FirstName") })
+
+                                @Html.ValidationMessageFor(p => p.LName, "", new { @class = "form-text text-danger fs-12" })
+                                @Html.TextBoxFor(p => p.LName, new { placeholder = T("LastName") })
+
+                                @Html.ValidationMessageFor(p => p.Email, "", new { @class = "form-text text-danger fs-12" })
+                                @Html.TextBoxFor(p => p.Email, new { @class = "ltr-dir", placeholder = T("Email") })
+
+                                @Html.ValidationMessageFor(p => p.Password, "", new { @class = "form-text text-danger fs-12" })
+                                <div class="psssword-box">
+                                    @Html.PasswordFor(p => p.Password, new { placeholder = T("Password") })
+                                    <span toggle="#Password" class="fa fa-fw icon-visibility field-icon toggle-password"></span>
                                 </div>
 
-                                if (ViewBag.RecaptchaLastErrors != null)
+                                @Html.ValidationMessageFor(p => p.PasswordConfirm, "", new { @class = "form-text text-danger fs-12" })
+                                <div class="psssword-box">
+                                    @Html.PasswordFor(p => p.PasswordConfirm, new { placeholder = T("ConfirmPassword") })
+                                    <span toggle="#PasswordConfirm" class="fa fa-fw icon-visibility field-icon toggle-password"></span>
+                                </div>
+
+                                @Html.ValidationMessageFor(p => p.Country, "", new { @class = "form-text text-danger fs-12" })
+                                @Html.DropDownListFor(p => p.Country, Model.CountriesList, T("SelectCountry").ToString(), new { @class = "b-mar-25" })
+
+                                if (Model.UserMustAcceptTerms)
                                 {
-                                    <small class="form-text text-danger fs-12">@T("InvalidCaptcha")</small>
+                                    <div class="remember-box">
+                                        <span class="filter-target-item">
+                                            <label class="checkbox-filter-ir-login">
+                                                @Html.CheckBoxFor(p => p.AcceptTerms)
+                                                <span class="checkbox-custom-ir-login rectangular"></span>
+                                                <span class="text-filter-checkbox-login">
+                                                    @Html.Raw(T("AcceptTerms", Url.Action("TermsAndConditions", "Home", new { area = "" })))
+                                                </span>
+                                            </label>
+                                            @Html.ValidationMessageFor(p => p.AcceptTerms, "", new { @class = "form-text text-danger fs-12" })
+                                        </span>
+                                    </div>
                                 }
+
+
+                                if (ViewBag.publicKey != null)
+                                {
+                                    <div class="d-block b-mar-5">
+                                        @ReCaptcha.GetHtml(ViewBag.publicKey, lang: Model.CurrentLanguage.IsoCode)
+                                    </div>
+
+                                    if (ViewBag.RecaptchaLastErrors != null)
+                                    {
+                                        <small class="form-text text-danger fs-12">@T("InvalidCaptcha")</small>
+                                    }
+                                }
+
+                                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                                <button type="submit" name="submit" class="signin-btn">@T("Signup")</button>
                             }
-                            @Html.ValidationSummary(true, "", new {@class = "text-danger"})
-                            <div class="text-center">
-                                <button type="submit" class="btn btn-success d-block m-auto t-mar-20 b-mar-10">@T("Signup")</button>
-                            </div>
-                        }
+                        </div>
                     </div>
                 </div>
             </div>

@@ -8,61 +8,56 @@
     Html.AddHeadCustomParts("<meta name=\"robots\" content=\"noindex,nofollow\">");
 }
 
-<div class="row justify-content-center">
-    <div class="col-12 col-lg-6">
-        <div class="panel">
-            <div class="panel-title pad-10">
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-12 col-lg-6">
+            <div class="panel-box">
                 <h5 class="no-mar">
-                    <a href="#" onclick="window.history.back()" class="text-warning"><i class="fa fa-arrow-circle-o-@Html.Raw(currentLang.IsRtl ? "right" : "left")"></i></a>
+                    <a href="@Url.Action("Index", "Profile")" class="text-warning"><i class="far fa-caret-square-@Html.Raw(currentLang.IsRtl ? "right" : "left")"></i></a>
                     @T("UpdateProfile")
                 </h5>
-            </div>
-            <div class="row pad-20">
-                <div class="col-12 t-mar-20 fs-14">
-                    @using (Html.BeginForm("UpdateProfile", "Profile", FormMethod.Post, new { enctype = "multipart/form-data" }))
-                    {
-                        @Html.AntiForgeryToken()
-                        @Html.HiddenFor(p=> p.Id)
+                <div class="row pad-h-20">
+                    <div class="col-12 t-mar-20 fs-14">
+                        @using (Html.BeginForm("UpdateProfile", "Profile", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                        {
+                            @Html.AntiForgeryToken()
+                            @Html.HiddenFor(p => p.Id)
 
-                        <div class="form-group b-mar-5">
-                            @Html.LabelFor(p => p.FirstName)
-                            @Html.TextBoxFor(p => p.FirstName, new { @class = "form-control form-control-sm" })
-                            @Html.ValidationMessageFor(p => p.FirstName, "", new { @class = "form-text text-danger fs-12" })
-                        </div>
-                        <div class="form-group b-mar-5">
-                            @Html.LabelFor(p => p.LastName)
-                            @Html.TextBoxFor(p => p.LastName, new { @class = "form-control form-control-sm" })
-                            @Html.ValidationMessageFor(p => p.LastName, "", new { @class = "form-text text-danger fs-12" })
-                        </div>
-                        <div class="form-group b-mar-5">
-                            @Html.LabelFor(p => p.Email)
-                            @Html.TextBoxFor(p => p.Email, new { @class = "form-control form-control-sm" })
-                            @Html.ValidationMessageFor(p => p.Email, "", new { @class = "form-text text-danger fs-12" })
-                            @if (Model.MustConfirmNewEmail)
-                            {
-                                <span class="form-text text-danger fs-12">@T("MustConfirmNewEmail")</span>
-                            }
-                        </div>
-                        <div class="form-group b-mar-5">
-                            @Html.LabelFor(p => p.UserCountryId)
-                            @Html.DropDownListFor(p => p.UserCountryId, Model.CountriesList, T("SelectCountry").ToString(), new { @class = "form-control custom-select form-control-sm" })
-                            @Html.ValidationMessageFor(p => p.UserCountryId, "", new { @class = "form-text text-danger fs-12" })
-                        </div>
-                        <div class="form-group b-mar-10">
-                            @Html.LabelFor(p => p.Avatar)
-                            @Html.TextBoxFor(p => p.Avatar, new { type = "file", @class = "form-control form-control-sm" })
-                            @Html.ValidationMessageFor(p => p.Avatar, "", new { @class = "form-text text-danger fs-12" })
-                        </div>
+                            <div class="form-group b-mar-5">
+                                @Html.ValidationMessageFor(p => p.FirstName, "", new { @class = "form-text text-danger fs-12" })
+                                @Html.TextBoxFor(p => p.FirstName, new {placeholder=T("FirstName") })
+                            </div>
+                            <div class="form-group b-mar-5">
+                                @Html.ValidationMessageFor(p => p.LastName, "", new { @class = "form-text text-danger fs-12" })
+                                @Html.TextBoxFor(p => p.LastName, new { placeholder=T("LastName") })
+                            </div>
+                            <div class="form-group b-mar-5">
+                                @Html.ValidationMessageFor(p => p.Email, "", new { @class = "form-text text-danger fs-12" })
+                                @Html.TextBoxFor(p => p.Email, new { @class = "ltr-dir", placeholder=T("Email") })
+                                @if (Model.MustConfirmNewEmail)
+                                {
+                                    <span class="form-text text-warning fs-12">@T("MustConfirmNewEmail")</span>
+                                }
+                            </div>
+                            <div class="form-group b-mar-5">
+                                @Html.ValidationMessageFor(p => p.UserCountryId, "", new { @class = "form-text text-danger fs-12" })
+                                @Html.DropDownListFor(p => p.UserCountryId, Model.CountriesList, T("SelectCountry").ToString(), null)
+                            </div>
+                            <div class="form-group b-mar-10">
+                                @Html.LabelFor(p => p.Avatar)
+                                @Html.TextBoxFor(p => p.Avatar, new { type = "file" })
+                                @Html.ValidationMessageFor(p => p.Avatar, "", new { @class = "form-text text-danger fs-12" })
+                            </div>
 
-                        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-                        <div class="text-center t-mar-20">
-                            <button type="submit" class="btn btn-success">@T("Update")</button>
-                            <a href="@Url.Action("ChangePassword")" class="btn btn-warning">@T("ChangePassword")</a>
-                        </div>
-                    }
+                            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                            <div class="text-center t-mar-40">
+                                <button type="submit" class="btn-custom-warning">@T("Update")</button>
+                                <a href="@Url.Action("ChangePassword")" class="btn-custom-muted">@T("ChangePassword")</a>
+                            </div>
+                        }
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
-

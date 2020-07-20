@@ -8,120 +8,152 @@
 
     Html.AddHeadCustomParts("<meta name=\"robots\" content=\"noindex,nofollow\">");
 }
-
-@{ Html.RenderPartial("Partials/_UserInfo", Model.UserInfo); }
-
-<div class="panel pad-15 t-mar-10">
-    <div class="row justify-content-center">
-        <div class="col-12 col-md-3">
-            <ul class="nav flex-column nav-pills mb-5">
-                <li class="nav-item">
-                    @Ajax.HtmlActionLink(
-                        "<img src='/Content/img/invoice_24px.png' class='m-auto' /> " + T("Invoices"),
-                        "UserInvoices", "Profile",
-                        new {userId = Model.UserInfo.Id},
-                        new AjaxOptions()
-                        {
-                            HttpMethod = "POST",
-                            LoadingElementId = "LoadingPanel",
-                            OnFailure = "ErrorAlert('" + T("Error") + "', '" + T("ServerConnectionError") + "');",
-                            OnComplete = "$('.nav-link').removeClass('active'); $(this).addClass('active')",
-                            InsertionMode = InsertionMode.Replace,
-                            UpdateTargetId = "placeholder",
-                        }, new {@class = "nav-link white-space-initial", id = "btn_Invoices" })
-                </li>
-                <li class="nav-item">
-                    @Ajax.HtmlActionLink(
-                        "<img src='/Content/img/alert_24px.png' class='m-auto' /> " + T("Notifications") +
-                        (Model.UserUnreadedNotifications > 0 ? " <span class='badge badge-danger'>" + Model.UserUnreadedNotifications + "</span>" : ""),
-                        "UserNotifications", "Profile",
-                        new {userId = Model.UserInfo.Id},
-                        new AjaxOptions()
-                        {
-                            HttpMethod = "POST",
-                            LoadingElementId = "LoadingPanel",
-                            OnFailure = "ErrorAlert('" + T("Error") + "', '" + T("ServerConnectionError") + "');",
-                            OnComplete = "$('.nav-link').removeClass('active'); $(this).addClass('active')",
-                            InsertionMode = InsertionMode.Replace,
-                            UpdateTargetId = "placeholder",
-                        }, new {@class = "nav-link white-space-initial" })
-                </li>
-                @if (settings.LikePosts)
-                {
-                    <li class="nav-item">
-                        @Ajax.HtmlActionLink(
-                            "<img src='/Content/img/heart_24px.png' class='m-auto' /> " + T("ProductsYouLike"),
-                            "UserLikes", "Profile",
-                            new {userId = Model.UserInfo.Id},
-                            new AjaxOptions()
-                            {
-                                HttpMethod = "POST",
-                                LoadingElementId = "LoadingPanel",
-                                OnFailure = "ErrorAlert('" + T("Error") + "', '" + T("ServerConnectionError") + "');",
-                                OnComplete = "$('.nav-link').removeClass('active'); $(this).addClass('active')",
-                                InsertionMode = InsertionMode.Replace,
-                                UpdateTargetId = "placeholder",
-                            }, new {@class = "nav-link white-space-initial" })
-                    </li>
-                }
-                @if (settings.Wishlist)
-                {
-                    <li class="nav-item">
-                        @Ajax.HtmlActionLink(
-                            "<img src='/Content/img/bookmark_24px.png' class='m-auto' /> " + T("Wishlist"),
-                            "UserWishList", "Profile",
-                            new {userId = Model.UserInfo.Id},
-                            new AjaxOptions()
-                            {
-                                HttpMethod = "POST",
-                                LoadingElementId = "LoadingPanel",
-                                OnFailure = "ErrorAlert('" + T("Error") + "', '" + T("ServerConnectionError") + "');",
-                                OnComplete = "$('.nav-link').removeClass('active'); $(this).addClass('active')",
-                                InsertionMode = InsertionMode.Replace,
-                                UpdateTargetId = "placeholder",
-                            }, new {@class = "nav-link white-space-initial" })
-                    </li>
-                }
-                <li class="nav-item">
-                    @Ajax.HtmlActionLink(
-                        "<img src='/Content/img/comment_24px.png' class='m-auto' /> " + T("Comments"),
-                        "UserComments", "Profile",
-                        new {userId = Model.UserInfo.Id},
-                        new AjaxOptions()
-                        {
-                            HttpMethod = "POST",
-                            LoadingElementId = "LoadingPanel",
-                            OnFailure = "ErrorAlert('" + T("Error") + "', '" + T("ServerConnectionError") + "');",
-                            OnComplete = "$('.nav-link').removeClass('active'); $(this).addClass('active')",
-                            InsertionMode = InsertionMode.Replace,
-                            UpdateTargetId = "placeholder",
-                        }, new {@class = "nav-link white-space-initial" })
-                </li>
-                <li class="nav-item">
-                    @Ajax.HtmlActionLink(
-                        "<img src='/Content/img/download_24px.png' class='m-auto' /> " + T("DownloadLogs"),
-                        "UserDownloadLogs", "Profile",
-                        new {userId = Model.UserInfo.Id},
-                        new AjaxOptions()
-                        {
-                            HttpMethod = "POST",
-                            LoadingElementId = "LoadingPanel",
-                            OnFailure = "ErrorAlert('" + T("Error") + "', '" + T("ServerConnectionError") + "');",
-                            OnComplete = "$('.nav-link').removeClass('active'); $(this).addClass('active')",
-                            InsertionMode = InsertionMode.Replace,
-                            UpdateTargetId = "placeholder",
-                        }, new {@class = "nav-link white-space-initial" })
-                </li>
-            </ul>
+<!-- pro head slider -->
+<header class="pro-head-slider">
+    <div class="pro-head-slider-layer">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 d-flex justify-content-center">
+                    <h1 class="pro-head-title pro-head-title-single no-t-mar">
+                        @Html.Raw(T("MyProfile"))
+                    </h1>
+                </div>
+                <div class="col-12">
+                    <ul class="breadcrumbs">
+                        <li><a href="@Url.Action("Index", "Home")">@T("Home")</a></li>
+                        <li>/</li>
+                        <li>@Html.Raw(T("MyProfile"))</li>
+                    </ul>
+                </div>
+                <div class="col-12 d-flex justify-content-center">
+                    @{Html.RenderPartial("Partials/_SearchBox");}
+                </div>
+            </div>
         </div>
-        <div class="col-12 col-md-9">
-            <div id="placeholder"></div>
+    </div>
+</header>
+
+<!-- Dashboard info -->
+<div class="dashboard-info">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12 col-md-5 col-lg-3">
+                @{ Html.RenderPartial("Partials/_UserInfo", Model.UserInfo); }
+                <div class="user-info-sidebar-db">
+                    <ul class="dashboard-menu-list">
+                        <li>
+                            @Ajax.HtmlActionLink(
+                                "<i class='far fa-file-alt'></i>&nbsp;&nbsp;" + T("Invoices"),
+                                "UserInvoices", "Profile",
+                                new { userId = Model.UserInfo.Id },
+                                new AjaxOptions()
+                                {
+                                    HttpMethod = "POST",
+                                    LoadingElementId = "LoadingPanel",
+                                    OnFailure = "ErrorAlert('" + T("Error") + "', '" + T("ServerConnectionError") + "');",
+                                    OnComplete = "$('.dashboard-menu-list a').removeClass('active'); $(this).addClass('active')",
+                                    InsertionMode = InsertionMode.Replace,
+                                    UpdateTargetId = "placeholder",
+                                }, new { id = "btn_Invoices" })
+                        </li>
+                        <li>
+                            @Ajax.HtmlActionLink(
+                                "<i class='far fa-bell'></i>&nbsp;&nbsp;" + T("Notifications") +
+                                (Model.UserUnreadedNotifications > 0 ? " <span class='badge badge-danger'>" + Model.UserUnreadedNotifications + "</span>" : ""),
+                                "UserNotifications", "Profile",
+                                new { userId = Model.UserInfo.Id },
+                                new AjaxOptions()
+                                {
+                                    HttpMethod = "POST",
+                                    LoadingElementId = "LoadingPanel",
+                                    OnFailure = "ErrorAlert('" + T("Error") + "', '" + T("ServerConnectionError") + "');",
+                                    OnComplete = "$('.dashboard-menu-list a').removeClass('active'); $(this).addClass('active')",
+                                    InsertionMode = InsertionMode.Replace,
+                                    UpdateTargetId = "placeholder",
+                                }, null)
+                        </li>
+                        @if (settings.LikePosts)
+                        {
+                            <li>
+                                @Ajax.HtmlActionLink(
+                                    "<i class='far fa-heart'></i>&nbsp;&nbsp;" + T("ProductsYouLike"),
+                                    "UserLikes", "Profile",
+                                    new { userId = Model.UserInfo.Id },
+                                    new AjaxOptions()
+                                    {
+                                        HttpMethod = "POST",
+                                        LoadingElementId = "LoadingPanel",
+                                        OnFailure = "ErrorAlert('" + T("Error") + "', '" + T("ServerConnectionError") + "');",
+                                        OnComplete = "$('.dashboard-menu-list a').removeClass('active'); $(this).addClass('active')",
+                                        InsertionMode = InsertionMode.Replace,
+                                        UpdateTargetId = "placeholder",
+                                    }, null)
+                            </li>
+                        }
+                        @if (settings.Wishlist)
+                        {
+                            <li>
+                                @Ajax.HtmlActionLink(
+                                    "<i class='far fa-bookmark'></i>&nbsp;&nbsp;" + T("Wishlist"),
+                                    "UserWishList", "Profile",
+                                    new { userId = Model.UserInfo.Id },
+                                    new AjaxOptions()
+                                    {
+                                        HttpMethod = "POST",
+                                        LoadingElementId = "LoadingPanel",
+                                        OnFailure = "ErrorAlert('" + T("Error") + "', '" + T("ServerConnectionError") + "');",
+                                        OnComplete = "$('.dashboard-menu-list a').removeClass('active'); $(this).addClass('active')",
+                                        InsertionMode = InsertionMode.Replace,
+                                        UpdateTargetId = "placeholder",
+                                    }, null)
+                            </li>
+                        }
+                        <li>
+                            @Ajax.HtmlActionLink(
+                                "<i class='far fa-comment-dots'></i>&nbsp;&nbsp;" + T("Comments"),
+                                "UserComments", "Profile",
+                                new { userId = Model.UserInfo.Id },
+                                new AjaxOptions()
+                                {
+                                    HttpMethod = "POST",
+                                    LoadingElementId = "LoadingPanel",
+                                    OnFailure = "ErrorAlert('" + T("Error") + "', '" + T("ServerConnectionError") + "');",
+                                    OnComplete = "$('.dashboard-menu-list a').removeClass('active'); $(this).addClass('active')",
+                                    InsertionMode = InsertionMode.Replace,
+                                    UpdateTargetId = "placeholder",
+                                }, null)
+                        </li>
+                        <li>
+                            @Ajax.HtmlActionLink(
+                                "<i class='fas fa-angle-double-down'></i>&nbsp;&nbsp;" + T("DownloadLogs"),
+                                "UserDownloadLogs", "Profile",
+                                new { userId = Model.UserInfo.Id },
+                                new AjaxOptions()
+                                {
+                                    HttpMethod = "POST",
+                                    LoadingElementId = "LoadingPanel",
+                                    OnFailure = "ErrorAlert('" + T("Error") + "', '" + T("ServerConnectionError") + "');",
+                                    OnComplete = "$('.dashboard-menu-list a').removeClass('active'); $(this).addClass('active')",
+                                    InsertionMode = InsertionMode.Replace,
+                                    UpdateTargetId = "placeholder",
+                                }, null)
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-sm-12 col-md-7 col-lg-9">
+                <div class="panel-box no-t-mar">
+                    <div id="placeholder"></div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
 
+
 @{
-    Html.AddInlineScript(ResourceLocation.Footer, @<script>
-                              $("#btn_Invoices").click();
-                          </script>);
+    Html.AddInlineScript(ResourceLocation.Footer,
+@<script>
+     $("#btn_Invoices").click();
+</script>);
 }

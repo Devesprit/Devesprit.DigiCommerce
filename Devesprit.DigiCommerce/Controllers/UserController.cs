@@ -428,7 +428,7 @@ namespace Devesprit.DigiCommerce.Controllers
 
             IncreaseFailedAttempts();
             return View(model);
-        }
+        } 
 
         [HttpPost]
         [AllowAnonymous] 
