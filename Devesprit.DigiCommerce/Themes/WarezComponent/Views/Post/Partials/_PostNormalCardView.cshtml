@@ -10,14 +10,14 @@
 }
 
 <div class="card border-0">
-    @if (Model.IsFeatured)
-    {
-        <p class="post-card-ribbon" title="@T("Featured")"><i class="fa fa-star"></i></p>
-    }
     <div class="row no-gutters">
         @if (!string.IsNullOrWhiteSpace(Model.MainImageUrl))
         {
             <div class="col-12 col-md-6 col-lg-4">
+                @if (Model.IsFeatured)
+                {
+                    <p class="post-card-ribbon" title="@T("Featured")"><i class="fa fa-star"></i></p>
+                }
                 <a href="@Model.PostUrl">
                     <img class="card-img-top lazy" src="~/Content/img/Loading.gif" data-src="@Model.MainImageUrl" alt="@Model.Title.ConvertHtmlToText()" title="@Model.DescriptionTruncated.ConvertHtmlToText()">
                 </a>

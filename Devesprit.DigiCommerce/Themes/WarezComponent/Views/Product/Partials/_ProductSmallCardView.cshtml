@@ -8,7 +8,7 @@
 }
 <article class="pro-content" title="@Html.Raw(Model.Title)">
     <a href="@Model.PostUrl" class="box-pro-logo">
-        <img alt="@Model.Title" src="@(string.IsNullOrWhiteSpace(Model.IconImageUrl) ? Model.MainImageUrl : Model.IconImageUrl)">
+        <img alt="@Model.Title" class="lazy" src="~/Content/img/Loading_Large.gif" data-src="@(string.IsNullOrWhiteSpace(Model.IconImageUrl) ? Model.MainImageUrl : Model.IconImageUrl)">
     </a>
     <div class="pro-content-desc">
         <h3>

@@ -10,12 +10,12 @@
     var settings = DependencyResolver.Current.GetService<ISettingService>().LoadSetting<SiteSettings>();
 }
 <article class="pro-slider-content archive-post-item">
-    @if (Model.IsFeatured)
-    {
-        <p class="post-card-ribbon" title="@T("Featured")"><i class="fas fa-star"></i></p>
-    }
     <div class="pro-slider-logo b-mar-5">
-        <img alt="@Model.Title" src="@(string.IsNullOrWhiteSpace(Model.IconImageUrl) ? Model.MainImageUrl : Model.IconImageUrl)">
+        @if (Model.IsFeatured)
+        {
+            <p class="post-card-ribbon" title="@T("Featured")"><i class="fas fa-star"></i></p>
+        }
+        <img alt="@Model.Title" class="lazy" src="~/Content/img/Loading_Large.gif" data-src="@(string.IsNullOrWhiteSpace(Model.IconImageUrl) ? Model.MainImageUrl : Model.IconImageUrl)">
         <a href="@Model.PostUrl" class="pro-slider-logo-layer">
             <div class="text-center">
                 @if (settings.Wishlist || settings.LikePosts)

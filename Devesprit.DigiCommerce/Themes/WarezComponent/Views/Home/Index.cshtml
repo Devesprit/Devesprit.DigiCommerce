@@ -65,14 +65,9 @@
 <!-- Latest products slider -->
 <div class="products-slider">
     <div class="container">
-        <div class="row">
+        <div class="row b-mar-30">
             <div class="col-12">
                 <h2 class="pro-slider-title">@T("NewestProductsWithoutPage")</h2>
-            </div>
-            <div class="col-12">
-                <div class="pro-slider-desc">
-                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit duis nec fringilla nibh pellentesque finibus</p>
-                </div>
             </div>
         </div>
         <div class="slider-irdev-wrap">
@@ -126,17 +121,6 @@
 <div class="products">
     <div class="container">
         <div class="row">
-            <div class="col-12 d-flex justify-content-center">
-                <h2 class="box-title">Products</h2>
-            </div>
-            <div class="col-12 d-flex justify-content-center">
-                <p class="pro-desc">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit duis nec fringilla
-                    nibh pellentesque finibus
-                </p>
-            </div>
-        </div>
-        <div class="row">
             <div class="col-sm-12 col-md-6">
                 <div class="pro-box-details">
                     <h3 class="pro-box-title">@T("HotProductsWithoutPage")</h3>
@@ -182,53 +166,47 @@
 </div>
 
 <!-- .Net products slider -->
-<div class="products-slider">
-    <div class="container">
-        <div class="row">
-            <div class="col-12">
-                <h2 class="pro-slider-title">@dotNetCat.GetLocalized(p => p.CategoryName)</h2>
-            </div>
-            <div class="col-12">
-                <div class="pro-slider-desc">
-                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit duis nec fringilla nibh pellentesque finibus</p>
+@if (dotNetCat != null)
+{
+    <div class="products-slider">
+        <div class="container">
+            <div class="row b-mar-30">
+                <div class="col-12">
+                    <h2 class="pro-slider-title">@dotNetCat.GetLocalized(p => p.CategoryName)</h2>
                 </div>
             </div>
-        </div>
-        <div class="slider-irdev-wrap">
-            <div class="swiper-container main-swiper">
-                <div class="swiper-wrapper">
-                    @{
-                        Html.RenderAction("GetProductsList", "Product", new
-                        {
-                            listType = ProductsListType.Newest,
-                            pageSize = 12,
-                            catId = dotNetCat.Id,
-                            showPager = false
-                        });
-                    }
+            <div class="slider-irdev-wrap">
+                <div class="swiper-container main-swiper">
+                    <div class="swiper-wrapper">
+                        @{
+                            Html.RenderAction("GetProductsList", "Product", new
+                            {
+                                listType = ProductsListType.Newest,
+                                pageSize = 12,
+                                catId = dotNetCat.Id,
+                                wrapperStart = "<div class='swiper-slide'>",
+                                showPager = false
+                            });
+                        }
+                    </div>
                 </div>
+                <div class="swiper-button-next"></div>
+                <div class="swiper-button-prev"></div>
             </div>
-            <div class="swiper-button-next"></div>
-            <div class="swiper-button-prev"></div>
-        </div>
-        <div class="col-12 d-flex justify-content-center">
-            <a href="@Url.Action("FilterByCategory", "Product", new {slug = dotNetCat.Slug})" class="btn-more-pro-sec">@T("SeeMore")</a>
+            <div class="col-12 d-flex justify-content-center">
+                <a href="@Url.Action("FilterByCategory", "Product", new {slug = dotNetCat.Slug})" class="btn-more-pro-sec">@T("SeeMore")</a>
+            </div>
         </div>
     </div>
-</div>
+}
 
 <!-- Free products slider -->
 <div class="parallax-pro-slider">
     <div class="parallax-pro-content-box">
         <div class="container">
-            <div class="row">
+            <div class="row b-mar-30">
                 <div class="col-12">
                     <h2 class="pro-slider-title pro-parallax-title">@T("FreeProductsWithoutPage")</h2>
-                </div>
-                <div class="col-12">
-                    <div class="pro-slider-desc pro-parallax-desc">
-                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit duis nec fringilla nibh pellentesque finibus</p>
-                    </div>
                 </div>
             </div>
             <div class="slider-irdev-wrap">
@@ -239,6 +217,7 @@
                             {
                                 listType = ProductsListType.FreeProducts,
                                 pageSize = 12,
+                                wrapperStart = "<div class='swiper-slide'>",
                                 showPager = false
                             });
                         }
@@ -255,74 +234,40 @@
 </div>
 
 <!-- Delphi products slider -->
-<div class="products-slider">
-    <div class="container">
-        <div class="row">
-            <div class="col-12">
-                <h2 class="pro-slider-title">@delphiCat.GetLocalized(p => p.CategoryName)</h2>
-            </div>
-            <div class="col-12">
-                <div class="pro-slider-desc">
-                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit duis nec fringilla nibh pellentesque finibus</p>
+@if (delphiCat != null)
+{
+    <div class="products-slider">
+        <div class="container">
+            <div class="row b-mar-30">
+                <div class="col-12">
+                    <h2 class="pro-slider-title">@delphiCat.GetLocalized(p => p.CategoryName)</h2>
                 </div>
             </div>
-        </div>
-        <div class="slider-irdev-wrap">
-            <div class="swiper-container main-swiper">
-                <div class="swiper-wrapper">
-                    @{
-                        Html.RenderAction("GetProductsList", "Product", new
-                        {
-                            listType = ProductsListType.Newest,
-                            pageSize = 12,
-                            catId = delphiCat.Id,
-                            showPager = false
-                        });
-                    }
+            <div class="slider-irdev-wrap">
+                <div class="swiper-container main-swiper">
+                    <div class="swiper-wrapper">
+                        @{
+                            Html.RenderAction("GetProductsList", "Product", new
+                            {
+                                listType = ProductsListType.Newest,
+                                pageSize = 12,
+                                catId = delphiCat.Id,
+                                wrapperStart = "<div class='swiper-slide'>",
+                                showPager = false
+                            });
+                        }
+                    </div>
                 </div>
+                <div class="swiper-button-next"></div>
+                <div class="swiper-button-prev"></div>
             </div>
-            <div class="swiper-button-next"></div>
-            <div class="swiper-button-prev"></div>
-        </div>
-        <div class="col-12 d-flex justify-content-center">
-            <a href="@Url.Action("FilterByCategory", "Product", new {slug = delphiCat.Slug})" class="btn-more-pro-sec">@T("SeeMore")</a>
+            <div class="col-12 d-flex justify-content-center">
+                <a href="@Url.Action("FilterByCategory", "Product", new {slug = delphiCat.Slug})" class="btn-more-pro-sec">@T("SeeMore")</a>
+            </div>
         </div>
     </div>
-</div>
+}
 
-
-@*<div class="row t-pad-20">
-        <div class="col-12 col-md-4 col-lg-4 col-xl-3 b-mar-70">
-            <div class="text-center mb-3">
-                <h2 class="mb-0">@T("HotProductsWithoutPage")</h2>
-                <a class="text-warning fs-12" href="@Url.Action("ProductsExplorer", "Product", new {listType = ProductsListType.HotList})">@T("SeeMore")</a>
-            </div>
-            @{Html.RenderAction("GetProductsList", "Product", new
-                {
-                    listType = ProductsListType.HotList,
-                    pageSize = 9,
-                    showPager = false,
-                    numberOfCol = NumberOfCol.One,
-                    style = ViewStyles.Small
-                });}
-            <a class="btn btn-sm btn-secondary btn-block mt-2" href="@Url.Action("ProductsExplorer", "Product", new {listType = ProductsListType.HotList})"><i class="fa fa-list"></i> @T("SeeMore")</a>
-        </div>
-        <div class="col b-mar-70">
-            <div class="text-center mb-3">
-                <h2 class="mb-0">@T("MostDownloadedProductsWithoutPage")</h2>
-                <a class="text-warning fs-12" href="@Url.Action("ProductsExplorer", "Product", new {listType = ProductsListType.MostDownloaded})">@T("SeeMore")</a>
-            </div>
-            @{Html.RenderAction("GetProductsList", "Product", new
-                {
-                    listType = ProductsListType.MostDownloaded,
-                    pageSize = 5,
-                    showPager = false,
-                    numberOfCol = NumberOfCol.One,
-                    style = ViewStyles.Large
-                });}
-            <a class="btn btn-sm btn-secondary btn-block mt-2" href="@Url.Action("ProductsExplorer", "Product", new {listType = ProductsListType.MostDownloaded})"><i class="fa fa-list"></i> @T("SeeMore")</a>
-        </div>
-    </div>*@
 <script type="application/ld+json">
     @Html.Raw(webSiteSchema.ToHtmlEscapedString())
 </script>

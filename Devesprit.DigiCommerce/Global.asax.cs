@@ -107,8 +107,11 @@ namespace Devesprit.DigiCommerce
             {
                 if (!User.HasPermission("SiteSettings_ApplicationErrorsLog"))
                 {
-                    if (!Response.IsRequestBeingRedirected)
-                        Redirect("/Error/AccessPermissionError", HttpContext.Current);
+                    var routeData = new RouteData();
+                    IController controller = new ErrorController();
+                    routeData.Values.Add("controller", "Error");
+                    routeData.Values.Add("action", "AccessPermissionError");
+                    controller.Execute(new RequestContext(new HttpContextWrapper(Context), routeData));
                 }
             }
 
@@ -116,8 +119,11 @@ namespace Devesprit.DigiCommerce
             {
                 if (!User.HasPermission("ManageBackgroundJobs_BackgroundJobServer"))
                 {
-                    if (!Response.IsRequestBeingRedirected)
-                        Redirect("/Error/AccessPermissionError", HttpContext.Current);
+                    var routeData = new RouteData();
+                    IController controller = new ErrorController();
+                    routeData.Values.Add("controller", "Error");
+                    routeData.Values.Add("action", "AccessPermissionError");
+                    controller.Execute(new RequestContext(new HttpContextWrapper(Context), routeData));
                 }
             }
         }
@@ -220,12 +226,19 @@ namespace Devesprit.DigiCommerce
             // Clear the error on server.
             Server.ClearError();
 
+            var routeData = new RouteData();
+            IController controller = new ErrorController();
+
             var httpException = exception as HttpException;
             if (httpException == null)
             {
                 var errorCode = ErrorLog.GetDefault(HttpContext.Current).Log(new Error(exception, HttpContext.Current));
-                if (!Response.IsRequestBeingRedirected)
-                    Redirect("/Error/Index?errorCode=" + errorCode, HttpContext.Current);
+
+                routeData.Values.Clear();
+                routeData.Values.Add("controller", "Error");
+                routeData.Values.Add("action", "Index");
+                routeData.Values.Add("errorCode", errorCode);
+                controller.Execute(new RequestContext(new HttpContextWrapper(Context), routeData));
             }
             else //It's an Http Exception, Let's handle it.
             {
@@ -233,13 +246,22 @@ namespace Devesprit.DigiCommerce
                 {
                     case 404:
                         // Page not found.
-                        if (!Response.IsRequestBeingRedirected)
-                            Redirect("/Error/PageNotFound", HttpContext.Current); 
+
+                        routeData.Values.Clear();
+                        routeData.Values.Add("controller", "Error");
+                        routeData.Values.Add("action", "PageNotFound");
+                        controller.Execute(new RequestContext(new HttpContextWrapper(Context), routeData));
+
                         break;
                     default:
                         var errorCode = ErrorLog.GetDefault(HttpContext.Current).Log(new Error(exception, HttpContext.Current));
-                        if (!Response.IsRequestBeingRedirected)
-                            Redirect("/Error/Index?errorCode=" + errorCode, HttpContext.Current);
+
+                        routeData.Values.Clear();
+                        routeData.Values.Add("controller", "Error");
+                        routeData.Values.Add("action", "Index");
+                        routeData.Values.Add("errorCode", errorCode);
+                        controller.Execute(new RequestContext(new HttpContextWrapper(Context), routeData));
+
                         break;
                 }
             }
@@ -349,44 +371,6 @@ namespace Devesprit.DigiCommerce
             }
 
             return base.GetVaryByCustomString(context, value);
-        }
-
-        private void Redirect(string url, HttpContext ctx)
-        {
-            var redirectToUrl = url;
-            if (!url.IsAbsoluteUrl())
-            {
-                redirectToUrl = url.GetAbsoluteUrl(new Uri(ctx.Request.Url.GetHostUrl()));
-            }
-            var pathAndQuery = new Uri(redirectToUrl).GetPathAndQueryAndFragment();
-            var currentSettings = DependencyResolver.Current.GetService<ISettingService>().LoadSetting<SiteSettings>();
-            if (currentSettings.AppendLanguageCodeToUrl)
-            {
-                var currentLanguage = DependencyResolver.Current.GetService<IWorkContext>().CurrentLanguage;
-
-                var isLocaleDefined = pathAndQuery.TrimStart('/').StartsWith(currentLanguage.IsoCode + "/",
-                                          StringComparison.InvariantCultureIgnoreCase) ||
-                                      pathAndQuery.TrimStart('/').StartsWith(currentLanguage.IsoCode + "?",
-                                          StringComparison.InvariantCultureIgnoreCase) ||
-                                      pathAndQuery.TrimStart('/').StartsWith(currentLanguage.IsoCode + "#",
-                                          StringComparison.InvariantCultureIgnoreCase) ||
-                                      pathAndQuery.TrimStart('/').Equals(currentLanguage.IsoCode,
-                                          StringComparison.InvariantCultureIgnoreCase);
-
-                if (!isLocaleDefined)
-                {
-                    pathAndQuery = $"/{currentLanguage.IsoCode.ToLower()}{pathAndQuery}";
-                }
-            }
-            if (currentSettings.SiteUrl.IsValidUrl() && currentSettings.RedirectAllRequestsToSiteUrl)
-            {
-                redirectToUrl = currentSettings.SiteUrl.TrimEnd("/") + pathAndQuery;
-            }
-            redirectToUrl = $"{new Uri(redirectToUrl).GetHostUrl()}{pathAndQuery}";
-            Response.Clear();
-            Response.RedirectPermanent(redirectToUrl);
-            Response.Flush();
-            Response.End();
         }
     }
 }

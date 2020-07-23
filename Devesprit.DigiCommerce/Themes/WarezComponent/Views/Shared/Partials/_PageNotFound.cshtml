@@ -2,6 +2,8 @@
 @{
     Layout = null;
     var isRtl = DependencyResolver.Current.GetService<IWorkContext>().CurrentLanguage.IsRtl;
+    Response.TrySkipIisCustomErrors = true;
+    Response.StatusCode = (int)HttpStatusCode.NotFound;
 }
 
 <div class="row justify-content-center">

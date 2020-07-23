@@ -49,7 +49,8 @@ namespace Devesprit.DigiCommerce.Controllers
         protected override void OnActionExecuting(ActionExecutingContext filterContext)
         {
             Response.BufferOutput = true;
-             
+
+
             if (!filterContext.IsChildAction)
             {
                 //Save user latest IP address 
@@ -155,7 +156,8 @@ namespace Devesprit.DigiCommerce.Controllers
             filterContext.ExceptionHandled = true;
             var errCode = ErrorLog.GetDefault(System.Web.HttpContext.Current)
                 .Log(new Error(filterContext.Exception, System.Web.HttpContext.Current));
-            filterContext.Result = RedirectToAction("Index", "Error", new {errorCode = errCode, area = ""});
+            ViewBag.ErrorCode = errCode;
+            filterContext.Result = View("Index", "Error");
         }
 
         protected virtual void SuccessNotification(string message, bool persistForTheNextRequest = true)

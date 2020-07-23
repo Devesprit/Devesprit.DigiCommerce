@@ -20,45 +20,50 @@ This set of fonts are used in this project under the license: (.....)
 	font-family: iranyekan-bold;
 	font-style: normal;
 	font-weight: bold;
+    font-display: block;
 	src: url('fonts/eot/iranyekanwebbold.eot');
-	src: url('fonts/eot/iranyekanwebbold.eot') format('embedded-opentype'),  /* IE6-8 */
-		 url('fonts/woff/iranyekanwebbold.woff') format('woff'),  /* FF3.6+, IE9, Chrome6+, Saf5.1+*/
-		 url('fonts/ttf/iranyekanwebbold.ttf') format('truetype');
+	src: url('fonts/eot/iranyekanwebbold.eot') format('embedded-opentype'), /* IE6-8 */
+	url('fonts/woff/iranyekanwebbold.woff') format('woff'), /* FF3.6+, IE9, Chrome6+, Saf5.1+*/
+	url('fonts/ttf/iranyekanwebbold.ttf') format('truetype');
 }
 
 @font-face {
 	font-family: iranyekan;
 	font-style: normal;
 	font-weight: normal;
+    font-display: block;
 	src: url('fonts/eot/iranyekanwebregular.eot');
-	src: url('fonts/eot/iranyekanwebregular.eot?#iefix') format('embedded-opentype'),  /* IE6-8 */
-		 url('fonts/woff/iranyekanwebregular.woff') format('woff'),  /* FF3.6+, IE9, Chrome6+, Saf5.1+*/
-		 url('fonts/ttf/iranyekanwebregular.ttf') format('truetype');
+	src: url('fonts/eot/iranyekanwebregular.eot?#iefix') format('embedded-opentype'), /* IE6-8 */
+	url('fonts/woff/iranyekanwebregular.woff') format('woff'), /* FF3.6+, IE9, Chrome6+, Saf5.1+*/
+	url('fonts/ttf/iranyekanwebregular.ttf') format('truetype');
 }
 @font-face {
 	font-family: roboto;
 	font-style: normal;
 	font-weight: normal;
+    font-display: block;
 	src: url('fonts/eot/robotoregular.eot');
-	src: url('fonts/eot/robotoregular.eot?#iefix') format('embedded-opentype'),  /* IE6-8 */
-		 url('fonts/woff/robotoregular.woff') format('woff'),  /* FF3.6+, IE9, Chrome6+, Saf5.1+*/
-		 url('fonts/ttf/robotoregular.ttf') format('truetype');
+	src: url('fonts/eot/robotoregular.eot?#iefix') format('embedded-opentype'), /* IE6-8 */
+	url('fonts/woff/robotoregular.woff') format('woff'), /* FF3.6+, IE9, Chrome6+, Saf5.1+*/
+	url('fonts/ttf/robotoregular.ttf') format('truetype');
 }
 @font-face {
 	font-family: roboto-thin;
 	font-style: normal;
 	font-weight: normal;
+    font-display: block;
 	src: url('fonts/eot/robotolight.eot');
-	src: url('fonts/eot/robotolight.eot?#iefix') format('embedded-opentype'),  /* IE6-8 */
-		 url('fonts/woff/robotolight.woff') format('woff'),  /* FF3.6+, IE9, Chrome6+, Saf5.1+*/
-		 url('fonts/ttf/robotolight.ttf') format('truetype');
+	src: url('fonts/eot/robotolight.eot?#iefix') format('embedded-opentype'), /* IE6-8 */
+	url('fonts/woff/robotolight.woff') format('woff'), /* FF3.6+, IE9, Chrome6+, Saf5.1+*/
+	url('fonts/ttf/robotolight.ttf') format('truetype');
 }
 @font-face {
 	font-family: roboto-bold;
 	font-style: normal;
 	font-weight: normal;
+    font-display: block;
 	src: url('fonts/eot/robotobold.eot');
-	src: url('fonts/eot/robotobold.eot?#iefix') format('embedded-opentype'),  /* IE6-8 */
-		 url('fonts/woff/robotobold.woff') format('woff'),  /* FF3.6+, IE9, Chrome6+, Saf5.1+*/
-		 url('fonts/ttf/robotobold.ttf') format('truetype');
+	src: url('fonts/eot/robotobold.eot?#iefix') format('embedded-opentype'), /* IE6-8 */
+	url('fonts/woff/robotobold.woff') format('woff'), /* FF3.6+, IE9, Chrome6+, Saf5.1+*/
+	url('fonts/ttf/robotobold.ttf') format('truetype');
 }

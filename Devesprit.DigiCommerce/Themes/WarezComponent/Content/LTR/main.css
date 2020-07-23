@@ -269,7 +269,7 @@ textarea {
 }
 
 body {
-    font-family: roboto !important;
+    font-family: roboto, iranyekan !important;
     background-color: #FCFCFC;
 }
 
@@ -532,7 +532,7 @@ ul {
 .head-title {
     color: #fafafa;
     font-size: 44px;
-    font-family: roboto-bold;
+    font-family: roboto-bold, iranyekan-bold;
     margin-bottom: 10px;
     margin-top: 0;
 }
@@ -586,7 +586,7 @@ ul {
 .box-title {
     color: #616161;
     font-size: 32px;
-    font-family: roboto-bold;
+    font-family: roboto-bold, iranyekan-bold;
 }
 
 .pro-desc {
@@ -700,7 +700,7 @@ ul {
 }
 
 .parallax-title {
-    font-family: roboto-bold;
+    font-family: roboto-bold, iranyekan-bold;
     font-size: 84px;
     color: rgba(187, 187, 187, 0.57);
 }
@@ -763,7 +763,7 @@ ul {
 .pro-slider-title {
     color: #616161;
     font-size: 32px;
-    font-family: roboto-bold;
+    font-family: roboto-bold, iranyekan-bold;
     position: relative;
 }
 
@@ -1017,7 +1017,7 @@ span.bookmark-checked {
 .footer-title {
     color: #f1f1f1;
     font-size: 18px;
-    font-family: roboto-bold;
+    font-family: roboto-bold, iranyekan-bold;
 }
 
 .footer-menu-list {
@@ -1126,7 +1126,7 @@ span.bookmark-checked {
 .pro-head-title {
     color: #ffffff;
     font-size: 34px;
-    font-family: roboto-bold;
+    font-family: roboto-bold, iranyekan-bold;
     text-align: center;
     width: 65%;
     line-height: 1.7em;
@@ -1289,7 +1289,7 @@ span.bookmark-checked {
 .item-info-pro-title h3 {
     color: #616161;
     font-size: 24px;
-    font-family: roboto-bold;
+    font-family: roboto-bold, iranyekan-bold;
     display: inline-block;
     width: 100%;
     margin-bottom: 0;
@@ -1317,7 +1317,7 @@ span.bookmark-checked {
 
         .list-item-info-pro li span {
             width: 45%;
-            font-family: roboto-thin;
+            font-family: roboto-thin, iranyekan;
         }
 
 .head-sidebar-single {
@@ -1326,7 +1326,7 @@ span.bookmark-checked {
 }
 
 .title-sideber-single {
-    font-family: roboto-bold;
+    font-family: roboto-bold, iranyekan-bold;
     font-size: 24px;
     margin-bottom: 0;
     color: #616161;
@@ -1370,7 +1370,7 @@ span.bookmark-checked {
         display: inline-block;
     }
 
-        .list-pro-sidebar-keywords li a {
+        .list-pro-sidebar-keywords li a, .list-pro-sidebar-keywords li span {
             color: #757575;
             font-size: 10px;
             padding: 2px 5px;
@@ -1417,7 +1417,7 @@ span.bookmark-checked {
         }
 
 .not-desc-pro {
-    font-family: roboto-bold;
+    font-family: roboto-bold, iranyekan-bold;
 }
 
 .project-tab .nav-link {
@@ -1467,7 +1467,7 @@ span.bookmark-checked {
 .tab-body-tile {
     color: #757575;
     font-size: 18px;
-    font-family: roboto-bold;
+    font-family: roboto-bold, iranyekan-bold;
 }
 
 .list-features {
@@ -1560,7 +1560,7 @@ span.bookmark-checked {
 }
 
 .share-title {
-    font-family: roboto-bold;
+    font-family: roboto-bold, iranyekan-bold;
     color: #616161;
     font-size: 16px;
 }
@@ -1621,7 +1621,7 @@ span.bookmark-checked {
 .add-cmnt {
     color: #424242;
     font-size: 18px;
-    font-family: roboto-bold;
+    font-family: roboto-bold, iranyekan-bold;
     margin-top: 10px;
     margin-bottom: 30px;
 }
@@ -1953,7 +1953,7 @@ span.bookmark-checked {
     width: 100%;
     height: auto;
     min-height: 100vh;
-    background: linear-gradient(rgba(33,33,33,.9)100%,rgba(72,72,72,.9)100%),url('img/login.png');
+    background: linear-gradient(rgba(33,33,33,.9)100%,rgba(72,72,72,.9)100%),url('img/login.jpg');
     background-size: cover;
 }
 
@@ -1971,13 +1971,13 @@ span.bookmark-checked {
     .login-reg-head h1 {
         font-size: 26px;
         color: #212121;
-        font-family: roboto-bold;
+        font-family: roboto-bold, iranyekan-bold;
     }
 
     .login-reg-head p {
         font-size: 16px;
         color: #757575;
-        font-family: roboto;
+        font-family: roboto, iranyekan;
         line-height: 1.25;
         margin-bottom: 0;
     }
@@ -2254,13 +2254,13 @@ span.bookmark-checked {
 
     .reg-box h1 {
         font-size: 24px;
-        font-family: roboto-bold;
+        font-family: roboto-bold, iranyekan-bold;
     }
 
 .reg-info {
     font-size: 16px;
     color: #757575;
-    font-family: roboto;
+    font-family: roboto, iranyekan;
     line-height: 1.25;
 }
 
@@ -2323,13 +2323,13 @@ span.bookmark-checked {
 .apper-text {
     color: #212121;
     font-size: 14px;
-    font-family: roboto;
+    font-family: roboto, iranyekan;
 }
 
 .login-info-forgot-pass {
     font-size: 16px;
     color: #757575;
-    font-family: roboto;
+    font-family: roboto, iranyekan;
     line-height: 1.25;
 }
 
@@ -2339,25 +2339,13 @@ span.bookmark-checked {
 }
 
 /*plans*/
-@font-face {
-    font-family: 'plan-icon';
-    src: url('fonts/plan-icon.eot?upbf2u');
-    src: url('fonts/plan-icon.eot?upbf2u#iefix') format('embedded-opentype'), url('fonts/plan-icon.ttf?upbf2u') format('truetype'), url('fonts/plan-icon.woff?upbf2u') format('woff'), url('fonts/plan-icon.svg?upbf2u#icomoon') format('svg');
-    font-weight: normal;
-    font-style: normal;
-    font-display: block;
-}
-
 .buy-plans .icon-gem, .buy-plans .icon-gold {
-    /* use !important to prevent issues with browser extensions that change fonts */
-    font-family: 'plan-icon' !important;
     speak: none;
     font-style: normal;
     font-weight: normal;
     font-variant: normal;
     text-transform: none;
     line-height: 1;
-    /* Better Font Rendering =========== */
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }
@@ -2425,7 +2413,7 @@ span.bookmark-checked {
         width: 100%;
         margin-top: 15px;
         color: #616161;
-        font-family: roboto-bold;
+        font-family: roboto-bold, iranyekan-bold;
         text-align: center;
     }
 
@@ -2622,7 +2610,7 @@ span.bookmark-checked {
     min-width: 80px;
     width: 80px;
     min-height: 3px;
-    font-family: 'Roboto';
+    font-family: 'Roboto', iranyekan;
     color: #777;
     font-weight: 300;
     background-color: transparent;
@@ -2923,7 +2911,7 @@ span.bookmark-checked {
     padding: 0 15px;
     border-bottom: 1px solid #ddd;
     font-size: 12px;
-    font-family: roboto;
+    font-family: roboto, iranyekan;
     color: #757575;
     line-height: 37px;
     cursor: pointer;
@@ -3013,7 +3001,7 @@ span.bookmark-checked {
 
     .cart-content-id .pro-slider-title {
         font-size: 20px;
-        font-family: roboto;
+        font-family: roboto, iranyekan;
     }
 
 .cart-table-id {
@@ -3035,7 +3023,7 @@ span.bookmark-checked {
     .head-cart-item-id .cart-item-title-id {
         font-size: 18px;
         color: #757575;
-        font-family: roboto-bold;
+        font-family: roboto-bold, iranyekan-bold;
     }
 
     .head-cart-item-id [class^="icon-"], .head-cart-item-id [class*=" icon-"] {
@@ -3059,7 +3047,7 @@ span.bookmark-checked {
 }
 
     .content-cart-item-id span {
-        font-family: roboto-bold;
+        font-family: roboto-bold, iranyekan-bold;
     }
 
 .quantity-cart-id {
@@ -3227,7 +3215,7 @@ span.bookmark-checked {
             width: 100%;
             color: #424242;
             margin-bottom: 12px;
-            font-family: roboto-bold;
+            font-family: roboto-bold, iranyekan-bold;
         }
 
     .discount-code-id input {
@@ -3269,7 +3257,7 @@ span.bookmark-checked {
 }
 
 .title-total-cart {
-    font-family: roboto-bold;
+    font-family: roboto-bold, iranyekan-bold;
     font-size: 16px;
     color: #212121;
     margin-bottom: 40px;
@@ -3284,13 +3272,13 @@ span.bookmark-checked {
 }
 
     .total-cart-id ul li:first-child {
-        font-family: roboto-bold;
+        font-family: roboto-bold, iranyekan-bold;
         font-size: 16px;
         color: #212121;
     }
 
     .total-cart-id ul li:last-child {
-        font-family: roboto-bold;
+        font-family: roboto-bold, iranyekan-bold;
         font-size: 16px;
         color: #64b768;
     }
@@ -3566,7 +3554,7 @@ span.bookmark-checked {
     font-size: 24px;
     color: #212121;
     text-align: center;
-    font-family: roboto-bold;
+    font-family: roboto-bold, iranyekan-bold;
     margin-bottom: 15px;
 }
 
@@ -3693,7 +3681,7 @@ span.bookmark-checked {
     }
 
         .confirm-billing-id ul li span, .confirm-peyment-content span {
-            font-family: roboto-bold;
+            font-family: roboto-bold, iranyekan-bold;
         }
 
 .confirm-cart .content-cart-item-id {
@@ -4507,8 +4495,8 @@ span.bookmark-checked {
 
 .post-card-ribbon {
     position: absolute;
-    top: 25px;
-    left: 25px;
+    top: 8px;
+    left: 8px;
     margin: 0;
     color: #ff9900;
     font-size: x-large;

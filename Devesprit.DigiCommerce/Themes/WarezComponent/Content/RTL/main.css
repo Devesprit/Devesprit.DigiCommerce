@@ -1376,7 +1376,7 @@ span.bookmark-checked {
         display: inline-block;
     }
 
-        .list-pro-sidebar-keywords li a {
+        .list-pro-sidebar-keywords li a, .list-pro-sidebar-keywords li span {
             color: #757575;
             font-size: 10px;
             padding: 2px 5px;
@@ -1960,7 +1960,7 @@ span.bookmark-checked {
     width: 100%;
     height: auto;
     min-height: 100vh;
-    background: linear-gradient(rgba(33,33,33,.9)100%,rgba(72,72,72,.9)100%),url('img/login.png');
+    background: linear-gradient(rgba(33,33,33,.9)100%,rgba(72,72,72,.9)100%),url('img/login.jpg');
     background-size: cover;
 }
 
@@ -2350,25 +2350,13 @@ span.bookmark-checked {
 }
 
 /*plans*/
-@font-face {
-    font-family: 'plan-icon';
-    src: url('fonts/plan-icon.eot?upbf2u');
-    src: url('fonts/plan-icon.eot?upbf2u#iefix') format('embedded-opentype'), url('fonts/plan-icon.ttf?upbf2u') format('truetype'), url('fonts/plan-icon.woff?upbf2u') format('woff'), url('fonts/plan-icon.svg?upbf2u#icomoon') format('svg');
-    font-weight: normal;
-    font-style: normal;
-    font-display: block;
-}
-
 .buy-plans .icon-gem, .buy-plans .icon-gold {
-    /* use !important to prevent issues with browser extensions that change fonts */
-    font-family: 'plan-icon' !important;
     speak: none;
     font-style: normal;
     font-weight: normal;
     font-variant: normal;
     text-transform: none;
     line-height: 1;
-    /* Better Font Rendering =========== */
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }
@@ -4546,8 +4534,8 @@ span.bookmark-checked {
 
 .post-card-ribbon {
     position: absolute;
-    top: 25px;
-    left: 25px;
+    top: 8px;
+    left: 8px;
     margin: 0;
     color: #ff9900;
     font-size: x-large;

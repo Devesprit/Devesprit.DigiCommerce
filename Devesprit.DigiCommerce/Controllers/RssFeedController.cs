@@ -42,6 +42,8 @@ namespace Devesprit.DigiCommerce.Controllers
         [MethodCache(Tags = new[] { nameof(TblBlogPosts), nameof(TblProducts) }, VaryByCustom = "lang")]
         public virtual ActionResult Index(PostsListType listType, int? page, int? pageSize, int? catId, DateTime? fromDate)
         {
+            page = 1;
+            pageSize = 20;
             IPagedList<TblPosts> posts = null;
             switch (listType)
             {
@@ -100,6 +102,8 @@ namespace Devesprit.DigiCommerce.Controllers
         [MethodCache(Tags = new[] { nameof(TblBlogPosts), nameof(TblProducts) }, VaryByCustom = "lang")]
         public virtual ActionResult Products(ProductsListType listType, int? page, int? pageSize, int? catId, DateTime? fromDate)
         {
+            page = 1;
+            pageSize = 20;
             IPagedList<TblProducts> products = null;
             switch (listType)
             {
@@ -145,6 +149,8 @@ namespace Devesprit.DigiCommerce.Controllers
         [MethodCache(Tags = new[] { nameof(TblBlogPosts), nameof(TblProducts) }, VaryByCustom = "lang")]
         public virtual ActionResult Blog(PostsListType listType, int? page, int? pageSize, int? catId, DateTime? fromDate)
         {
+            page = 1;
+            pageSize = 20;
             IPagedList<TblBlogPosts> posts = null;
             switch (listType)
             {
