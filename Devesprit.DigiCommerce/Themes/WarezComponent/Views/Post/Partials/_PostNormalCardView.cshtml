@@ -4,72 +4,52 @@
 @using Devesprit.Utilities.Extensions
 @model Devesprit.DigiCommerce.Models.Post.PostCardViewModel
 @{
-    var counter = 0;
     var settings = DependencyResolver.Current.GetService<ISettingService>().LoadSetting<SiteSettings>();
     Layout = null;
 }
 
-<div class="card border-0">
-    <div class="row no-gutters">
-        @if (!string.IsNullOrWhiteSpace(Model.MainImageUrl))
+<article class="pro-slider-content archive-post-item">
+    <div class="pro-slider-logo b-mar-5">
+        @if (Model.IsFeatured)
         {
-            <div class="col-12 col-md-6 col-lg-4">
-                @if (Model.IsFeatured)
-                {
-                    <p class="post-card-ribbon" title="@T("Featured")"><i class="fa fa-star"></i></p>
-                }
-                <a href="@Model.PostUrl">
-                    <img class="card-img-top lazy" src="~/Content/img/Loading.gif" data-src="@Model.MainImageUrl" alt="@Model.Title.ConvertHtmlToText()" title="@Model.DescriptionTruncated.ConvertHtmlToText()">
-                </a>
-            </div>
+            <p class="post-card-ribbon" title="@T("Featured")"><i class="fas fa-star"></i></p>
         }
-        <div class="col">
-            <div class="p-3">
-                <h5 class="card-title @Html.Raw(Model.Title.IsRtlLanguage() ? "rtl-dir text-right" : "ltr-dir text-left") mb-0">
-                    <a href="@Model.PostUrl">
-                        @Html.Raw(Model.Title)
-                    </a>
-                </h5>
-                <div class="card-attr text-muted fs-12">
-                    <span title="@T("Visits") : @Model.NumberOfViews.ToString("##,###")">
+        <img alt="@Model.Title" class="lazy" src="~/Content/img/Loading_Large.gif" data-src="@Model.MainImageUrl">
+        <a href="@Model.PostUrl" class="pro-slider-logo-layer">
+            <div class="text-center">
+                @if (settings.Wishlist || settings.LikePosts)
+                {
+                    Html.RenderAction("LikeWishlistButtonsPartialView", "Post", new { model = Model.LikeWishlistButtonsModel });
+                }
+                else
+                {
+                    <i class="fas fa-plus text-light"></i>
+                }
+
+                <ul class="rate-pro-slider persiaNumber">
+                    <li title="@T("Visits"): @Model.NumberOfViews.ToString("##,###")">
                         <i class="fa fa-eye"></i> @Model.NumberOfViews.FormatNumber()
-                    </span>
-                    <span title="@T("LastUpdate", Model.LastUpDate.TimeAgo())">
-                        <i class="fa fa-clock-o"></i> @Model.LastUpDate.ToString("yyyy/MM/dd")
-                    </span>
+                    </li>
+                    <li title="@T("LastUpdate", Model.LastUpDate.TimeAgo())">
+                        <i class="fa fa-clock"></i> @Model.LastUpDate.ToString("yyyy/MM/dd")
+                    </li>
                     @if (settings.LikePosts)
                     {
-                        <span title="@T("Likes") : @Model.NumberOfLikes.ToString("##,###")">
+                        <li title="@T("Likes"): @Model.NumberOfLikes.ToString("##,###")">
                             <i class="fa fa-heart"></i> @Model.NumberOfLikes.FormatNumber()
-                        </span>
+                        </li>
                     }
-                    @if (Model.Categories.Any())
-                    {
-                        <span title="@T("Categories", Model.LastUpDate.TimeAgo())">
-                            <i class="fa fa-bars" aria-hidden="true"></i>
-                            @{ counter = 0;}
-                            @foreach (var cat in Model.Categories)
-                            {
-                                <a href="@cat.CategoryUrl" target="_blank">@cat.CategoryName</a>
-                                if (counter < Model.Categories.Count - 1)
-                                {
-                                    counter++;
-                                    @Html.Raw(", ")
-                                }
-                            }
-                        </span>
-                    }
-                </div>
-
-                <p class="fs-12 pt-2 @Html.Raw(Model.DescriptionTruncated.IsRtlLanguage() ? "rtl-dir text-right" : "ltr-dir text-left")">@Html.Raw(Model.DescriptionTruncated)</p>
+                </ul>
             </div>
-        </div>
+        </a>
     </div>
-
-    <div class="card-footer text-muted">
-        <span class="float-start fs-20">
-            @{Html.RenderAction("LikeWishlistButtonsPartialView", "Post", new { model = Model.LikeWishlistButtonsModel });}
-        </span>
-        <a href="@Model.PostUrl" class="btn btn-sm btn-outline-secondary float-end"><i class="fa fa-chevron-down"></i> @T("ReadMore")</a>
-    </div>
-</div>
+    <span class='slider-pro-items-category'>
+        <i class="fas fa-th-list" title="@T("Categories")"></i>
+        @Html.Raw(string.Join(", ",
+            Model.Categories.Select(p =>
+                "<a href=" + p.CategoryUrl + " target='_blank'>" + p.CategoryName + "</a>").ToList()))
+    </span>
+    <h3 class="@Html.Raw(Model.Title.IsRtlLanguage() ? "rtl-dir text-right" : "ltr-dir text-left") t-mar-5">
+        <a href="@Model.PostUrl" title="@Model.DescriptionTruncated.ConvertHtmlToText()" class="slider-pro-items-name">@Html.Raw(Model.Title)</a>
+    </h3>
+</article>

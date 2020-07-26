@@ -15,7 +15,7 @@
         {
             <p class="post-card-ribbon" title="@T("Featured")"><i class="fas fa-star"></i></p>
         }
-        <img alt="@Model.Title" class="lazy" src="~/Content/img/Loading_Large.gif" data-src="@(string.IsNullOrWhiteSpace(Model.IconImageUrl) ? Model.MainImageUrl : Model.IconImageUrl)">
+        <img alt="@Model.Title" class="lazy" src="~/Content/img/Loading_Large.gif" data-src="@Model.MainImageUrl">
         <a href="@Model.PostUrl" class="pro-slider-logo-layer">
             <div class="text-center">
                 @if (settings.Wishlist || settings.LikePosts)

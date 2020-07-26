@@ -74,7 +74,7 @@ namespace Devesprit.DigiCommerce.Controllers
                 NumberOfItemsFound = posts.Count,
                 SearchResult = _postModelFactory.PreparePostCardViewModel(posts, currentUser, Url),
                 SuggestSimilar = result.SuggestSimilar,
-                CardViewStyles = ViewStyles.Small
+                CardViewStyles = ViewStyles.Normal
             };
 
             foreach (var document in result.Documents)

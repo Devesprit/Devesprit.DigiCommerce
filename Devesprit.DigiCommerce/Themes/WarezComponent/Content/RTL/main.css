@@ -439,6 +439,10 @@ ul {
         position: relative;
     }
 
+    .list-main-menu li .sub-menu ul {
+        box-shadow: 0 0 10px rgba(0,0,0,0.15);
+    }
+
     .list-main-menu li .sub-menu .sub-menu2 {
         display: none;
         position: absolute;
@@ -693,7 +697,7 @@ ul {
     height: 100%;
     opacity: 0.87;
     border-radius: 12px;
-    background-image: linear-gradient(110deg, #212121 32%, rgba(0, 0, 0, 0) 109%);
+    background-image: linear-gradient(290deg,#1f202c 32%,rgba(0,0,0,0) 55%);
     display: flex;
     align-items: center;
 }
@@ -1464,10 +1468,10 @@ span.bookmark-checked {
     margin-top: 20px;
 }
 
-    .tab-body-box p {
-        color: #757575;
-        font-size: 14px;
-        line-height: 1.7em;
+    .tab-body-box ul {
+        list-style: initial;
+        padding-left: 45px;
+        margin-bottom: 15px;
     }
 
 .tab-body-tile {
@@ -1558,11 +1562,14 @@ span.bookmark-checked {
 .single-pro-share-social {
     display: flex;
     align-items: center;
+    list-style: none !important;
+    padding-left: 0 !important;
+    margin-bottom: 0 !important;
 }
 
 .share-box-pro {
     display: flex;
-    margin-right: 30px;
+    margin-left: 30px;
 }
 
 .share-title {
@@ -2453,10 +2460,11 @@ span.bookmark-checked {
     border: 2px solid #ffbb00;
     box-shadow: 0 3px 20px 0 rgba(0, 0, 0, 0.04);
     outline: none;
-    padding: 11px 100px;
+    padding: 11px 65px;
     border-radius: 50px;
     margin-top: 40px;
     transition: all 0.2s;
+    width: 100%;
 }
 
     .buy-btn-plan:hover {

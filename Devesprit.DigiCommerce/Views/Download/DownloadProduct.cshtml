@@ -10,7 +10,6 @@
     ViewBag.MetaDescription = ViewBag.Title;
     int counter = 0;
     var currentLang = DependencyResolver.Current.GetService<IWorkContext>().CurrentLanguage;
-    Html.AddHeadCustomParts("<meta name=\"robots\" content=\"noindex,nofollow\">");
 }
 
 <div class="panel">
