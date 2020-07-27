@@ -28,7 +28,7 @@
             <div class="row">
                 <div class="col-12 d-flex justify-content-center">
                     <h1 class="pro-head-title pro-head-title-archive">
-                        <a href="@Url.Action("Products", "RssFeed", new {listType = Model.PostsListType, catId = Model.FilterByCategoryId, fromDate = Model.FromDate}).RemoveEmptyParametersFromQueryString()" target="_blank" title="@T("RSSFeed")" class="text-warning"><i class="fa fa-rss"></i></a>
+                        <a href="@Url.Action("Products", "RssFeed", new {listType = Model.PostsListType, page = 1, catId = Model.FilterByCategoryId, fromDate = Model.FromDate}).RemoveEmptyParametersFromQueryString()" target="_blank" title="@T("RSSFeed")" class="text-warning"><i class="fa fa-rss"></i></a>
                         @Html.Raw(ViewBag.Title)
                     </h1>
                 </div>
@@ -59,7 +59,7 @@
     <div class="row mar-v-80">
         <div class="col-sm-12 col-md-5 col-lg-4">
             <h3 class="fs-18">
-                <a href="@Url.Action("Products", "RssFeed", new {listType = ProductsListType.MostPopular, catId = Model.FilterByCategoryId, fromDate = Model.FromDate}).RemoveEmptyParametersFromQueryString()" target="_blank" title="@T("RSSFeed")" class="text-warning"><i class="fa fa-rss"></i></a>
+                <a href="@Url.Action("Products", "RssFeed", new {listType = ProductsListType.MostPopular, page = 1, catId = Model.FilterByCategoryId, fromDate = Model.FromDate}).RemoveEmptyParametersFromQueryString()" target="_blank" title="@T("RSSFeed")" class="text-warning"><i class="fa fa-rss"></i></a>
                 <span>@Html.Raw(T("MostPopularProductsIn", Model.CategoryName))</span>
             </h3>
 

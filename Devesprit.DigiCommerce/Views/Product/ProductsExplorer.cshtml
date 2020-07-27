@@ -16,7 +16,7 @@
 
 <div class="t-pad-20">
     <h1 class="fs-20">
-        <a href="@Url.Action("Products", "RssFeed", new {listType = Model.PostsListType, catId = Model.FilterByCategoryId, fromDate = Model.FromDate}).RemoveEmptyParametersFromQueryString()" target="_blank" title="@T("RSSFeed")" class="text-warning"><i class="fa fa-rss"></i></a>
+        <a href="@Url.Action("Products", "RssFeed", new {listType = Model.PostsListType, page = 1, catId = Model.FilterByCategoryId, fromDate = Model.FromDate}).RemoveEmptyParametersFromQueryString()" target="_blank" title="@T("RSSFeed")" class="text-warning"><i class="fa fa-rss"></i></a>
         @Html.Raw(ViewBag.Title)
     </h1>
 

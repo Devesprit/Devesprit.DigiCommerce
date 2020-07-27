@@ -32,7 +32,7 @@
                 }
                 <li><a href="@Url.Action("Index", "ContactUs", new {area = ""})"><i class="fas fa-phone"></i> @T("ContactUs")</a></li>
                 <li>
-                    <a href="@Url.Action("Index", "RssFeed", new {listType = PostsListType.Newest, area = ""})" target="_blank" title="@T("RSSFeed")">
+                    <a href="@Url.Action("Index", "RssFeed", new {listType = PostsListType.Newest, page = 1, area = ""})" target="_blank" title="@T("RSSFeed")">
                         <i class="fas fa-rss"></i> @T("RSSFeed")
                     </a>
                 </li>
