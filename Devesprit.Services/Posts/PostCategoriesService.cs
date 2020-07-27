@@ -136,6 +136,26 @@ namespace Devesprit.Services.Posts
             _eventPublisher.Publish(new PostCategoriesOrderChangeEvent(itemsOrder, id, newParentId));
         }
 
+        public IEnumerable<TblPostCategories> GetParentCategoriesList(int catId)
+        {
+            var result = new List<TblPostCategories>();
+            var catList = GetAsEnumerable().ToList();
+            var currentCategory = catList.FirstOrDefault(p => p.Id == catId);
+            if (currentCategory == null)
+            {
+                return result;
+            }
+            result.Add(currentCategory);
+
+            while (currentCategory?.ParentCategoryId != null)
+            {
+                currentCategory = catList.FirstOrDefault(p => p.Id == currentCategory.ParentCategoryId.Value);
+                result.Insert(0, currentCategory);
+            }
+
+            return result;
+        }
+
         public virtual List<int> GetSubCategories(int categoryId, List<int> result = null)
         {
             if (result == null)

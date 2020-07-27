@@ -23,5 +23,6 @@ namespace Devesprit.Services.Posts
         IEnumerable<TblPostCategories> GetCategoriesMustShowInFooter();
         List<int> GetSubCategories(int categoryId, List<int> result = null);
         Task SetCategoryOrderAsync(int[] itemsOrder, int id, int? newParentId);
+        IEnumerable<TblPostCategories> GetParentCategoriesList(int catId);
     }
 }

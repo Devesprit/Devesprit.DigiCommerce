@@ -1,9 +1,11 @@
-﻿@using System.Web.Mvc.Html
+﻿@using System.Net.Http
+@using Devesprit.DigiCommerce
 @using Devesprit.DigiCommerce.Models
 @using Devesprit.DigiCommerce.Models.Post
 @using Devesprit.Utilities
 @using X.PagedList.Mvc
 @model Devesprit.DigiCommerce.Models.Products.ProductsListModel
+
 @{
     Layout = null;
 }
@@ -29,7 +31,7 @@
     if (Model.ShowPager)
     {
         <div class="col-12 t-mar-30">
-            @Html.PagedListPager(Model.PostsList, page => Request.Url.ToString().BuildQueryStringUrl(new[] { "Page=" + page }).RemoveEmptyParametersFromQueryString(), new TwitterBootstrap4Pager())
+            @Html.PagedListPager(Model.PostsList, GeneratePageUrl, new TwitterBootstrap4Pager())
         </div>
     }
 }
@@ -43,4 +45,20 @@ else
             @T("NoItemsToShow")
         </h5>
     </div>
+}
+
+@functions {
+    private string GeneratePageUrl(int arg)
+    {
+        var httpContext = HttpContext.Current.GetOwinContext().Get<System.Web.HttpContextWrapper>("System.Web.HttpContextBase");
+        var route = ViewContext.ParentActionViewContext.RouteData.Route.GetRouteData(httpContext);
+        if (route.Values.Keys.Contains("page"))
+        {
+            var routeData = ViewContext.ParentActionViewContext.RouteData.Values;
+            routeData["page"] = arg;
+            var queryStrings = Request.Url.Query;
+            return Url.RouteUrl(routeData).BuildQueryStringUrl(new []{queryStrings}).RemoveEmptyParametersFromQueryString();
+        }
+        return Request.Url.ToString().BuildQueryStringUrl(new[] { "page=" + arg }).RemoveEmptyParametersFromQueryString();
+    }
 }

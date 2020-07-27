@@ -3,13 +3,19 @@
 @using Devesprit.DigiCommerce.Models
 @using Devesprit.DigiCommerce.Models.Post
 @using Devesprit.DigiCommerce.Models.Products
+@using Devesprit.Services.Localization
+@using Devesprit.Services.Posts
 @using Devesprit.Utilities
 @model Devesprit.DigiCommerce.Models.Products.ProductsExplorerModel
 
 @{
-    ViewBag.Title = T("NewestProductsIn", Model.CategoryName, Model.PageIndex);
+    var categoriesService = DependencyResolver.Current.GetService<IPostCategoriesService>();
+    var catLists = categoriesService.GetParentCategoriesList(Model.FilterByCategoryId.Value);
+
+    var categoryFullName = string.Join(" / ", catLists.Select(p => p.GetLocalized(x => x.CategoryName)));
+    
+    ViewBag.Title = T("NewestProductsIn", categoryFullName, Model.PageIndex);
     ViewBag.MetaDescription = ViewBag.Title;
-    Html.AddHeadCustomParts("<meta name=\"robots\" content=\"index,follow\">");
     var workContext = DependencyResolver.Current.GetService<IWorkContext>();
     var pageMainUrl = Url.Action("FilterByCategory", "Product", new { page = Model.PageIndex, slug = Model.CategorySlug, lang = workContext.CurrentLanguage.IsoCode }, Request.Url.Scheme);
     Html.AddCanonicalUrlParts(pageMainUrl);
@@ -29,8 +35,15 @@
                 <div class="col-12">
                     <ul class="breadcrumbs">
                         <li><a href="@Url.Action("Index", "Home")">@T("Home")</a></li>
-                        <li>/</li>
-                        <li><a href="@Url.Action("FilterByCategory", "Product", new {slug = Model.CategorySlug, lang = workContext.CurrentLanguage.IsoCode}, Request.Url.Scheme)">@Html.Raw(Model.CategoryName.Trim())</a></li>
+                        @foreach (var cat in catLists)
+                        {
+                            <li>/</li>
+                            <li>
+                                <a href="@Url.Action("FilterByCategory", "Product", new {slug = cat.Slug, lang = workContext.CurrentLanguage.IsoCode}, Request.Url.Scheme)">
+                                    @Html.Raw(cat.GetLocalized(p => p.CategoryName).Trim())
+                                </a>
+                            </li>
+                        }
                     </ul>
                 </div>
                 <div class="col-12 d-flex justify-content-center">
@@ -51,29 +64,29 @@
             </h3>
 
             @{Html.RenderAction("GetProductsList", "Product", new
-              {
-                  listType = ProductsListType.MostPopular,
-                  page = Model.PageIndex,
-                  pageSize = 15,
-                  catId = Model.FilterByCategoryId,
-                  fromDate = Model.FromDate,
-                  wrapperStart = "<div class='col-12'>",
-                  style = ViewStyles.Small,
-                  showPager = false
-              });}
+                {
+                    listType = ProductsListType.MostPopular,
+                    page = Model.PageIndex,
+                    pageSize = 15,
+                    catId = Model.FilterByCategoryId,
+                    fromDate = Model.FromDate,
+                    wrapperStart = "<div class='col-12'>",
+                    style = ViewStyles.Small,
+                    showPager = false
+                });}
         </div>
         <div class="col-sm-12 col-md-7 col-lg-8">
             <div class="row">
                 @{Html.RenderAction("GetProductsList", "Product", new
-                  {
-                      listType = Model.PostsListType,
-                      page = Model.PageIndex,
-                      pageSize = Model.PageSize,
-                      catId = Model.FilterByCategoryId,
-                      fromDate = Model.FromDate,
-                      wrapperStart = "<div class='col-12 col-sm-6 col-lg-4 d-sm-flex justify-content-sm-center'>",
-                      showPager = true
-                  });}
+                    {
+                        listType = Model.PostsListType,
+                        page = Model.PageIndex,
+                        pageSize = Model.PageSize,
+                        catId = Model.FilterByCategoryId,
+                        fromDate = Model.FromDate,
+                        wrapperStart = "<div class='col-12 col-sm-6 col-lg-4 d-sm-flex justify-content-sm-center'>",
+                        showPager = true,
+                    });}
             </div>
         </div>
 

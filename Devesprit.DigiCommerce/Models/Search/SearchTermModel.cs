@@ -29,7 +29,8 @@ namespace Devesprit.DigiCommerce.Models.Search
 
         [DisplayNameLocalized("OrderBy")]
         public SearchResultSortType OrderBy { get; set; } = SearchResultSortType.LastUpDate;
-        public int? Page { get; set; }
+
+        public int? Page { get; set; } = 1;
 
         [DisplayNameLocalized("PageSize")]
         public int? PageSize { get; set; } = 20;

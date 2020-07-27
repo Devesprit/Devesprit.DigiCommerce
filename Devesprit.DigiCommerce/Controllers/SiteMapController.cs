@@ -115,41 +115,42 @@ namespace Devesprit.DigiCommerce.Controllers
             return Url.Action(action, controller, routeValues, Request.Url.Scheme);
         }
 
-        private List<Tuple<string, string>> GenerateAlternateUrls(List<TblLanguages> languagesList, string action, string controller, object routeValues)
+        private List<Tuple<string, string>> GenerateAlternateUrls(List<TblLanguages> languagesList, string action, string controller, object routeValues, SiteSettings settings)
         {
             if (languagesList.Count == 1)
             {
                 return null;
             }
-            var routeValueDictionary = new RouteValueDictionary(routeValues);
-            if (routeValueDictionary.Keys.Any(p => p.ToString().ToLower().Trim() == "lang"))
-            {
-                routeValueDictionary.Remove("lang");
-            }
-
+            
             var result = new List<Tuple<string, string>>();
+            var uri = new Uri(Url.Action(action, controller, new RouteValueDictionary(routeValues), Request.Url.Scheme));
+            var allLangsIso = languagesList.Select(p => p.IsoCode).ToList();
+            if(settings.AppendLanguageCodeToUrl)
+            {
+                result.Add(new Tuple<string, string>(
+                        "x-default",
+                        uri.SetLangIso(languagesList.FirstOrDefault(p=> p.IsDefault).IsoCode, allLangsIso).ToString()
+                    ));
+            }
+            else
+            {
+                result.Add(new Tuple<string, string>(
+                        "x-default",
+                        uri.RemoveLangIso(allLangsIso).ToString()
+                    ));
+            }
             foreach (var lang in languagesList)
             {
-                if (routeValueDictionary.Keys.Any(p => p.ToString().ToLower().Trim() == "lang"))
-                {
-                    routeValueDictionary["lang"] = lang.IsoCode;
-                }
-                else
-                {
-                    routeValueDictionary.Add("lang", lang.IsoCode);
-                }
-
                 result.Add(new Tuple<string, string>(
-                        lang.IsoCode,
-                        Url.Action(action, controller, routeValueDictionary, Request.Url.Scheme)
-                    ));
+                    lang.IsoCode,
+                    uri.SetLangIso(lang.IsoCode, allLangsIso).ToString()
+                ));
             }
 
             return result;
         }
 
-
-        private List<Tuple<string, string>> GenerateAlternateUrlsForTags(List<TblLanguages> languagesList, TblPostTags tag)
+        private List<Tuple<string, string>> GenerateAlternateUrlsForTags(List<TblLanguages> languagesList, TblPostTags tag, SiteSettings settings)
         {
             if (languagesList.Count == 1)
             {
@@ -159,15 +160,46 @@ namespace Devesprit.DigiCommerce.Controllers
             var action = "Tag";
             var controller = "Search";
             var result = new List<Tuple<string, string>>();
+
+            var allLangsIso = languagesList.Select(p => p.IsoCode).ToList();
+            var defaultLang = languagesList.FirstOrDefault(p => p.IsDefault);
+            if (settings.AppendLanguageCodeToUrl)
+            {
+                var routeValueDictionary = new RouteValueDictionary
+                {
+                    {"tag", tag.GetLocalized(x => x.Tag, defaultLang.Id)}
+                };
+                var uri = new Uri(Url.Action(action, controller, routeValueDictionary, Request.Url.Scheme));
+
+                result.Add(new Tuple<string, string>(
+                    "x-default",
+                    uri.SetLangIso(defaultLang.IsoCode, allLangsIso).ToString()
+                ));
+            }
+            else
+            {
+                var routeValueDictionary = new RouteValueDictionary
+                {
+                    {"tag", tag.GetLocalized(x => x.Tag, defaultLang.Id)}
+                };
+                var uri = new Uri(Url.Action(action, controller, routeValueDictionary, Request.Url.Scheme));
+
+                result.Add(new Tuple<string, string>(
+                    "x-default",
+                    uri.RemoveLangIso(allLangsIso).ToString()
+                ));
+            }
             foreach (var lang in languagesList)
             {
-                var routeValueDictionary = new RouteValueDictionary();
-                routeValueDictionary.Add("lang", lang.IsoCode);
-                routeValueDictionary.Add("tag", tag.GetLocalized(x => x.Tag, lang.Id));
+                var routeValueDictionary = new RouteValueDictionary
+                {
+                    {"tag", tag.GetLocalized(x => x.Tag, lang.Id)}
+                };
+                var uri = new Uri(Url.Action(action, controller, routeValueDictionary, Request.Url.Scheme));
 
                 result.Add(new Tuple<string, string>(
                     lang.IsoCode,
-                    Url.Action(action, controller, routeValueDictionary, Request.Url.Scheme)
+                    uri.SetLangIso(lang.IsoCode, allLangsIso).ToString()
                 ));
             }
 
@@ -184,7 +216,7 @@ namespace Devesprit.DigiCommerce.Controllers
 
             var items = new List<SitemapItem>();
             var languagesList = _languagesService.GetAsEnumerable().Where(p => p.Published)
-                .OrderByDescending(p => p.DisplayOrder).ToList();
+                .OrderBy(p => p.DisplayOrder).ToList();
 
             var defaultLanguage = await _languagesService.GetDefaultLanguageAsync();
             foreach (var lang in languagesList)
@@ -194,7 +226,7 @@ namespace Devesprit.DigiCommerce.Controllers
                     DateTime.Now,
                     SitemapChangeFrequency.Daily,
                     1,
-                    GenerateAlternateUrls(languagesList, "Index", "Home", null)
+                    GenerateAlternateUrls(languagesList, "Index", "Home", null, settings)
                 ));
 
                 items.AddRange((await _pagesService.GetAsEnumerableAsync()).Where(p => p.Published).Select(page =>
@@ -203,7 +235,7 @@ namespace Devesprit.DigiCommerce.Controllers
                         DateTime.Now,
                         SitemapChangeFrequency.Daily,
                         0.7,
-                        GenerateAlternateUrls(languagesList, "Index", "Page", new { slug = page.Slug })
+                        GenerateAlternateUrls(languagesList, "Index", "Page", new { slug = page.Slug }, settings)
                     )));
 
                 items.AddRange((await _tagsService.GetAsEnumerableAsync()).Select(tag =>
@@ -213,7 +245,7 @@ namespace Devesprit.DigiCommerce.Controllers
                         DateTime.Now,
                         SitemapChangeFrequency.Daily,
                         0.8,
-                        GenerateAlternateUrlsForTags(languagesList, tag)
+                        GenerateAlternateUrlsForTags(languagesList, tag, settings)
                     )));
 
                 items.AddRange((await _categoriesService.GetAsEnumerableAsync())
@@ -225,7 +257,7 @@ namespace Devesprit.DigiCommerce.Controllers
                             DateTime.Now,
                             SitemapChangeFrequency.Daily,
                             0.9,
-                            GenerateAlternateUrls(languagesList, "FilterByCategory", "Product", new { slug = category.Slug })
+                            GenerateAlternateUrls(languagesList, "FilterByCategory", "Product", new { slug = category.Slug }, settings)
                         )));
 
                 if (settings.EnableBlog)
@@ -239,7 +271,7 @@ namespace Devesprit.DigiCommerce.Controllers
                                 DateTime.Now,
                                 SitemapChangeFrequency.Daily,
                                 0.8,
-                                GenerateAlternateUrls(languagesList, "FilterByCategory", "Blog", new { slug = category.Slug })
+                                GenerateAlternateUrls(languagesList, "FilterByCategory", "Blog", new { slug = category.Slug }, settings)
                             )));
                 }
 
@@ -252,7 +284,7 @@ namespace Devesprit.DigiCommerce.Controllers
                             post.LastUpDate ?? post.PublishDate,
                             SitemapChangeFrequency.Weekly,
                             0.9,
-                            GenerateAlternateUrls(languagesList, "Post", "Blog", new { id = post.Id, slug = post.Slug })
+                            GenerateAlternateUrls(languagesList, "Post", "Blog", new { id = post.Id, slug = post.Slug }, settings)
                         ));
                     }
                     else if (post.PostType == PostType.Product)
@@ -262,7 +294,7 @@ namespace Devesprit.DigiCommerce.Controllers
                             post.LastUpDate ?? post.PublishDate,
                             SitemapChangeFrequency.Weekly,
                             1,
-                            GenerateAlternateUrls(languagesList, "Index", "Product", new { id = post.Id, slug = post.Slug })
+                            GenerateAlternateUrls(languagesList, "Index", "Product", new { id = post.Id, slug = post.Slug }, settings)
                         ));
                     }
                     else
@@ -283,7 +315,7 @@ namespace Devesprit.DigiCommerce.Controllers
                                 OrderBy = SearchResultSortType.Score,
                                 SearchPlace = SearchPlace.Title,
                                 Query = post.Title
-                            })
+                            }, settings)
                         ));
                     }
                 }

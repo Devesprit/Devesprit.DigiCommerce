@@ -37,6 +37,10 @@
     Html.AppendCanonicalUrlParts(pageMainUrl);
 
     var postFirstCategory = Model.Categories.FirstOrDefault();
+
+    var categoriesService = DependencyResolver.Current.GetService<IPostCategoriesService>();
+    var catLists = categoriesService.GetParentCategoriesList(postFirstCategory?.Id ?? 0);
+
     var counter = 0;
 }
 
@@ -56,8 +60,15 @@
                             <li><a href="@Url.Action("Index", "Home")">@T("Home")</a></li>
                             @if (postFirstCategory != null)
                             {
-                                <li>/</li>
-                                <li><a href="@postFirstCategory.CategoryUrl">@postFirstCategory.CategoryName</a></li>
+                                foreach (var cat in catLists)
+                                {
+                                    <li>/</li>
+                                    <li>
+                                        <a href="@Url.Action("FilterByCategory", "Product", new {slug = cat.Slug, lang = workContext.CurrentLanguage.IsoCode}, Request.Url.Scheme)">
+                                            @Html.Raw(cat.GetLocalized(p => p.CategoryName).Trim())
+                                        </a>
+                                    </li>
+                                }
                             }
                         </ul>
                     </div>

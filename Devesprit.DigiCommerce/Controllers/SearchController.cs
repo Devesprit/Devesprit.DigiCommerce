@@ -35,8 +35,8 @@ namespace Devesprit.DigiCommerce.Controllers
             _searchEngine = searchEngine;
         }
 
-        [Route("{lang}/Search", Order = 0)]
-        [Route("Search", Order = 1)]
+        [Route("{lang}/Search/{Page?}", Order = 0)]
+        [Route("Search/{Page?}", Order = 1)]
         [MethodCache(Tags = new[] { CacheTags.Search }, VaryByCustom = "lang")]
         public virtual async Task<ActionResult> Index(SearchTermModel model)
         {
@@ -102,10 +102,10 @@ namespace Devesprit.DigiCommerce.Controllers
                 model.PageSize
             }, Request.Url.Scheme);
             return View(viewModel);
-        }
+        }  
 
-        [Route("{lang}/Tags/{tag}", Order = 0)]
-        [Route("Tags/{tag}", Order = 1)]
+        [Route("{lang}/Tags/{tag}/{page?}", Order = 0)]
+        [Route("Tags/{tag}/{page?}", Order = 1)]
         [MethodCache(Tags = new[] { CacheTags.Search }, VaryByCustom = "lang")]
         public virtual async Task<ActionResult> Tag(string tag, int? page)
         {
@@ -151,8 +151,8 @@ namespace Devesprit.DigiCommerce.Controllers
             return View("Index", viewModel);
         }
 
-        [Route("{lang}/Keyword/{keyword}", Order = 0)]
-        [Route("Keyword/{keyword}", Order = 1)]
+        [Route("{lang}/Keyword/{keyword}/{page?}", Order = 0)]
+        [Route("Keyword/{keyword}/{page?}", Order = 1)]
         [MethodCache(Tags = new[] { CacheTags.Search }, VaryByCustom = "lang")]
         public virtual async Task<ActionResult> Keyword(string keyword, int? page)
         {

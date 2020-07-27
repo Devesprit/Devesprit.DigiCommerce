@@ -116,10 +116,10 @@ else
                                 @Html.Raw("<div class='col-12 py-2'>")
                                 break;
                             case ViewStyles.Normal:
-                                @Html.Raw("<div class='col-12 py-2'>")
+                                @Html.Raw("<div class='col-12 col-sm-6 " + (Model.ShowAdvancedSearchPanel ? "" : "col-lg-4") + " py-2'>")
                                 break;
                             case ViewStyles.Small:
-                                @Html.Raw("<div class='col-12 col-sm-6 "+(Model.ShowAdvancedSearchPanel ? "" : "col-lg-4")+" py-2'>")
+                                @Html.Raw("<div class='col-12 col-sm-6 " + (Model.ShowAdvancedSearchPanel ? "" : "col-lg-4") + " py-2'>")
                                 break;
                         }
                         {
@@ -130,7 +130,7 @@ else
                 </div>
                 <div class="row">
                     <div class="col-12 t-mar-30">
-                        @Html.PagedListPager(Model.SearchResult, page => Request.Url.ToString().BuildQueryStringUrl(new[] { "Page=" + page }).RemoveEmptyParametersFromQueryString(), new TwitterBootstrap4Pager())
+                        @Html.PagedListPager(Model.SearchResult, GeneratePageUrl, new TwitterBootstrap4Pager())
                     </div>
                 </div>
             </div>
@@ -139,3 +139,19 @@ else
     </div>
 }
 
+
+@functions {
+    private string GeneratePageUrl(int arg)
+    {
+        var httpContext = HttpContext.Current.GetOwinContext().Get<System.Web.HttpContextWrapper>("System.Web.HttpContextBase");
+        var route = ViewContext.RouteData.Route.GetRouteData(httpContext);
+        if (route.Values.Keys.Contains("page"))
+        {
+            var routeData = ViewContext.RouteData.Values;
+            routeData["page"] = arg;
+            var queryStrings = Request.Url.Query;
+            return Url.RouteUrl(routeData).BuildQueryStringUrl(new[] { queryStrings }).RemoveEmptyParametersFromQueryString();
+        }
+        return Request.Url.ToString().BuildQueryStringUrl(new[] { "page=" + arg }).RemoveEmptyParametersFromQueryString();
+    }
+}

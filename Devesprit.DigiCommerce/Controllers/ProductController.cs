@@ -95,8 +95,8 @@ namespace Devesprit.DigiCommerce.Controllers
             return View(_productModelFactory.PrepareProductModel(product, currentUser, Url));
         } 
 
-        [Route("{lang}/Products/{listType}", Order = 0)]
-        [Route("Products/{listType}", Order = 1)]
+        [Route("{lang}/Products/{listType}/{page?}", Order = 0)]
+        [Route("Products/{listType}/{page?}", Order = 1)]
         [MethodCache(Tags = new[] { nameof(TblProducts) }, VaryByCustom = "lang" /*"lang,user"*/)]
         public virtual ActionResult ProductsExplorer(ProductsListType listType, int? page, int? pageSize, int? catId, DateTime? fromDate)
         {
@@ -141,7 +141,7 @@ namespace Devesprit.DigiCommerce.Controllers
                     break;
             }
             var model = new ProductsListModel()
-            {
+            {   
                 PostsList = _productModelFactory.PrepareProductCardViewModel(products, currentUser, Url),
                 ViewStyle = style ?? ViewStyles.Normal,
                 PageIndex = page ?? 1,
@@ -157,8 +157,8 @@ namespace Devesprit.DigiCommerce.Controllers
             return View("Partials/_ProductsList", model);
         }
 
-        [Route("{lang}/Categories/{slug}", Order = 0)]
-        [Route("Categories/{slug}", Order = 1)]
+        [Route("{lang}/Categories/{slug}/{page?}", Order = 0)]
+        [Route("Categories/{slug}/{page?}", Order = 1)]
         [MethodCache(Tags = new[] { nameof(TblProducts) }, VaryByCustom = "lang" /*"lang,user"*/)]
         public virtual async Task<ActionResult> FilterByCategory(string slug, int? page, int? pageSize)
         {

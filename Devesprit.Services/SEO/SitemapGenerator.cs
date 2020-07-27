@@ -24,8 +24,8 @@ namespace Devesprit.Services.SEO
                 new XElement(Xmlns + "urlset",
                     new XAttribute("xmlns", Xmlns),
                     new XAttribute(XNamespace.Xmlns + "xhtml", "http://www.w3.org/1999/xhtml"),
-                    new XAttribute(XNamespace.Xmlns + "xsi", Xsi),
-                    new XAttribute(Xsi + "schemaLocation", "http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd"),
+                    //new XAttribute(XNamespace.Xmlns + "xsi", Xsi),
+                    //new XAttribute(Xsi + "schemaLocation", "http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd"),
                     from item in items
                     select CreateItemElement(item)
                 )
