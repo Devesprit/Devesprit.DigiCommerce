@@ -6,6 +6,7 @@
 }
 @using (Html.BeginForm("Index", "Search", FormMethod.Get, new { @class = "header-form", novalidate = "novalidate" }))
 {
+    <input type="hidden" name="Page" value="1" />
     <input id="txtSearch" type="text" name="query" class="header-form-input" placeholder="@T("Search")" data-val="true" data-val-required="" />
     <button type="submit" class="btn-header-form btn"><i class="fas fa-search"></i></button>
 }

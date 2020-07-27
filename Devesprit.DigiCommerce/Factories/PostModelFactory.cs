@@ -59,8 +59,8 @@ namespace Devesprit.DigiCommerce.Factories
                         CategoryName = p.GetLocalized(x => x.CategoryName),
                         Slug = p.Slug,
                         CategoryUrl = post.PostType == PostType.BlogPost ?
-                            url.Action("FilterByCategory", "Blog", new { slug = p.Slug }) :
-                            url.Action("FilterByCategory", "Product", new { slug = p.Slug })
+                            url.Action("FilterByCategory", "Blog", new { slug = p.Slug, page = 1 }) :
+                            url.Action("FilterByCategory", "Product", new { slug = p.Slug, page = 1 })
                     })
                     .ToList();
                 var desc = post.Descriptions?.OrderBy(p => p.DisplayOrder).FirstOrDefault()?.GetLocalized(x => x.HtmlDescription) ?? "";
@@ -81,7 +81,8 @@ namespace Devesprit.DigiCommerce.Factories
                         PostType = null,
                         OrderBy = SearchResultSortType.Score,
                         SearchPlace = SearchPlace.Title,
-                        Query = post.Title
+                        Query = post.Title,
+                        Page = 1
                     }, _httpContext.Request.Url.Scheme)).ToString();
                 }
 
@@ -120,8 +121,8 @@ namespace Devesprit.DigiCommerce.Factories
                     CategoryName = p.GetLocalized(x => x.CategoryName),
                     Slug = p.Slug,
                     CategoryUrl = post.PostType == PostType.BlogPost ?
-                        url.Action("FilterByCategory", "Blog", new { slug = p.Slug }) :
-                        url.Action("FilterByCategory", "Product", new { slug = p.Slug })
+                        url.Action("FilterByCategory", "Blog", new { slug = p.Slug, page = 1 }) :
+                        url.Action("FilterByCategory", "Product", new { slug = p.Slug, page = 1 })
                 })
                 .ToList();
             result.TagsList = post.Tags
@@ -197,7 +198,8 @@ namespace Devesprit.DigiCommerce.Factories
                     PostType = null,
                     OrderBy = SearchResultSortType.Score,
                     SearchPlace = SearchPlace.Title,
-                    Query = post.Title
+                    Query = post.Title,
+                    Page = 1
                 }, _httpContext.Request.Url.Scheme)).ToString();
             }
 

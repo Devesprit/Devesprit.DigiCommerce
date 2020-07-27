@@ -40,6 +40,7 @@
 </header>
 
 <div class="container t-mar-60 b-mar-60">
+
     @if (Model.UserHasAccessToFiles != null && !OtherExtensions.HasFlagFast(Model.UserHasAccessToFiles.Value, UserCanDownloadProductResult.UserCanDownloadProduct))
     {
         <h4 class="alert alert-warning text-center b-pad-25">
@@ -127,6 +128,7 @@
     }
     else
     {
+	<h4 class="m-3">@T("UnRarPassword") : <b onclick="CopyToClipboard('lblPassword')" style="cursor: pointer;" class="badge badge-danger" data-toggle="tooltip" title="Click to copy">DownloadDevTools.ir</b></h4>
     <div class="accordion shadow" style="border-radius: 12px; overflow: hidden; border: solid 1px #e0e0e0;" id="accordion">
 
         @foreach (var group in Model.FileGroups.Where(p => !string.IsNullOrWhiteSpace(p.FileListTree)))
@@ -183,6 +185,22 @@
             }
 
     </div>
+	<h4 class="m-3">@T("UnRarPassword") : <b id="lblPassword" onclick="CopyToClipboard('lblPassword')" style="cursor: pointer;" class="badge badge-danger" data-toggle="tooltip" title="Click to copy">DownloadDevTools.ir</b></h4>
     }
-
+   
 </div>
+
+@{
+    Html.AddInlineScript(ResourceLocation.Footer,
+@<script>
+function CopyToClipboard(elem) {
+    var range = document.createRange();
+    range.selectNode(document.getElementById(elem));
+    window.getSelection().removeAllRanges();
+    window.getSelection().addRange(range);
+    document.execCommand("copy");
+    window.getSelection().removeAllRanges();
+	SuccessAlert('Password copied to clipboard!', '');
+}
+</script>, true);
+}

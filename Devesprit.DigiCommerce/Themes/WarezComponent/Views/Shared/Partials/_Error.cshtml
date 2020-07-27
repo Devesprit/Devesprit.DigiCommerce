@@ -2,7 +2,7 @@
 @{
     Layout = null;
     var isRtl = DependencyResolver.Current.GetService<IWorkContext>().CurrentLanguage.IsRtl;
-    Response.TrySkipIisCustomErrors = true;
+	Response.TrySkipIisCustomErrors = true;
     Response.StatusCode = (int)HttpStatusCode.InternalServerError;
 }
 

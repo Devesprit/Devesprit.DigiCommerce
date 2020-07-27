@@ -41,12 +41,13 @@
                             @T("Suggestions") :
                             @foreach (var suggest in Model.SuggestSimilar)
                             {
-                                @:&#9679; <a href="@Url.Action("Index", new {query = suggest})">@suggest</a>
+                                @:&#9679; <a href="@Url.Action("Index", new {query = suggest, Page = 1 })">@suggest</a>
                             }
                         </small>
                     }
                     @using (Html.BeginForm("Index", "Search", FormMethod.Get, new { @class = "text-center", novalidate = "novalidate" }))
                     {
+                        <input type="hidden" name="Page" value="1" />
                         <input type="text" name="query" class="form-control form-control-sm" value="@(Model?.SearchTerm.Query)" placeholder="@T("Search")" data-val="true" data-val-required="" />
                         <button type="submit" class="btn btn-sm btn-secondary t-mar-10"><i class="fa fa-search"></i> @T("Search")</button>
                     }
@@ -68,7 +69,7 @@ else
                         @T("Suggestions") :
                         @foreach (var suggest in Model.SuggestSimilar)
                         {
-                            @:&#9679; <a href="@Url.Action("Index", new {query = suggest})">@suggest</a>
+                            @:&#9679; <a href="@Url.Action("Index", new {query = suggest, Page = 1})">@suggest</a>
                         }
                     </small>
                 }

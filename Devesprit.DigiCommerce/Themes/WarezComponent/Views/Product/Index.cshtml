@@ -64,7 +64,7 @@
                                 {
                                     <li>/</li>
                                     <li>
-                                        <a href="@Url.Action("FilterByCategory", "Product", new {slug = cat.Slug, lang = workContext.CurrentLanguage.IsoCode}, Request.Url.Scheme)">
+                                        <a href="@Url.Action("FilterByCategory", "Product", new {slug = cat.Slug, page = 1, lang = workContext.CurrentLanguage.IsoCode}, Request.Url.Scheme)">
                                             @Html.Raw(cat.GetLocalized(p => p.CategoryName).Trim())
                                         </a>
                                     </li>

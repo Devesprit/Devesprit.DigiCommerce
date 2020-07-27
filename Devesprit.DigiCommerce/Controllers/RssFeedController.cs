@@ -72,7 +72,8 @@ namespace Devesprit.DigiCommerce.Controllers
                     PostType = null,
                     OrderBy = SearchResultSortType.Score,
                     SearchPlace = SearchPlace.Title,
-                    Query = post.Title
+                    Query = post.Title,
+                    Page = 1
                 }, Request.Url.Scheme));
 
                 if (post.PostType == PostType.BlogPost)

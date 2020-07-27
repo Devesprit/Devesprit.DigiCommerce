@@ -18,7 +18,7 @@
         Headline = settings.SiteName.ToString(),
         PotentialAction = new OneOrMany<IAction>(new SearchAction()
         {
-            Target = new Uri(Url.Action("Index", "Search", new { Query = "{search_term_string}" }).GetAbsoluteUrl().UrlDecode()),
+            Target = new Uri(Url.Action("Index", "Search", new { Query = "{search_term_string}", Page = 1 }).GetAbsoluteUrl().UrlDecode()),
             QueryInput = "required name=search_term_string"
         }),
         Description = settings.SiteDescription.ToString(),
@@ -46,7 +46,7 @@
     <div class="col-12 b-mar-70">
         <div class="text-center mb-3">
             <h2 class="mb-0">@T("NewestProductsWithoutPage")</h2>
-            <a class="text-warning fs-12" href="@Url.Action("ProductsExplorer", "Product", new {listType = ProductsListType.Newest})">@T("SeeMore")</a>
+            <a class="text-warning fs-12" href="@Url.Action("ProductsExplorer", "Product", new {listType = ProductsListType.Newest, page = 1})">@T("SeeMore")</a>
         </div>
         @{Html.RenderAction("GetProductsList", "Product", new
             {
@@ -55,12 +55,12 @@
                 wrapperStart = "<div class='col-12 col-sm-6 col-lg-4 py-2'>",
                 showPager = false
             });}
-        <a class="btn btn-sm btn-secondary btn-block mt-2" href="@Url.Action("ProductsExplorer", "Product", new {listType = ProductsListType.Newest})"><i class="fa fa-list"></i> @T("SeeMore")</a>
+        <a class="btn btn-sm btn-secondary btn-block mt-2" href="@Url.Action("ProductsExplorer", "Product", new {listType = ProductsListType.Newest, page = 1})"><i class="fa fa-list"></i> @T("SeeMore")</a>
     </div>
     <div class="col-12 col-md-4 col-lg-4 col-xl-3 b-mar-70">
         <div class="text-center mb-3">
             <h2 class="mb-0">@T("HotProductsWithoutPage")</h2>
-            <a class="text-warning fs-12" href="@Url.Action("ProductsExplorer", "Product", new {listType = ProductsListType.HotList})">@T("SeeMore")</a>
+            <a class="text-warning fs-12" href="@Url.Action("ProductsExplorer", "Product", new {listType = ProductsListType.HotList, page = 1})">@T("SeeMore")</a>
         </div>
         @{Html.RenderAction("GetProductsList", "Product", new
             {
@@ -70,12 +70,12 @@
                 wrapperStart = "<div class='col-12 py-2'>",
                 style = ViewStyles.Small
             });}
-        <a class="btn btn-sm btn-secondary btn-block mt-2" href="@Url.Action("ProductsExplorer", "Product", new {listType = ProductsListType.HotList})"><i class="fa fa-list"></i> @T("SeeMore")</a>
+        <a class="btn btn-sm btn-secondary btn-block mt-2" href="@Url.Action("ProductsExplorer", "Product", new {listType = ProductsListType.HotList, page = 1})"><i class="fa fa-list"></i> @T("SeeMore")</a>
     </div>
     <div class="col b-mar-70">
         <div class="text-center mb-3">
             <h2 class="mb-0">@T("MostDownloadedProductsWithoutPage")</h2>
-            <a class="text-warning fs-12" href="@Url.Action("ProductsExplorer", "Product", new {listType = ProductsListType.MostDownloaded})">@T("SeeMore")</a>
+            <a class="text-warning fs-12" href="@Url.Action("ProductsExplorer", "Product", new {listType = ProductsListType.MostDownloaded, page = 1})">@T("SeeMore")</a>
         </div>
         @{Html.RenderAction("GetProductsList", "Product", new
             {
@@ -85,7 +85,7 @@
                 wrapperStart = "<div class='col-12 py-2'>",
                 style = ViewStyles.Large
             });}
-        <a class="btn btn-sm btn-secondary btn-block mt-2" href="@Url.Action("ProductsExplorer", "Product", new {listType = ProductsListType.MostDownloaded})"><i class="fa fa-list"></i> @T("SeeMore")</a>
+        <a class="btn btn-sm btn-secondary btn-block mt-2" href="@Url.Action("ProductsExplorer", "Product", new {listType = ProductsListType.MostDownloaded, page = 1})"><i class="fa fa-list"></i> @T("SeeMore")</a>
     </div>
     @if (settings.EnableBlog)
     {

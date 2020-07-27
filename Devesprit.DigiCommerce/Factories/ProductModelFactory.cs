@@ -73,7 +73,7 @@ namespace Devesprit.DigiCommerce.Factories
                         Id = p.Id,
                         CategoryName = p.GetLocalized(x => x.CategoryName),
                         Slug = p.Slug,
-                        CategoryUrl = url.Action("FilterByCategory", "Product", new { slug = p.Slug })
+                        CategoryUrl = url.Action("FilterByCategory", "Product", new { slug = p.Slug, page = 1 })
                     })
                     .ToList();
                 var desc = product.Descriptions?.OrderBy(p => p.DisplayOrder).FirstOrDefault()?.GetLocalized(x => x.HtmlDescription) ?? "";
@@ -123,7 +123,7 @@ namespace Devesprit.DigiCommerce.Factories
                     Id = p.Id,
                     CategoryName = p.GetLocalized(x => x.CategoryName),
                     Slug = p.Slug,
-                    CategoryUrl = url.Action("FilterByCategory", "Product", new { slug = p.Slug })
+                    CategoryUrl = url.Action("FilterByCategory", "Product", new { slug = p.Slug, page = 1 })
                 })
                 .ToList();
             result.TagsList = product.Tags

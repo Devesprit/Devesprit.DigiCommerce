@@ -11,7 +11,7 @@
             <ul class="list-pro-sidebar-tags">
                 @foreach (var tag in Model)
                 {
-                    <li><a href="@Url.Action("Tag", "Search", new {tag=tag.Item2})" target="_blank">@tag.Item2</a></li>
+                    <li><a href="@Url.Action("Tag", "Search", new {tag=tag.Item2, page = 1})" target="_blank">@tag.Item2</a></li>
                 }
             </ul>
         </div>

@@ -74,7 +74,7 @@
                 <ul class="footer-list">
                     @foreach (var cat in categories)
                     {
-                        <li><a href="@Url.Action("FilterByCategory", "Product", new {slug=cat.Slug, area = ""})">@cat.GetLocalized(p => p.CategoryName)</a></li>
+                        <li><a href="@Url.Action("FilterByCategory", "Product", new {slug=cat.Slug, page = 1, area = ""})">@cat.GetLocalized(p => p.CategoryName)</a></li>
                     }
                 </ul>
             </div>

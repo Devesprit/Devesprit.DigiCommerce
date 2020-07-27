@@ -15,6 +15,7 @@
     <div class="pad-10">
         @using (Html.BeginForm("Index", "Search", FormMethod.Get))
         {
+            <input type="hidden" name="Page" value="1" />
             <div class="row fs-14">
                 <div class="col-12">
                     <div class="form-group">

@@ -19,7 +19,7 @@
         Headline = settings.SiteName.ToString(),
         PotentialAction = new OneOrMany<IAction>(new SearchAction()
         {
-            Target = new Uri(Url.Action("Index", "Search", new { Query = "{search_term_string}" }).GetAbsoluteUrl().UrlDecode()),
+            Target = new Uri(Url.Action("Index", "Search", new { Query = "{search_term_string}", Page = 1 }).GetAbsoluteUrl().UrlDecode()),
             QueryInput = "required name=search_term_string"
         }),
         Description = settings.SiteDescription.ToString(),
@@ -88,7 +88,7 @@
             <div class="swiper-button-prev"></div>
         </div>
         <div class="col-12 d-flex justify-content-center">
-            <a href="@Url.Action("ProductsExplorer", "Product", new {listType = ProductsListType.Newest})" class="btn-more-pro-sec">@T("SeeMore")</a>
+            <a href="@Url.Action("ProductsExplorer", "Product", new {listType = ProductsListType.Newest, page = 1})" class="btn-more-pro-sec">@T("SeeMore")</a>
         </div>
     </div>
 </div>
@@ -99,18 +99,15 @@
         <div class="parallax-layer">
             <div class="row">
                 <div class="col-sm-12 col-md-10 offset-md-1">
-                    <h2 class="parallax-title">irDevelopers</h2>
+                    <h2 class="parallax-title">@T("VIPSubscription")</h2>
                 </div>
                 <div class="col-sm-12 col-md-6 offset-md-1 col-lg-4 offset-lg-1">
                     <div class="parallax-desc">
-                        <p>
-                            Become a member of Unlimited Planet and
-                            download everything for free forever
-                        </p>
+                        <p>@T("VIPPlansAds")</p>
                     </div>
                 </div>
                 <div class="col-sm-12 col-md-10 offset-md-1">
-                    <a href="#" title="" class="btn-parallax">Learn more</a>
+                    <a href="@Url.Action("UpgradeAccount", "Purchase")" target="_blank" class="btn-parallax">@T("JoinNow")</a>
                 </div>
             </div>
         </div>
@@ -135,7 +132,7 @@
                                     style = ViewStyles.Small
                                 });}
                             <div class="col-sm-12 b-mar-20 text-center">
-                                <a href="@Url.Action("ProductsExplorer", "Product", new {listType = ProductsListType.HotList})" class="btn-more-pro-sec">@T("SeeMore")</a>
+                                <a href="@Url.Action("ProductsExplorer", "Product", new {listType = ProductsListType.HotList, page = 1})" class="btn-more-pro-sec">@T("SeeMore")</a>
                             </div>
                         </div>
                     </div>
@@ -155,7 +152,7 @@
                                     style = ViewStyles.Small
                                 });}
                             <div class="col-sm-12 b-mar-20 text-center">
-                                <a href="@Url.Action("ProductsExplorer", "Product", new {listType = ProductsListType.MostDownloaded})" class="btn-more-pro-sec">@T("SeeMore")</a>
+                                <a href="@Url.Action("ProductsExplorer", "Product", new {listType = ProductsListType.MostDownloaded, page = 1})" class="btn-more-pro-sec">@T("SeeMore")</a>
                             </div>
                         </div>
                     </div>
@@ -194,7 +191,7 @@
                 <div class="swiper-button-prev"></div>
             </div>
             <div class="col-12 d-flex justify-content-center">
-                <a href="@Url.Action("FilterByCategory", "Product", new {slug = dotNetCat.Slug})" class="btn-more-pro-sec">@T("SeeMore")</a>
+                <a href="@Url.Action("FilterByCategory", "Product", new {slug = dotNetCat.Slug, page = 1})" class="btn-more-pro-sec">@T("SeeMore")</a>
             </div>
         </div>
     </div>
@@ -227,7 +224,7 @@
                 <div class="swiper-button-prev"></div>
             </div>
             <div class="col-12 d-flex justify-content-center">
-                <a href="@Url.Action("ProductsExplorer", "Product", new {listType = ProductsListType.FreeProducts})" class="btn-parallax">@T("SeeMore")</a>
+                <a href="@Url.Action("ProductsExplorer", "Product", new {listType = ProductsListType.FreeProducts, page = 1})" class="btn-parallax">@T("SeeMore")</a>
             </div>
         </div>
     </div>
@@ -262,7 +259,7 @@
                 <div class="swiper-button-prev"></div>
             </div>
             <div class="col-12 d-flex justify-content-center">
-                <a href="@Url.Action("FilterByCategory", "Product", new {slug = delphiCat.Slug})" class="btn-more-pro-sec">@T("SeeMore")</a>
+                <a href="@Url.Action("FilterByCategory", "Product", new {slug = delphiCat.Slug, page = 1})" class="btn-more-pro-sec">@T("SeeMore")</a>
             </div>
         </div>
     </div>

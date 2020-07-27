@@ -132,7 +132,8 @@ namespace Devesprit.DigiCommerce.Factories
                     PostType = null,
                     OrderBy = SearchResultSortType.Score,
                     SearchPlace = SearchPlace.Title,
-                    Query = post.Title
+                    Query = post.Title,
+                    Page = 1
                 }, _httpContext.Request.Url.Scheme));
 
                 if (post.PostType == PostType.BlogPost)
@@ -170,7 +171,8 @@ namespace Devesprit.DigiCommerce.Factories
                     PostType = null,
                     OrderBy = SearchResultSortType.Score,
                     SearchPlace = SearchPlace.Title,
-                    Query = post.Title
+                    Query = post.Title,
+                    Page = 1
                 }, _httpContext.Request.Url.Scheme));
 
                 if (post.PostType == PostType.BlogPost)

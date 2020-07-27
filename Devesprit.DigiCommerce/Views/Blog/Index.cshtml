@@ -12,7 +12,7 @@
     <div class="col-12 b-mar-70">
         <div class="text-center">
             <h2 class="mb-0">@PostsListType.Newest.GetLocalized()</h2>
-            <a class="text-warning fs-12" href="@Url.Action("BlogExplorer", "Blog", new {listType = PostsListType.Newest})">@T("SeeMore")</a>
+            <a class="text-warning fs-12" href="@Url.Action("BlogExplorer", "Blog", new {listType = PostsListType.Newest, page = 1})">@T("SeeMore")</a>
         </div>
         @{Html.RenderAction("GetBlogPostsList", "Blog", new
             {
@@ -23,12 +23,12 @@
                 style = ViewStyles.Large
             });
         }
-        <a class="btn btn-sm btn-secondary btn-block mt-2" href="@Url.Action("BlogExplorer", "Blog", new {listType = PostsListType.Newest})"><i class="fa fa-list"></i> @T("SeeMore")</a>
+        <a class="btn btn-sm btn-secondary btn-block mt-2" href="@Url.Action("BlogExplorer", "Blog", new {listType = PostsListType.Newest, page = 1})"><i class="fa fa-list"></i> @T("SeeMore")</a>
     </div>
     <div class="col-12 col-md-4 col-lg-4 col-xl-3 b-mar-70">
         <div class="text-center">
             <h2 class="mb-0">@PostsListType.HotList.GetLocalized()</h2>
-            <a class="text-warning fs-12" href="@Url.Action("BlogExplorer", "Blog", new {listType = PostsListType.HotList})">@T("SeeMore")</a>
+            <a class="text-warning fs-12" href="@Url.Action("BlogExplorer", "Blog", new {listType = PostsListType.HotList, page = 1})">@T("SeeMore")</a>
         </div>
         @{Html.RenderAction("GetBlogPostsList", "Blog", new
             {
@@ -38,12 +38,12 @@
                 wrapperStart = "<div class='col-12 py-2'>",
                 style = ViewStyles.Small
             });}
-        <a class="btn btn-sm btn-secondary btn-block mt-2" href="@Url.Action("BlogExplorer", "Blog", new {listType = PostsListType.HotList})"><i class="fa fa-list"></i> @T("SeeMore")</a>
+        <a class="btn btn-sm btn-secondary btn-block mt-2" href="@Url.Action("BlogExplorer", "Blog", new {listType = PostsListType.HotList, page = 1})"><i class="fa fa-list"></i> @T("SeeMore")</a>
     </div>
     <div class="col b-mar-70">
         <div class="text-center">
             <h2 class="mb-0">@PostsListType.MostPopular.GetLocalized()</h2>
-            <a class="text-warning fs-12" href="@Url.Action("BlogExplorer", "Blog", new {listType = PostsListType.MostPopular})">@T("SeeMore")</a>
+            <a class="text-warning fs-12" href="@Url.Action("BlogExplorer", "Blog", new {listType = PostsListType.MostPopular, page = 1})">@T("SeeMore")</a>
         </div>
         @{Html.RenderAction("GetBlogPostsList", "Blog", new
             {
@@ -53,7 +53,7 @@
                 wrapperStart = "<div class='col-12 py-2'>",
                 style = ViewStyles.Normal
             });}
-        <a class="btn btn-sm btn-secondary btn-block mt-2" href="@Url.Action("BlogExplorer", "Blog", new {listType = PostsListType.MostPopular})"><i class="fa fa-list"></i> @T("SeeMore")</a>
+        <a class="btn btn-sm btn-secondary btn-block mt-2" href="@Url.Action("BlogExplorer", "Blog", new {listType = PostsListType.MostPopular, page = 1})"><i class="fa fa-list"></i> @T("SeeMore")</a>
     </div>
 </div>
 @Html.Widget("blog_home_page_end")

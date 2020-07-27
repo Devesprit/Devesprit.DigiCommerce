@@ -39,7 +39,7 @@
             @{ counter = 0;}
             @foreach (var cat in Model.Categories)
             {
-                <a href="@Url.Action("FilterByCategory", "Blog", new {slug=cat.Slug})" target="_blank">@cat.CategoryName</a>
+                <a href="@Url.Action("FilterByCategory", "Blog", new {slug=cat.Slug, page = 1})" target="_blank">@cat.CategoryName</a>
                 if (counter < Model.Categories.Count - 1)
                 {
                     counter++;
