@@ -7,10 +7,12 @@
 @model Devesprit.DigiCommerce.Models.Products.ProductsExplorerModel
 
 @{
-
+    if (Model.PageIndex > 1)
+    {
+        Html.AddHeadCustomParts("<meta name=\"robots\" content=\"noindex\">");
+    }
     ViewBag.Title = string.Format(Model.PostsListType.GetLocalized(), Model.PageIndex);
     ViewBag.MetaDescription = ViewBag.Title;
-    Html.AddHeadCustomParts("<meta name=\"robots\" content=\"index,follow\">");
     var workContext = DependencyResolver.Current.GetService<IWorkContext>();
     Html.AddCanonicalUrlParts(Url.Action("ProductsExplorer", "Product", new { page = Model.PageIndex, listType = Model.PostsListType, catId = Model.FilterByCategoryId, fromDate = Model.FromDate, lang = workContext.CurrentLanguage.IsoCode }, Request.Url.Scheme));
 }
@@ -25,6 +27,16 @@
                         <a href="@Url.Action("Products", "RssFeed", new {listType = Model.PostsListType, page = 1, catId = Model.FilterByCategoryId, fromDate = Model.FromDate}).RemoveEmptyParametersFromQueryString()" target="_blank" title="@T("RSSFeed")" class="text-warning"><i class="fa fa-rss"></i></a>
                         @Html.Raw(ViewBag.Title)
                     </h1>
+                </div>
+				
+                <div class="col-12">
+                    <ul class="breadcrumbs">
+                        <li><a href="@Url.Action("Index", "Home")">@T("Home")</a></li>
+                        <li>/</li>
+                        <li>
+                            @Html.Raw(ViewBag.Title)
+                        </li>
+                    </ul>
                 </div>
                 <div class="col-12 d-flex justify-content-center">
                     @{Html.RenderPartial("Partials/_SearchBox");}

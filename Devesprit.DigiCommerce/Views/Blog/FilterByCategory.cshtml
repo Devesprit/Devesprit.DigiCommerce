@@ -6,9 +6,12 @@
 @model Devesprit.DigiCommerce.Models.Post.PostsExplorerModel
 
 @{
+    if (Model.PageIndex > 1)
+    {
+        Html.AddHeadCustomParts("<meta name=\"robots\" content=\"noindex\">");
+    }
     ViewBag.Title = T("NewestPostsIn", Model.CategoryName, Model.PageIndex);
     ViewBag.MetaDescription = ViewBag.Title;
-    Html.AddHeadCustomParts("<meta name=\"robots\" content=\"index,follow\">");
     var workContext = DependencyResolver.Current.GetService<IWorkContext>();
     Html.AddCanonicalUrlParts(Url.Action("FilterByCategory", "Blog", new {page = Model.PageIndex, slug = Model.CategorySlug, lang = workContext.CurrentLanguage.IsoCode}, Request.Url.Scheme));
 }

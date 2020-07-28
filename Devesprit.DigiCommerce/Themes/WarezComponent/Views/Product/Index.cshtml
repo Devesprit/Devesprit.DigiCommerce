@@ -20,7 +20,7 @@
     ViewBag.MetaDescription = Model.MetaDescription;
     var settings = DependencyResolver.Current.GetService<ISettingService>().LoadSetting<SiteSettings>();
 
-    Html.AddHeadCustomParts("<meta name=\"robots\" content=\"index,follow\">");
+    
     Html.AddHeadCustomParts("<meta property=\"og:title\" content=\"" + Model.Title + "\">");
     Html.AddHeadCustomParts("<meta property=\"og:url\" content=\"" + Model.PostUrl + "\">");
     Html.AddHeadCustomParts("<meta property=\"og:description\" content=\"" + Model.MetaDescription + "\">");
@@ -30,7 +30,7 @@
     {
         Html.AddHeadCustomParts("<meta property=\"og:image\" content=\"" + Model.Images[0].ImageUrl + "\">");
     }
-
+	
     //Add Canonical Url
     var workContext = DependencyResolver.Current.GetService<IWorkContext>();
     var pageMainUrl = Url.Action("Index", "Product", new { id = Model.Id, slug = Model.Slug, lang = workContext.CurrentLanguage.IsoCode }, Request.Url.Scheme);
@@ -218,14 +218,11 @@
             images.Add(new Uri(image.ImageUrl.GetAbsoluteUrl()));
         }
 
-        var result = new Schema.NET.WebPage()
+        var result = new Schema.NET.SoftwareApplication()
         {
             Name = Model.Title.ConvertHtmlToText(),
             Headline = Model.Title.ConvertHtmlToText(),
-            Description = Model.Descriptions != null && Model.Descriptions.Count > 0
-                ? JsonConvert.ToString(Model.Descriptions[0].Description.ConvertHtmlToText())
-                : Model.MetaDescription,
-            Keywords = Model.MetaKeyWords,
+			Description = Model.MetaDescription,
             DatePublished = Model.PublishDate,
             DateCreated = Model.PublishDate,
             DateModified = Model.LastUpdate,
@@ -234,55 +231,21 @@
                 UserInteractionCount = Model.NumberOfViews,
             },
             Url = new Uri(Model.PostUrl.GetAbsoluteUrl()),
-            DiscussionUrl = new Uri(Model.PostUrl.GetAbsoluteUrl()),
-            PrimaryImageOfPage = new ImageObject()
-            {
-                Url = Model.Images != null && Model.Images.Count > 0 ? new Uri(Model.Images[0].ImageUrl.GetAbsoluteUrl()) : null
-            },
             Image = images,
-            ContentRating = new Values<IRating, string>(),
-            Publisher = new Organization()
+			ApplicationCategory = "DeveloperApplication",
+            AggregateRating = new AggregateRating()
             {
-                Name = setting.GetLocalized(x => x.SiteName),
-                Email = setting.SiteEmailAddress,
-                Url = new Uri(setting.SiteUrl),
-                Logo = new Uri(setting.GetLocalized(x => x.SiteLogoHeader).GetAbsoluteUrl())
-            },
-            Provider = new Organization()
-            {
-                Name = setting.GetLocalized(x => x.SiteName),
-                Email = setting.SiteEmailAddress,
-                Url = new Uri(setting.SiteUrl),
-                Logo = new Uri(setting.GetLocalized(x => x.SiteLogoHeader).GetAbsoluteUrl())
+                RatingValue = double.Parse("0"+CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator + Model.Id) * (5 - 4) + 4,
+                BestRating = 5,
+                RatingCount = Model.NumberOfDownloads + 1,
             },
             Offers = new OneOrMany<IOffer>(new Offer()
             {
                 Price = Model.Price.ToString("F2", CultureInfo.InvariantCulture),
                 PriceCurrency = defaultCurrency.IsoCode
             }),
+			OperatingSystem = "WINDOWS, MacOS, Linux"
         };
-
-        var relatedProducts = DependencyResolver.Current.GetService<ISearchEngine>()
-            .MoreLikeThis(Model.Id, null, 0, PostType.Product, SearchPlace.Title | SearchPlace.Description | SearchPlace.Tags, 20);
-        var relatedLinks = new List<Uri>();
-        if (!relatedProducts.HasError && relatedProducts.Documents.Count > 0)
-        {
-            var posts = DependencyResolver.Current.GetService<IPostService<TblPosts>>().GetItemsById(
-                relatedProducts.Documents.Select(p => p.DocumentId).Take(5)
-                    .ToList(), 1,
-                5);
-
-            foreach (var post in posts)
-            {
-                relatedLinks.Add(
-                    new Uri(("/Product/" + post.Slug).GetAbsoluteUrl()));
-            }
-        }
-
-        if (relatedLinks.Count > 0)
-        {
-            result.RelatedLink = new OneOrMany<Uri>(relatedLinks);
-        }
 
 
         return result.ToHtmlEscapedString();

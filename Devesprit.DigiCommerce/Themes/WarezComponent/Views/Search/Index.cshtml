@@ -1,15 +1,32 @@
 ﻿@using System.Web.Mvc.Html
 @using Devesprit.DigiCommerce.Models
 @using Devesprit.Utilities
+@using Devesprit.Utilities.Extensions
 @using X.PagedList.Mvc
 @model Devesprit.DigiCommerce.Models.Search.SearchResultModel
 @{
+    if (Model.SearchTerm.Page > 1)
+    {
+        Html.AddHeadCustomParts("<meta name=\"robots\" content=\"noindex\">");
+    }
     ViewBag.Title = Model != null ? T("SearchFor", Model.SearchTerm.Query, Model.SearchTerm.Page ?? 1) : T("NoItemFound");
-    Html.AddHeadCustomParts("<meta name=\"robots\" content=\"index,follow\">");
+
     if (ViewBag.CanonicalUrl != null)
     {
         string url = ViewBag.CanonicalUrl.ToString();
         Html.AddCanonicalUrlParts(url);
+    }
+
+    if (Model.SearchTerm.Page != null)
+    {
+        if (!Model.SearchResult.IsFirstPage)
+        {
+            Html.AddHeadCustomParts("<meta name=\"prev\" content=\"" + GeneratePageUrl(Model.SearchTerm.Page.Value - 1).GetAbsoluteUrl() + "\">");
+        }
+        if (!Model.SearchResult.IsLastPage)
+        {
+            Html.AddHeadCustomParts("<meta name=\"next\" content=\"" + GeneratePageUrl(Model.SearchTerm.Page.Value + 1).GetAbsoluteUrl() + "\">");
+        }
     }
 }
 

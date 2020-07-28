@@ -3,7 +3,7 @@
 @using Devesprit.Services.Localization
 @{
     ViewBag.Title = T("TermsAndConditions");
-    Html.AddHeadCustomParts("<meta name=\"robots\" content=\"index,follow\">");
+    
     var settings = DependencyResolver.Current.GetService<ISettingService>().LoadSetting<SiteSettings>();
 }
 

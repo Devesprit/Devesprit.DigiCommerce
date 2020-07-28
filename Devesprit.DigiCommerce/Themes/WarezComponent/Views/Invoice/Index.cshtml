@@ -6,6 +6,7 @@
 @using Devesprit.WebFramework.Helpers
 @model Devesprit.DigiCommerce.Models.Invoice.InvoiceModel
 @{
+    Html.AddHeadCustomParts("<meta name=\"robots\" content=\"noindex\">");
     var settings = DependencyResolver.Current.GetService<ISettingService>().LoadSetting<SiteSettings>();
     ViewBag.Title = T("Invoice");
     var isAdmin = User.IsInRole("Admin");
@@ -33,8 +34,6 @@
         Html.AppendScriptParts(ResourceLocation.Footer, "~/Scripts/daterangepicker.js");
         Html.AppendScriptParts(ResourceLocation.Footer, "~/Scripts/moment.js");
     }
-
-    Html.AddHeadCustomParts("<meta name=\"robots\" content=\"noindex,nofollow\">");
 }
 <!-- pro head slider -->
 <header class="pro-head-slider">

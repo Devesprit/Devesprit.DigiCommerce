@@ -18,19 +18,21 @@ namespace Devesprit.Utilities.Extensions
 
         public static Uri SetLangIso(this Uri uri, string langIso, List<string> allLanguagesIso)
         {
+            var haveBackSlash = uri.ToString().EndsWith("/");
             uri = uri.RemoveLangIso(allLanguagesIso);
             var host = uri.GetHostUrl().TrimEnd("/");
             var path = uri.GetPathAndQueryAndFragment().TrimStart("/");
 
             if (!string.IsNullOrWhiteSpace(path))
             {
-                return new Uri(host + "/" + langIso + "/" + path);
+                return new Uri(host + "/" + langIso + "/" + path + (haveBackSlash ? "/" : ""));
             }
-            return new Uri(host + "/" + langIso);
+            return new Uri(host + "/" + langIso + (haveBackSlash ? "/" : ""));
         }
 
         public static Uri RemoveLangIso(this Uri uri, List<string> allLanguagesIso)
         {
+            var haveBackSlash = uri.ToString().EndsWith("/");
             var host = uri.GetHostUrl().TrimEnd("/");
             var path = uri.GetPathAndQueryAndFragment().TrimStart("/");
 
@@ -53,10 +55,10 @@ namespace Devesprit.Utilities.Extensions
 
             if (!string.IsNullOrWhiteSpace(path))
             {
-                return new Uri(host + "/" + path);
+                return new Uri(host + "/" + path + (haveBackSlash ? "/" : ""));
             }
 
-            return new Uri(host);
+            return new Uri(host + (haveBackSlash ? "/" : ""));
         }
     }
 }

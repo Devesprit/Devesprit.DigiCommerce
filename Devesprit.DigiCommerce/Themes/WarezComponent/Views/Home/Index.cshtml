@@ -35,7 +35,7 @@
         SameAs = new OneOrMany<Uri>(socialAccounts.Select(p => new Uri(p.YourAccountUrl)).ToList()),
 
     };
-    Html.AddHeadCustomParts("<meta name=\"robots\" content=\"index,follow\">");
+    
 
     //Add Canonical Url
     var workContext = DependencyResolver.Current.GetService<IWorkContext>();
@@ -265,12 +265,12 @@
     </div>
 }
 
-<script type="application/ld+json">
+@*<script type="application/ld+json">
     @Html.Raw(webSiteSchema.ToHtmlEscapedString())
 </script>
 <script type="application/ld+json">
     @Html.Raw(organizationSchema.ToHtmlEscapedString())
-</script>
+</script>*@
 
 @Html.Widget("home_page_end")
 

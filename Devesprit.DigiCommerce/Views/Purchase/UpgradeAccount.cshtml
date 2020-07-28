@@ -7,7 +7,7 @@
     var currentUserGroupPriority = Model.CurrentUser?.SubscriptionExpireDate > DateTime.Now ?
         Model.CurrentUser?.UserGroup?.GroupPriority ?? int.MinValue : int.MinValue;
 
-    Html.AddHeadCustomParts("<meta name=\"robots\" content=\"index,follow\">");
+    
     var upgradePlanNotes = T("UpgradePlanNotes");
 }
 

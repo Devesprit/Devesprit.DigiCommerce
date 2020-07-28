@@ -9,7 +9,7 @@
     ViewBag.Title = T("ContactUs");
     var currentLang = DependencyResolver.Current.GetService<IWorkContext>().CurrentLanguage;
     var currentSettings = DependencyResolver.Current.GetService<ISettingService>().LoadSetting<SiteSettings>();
-    Html.AddHeadCustomParts("<meta name=\"robots\" content=\"index,follow\">");
+    
     var socialAccountsService = DependencyResolver.Current.GetService<ISocialAccountsService>();
 }
 

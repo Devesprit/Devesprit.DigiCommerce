@@ -18,7 +18,7 @@
     ViewBag.MetaDescription = Model.MetaDescription;
     var settings = DependencyResolver.Current.GetService<ISettingService>().LoadSetting<SiteSettings>();
 
-    Html.AddHeadCustomParts("<meta name=\"robots\" content=\"index,follow\">");
+    
     Html.AddHeadCustomParts("<meta property=\"og:title\" content=\"" + Model.Title + "\">");
     Html.AddHeadCustomParts("<meta property=\"og:url\" content=\"" + Model.PostUrl + "\">");
     Html.AddHeadCustomParts("<meta property=\"og:description\" content=\"" + Model.MetaDescription + "\">");

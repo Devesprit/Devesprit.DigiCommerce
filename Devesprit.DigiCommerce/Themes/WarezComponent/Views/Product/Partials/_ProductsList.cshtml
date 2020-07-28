@@ -3,11 +3,24 @@
 @using Devesprit.DigiCommerce.Models
 @using Devesprit.DigiCommerce.Models.Post
 @using Devesprit.Utilities
+@using Devesprit.Utilities.Extensions
 @using X.PagedList.Mvc
 @model Devesprit.DigiCommerce.Models.Products.ProductsListModel
 
 @{
     Layout = null;
+
+    if (Model.ShowPager)
+    {
+        if (!Model.PostsList.IsFirstPage)
+        {
+            Html.AddHeadCustomParts("<meta name=\"prev\" content=\"" + GeneratePageUrl(Model.PageIndex - 1).GetAbsoluteUrl() + "\">");
+        }
+        if (!Model.PostsList.IsLastPage)
+        {
+            Html.AddHeadCustomParts("<meta name=\"next\" content=\"" + GeneratePageUrl(Model.PageIndex + 1).GetAbsoluteUrl() + "\">");
+        }
+    }
 }
 @if (Model.PostsList.Any())
 {

@@ -34,7 +34,7 @@
         SameAs = new OneOrMany<Uri>(socialAccounts.Select(p => new Uri(p.YourAccountUrl)).ToList()),
 
     };
-    Html.AddHeadCustomParts("<meta name=\"robots\" content=\"index,follow\">");
+    
 
     //Add Canonical Url
     var workContext = DependencyResolver.Current.GetService<IWorkContext>();

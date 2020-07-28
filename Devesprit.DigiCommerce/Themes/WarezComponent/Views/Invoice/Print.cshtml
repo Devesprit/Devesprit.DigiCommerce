@@ -10,10 +10,10 @@
 @model Devesprit.DigiCommerce.Models.Invoice.InvoiceModel
 
 @{
+    Html.AddHeadCustomParts("<meta name=\"robots\" content=\"noindex\">");
     Layout = Html.GetCurrentThemeLayoutAddress(true);
     var settings = DependencyResolver.Current.GetService<ISettingService>().LoadSetting<SiteSettings>();
     var user = DependencyResolver.Current.GetService<IUsersService>().UserManager.FindById(Model.UserId);
-    Html.AddHeadCustomParts("<meta name=\"robots\" content=\"noindex,nofollow\">");
 }
 
 <div class="container bg-white t-pad-30 b-pad-15 mar-v-100">

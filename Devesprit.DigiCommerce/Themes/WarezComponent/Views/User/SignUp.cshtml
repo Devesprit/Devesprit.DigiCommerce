@@ -8,7 +8,6 @@
     var workContext = DependencyResolver.Current.GetService<IWorkContext>();
     var currentLang = workContext.CurrentLanguage;
     Html.AddCanonicalUrlParts(Url.Action("SignUp", "User", new { lang = workContext.CurrentLanguage.IsoCode }, Request.Url.Scheme));
-    Html.AddHeadCustomParts("<meta name=\"robots\" content=\"index,follow\">");
 }
 
 <div class="log-reg-bg d-flex align-items-center">

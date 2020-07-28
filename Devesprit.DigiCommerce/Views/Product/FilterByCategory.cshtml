@@ -7,9 +7,12 @@
 @model Devesprit.DigiCommerce.Models.Products.ProductsExplorerModel
 
 @{
+    if (Model.PageIndex > 1)
+    {
+        Html.AddHeadCustomParts("<meta name=\"robots\" content=\"noindex\">");
+    }
     ViewBag.Title = T("NewestProductsIn", Model.CategoryName, Model.PageIndex);
     ViewBag.MetaDescription = ViewBag.Title;
-    Html.AddHeadCustomParts("<meta name=\"robots\" content=\"index,follow\">");
     var workContext = DependencyResolver.Current.GetService<IWorkContext>();
     Html.AddCanonicalUrlParts(Url.Action("FilterByCategory", "Product", new {page = Model.PageIndex, slug = Model.CategorySlug, lang = workContext.CurrentLanguage.IsoCode}, Request.Url.Scheme));
 }
