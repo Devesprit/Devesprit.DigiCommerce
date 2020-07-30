@@ -167,7 +167,7 @@ namespace Devesprit.DigiCommerce.Controllers
             {
                 var routeValueDictionary = new RouteValueDictionary
                 {
-                    {"tag", tag.GetLocalized(x => x.Tag, defaultLang.Id)}
+                    {"tag", tag.GetLocalized(x => x.Tag, defaultLang.Id).UrlEncode()}
                 };
                 var uri = new Uri(Url.Action(action, controller, routeValueDictionary, Request.Url.Scheme));
 
@@ -180,7 +180,7 @@ namespace Devesprit.DigiCommerce.Controllers
             {
                 var routeValueDictionary = new RouteValueDictionary
                 {
-                    {"tag", tag.GetLocalized(x => x.Tag, defaultLang.Id)}
+                    {"tag", tag.GetLocalized(x => x.Tag, defaultLang.Id).UrlEncode()}
                 };
                 var uri = new Uri(Url.Action(action, controller, routeValueDictionary, Request.Url.Scheme));
 
@@ -193,7 +193,7 @@ namespace Devesprit.DigiCommerce.Controllers
             {
                 var routeValueDictionary = new RouteValueDictionary
                 {
-                    {"tag", tag.GetLocalized(x => x.Tag, lang.Id)}
+                    {"tag", tag.GetLocalized(x => x.Tag, lang.Id).UrlEncode()}
                 };
                 var uri = new Uri(Url.Action(action, controller, routeValueDictionary, Request.Url.Scheme));
 

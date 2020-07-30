@@ -27,6 +27,7 @@ namespace Devesprit.Utilities.Extensions
             {
                 return new Uri(host + "/" + langIso + "/" + path + (haveBackSlash ? "/" : ""));
             }
+            
             return new Uri(host + "/" + langIso + (haveBackSlash ? "/" : ""));
         }
 

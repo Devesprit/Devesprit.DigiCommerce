@@ -65,15 +65,15 @@
 
     @if (settings.AppendLanguageCodeToUrl)
     {
-        <link rel="alternate" hreflang="x-default" href="@Request.Url.SetLangIso(defaultLanguage.IsoCode, allLanguagesIso).ToString()" />
+        <link rel="alternate" hreflang="x-default" href="@HttpUtility.UrlPathEncode(Request.Url.SetLangIso(defaultLanguage.IsoCode, allLanguagesIso).ToString())" />
     }
     else
     {
-        <link rel="alternate" hreflang="x-default" href="@Request.Url.RemoveLangIso(allLanguagesIso).ToString()" />
+        <link rel="alternate" hreflang="x-default" href="@HttpUtility.UrlPathEncode(Request.Url.RemoveLangIso(allLanguagesIso).ToString())" />
     }
     @foreach (var lang in allLanguagesIso)
     {
-        <link rel="alternate" hreflang="@lang" href="@Request.Url.SetLangIso(lang, allLanguagesIso).ToString()" />
+        <link rel="alternate" hreflang="@lang" href="@HttpUtility.UrlPathEncode(Request.Url.SetLangIso(lang, allLanguagesIso).ToString())" />
     }
 
     <meta charset="utf-8">

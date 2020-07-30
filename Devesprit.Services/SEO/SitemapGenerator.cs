@@ -36,7 +36,7 @@ namespace Devesprit.Services.SEO
 
         protected virtual XElement CreateItemElement(ISitemapItem item)
         {
-            var itemElement = new XElement(Xmlns + "url", new XElement(Xmlns + "loc", item.Url.ToLowerInvariant()));
+            var itemElement = new XElement(Xmlns + "url", new XElement(Xmlns + "loc", item.Url.ToLowerInvariant().Trim().TrimEnd('/')));
 
             // all other elements are optional
 
@@ -55,8 +55,8 @@ namespace Devesprit.Services.SEO
                 {
                     itemElement.Add(new XElement(Xhtml + "link",
                         new XAttribute("rel", "alternate"),
-                        new XAttribute("hreflang", alternateUrl.Item1.ToLowerInvariant()),
-                        new XAttribute("href", alternateUrl.Item2.ToLowerInvariant())));
+                        new XAttribute("hreflang", alternateUrl.Item1.ToLowerInvariant().Trim().TrimEnd('/')),
+                        new XAttribute("href", alternateUrl.Item2.ToLowerInvariant().Trim().TrimEnd('/'))));
                 }
             }
 
