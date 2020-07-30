@@ -55,8 +55,8 @@ namespace Devesprit.Services.SEO
                 {
                     itemElement.Add(new XElement(Xhtml + "link",
                         new XAttribute("rel", "alternate"),
-                        new XAttribute("hreflang", alternateUrl.Item1),
-                        new XAttribute("href", alternateUrl.Item2)));
+                        new XAttribute("hreflang", alternateUrl.Item1.ToLowerInvariant()),
+                        new XAttribute("href", alternateUrl.Item2.ToLowerInvariant())));
                 }
             }
 
