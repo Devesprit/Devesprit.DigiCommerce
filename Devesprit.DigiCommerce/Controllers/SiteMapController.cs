@@ -167,7 +167,8 @@ namespace Devesprit.DigiCommerce.Controllers
             {
                 var routeValueDictionary = new RouteValueDictionary
                 {
-                    {"tag", tag.GetLocalized(x => x.Tag, defaultLang.Id).UrlEncode()}
+                    {"tag", tag.GetLocalized(x => x.Tag, defaultLang.Id).UrlEncode()},
+                    {"page", 1 }
                 };
                 var uri = new Uri(Url.Action(action, controller, routeValueDictionary, Request.Url.Scheme));
 
@@ -180,7 +181,8 @@ namespace Devesprit.DigiCommerce.Controllers
             {
                 var routeValueDictionary = new RouteValueDictionary
                 {
-                    {"tag", tag.GetLocalized(x => x.Tag, defaultLang.Id).UrlEncode()}
+                    {"tag", tag.GetLocalized(x => x.Tag, defaultLang.Id).UrlEncode()},
+                    {"page", 1 }
                 };
                 var uri = new Uri(Url.Action(action, controller, routeValueDictionary, Request.Url.Scheme));
 
@@ -193,7 +195,8 @@ namespace Devesprit.DigiCommerce.Controllers
             {
                 var routeValueDictionary = new RouteValueDictionary
                 {
-                    {"tag", tag.GetLocalized(x => x.Tag, lang.Id).UrlEncode()}
+                    {"tag", tag.GetLocalized(x => x.Tag, lang.Id).UrlEncode()},
+                    {"page", 1 }
                 };
                 var uri = new Uri(Url.Action(action, controller, routeValueDictionary, Request.Url.Scheme));
 
@@ -241,7 +244,7 @@ namespace Devesprit.DigiCommerce.Controllers
                 items.AddRange((await _tagsService.GetAsEnumerableAsync()).Select(tag =>
                     new SitemapItem(
                         GenerateUrl("Tag", "Search",
-                            new { tag = tag.GetLocalized(p=> p.Tag, lang.Id), lang = lang.IsoCode }),
+                            new { tag = tag.GetLocalized(p=> p.Tag, lang.Id), page = 1, lang = lang.IsoCode }),
                         DateTime.Now,
                         SitemapChangeFrequency.Daily,
                         0.8,
@@ -253,11 +256,11 @@ namespace Devesprit.DigiCommerce.Controllers
                                 p.DisplayArea == DisplayArea.ProductsSection)
                     .Select(category =>
                         new SitemapItem(
-                            GenerateUrl("FilterByCategory", "Product", new { slug = category.Slug, lang = lang.IsoCode }),
+                            GenerateUrl("FilterByCategory", "Product", new { slug = category.Slug, page = 1, lang = lang.IsoCode }),
                             DateTime.Now,
                             SitemapChangeFrequency.Daily,
                             0.9,
-                            GenerateAlternateUrls(languagesList, "FilterByCategory", "Product", new { slug = category.Slug }, settings)
+                            GenerateAlternateUrls(languagesList, "FilterByCategory", "Product", new { slug = category.Slug, page = 1 }, settings)
                         )));
 
                 if (settings.EnableBlog)
@@ -267,11 +270,11 @@ namespace Devesprit.DigiCommerce.Controllers
                         .Select(category =>
                             new SitemapItem(
                                 GenerateUrl("FilterByCategory", "Blog",
-                                    new { slug = category.Slug, lang = lang.IsoCode }),
+                                    new { slug = category.Slug, page = 1, lang = lang.IsoCode }),
                                 DateTime.Now,
                                 SitemapChangeFrequency.Daily,
                                 0.8,
-                                GenerateAlternateUrls(languagesList, "FilterByCategory", "Blog", new { slug = category.Slug }, settings)
+                                GenerateAlternateUrls(languagesList, "FilterByCategory", "Blog", new { slug = category.Slug, page = 1 }, settings)
                             )));
                 }
 
@@ -305,7 +308,8 @@ namespace Devesprit.DigiCommerce.Controllers
                                 lang = lang.IsoCode,
                                 OrderBy = SearchResultSortType.Score,
                                 SearchPlace = SearchPlace.Title,
-                                Query = post.Title
+                                Query = post.Title,
+                                Page = 1
                             }),
                             post.LastUpDate ?? post.PublishDate,
                             SitemapChangeFrequency.Weekly,
@@ -314,7 +318,8 @@ namespace Devesprit.DigiCommerce.Controllers
                             {
                                 OrderBy = SearchResultSortType.Score,
                                 SearchPlace = SearchPlace.Title,
-                                Query = post.Title
+                                Query = post.Title,
+                                Page = 1
                             }, settings)
                         ));
                     }

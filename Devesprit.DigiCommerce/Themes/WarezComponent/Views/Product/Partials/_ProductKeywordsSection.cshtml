@@ -11,7 +11,6 @@
             <ul class="list-pro-sidebar-keywords">
                 @foreach (var keyword in Model.Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries).Select(p => p.Trim()).Where(p => !string.IsNullOrWhiteSpace(p)))
                 {
-                    @*<li><a href="@Url.Action("Keyword", "Search", new {keyword=keyword})" target="_blank">@keyword</a></li>*@
                     <li><span>@keyword</span></li>
                 }
             </ul>

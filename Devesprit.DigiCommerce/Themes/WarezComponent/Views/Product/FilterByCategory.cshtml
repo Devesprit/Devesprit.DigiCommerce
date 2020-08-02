@@ -13,8 +13,7 @@
     {
         Html.AddHeadCustomParts("<meta name=\"robots\" content=\"noindex\">");
     }
-    
-    var categoriesService = DependencyResolver.Current.GetService<IPostCategoriesService>();
+	var categoriesService = DependencyResolver.Current.GetService<IPostCategoriesService>();
     var catLists = categoriesService.GetParentCategoriesList(Model.FilterByCategoryId.Value);
 
     var categoryFullName = string.Join(" / ", catLists.Select(p => p.GetLocalized(x => x.CategoryName)));
@@ -34,7 +33,7 @@
                 <div class="col-12 d-flex justify-content-center">
                     <h1 class="pro-head-title pro-head-title-archive">
                         <a href="@Url.Action("Products", "RssFeed", new {listType = Model.PostsListType, page = 1, catId = Model.FilterByCategoryId, fromDate = Model.FromDate}).RemoveEmptyParametersFromQueryString()" target="_blank" title="@T("RSSFeed")" class="text-warning"><i class="fa fa-rss"></i></a>
-                        @Html.Raw(ViewBag.Title)
+                        @Html.Raw(@T("NewestProductsInCategory", categoryFullName))
                     </h1>
                 </div>
                 <div class="col-12">
@@ -49,6 +48,8 @@
                                 </a>
                             </li>
                         }
+						<li>/</li>
+						<li>@T("Page", Model.PageIndex)</li>
                     </ul>
                 </div>
                 <div class="col-12 d-flex justify-content-center">

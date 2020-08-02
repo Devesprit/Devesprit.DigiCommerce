@@ -13,6 +13,7 @@ using Devesprit.Services;
 using Devesprit.Services.MemoryCache;
 using Devesprit.Services.Posts;
 using Devesprit.Services.SearchEngine;
+using Devesprit.Utilities;
 using Elmah;
 using Microsoft.AspNet.Identity;
 
@@ -100,7 +101,7 @@ namespace Devesprit.DigiCommerce.Controllers
                 model.SearchPlace,
                 model.LanguageId,
                 model.PageSize
-            }, Request.Url.Scheme);
+            }, Request.Url.Scheme).RemoveEmptyParametersFromQueryString();
             return View(viewModel);
         }  
 
@@ -147,7 +148,7 @@ namespace Devesprit.DigiCommerce.Controllers
                 lang = WorkContext.CurrentLanguage.IsoCode,
                 tag,
                 page,
-            }, Request.Url.Scheme);
+            }, Request.Url.Scheme).RemoveEmptyParametersFromQueryString();
             return View("Index", viewModel);
         }
 
@@ -193,7 +194,7 @@ namespace Devesprit.DigiCommerce.Controllers
                 lang = WorkContext.CurrentLanguage.IsoCode,
                 keyword,
                 page,
-            }, Request.Url.Scheme);
+            }, Request.Url.Scheme).RemoveEmptyParametersFromQueryString();
             return View("Index", viewModel);
         }
 

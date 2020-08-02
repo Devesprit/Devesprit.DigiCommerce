@@ -5,7 +5,8 @@
 @using X.PagedList.Mvc
 @model Devesprit.DigiCommerce.Models.Search.SearchResultModel
 @{
-    if (Model.SearchTerm.Page > 1)
+    if (Model == null || Model.SearchTerm.Page > 1 || Model.NumberOfItemsFound == 0 ||
+        Request.RawUrl.Contains("/Search/", StringComparison.InvariantCultureIgnoreCase))
     {
         Html.AddHeadCustomParts("<meta name=\"robots\" content=\"noindex\">");
     }
@@ -37,7 +38,7 @@
             <div class="row">
                 <div class="col-12 d-flex justify-content-center">
                     <h1 class="pro-head-title pro-head-title-single no-t-mar">
-                        @Html.Raw(ViewBag.Title)
+                        @Html.Raw(T("SearchResultFor", Model.SearchTerm.Query))
                     </h1>
                 </div>
                 <div class="col-12">
@@ -133,10 +134,10 @@ else
                                 @Html.Raw("<div class='col-12 py-2'>")
                                 break;
                             case ViewStyles.Normal:
-                                @Html.Raw("<div class='col-12 col-sm-6 "+(Model.ShowAdvancedSearchPanel ? "" : "col-lg-4")+" py-2'>")
+                                @Html.Raw("<div class='col-12 col-sm-6 "+(Model.ShowAdvancedSearchPanel ? "" : "col-lg-3")+" py-2'>")
                                 break;
                             case ViewStyles.Small:
-                                @Html.Raw("<div class='col-12 col-sm-6 "+(Model.ShowAdvancedSearchPanel ? "" : "col-lg-4")+" py-2'>")
+                                @Html.Raw("<div class='col-12 col-sm-6 "+(Model.ShowAdvancedSearchPanel ? "" : "col-lg-3")+" py-2'>")
                                 break;
                         }
                         {
