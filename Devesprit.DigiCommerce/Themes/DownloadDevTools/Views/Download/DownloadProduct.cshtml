@@ -1,13 +1,20 @@
 ﻿
+@using System.Globalization
 @using Devesprit.Core
+@using Devesprit.Core.Settings
+@using Devesprit.Services
+@using Devesprit.Services.Currency
 @using Devesprit.Services.Products
+@using Devesprit.Utilities
+@using Devesprit.Utilities.Extensions
 @using Devesprit.WebFramework.Helpers
+@using Schema.NET
 @using OtherExtensions = Devesprit.Utilities.Extensions.OtherExtensions
 
 @model Devesprit.DigiCommerce.Models.Download.DownloadModel
 @{
-    ViewBag.Title = $"{T("Download")} - {Model.PageTitle}";
-    ViewBag.MetaDescription = ViewBag.Title;
+    ViewBag.Title = T("DownloadPageTitle", Model.PageTitle);
+    ViewBag.MetaDescription = T("DownloadPageMetaDesc", Model.PageTitle);
     int counter = 0;
     var currentLang = DependencyResolver.Current.GetService<IWorkContext>().CurrentLanguage;
 }
@@ -19,7 +26,7 @@
             <div class="row">
                 <div class="col-12 d-flex justify-content-center">
                     <h1 class="pro-head-title pro-head-title-single no-t-mar">
-                        @T("Download") @Html.Raw(Model.PageTitle)
+                        @T("DownloadPageHeader", Html.Raw(Model.PageTitle))
                     </h1>
                 </div>
                 <div class="col-12">
@@ -203,4 +210,54 @@ function CopyToClipboard(elem) {
 	SuccessAlert('Password copied to clipboard!', '');
 }
 </script>, true);
+}
+
+<script type="application/ld+json">
+    @Html.Raw(GenerateSchema())
+</script>
+
+@functions
+{
+    private string GenerateSchema()
+    {
+        var setting = DependencyResolver.Current.GetService<ISettingService>().LoadSetting<SiteSettings>();
+        var defaultCurrency = DependencyResolver.Current.GetService<ICurrencyService>().GetDefaultCurrency();
+        var images = new List<Uri>();
+        foreach (var image in Model.ProductModel.Images)
+        {
+            images.Add(new Uri(image.ImageUrl.GetAbsoluteUrl()));
+        }
+
+        var result = new Schema.NET.SoftwareApplication()
+        {
+            Name = Model.ProductModel.Title.ConvertHtmlToText(),
+            Headline = Model.ProductModel.Title.ConvertHtmlToText(),
+            Description = Model.ProductModel.Descriptions.FirstOrDefault()?.Description.ConvertHtmlToText() ?? Model.ProductModel.MetaDescription,
+            DatePublished = Model.ProductModel.PublishDate,
+            DateCreated = Model.ProductModel.PublishDate,
+            DateModified = Model.ProductModel.LastUpdate,
+            InteractionStatistic = new InteractionCounter()
+            {
+                UserInteractionCount = Model.ProductModel.NumberOfViews,
+            },
+            Url = new Uri(Model.ProductModel.PostUrl.GetAbsoluteUrl()),
+            Image = images,
+            ApplicationCategory = "DeveloperApplication",
+            AggregateRating = new AggregateRating()
+            {
+                RatingValue = double.Parse("0"+CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator + Model.ProductModel.Id) * (5 - 4) + 4,
+                BestRating = 5,
+                RatingCount = Model.ProductModel.NumberOfDownloads + 1,
+            },
+            Offers = new OneOrMany<IOffer>(new Offer()
+            {
+                Price = Model.ProductModel.Price.ToString("F2", CultureInfo.InvariantCulture),
+                PriceCurrency = defaultCurrency.IsoCode
+            }),
+            OperatingSystem = "WINDOWS, MacOS, Linux"
+        };
+
+
+        return result.ToHtmlEscapedString();
+    }
 }

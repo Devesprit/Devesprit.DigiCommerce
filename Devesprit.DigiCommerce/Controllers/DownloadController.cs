@@ -7,6 +7,7 @@ using System.Web.Mvc;
 using Devesprit.Core.Localization;
 using Devesprit.Data.Domain;
 using Devesprit.Data.Enums;
+using Devesprit.DigiCommerce.Factories.Interfaces;
 using Devesprit.DigiCommerce.Models.Download;
 using Devesprit.Services.Currency;
 using Devesprit.Services.FileManagerServiceReference;
@@ -25,6 +26,7 @@ namespace Devesprit.DigiCommerce.Controllers
         private readonly ILocalizationService _localizationService;
         private readonly IProductCheckoutAttributesService _productCheckoutAttributesService;
         private readonly IProductDiscountsForUserGroupsService _productDiscountsForUserGroupsService;
+        private readonly IProductModelFactory _productModelFactory;
         private readonly IProductDownloadsLogService _downloadsLogService;
 
         public DownloadController(
@@ -33,6 +35,7 @@ namespace Devesprit.DigiCommerce.Controllers
             ILocalizationService localizationService,
             IProductCheckoutAttributesService productCheckoutAttributesService,
             IProductDiscountsForUserGroupsService productDiscountsForUserGroupsService,
+            IProductModelFactory productModelFactory,
             IProductDownloadsLogService downloadsLogService)
         {
             _productService = productService;
@@ -40,6 +43,7 @@ namespace Devesprit.DigiCommerce.Controllers
             _localizationService = localizationService;
             _productCheckoutAttributesService = productCheckoutAttributesService;
             _productDiscountsForUserGroupsService = productDiscountsForUserGroupsService;
+            _productModelFactory = productModelFactory;
             _downloadsLogService = downloadsLogService;
         }
 
@@ -59,7 +63,8 @@ namespace Devesprit.DigiCommerce.Controllers
             {
                 PageTitle = product.GetLocalized(p => p.Title),
                 ProductPageUrl = Url.Action("Index", "Product", new { id = product.Id, slug = product.Slug }),
-                IsDemo = requestDemoFiles
+                IsDemo = requestDemoFiles,
+                ProductModel = _productModelFactory.PrepareProductModel(product, user, Url)
             };
 
             var userHasAccessToFiles = _productService.UserCanDownloadProduct(product, user, requestDemoFiles);
@@ -170,7 +175,7 @@ namespace Devesprit.DigiCommerce.Controllers
                     model.FileGroups.Add(new FileGroup()
                     {
                         Title = productTitle,
-                        FileListTree = $"<ul><li data-jstree='{{\"icon\":\"/Content/img/FileExtIcons/download.png\"}}'><a target='_blank' rel='noindex, nofollow' href='{downloadLink}'><img src='/Content/img/FileExtIcons/link.png'/> <span class='{(productTitle.IsRtlLanguage() ? "rtl-dir" : "ltr-dir")}'>{productTitle}</span></a></li></ul>"
+                        FileListTree = $"<ul><li data-jstree='{{\"icon\":\"/Content/img/FileExtIcons/download.png\"}}'><a target='_blank' rel='noindex, nofollow' href='{downloadLink}'><img alt='Link' src='/Content/img/FileExtIcons/link.png'/> <span class='{(productTitle.IsRtlLanguage() ? "rtl-dir" : "ltr-dir")}'>{productTitle}</span></a></li></ul>"
                     });
                 }
             }
@@ -226,7 +231,7 @@ namespace Devesprit.DigiCommerce.Controllers
                                         Url.Action("DownloadLog", new { productId = productId, downloadLink = attributeOption.FilesPath, version = requestDemoFiles ? ("DEMO" + productId).EncryptString() : ("FULL" + productId).EncryptString() })
                                         : $"#' onclick='WarningAlert(\"{_localizationService.GetResource("Note")}\", \"{_localizationService.GetResource("YouDoNotHaveAccessRightsToThisFile")}\")";
                                     fileListTreeHtml +=
-                                        $"<li data-jstree='{{\"icon\":\"/Content/img/FileExtIcons/download.png\"}}'><a target='_blank' rel='noindex, nofollow' href='{downloadLink}'><img src='/Content/img/FileExtIcons/link.png'/> <span class='{(optionName.IsRtlLanguage() ? "rtl-dir" : "ltr-dir")}'>{optionName}</span></a></li>";
+                                        $"<li data-jstree='{{\"icon\":\"/Content/img/FileExtIcons/download.png\"}}'><a target='_blank' rel='noindex, nofollow' href='{downloadLink}'><img alt='Link' src='/Content/img/FileExtIcons/link.png'/> <span class='{(optionName.IsRtlLanguage() ? "rtl-dir" : "ltr-dir")}'>{optionName}</span></a></li>";
                                 }
                             }
 
@@ -241,7 +246,7 @@ namespace Devesprit.DigiCommerce.Controllers
                     });
                 }
             }
-
+            
             return View(model);
         }
 
@@ -249,17 +254,17 @@ namespace Devesprit.DigiCommerce.Controllers
         {
             var result = "<ul>";
 
-            foreach (var dir in entries.Where(p => p.Type == FileSystemEntryType.Dir).OrderByDescending(p => p.ModifiedDateUtc))
+            foreach (var dir in entries.Where(p => p.Type == FileSystemEntryType.Dir).OrderByDescending(p => p.Name))
             {
                 result += $"<li data-jstree='{{\"icon\":\"/Content/img/FileExtIcons/dir.png\"}}'><span class='{(dir.Name.IsRtlLanguage() ? "rtl-dir" : "ltr-dir")}'>{dir.Name.Replace("_", " ")}     <small class='text-muted'>({dir.DisplaySize} - {dir.ModifiedDateUtc:G})</small></span> {GenerateFileTreeHtml(dir.SubEntries.ToList(), includeDownloadLink, productId, isDemo)}</li>";
             }
 
-            foreach (var file in entries.Where(p => p.Type == FileSystemEntryType.File).OrderByDescending(p => p.ModifiedDateUtc))
+            foreach (var file in entries.Where(p => p.Type == FileSystemEntryType.File).OrderByDescending(p => p.Name))
             {
                 var downloadLink = includeDownloadLink
                     ? Url.Action("DownloadLog", "Download", new { productId = productId, downloadLink = file.DownloadLink, version = isDemo ? ("DEMO" + productId).EncryptString() : ("FULL" + productId).EncryptString() })
                     : $"#' onclick='WarningAlert(\"{_localizationService.GetResource("Note")}\", \"{_localizationService.GetResource("YouDoNotHaveAccessRightsToThisFile")}\")";
-                result += $"<li data-jstree='{{\"icon\":\"/Content/img/FileExtIcons/download.png\"}}'><a target='_blank' rel='noindex, nofollow' href='{downloadLink}'><img src='{GetFileImage(file)}'/><span class='{(file.Name.IsRtlLanguage() ? "rtl -dir" : "ltr-dir")}'>{file.Name.Replace("_", " ")}     <small class='text-muted'>({_localizationService.GetResource("Size")}: {file.DisplaySize} - {_localizationService.GetResource("Date")}: {file.ModifiedDateUtc:G})</small></span></a></li>";
+                result += $"<li data-jstree='{{\"icon\":\"/Content/img/FileExtIcons/download.png\"}}'><a target='_blank' rel='noindex, nofollow' href='{downloadLink}'><img alt='File Type Icon' src='{GetFileImage(file)}'/><span class='{(file.Name.IsRtlLanguage() ? "rtl -dir" : "ltr-dir")}'>{file.Name.Replace("_", " ")}     <small class='text-muted'>({_localizationService.GetResource("Size")}: {file.DisplaySize} - {_localizationService.GetResource("Date")}: {file.ModifiedDateUtc:G})</small></span></a></li>";
             }
             result += "</ul>";
             return result;

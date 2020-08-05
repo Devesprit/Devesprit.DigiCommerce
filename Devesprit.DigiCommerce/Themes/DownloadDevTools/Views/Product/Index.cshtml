@@ -138,10 +138,10 @@
                                                 <div class="share-box-pro">
                                                     <span class="share-title">@T("Share"):</span>
                                                     <ul class="single-pro-share-social">
-                                                        <li><a href="javascript:void(0);" onclick="window.open('https://www.facebook.com/sharer/sharer.php?u=@pageMainUrl', '_blank', 'width=600,height=600');"><i class="fab fa-facebook-f"></i></a></li>
-                                                        <li><a href="javascript:void(0);" onclick="window.open('https://twitter.com/share?url=@pageMainUrl', '_blank', 'width=600,height=600');"><i class="fab fa-twitter"></i></a></li>
-                                                        <li><a href="javascript:void(0);" onclick="window.open('https://www.linkedin.com/shareArticle?mini=true&url=@pageMainUrl', '_blank', 'width=600,height=600');"><i class="fab fa-linkedin"></i></a></li>
-                                                        <li><a href="whatsapp://send?text=@pageMainUrl"><i class="fab fa-whatsapp"></i></a></li>
+                                                        <li><a rel="noindex, nofollow" href="javascript:void(0);" onclick="window.open('https://www.facebook.com/sharer/sharer.php?u=@pageMainUrl', '_blank', 'width=600,height=600');"><i class="fab fa-facebook-f"></i></a></li>
+                                                        <li><a rel="noindex, nofollow" href="javascript:void(0);" onclick="window.open('https://twitter.com/share?url=@pageMainUrl', '_blank', 'width=600,height=600');"><i class="fab fa-twitter"></i></a></li>
+                                                        <li><a rel="noindex, nofollow" href="javascript:void(0);" onclick="window.open('https://www.linkedin.com/shareArticle?mini=true&url=@pageMainUrl', '_blank', 'width=600,height=600');"><i class="fab fa-linkedin"></i></a></li>
+                                                        <li><a rel="noindex, nofollow" href="whatsapp://send?text=@pageMainUrl"><i class="fab fa-whatsapp"></i></a></li>
                                                     </ul>
                                                 </div>
                                                 </footer>
@@ -222,7 +222,7 @@
         {
             Name = Model.Title.ConvertHtmlToText(),
             Headline = Model.Title.ConvertHtmlToText(),
-			Description = Model.MetaDescription,
+			Description = Model.Descriptions.FirstOrDefault()?.Description.ConvertHtmlToText() ?? Model.MetaDescription,
             DatePublished = Model.PublishDate,
             DateCreated = Model.PublishDate,
             DateModified = Model.LastUpdate,

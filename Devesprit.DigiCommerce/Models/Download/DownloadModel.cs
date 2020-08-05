@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Devesprit.DigiCommerce.Models.Products;
 using Devesprit.Services.Products;
 
 namespace Devesprit.DigiCommerce.Models.Download
@@ -15,6 +16,7 @@ namespace Devesprit.DigiCommerce.Models.Download
         public DateTime DownloadLimitResetDate { get; set; }
         public string ProductPageUrl { get; set; }
         public List<FileGroup> FileGroups { get; set; } = new List<FileGroup>();
-        public bool IsDemo { get; set; } 
+        public bool IsDemo { get; set; }
+        public ProductModel ProductModel { get; set; }
     }
 }
