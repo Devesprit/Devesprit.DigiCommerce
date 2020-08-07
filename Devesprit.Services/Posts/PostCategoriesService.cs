@@ -160,22 +160,20 @@ namespace Devesprit.Services.Posts
         {
             if (result == null)
             {
-                result = new List<int> { categoryId };
+                result = new List<int>();
             }
+
+            result.Add(categoryId);
 
             var allCategories = GetAsEnumerable();
 
             foreach (var cat in allCategories.Where(p => p.ParentCategoryId == categoryId))
             {
-                if (!result.Contains(cat.Id))
-                {
-                    result.Add(cat.Id);
-
-                    GetSubCategories(cat.Id);
-                }
+                result.Add(cat.Id);
+                GetSubCategories(cat.Id, result);
             }
 
-            return result;
+            return result.Distinct().ToList();
         }
 
         protected virtual bool DetectLoop(List<TblPostCategories> categories, TblPostCategories category, HashSet<TblPostCategories> visited)
