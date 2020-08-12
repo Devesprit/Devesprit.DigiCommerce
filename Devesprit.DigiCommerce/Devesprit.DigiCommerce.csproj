@@ -2349,6 +2349,8 @@
     <Content Include="Themes\DownloadDevTools\Views\Invoice\Partials\_InvoiceTable.cshtml" />
     <Content Include="Themes\DownloadDevTools\Views\Invoice\Print.cshtml" />
     <Content Include="Themes\DownloadDevTools\Views\Invoice\VerifyPayment.cshtml" />
+    <Content Include="Views\Download\Partials\_DownloadProductPanel.cshtml" />
+    <Content Include="Themes\DownloadDevTools\Views\Download\Partials\_DownloadProductPanel.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

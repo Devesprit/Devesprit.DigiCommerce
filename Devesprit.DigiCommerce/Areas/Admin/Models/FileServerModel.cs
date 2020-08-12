@@ -31,5 +31,15 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Models
         [MaxLengthLocalized(500)]
         [DisplayNameLocalized("LoginPassword")]
         public string ServicePassword { get; set; }
+
+        [RequiredLocalized(AllowEmptyStrings = false)]
+        [MaxLengthLocalized(500)]
+        [DisplayNameLocalized("EncryptionKey")]
+        public string EncryptionKey { get; set; }
+
+        [RequiredLocalized(AllowEmptyStrings = false)]
+        [MaxLengthLocalized(500)]
+        [DisplayNameLocalized("EncryptionSalt")]
+        public string EncryptionSalt { get; set; }
     }
 }

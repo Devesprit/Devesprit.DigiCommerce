@@ -20,6 +20,7 @@ namespace Devesprit.Data.Domain
         public string FilesPath { get; set; }
         public int? FileServerId { get; set; }
         public virtual TblFileServers FileServer { get; set; }
+        public string FilesListJson { get; set; }
         public int? DownloadLimitedToUserGroupId { get; set; }
         public virtual TblUserGroups DownloadLimitedToUserGroup { get; set; }
         public bool HigherUserGroupsCanDownload { get; set; }

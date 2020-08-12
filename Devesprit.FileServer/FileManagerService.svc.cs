@@ -491,7 +491,7 @@ namespace Devesprit.FileServer
                 throw new FaultException("The requested file was not found.");
             }
 
-            //Check AllowedFileExtensionsToUpload
+            //Check Allowed File Extensions To Download
             var notAllowedFileExtensions =
                     ConfigurationManager.AppSettings["NotAllowedFileExtensionsToDownload"].ToLower()
                         .Split(new[] { ";" }, StringSplitOptions.RemoveEmptyEntries);

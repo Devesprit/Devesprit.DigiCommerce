@@ -3,17 +3,21 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Web;
 using System.Web.Mvc;
 using Devesprit.Core.Localization;
+using Devesprit.Core.Settings;
 using Devesprit.Data.Domain;
 using Devesprit.Data.Enums;
 using Devesprit.DigiCommerce.Factories.Interfaces;
 using Devesprit.DigiCommerce.Models.Download;
+using Devesprit.Services;
 using Devesprit.Services.Currency;
 using Devesprit.Services.FileManagerServiceReference;
 using Devesprit.Services.FileServers;
 using Devesprit.Services.Localization;
 using Devesprit.Services.Products;
+using Devesprit.Utilities;
 using Devesprit.Utilities.Extensions;
 using Microsoft.AspNet.Identity;
 
@@ -27,6 +31,7 @@ namespace Devesprit.DigiCommerce.Controllers
         private readonly IProductCheckoutAttributesService _productCheckoutAttributesService;
         private readonly IProductDiscountsForUserGroupsService _productDiscountsForUserGroupsService;
         private readonly IProductModelFactory _productModelFactory;
+        private readonly ISettingService _settingService;
         private readonly IProductDownloadsLogService _downloadsLogService;
 
         public DownloadController(
@@ -36,6 +41,7 @@ namespace Devesprit.DigiCommerce.Controllers
             IProductCheckoutAttributesService productCheckoutAttributesService,
             IProductDiscountsForUserGroupsService productDiscountsForUserGroupsService,
             IProductModelFactory productModelFactory,
+            ISettingService settingService,
             IProductDownloadsLogService downloadsLogService)
         {
             _productService = productService;
@@ -44,6 +50,7 @@ namespace Devesprit.DigiCommerce.Controllers
             _productCheckoutAttributesService = productCheckoutAttributesService;
             _productDiscountsForUserGroupsService = productDiscountsForUserGroupsService;
             _productModelFactory = productModelFactory;
+            _settingService = settingService;
             _downloadsLogService = downloadsLogService;
         }
 
@@ -54,6 +61,28 @@ namespace Devesprit.DigiCommerce.Controllers
         {
             var product = await _productService.FindByIdAsync(productId);
             var user = await UserManager.FindByIdAsync(HttpContext.User.Identity.GetUserId());
+            var requestDemoFiles = demoFiles ?? false;
+
+            if (product == null || (!product.Published && !HttpContext.User.IsInRole("Admin")))
+                return View("PageNotFound"); // product id is invalid or not published
+
+            var model = new DownloadModel
+            {
+                PageTitle = product.GetLocalized(p => p.Title),
+                ProductPageUrl = Url.Action("Index", "Product", new { id = product.Id, slug = product.Slug }),
+                IsDemo = requestDemoFiles,
+                ProductModel = _productModelFactory.PrepareProductModel(product, user, Url)
+            };
+
+            return View(model);
+        }
+
+        [ChildActionOnly]
+        public virtual ActionResult DownloadProductChildView(int productId, bool? demoFiles)
+        {
+            var product = AsyncHelper.RunSync(()=> _productService.FindByIdAsync(productId));
+            var siteSettings = _settingService.LoadSetting<SiteSettings>();
+            var user = UserManager.FindById(HttpContext.User.Identity.GetUserId());
             var requestDemoFiles = demoFiles ?? false;
 
             if (product == null || (!product.Published && !HttpContext.User.IsInRole("Admin")))
@@ -148,15 +177,27 @@ namespace Devesprit.DigiCommerce.Controllers
             {
                 if (product.FileServerId != null)
                 {
-                    //Load files from server
-                    var entriesList = await Task.Run(() =>
+                    FileSystemEntries[] entriesList;
+                    if (!string.IsNullOrWhiteSpace(product.FilesListJson) &&
+                        !string.IsNullOrWhiteSpace(product.FileServer.EncryptionSalt) &&
+                        !string.IsNullOrWhiteSpace(product.FileServer.EncryptionKey))
                     {
+                        entriesList = product.FilesListJson.JsonToObject<FileSystemEntries[]>();
+
+                        GenerateDownloadLinks(product.FileServer, siteSettings, entriesList);
+                    }
+                    else
+                    {
+                        //Load files from server
                         var fileServer = _fileServersService.GetWebService(product.FileServer);
-                        return fileServer.EnumerateDirectoryEntries(filesPath,
-                            CurrentSettings.DownloadableFilesExtensions, true, true,
-                            TimeSpan.FromHours(CurrentSettings.DownloadUrlsAgeByHour),
-                            CurrentSettings.NumberOfDownloadUrlsFireLimit);
-                    }).ConfigureAwait(false);
+                        entriesList = fileServer.EnumerateDirectoryEntries(filesPath,
+                            siteSettings.DownloadableFilesExtensions, true, true,
+                            TimeSpan.FromHours(siteSettings.DownloadUrlsAgeByHour),
+                            siteSettings.NumberOfDownloadUrlsFireLimit);
+
+                        //Save FilesList
+                        _productService.UpdateProductFilesListJson(product, entriesList);
+                    }
 
                     model.FileGroups.Add(new FileGroup()
                     {
@@ -191,9 +232,10 @@ namespace Devesprit.DigiCommerce.Controllers
             if (!requestDemoFiles)
             {
                 //Get product attributes files
-                var userPurchasedAttributes = await _productService.GetUserDownloadableAttributesAsync(product, user);
+                var userPurchasedAttributes =
+                    AsyncHelper.RunSync(() => _productService.GetUserDownloadableAttributesAsync(product, user));
                 var productCheckoutAttributes =
-                    await _productCheckoutAttributesService.FindProductAttributesAsync(productId);
+                    AsyncHelper.RunSync(() => _productCheckoutAttributesService.FindProductAttributesAsync(productId));
                 foreach (var attribute in productCheckoutAttributes.Where(p => p.Options.Any(x => !string.IsNullOrWhiteSpace(x.FilesPath))).OrderBy(p => p.DisplayOrder))
                 {
                     var attributeName = attribute.GetLocalized(p => p.Name);
@@ -210,15 +252,27 @@ namespace Devesprit.DigiCommerce.Controllers
                             {
                                 if (attributeOption.FileServerId != null)
                                 {
-                                    //Load files from server
-                                    var entriesList = await Task.Run(() =>
+                                    FileSystemEntries[] entriesList;
+                                    if (!string.IsNullOrWhiteSpace(attributeOption.FilesListJson) &&
+                                        !string.IsNullOrWhiteSpace(attributeOption.FileServer.EncryptionSalt) &&
+                                        !string.IsNullOrWhiteSpace(attributeOption.FileServer.EncryptionKey))
                                     {
+                                        entriesList = attributeOption.FilesListJson.JsonToObject<FileSystemEntries[]>();
+
+                                        GenerateDownloadLinks(attributeOption.FileServer, siteSettings, entriesList);
+                                    }
+                                    else
+                                    {
+                                        //Load files from server
                                         var fileServer = _fileServersService.GetWebService(attributeOption.FileServer);
-                                        return fileServer.EnumerateDirectoryEntries(attributeOption.FilesPath,
-                                            CurrentSettings.DownloadableFilesExtensions, true, true,
-                                            TimeSpan.FromHours(CurrentSettings.DownloadUrlsAgeByHour),
-                                            CurrentSettings.NumberOfDownloadUrlsFireLimit);
-                                    }).ConfigureAwait(false);
+                                        entriesList = fileServer.EnumerateDirectoryEntries(attributeOption.FilesPath,
+                                            siteSettings.DownloadableFilesExtensions, true, true,
+                                            TimeSpan.FromHours(siteSettings.DownloadUrlsAgeByHour),
+                                            siteSettings.NumberOfDownloadUrlsFireLimit);
+
+                                        //Save FilesList
+                                        _productCheckoutAttributesService.UpdateAttributeOptionFilesListJson(attributeOption, entriesList);
+                                    }
 
                                     fileListTreeHtml += entriesList.Length > 0
                                         ? GenerateFileTreeHtml(entriesList.ToList(), showDownloadLink, productId, requestDemoFiles).TrimStart("<ul>").TrimEnd("</ul>")
@@ -246,8 +300,8 @@ namespace Devesprit.DigiCommerce.Controllers
                     });
                 }
             }
-            
-            return View(model);
+
+            return View("Partials/_DownloadProductPanel", model);
         }
 
         protected virtual string GenerateFileTreeHtml(List<FileSystemEntries> entries, bool includeDownloadLink, int productId, bool isDemo)
@@ -392,6 +446,37 @@ namespace Devesprit.DigiCommerce.Controllers
             await _productService.IncreaseNumberOfDownloadsAsync(await _productService.FindByIdAsync(productId));
 
             return Redirect(downloadLink);
+        }
+
+        private void GenerateDownloadLinks(TblFileServers fileServers, SiteSettings settings, FileSystemEntries[] entries)
+        {
+            var expire = TimeSpan.FromHours(settings.DownloadUrlsAgeByHour);
+            foreach (var entry in entries)
+            {
+                if (entry.Type == FileSystemEntryType.File)
+                {
+                    entry.DownloadLink = fileServers.DownloadPageUrl + "?request=" +
+                                         HttpUtility.UrlEncode(new DownloadRequest()
+                                         {
+                                             File = entry.Path,
+                                             Expire = expire.TotalSeconds > 0
+                                                 ? DateTime.Now.Add(expire)
+                                                 : DateTime.MinValue,
+                                             DownloadCount = settings.NumberOfDownloadUrlsFireLimit
+                                         }.ObjectToJson().EncryptString(fileServers.EncryptionKey, fileServers.EncryptionSalt));
+                }
+                else
+                {
+                    GenerateDownloadLinks(fileServers, settings, entry.SubEntries);
+                }
+            }
+        }
+
+        class DownloadRequest
+        {
+            public string File { get; set; }
+            public DateTime Expire { get; set; }
+            public int DownloadCount { get; set; }
         }
     }
 }

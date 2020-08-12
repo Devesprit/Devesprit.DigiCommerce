@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Devesprit.Data.Domain;
+using Devesprit.Services.FileManagerServiceReference;
 
 namespace Devesprit.Services.Products
 {
@@ -14,6 +15,7 @@ namespace Devesprit.Services.Products
         Task UpdateAsync(TblProductCheckoutAttributes record);
         Task<int> AddAsync(TblProductCheckoutAttributes record);
         Task<double> CalculateAttributeOptionPriceForUserAsync(int optionId, TblUsers user);
+        void UpdateAttributeOptionFilesListJson(TblProductCheckoutAttributeOptions attributeOption, FileSystemEntries[] filesList);
 
 
         #region Attribute Options

@@ -34,6 +34,7 @@ namespace Devesprit.Data.Domain
         public virtual TblUserGroups DownloadLimitedToUserGroup { get; set; }
         public bool HigherUserGroupsCanDownload { get; set; }
         public string LicenseGeneratorServiceId { get; set; }
+        public string FilesListJson { get; set; }
 
 
         public virtual ICollection<TblProductDownloadsLog> DownloadsLog { get; set; }

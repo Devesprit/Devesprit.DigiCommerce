@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Autofac.Extras.DynamicProxy;
 using Devesprit.Data.Domain;
+using Devesprit.Services.FileManagerServiceReference;
 using Devesprit.Services.MemoryCache;
 using Devesprit.Services.Posts;
 using Devesprit.Services.SEO;
@@ -46,6 +47,7 @@ namespace Devesprit.Services.Products
         Task IncreaseNumberOfDownloadsAsync(TblProducts product, int value = 1);
 
         Task IncreaseNumberOfPurchasesAsync(TblProducts product, int value = 1);
+        void UpdateProductFilesListJson(TblProducts product, FileSystemEntries[] filesList);
 
         double CalculateProductPriceForUser(TblProducts product, TblUsers user);
         UserCanDownloadProductResult UserCanDownloadProduct(TblProducts product, TblUsers user, bool demoFiles);

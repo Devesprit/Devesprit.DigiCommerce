@@ -225,7 +225,7 @@ namespace Devesprit.Services.Redirects
                 }
             }
 
-            return url;
+            return url.Trim().TrimEnd('/');
         }
     }
 }

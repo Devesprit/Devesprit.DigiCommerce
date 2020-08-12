@@ -9,6 +9,8 @@ using Devesprit.Data;
 using Devesprit.Data.Domain;
 using Devesprit.Data.Enums;
 using Devesprit.Services.Events;
+using Devesprit.Services.FileManagerServiceReference;
+using Devesprit.Utilities.Extensions;
 using X.PagedList;
 using Z.EntityFramework.Plus;
 
@@ -155,6 +157,14 @@ namespace Devesprit.Services.Products
             }
 
             return result;
+        }
+
+        public virtual void UpdateAttributeOptionFilesListJson(TblProductCheckoutAttributeOptions attributeOption,
+            FileSystemEntries[] filesList)
+        {
+            attributeOption.FilesListJson = filesList.ObjectToJson();
+            _dbContext.ProductCheckoutAttributeOptions.AddOrUpdate(attributeOption);
+            _dbContext.SaveChanges();
         }
 
 

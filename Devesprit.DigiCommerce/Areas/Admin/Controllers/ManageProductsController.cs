@@ -88,9 +88,10 @@ namespace Devesprit.DigiCommerce.Areas.Admin.Controllers
             if (!ModelState.IsValid)
             {
                 return View(model);
-            }
+            }  
 
             var record = _adminProductModelFactory.PrepareTblProducts(model);
+            record.FilesListJson = string.Empty;
             var recordId = model.Id;
             try
             {

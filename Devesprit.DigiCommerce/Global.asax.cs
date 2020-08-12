@@ -160,7 +160,7 @@ namespace Devesprit.DigiCommerce
 
                         eventPublisher.Publish(new CurrentLanguageChangeEvent(lang));
 
-                        Response.Redirect(Request.RawUrl);
+                        Response.Redirect(Request.RawUrl.TrimEnd("/"));
                         Response.Flush();
                         Response.End();
                         return;
@@ -194,7 +194,7 @@ namespace Devesprit.DigiCommerce
 
                         eventPublisher.Publish(new CurrentCurrencyChangeEvent(currency));
 
-                        Response.Redirect(Request.RawUrl);
+                        Response.Redirect(Request.RawUrl.TrimEnd("/"));
                         Response.Flush();
                         Response.End();
                         return;

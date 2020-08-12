@@ -9,6 +9,7 @@ using Devesprit.Data;
 using Devesprit.Data.Domain;
 using Devesprit.Data.Enums;
 using Devesprit.Services.Events;
+using Devesprit.Services.FileManagerServiceReference;
 using Devesprit.Services.Posts;
 using Devesprit.Services.Users;
 using Devesprit.Utilities;
@@ -252,6 +253,13 @@ namespace Devesprit.Services.Products
             product.NumberOfPurchases += value;
             _dbContext.Products.AddOrUpdate(product);
             await _dbContext.SaveChangesAsync();
+        }
+
+        public virtual void UpdateProductFilesListJson(TblProducts product, FileSystemEntries[] filesList)
+        {
+            product.FilesListJson = filesList.ObjectToJson();
+            _dbContext.Products.AddOrUpdate(product);
+            _dbContext.SaveChanges();
         }
 
         public virtual double CalculateProductPriceForUser(TblProducts product, TblUsers user)

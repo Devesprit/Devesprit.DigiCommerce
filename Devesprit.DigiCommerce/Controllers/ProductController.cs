@@ -82,7 +82,7 @@ namespace Devesprit.DigiCommerce.Controllers
             if (Request.Url.ToString().Trim().ToLower() != pageMainUrl.Trim().ToLower())
             {
                 Response.Clear();
-                return RedirectPermanent(pageMainUrl);
+                return RedirectPermanent(pageMainUrl.Trim().TrimEnd('/'));
             }
 
             //Increase the number of product views

@@ -123,7 +123,7 @@ namespace Devesprit.DigiCommerce.Controllers
                     if (mustRedirect)
                     {
                         Response.Clear();
-                        Response.RedirectPermanent(redirectToUrl);
+                        Response.RedirectPermanent(redirectToUrl.Trim().TrimEnd('/'));
                         Response.Flush();
                         Response.End();
                         filterContext.Result = new EmptyResult();
