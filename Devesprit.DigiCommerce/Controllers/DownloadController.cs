@@ -212,7 +212,7 @@ namespace Devesprit.DigiCommerce.Controllers
                     //File(s) is in outside of server
                     var downloadLink = canDownload
                         ? Url.Action("DownloadLog", new { productId = productId, downloadLink = filesPath, version = requestDemoFiles ? ("DEMO" + productId).EncryptString() : ("FULL" + productId).EncryptString() })
-                        : $"#' onclick='WarningAlert(\"{_localizationService.GetResource("Note")}\", \"{_localizationService.GetResource("YouDoNotHaveAccessRightsToThisFile")}\")";
+                        : $"#' onclick='if($(\"#NoAccessModal\").length > 0)$(\"#NoAccessModal\").modal(\"show\"); else WarningAlert(\"{_localizationService.GetResource("Note")}\", \"{_localizationService.GetResource("YouDoNotHaveAccessRightsToThisFile")}\")";
                     model.FileGroups.Add(new FileGroup()
                     {
                         Title = productTitle,
@@ -283,7 +283,7 @@ namespace Devesprit.DigiCommerce.Controllers
                                     //File(s) is in outside of server
                                     var downloadLink = showDownloadLink ?
                                         Url.Action("DownloadLog", new { productId = productId, downloadLink = attributeOption.FilesPath, version = requestDemoFiles ? ("DEMO" + productId).EncryptString() : ("FULL" + productId).EncryptString() })
-                                        : $"#' onclick='WarningAlert(\"{_localizationService.GetResource("Note")}\", \"{_localizationService.GetResource("YouDoNotHaveAccessRightsToThisFile")}\")";
+                                        : $"#' onclick='if($(\"#NoAccessModal\").length > 0)$(\"#NoAccessModal\").modal(\"show\"); else WarningAlert(\"{_localizationService.GetResource("Note")}\", \"{_localizationService.GetResource("YouDoNotHaveAccessRightsToThisFile")}\")";
                                     fileListTreeHtml +=
                                         $"<li data-jstree='{{\"icon\":\"/Content/img/FileExtIcons/download.png\"}}'><a target='_blank' rel='noindex, nofollow' href='{downloadLink}'><img alt='Link' src='/Content/img/FileExtIcons/link.png'/> <span class='{(optionName.IsRtlLanguage() ? "rtl-dir" : "ltr-dir")}'>{optionName}</span></a></li>";
                                 }
@@ -317,7 +317,7 @@ namespace Devesprit.DigiCommerce.Controllers
             {
                 var downloadLink = includeDownloadLink
                     ? Url.Action("DownloadLog", "Download", new { productId = productId, downloadLink = file.DownloadLink, version = isDemo ? ("DEMO" + productId).EncryptString() : ("FULL" + productId).EncryptString() })
-                    : $"#' onclick='WarningAlert(\"{_localizationService.GetResource("Note")}\", \"{_localizationService.GetResource("YouDoNotHaveAccessRightsToThisFile")}\")";
+                    : $"#' onclick='if($(\"#NoAccessModal\").length > 0)$(\"#NoAccessModal\").modal(\"show\"); else WarningAlert(\"{_localizationService.GetResource("Note")}\", \"{_localizationService.GetResource("YouDoNotHaveAccessRightsToThisFile")}\")";
                 result += $"<li data-jstree='{{\"icon\":\"/Content/img/FileExtIcons/download.png\"}}'><a target='_blank' rel='noindex, nofollow' href='{downloadLink}'><img alt='File Type Icon' src='{GetFileImage(file)}'/><span class='{(file.Name.IsRtlLanguage() ? "rtl -dir" : "ltr-dir")}'>{file.Name.Replace("_", " ")}     <small class='text-muted'>({_localizationService.GetResource("Size")}: {file.DisplaySize} - {_localizationService.GetResource("Date")}: {file.ModifiedDateUtc:G})</small></span></a></li>";
             }
             result += "</ul>";
