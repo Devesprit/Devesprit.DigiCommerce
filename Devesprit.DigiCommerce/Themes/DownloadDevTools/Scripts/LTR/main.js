@@ -1,8 +1,9 @@
-var x = document.getElementsByClassName("slider-irdev-wrap");
+//One Line Slider-------------------
+var oneLineSlider = document.getElementsByClassName("slider-irdev-wrap");
 
-for (var i = 0; i < x.length; i++) {
+for (var i = 0; i < oneLineSlider.length; i++) {
 
-    var el = x[i];
+    var el = oneLineSlider[i];
 
     var swiper = el.getElementsByClassName("swiper-container")[0];
     var nx = el.getElementsByClassName("swiper-button-next")[0];
@@ -43,7 +44,58 @@ for (var i = 0; i < x.length; i++) {
         }
     });
 }
+//-------------------One Line Slider
 
+//Two Line Slider-------------------
+var twoLineSlider = document.getElementsByClassName("slider-irdev-wrap-2-line");
+
+for (var i = 0; i < twoLineSlider.length; i++) {
+
+    var el = twoLineSlider[i];
+
+    var swiper = el.getElementsByClassName("swiper-container")[0];
+    var nx = el.getElementsByClassName("swiper-button-next")[0];
+    var pr = el.getElementsByClassName("swiper-button-prev")[0];
+
+    new Swiper(swiper, {
+        slidesPerView: 4,
+        slidesPerColumn: 2,
+        slidesPerColumnFill: 'row',
+        slidesPerGroup: 2,
+        spaceBetween: 30,
+        loop: false,
+        navigation: {
+            nextEl: nx,
+            prevEl: pr
+        },
+        breakpoints: {
+            // when window width is >= 320px
+            320: {
+                slidesPerView: 1,
+                spaceBetween: 20
+            },
+            // when window width is >= 480px
+            600: {
+                slidesPerView: 1,
+                spaceBetween: 30
+            },
+            800: {
+                slidesPerView: 2,
+                spaceBetween: 30
+            },
+            // when window width is >= 640px
+            1000: {
+                slidesPerView: 3,
+                spaceBetween: 40
+            },
+            1200: {
+                slidesPerView: 4,
+                spaceBetween: 40
+            }
+        }
+    });
+}
+//-------------------Two Line Slider
 
 
 

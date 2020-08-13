@@ -70,14 +70,14 @@
                 <h2 class="pro-slider-title">@T("NewestProductsWithoutPage")</h2>
             </div>
         </div>
-        <div class="slider-irdev-wrap">
+        <div class="slider-irdev-wrap-2-line">
             <div class="swiper-container main-swiper">
                 <div class="swiper-wrapper">
                     @{
                         Html.RenderAction("GetProductsList", "Product", new
                         {
                             listType = ProductsListType.Newest,
-                            pageSize = 12,
+                            pageSize = 24,
                             wrapperStart = "<div class='swiper-slide'>",
                             showPager = false
                         });
@@ -206,14 +206,14 @@
                     <h2 class="pro-slider-title pro-parallax-title">@T("FreeProductsWithoutPage")</h2>
                 </div>
             </div>
-            <div class="slider-irdev-wrap">
+            <div class="slider-irdev-wrap-2-line">
                 <div class="swiper-container main-swiper">
                     <div class="swiper-wrapper">
                         @{
                             Html.RenderAction("GetProductsList", "Product", new
                             {
                                 listType = ProductsListType.FreeProducts,
-                                pageSize = 12,
+                                pageSize = 24,
                                 wrapperStart = "<div class='swiper-slide'>",
                                 showPager = false
                             });

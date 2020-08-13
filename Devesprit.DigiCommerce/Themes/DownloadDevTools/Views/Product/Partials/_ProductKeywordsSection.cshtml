@@ -11,7 +11,7 @@
             <ul class="list-pro-sidebar-keywords">
                 @foreach (var keyword in Model.Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries).Select(p => p.Trim()).Where(p => !string.IsNullOrWhiteSpace(p)))
                 {
-                    <li><span>@keyword</span></li>
+                    <li><span><strong>@keyword</strong></span></li>
                 }
             </ul>
         </div>

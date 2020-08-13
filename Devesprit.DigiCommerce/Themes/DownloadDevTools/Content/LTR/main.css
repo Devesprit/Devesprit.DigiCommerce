@@ -274,7 +274,8 @@ body {
 }
 
 ::-webkit-scrollbar {
-    width: 8px;
+    width: 7px;
+    height: 7px;
 }
 
 ::-webkit-scrollbar-track {
@@ -738,6 +739,10 @@ background-image: linear-gradient(110deg,#1f202c 32%,rgba(0,0,0,0) 55%);
 
 
 .slider-irdev-wrap {
+    position: relative;
+    width: 100%;
+}
+.slider-irdev-wrap-2-line {
     position: relative;
     width: 100%;
 }

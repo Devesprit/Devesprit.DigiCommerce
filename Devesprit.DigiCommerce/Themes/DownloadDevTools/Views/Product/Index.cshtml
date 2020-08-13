@@ -22,6 +22,7 @@
 
     
     Html.AddHeadCustomParts("<meta property=\"og:title\" content=\"" + Model.Title + "\">");
+    Html.AddHeadCustomParts("<meta property=\"og:type\" content=\"article\">");
     Html.AddHeadCustomParts("<meta property=\"og:url\" content=\"" + Model.PostUrl + "\">");
     Html.AddHeadCustomParts("<meta property=\"og:description\" content=\"" + Model.MetaDescription + "\">");
     Html.AddHeadCustomParts("<meta property=\"og:site_name\" content=\"" + settings.GetLocalized(x => x.SiteName) + "\">");
@@ -125,25 +126,27 @@
                                     {
                                         <div class="tab-pane fade @Html.Raw(desc.IsRtl ? "rtl-dir text-right" : "ltr-dir text-left") @Html.Raw(counter == 0 ? "show active" : "")" id="nav-@counter" role="tabpanel" aria-labelledby="nav-@counter-tab">
                                             <div class="tab-body-box">
-                                                @Html.Raw(desc.Description)
+                                                <div style="max-height: 1100px; overflow: auto; padding: 20px">
+                                                    @Html.Raw(desc.Description)
+                                                </div>
                                                 <footer class="pro-single-desc-footer">
-                                                    @if (Model.DownloadModel.ShowDownloadFullVersionBtn)
+                                                    @*@if (Model.DownloadModel.ShowDownloadFullVersionBtn)
                                                     {
                                                         <a href="@Url.Action("DownloadProduct", "Download", new {productId = Model.Id, demoFiles = false})"
                                                            target="_blank"
                                                            class="pro-single-dl-btn">
                                                             @Html.Raw(T("DownloadNow"))
                                                         </a>
-                                                    }
-                                                <div class="share-box-pro">
-                                                    <span class="share-title">@T("Share"):</span>
-                                                    <ul class="single-pro-share-social">
-                                                        <li><a rel="noindex, nofollow" href="javascript:void(0);" onclick="window.open('https://www.facebook.com/sharer/sharer.php?u=@pageMainUrl', '_blank', 'width=600,height=600');"><i class="fab fa-facebook-f"></i></a></li>
-                                                        <li><a rel="noindex, nofollow" href="javascript:void(0);" onclick="window.open('https://twitter.com/share?url=@pageMainUrl', '_blank', 'width=600,height=600');"><i class="fab fa-twitter"></i></a></li>
-                                                        <li><a rel="noindex, nofollow" href="javascript:void(0);" onclick="window.open('https://www.linkedin.com/shareArticle?mini=true&url=@pageMainUrl', '_blank', 'width=600,height=600');"><i class="fab fa-linkedin"></i></a></li>
-                                                        <li><a rel="noindex, nofollow" href="whatsapp://send?text=@pageMainUrl"><i class="fab fa-whatsapp"></i></a></li>
-                                                    </ul>
-                                                </div>
+                                                    }*@
+                                                    <div class="share-box-pro no-mar">
+                                                        <span class="share-title">@T("Share"):</span>
+                                                        <ul class="single-pro-share-social">
+                                                            <li><a rel="noindex, nofollow" href="javascript:void(0);" onclick="window.open('https://www.facebook.com/sharer/sharer.php?u=@pageMainUrl', '_blank', 'width=600,height=600');"><i class="fab fa-facebook-f"></i></a></li>
+                                                            <li><a rel="noindex, nofollow" href="javascript:void(0);" onclick="window.open('https://twitter.com/share?url=@pageMainUrl', '_blank', 'width=600,height=600');"><i class="fab fa-twitter"></i></a></li>
+                                                            <li><a rel="noindex, nofollow" href="javascript:void(0);" onclick="window.open('https://www.linkedin.com/shareArticle?mini=true&url=@pageMainUrl', '_blank', 'width=600,height=600');"><i class="fab fa-linkedin"></i></a></li>
+                                                            <li><a rel="noindex, nofollow" href="whatsapp://send?text=@pageMainUrl"><i class="fab fa-whatsapp"></i></a></li>
+                                                        </ul>
+                                                    </div>
                                                 </footer>
                                             </div>
                                         </div>
@@ -188,6 +191,11 @@
                 {
                     Html.RenderPartial("Partials/_ProductKeywordsSection", Model.MetaKeyWords);
                 }
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                @{ Html.RenderAction("DownloadProductChildView", "Download", new { productId = Model.Id, demoFiles = false }); }
             </div>
         </div>
     </div>

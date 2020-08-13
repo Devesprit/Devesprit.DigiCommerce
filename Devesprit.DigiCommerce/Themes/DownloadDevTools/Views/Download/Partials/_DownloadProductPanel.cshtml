@@ -19,107 +19,131 @@
 
 @if (Model.UserHasAccessToFiles != null && !OtherExtensions.HasFlagFast(Model.UserHasAccessToFiles.Value, UserCanDownloadProductResult.UserCanDownloadProduct))
 {
-    <h4 class="alert alert-warning text-center b-pad-25">
-        <i class="fas fa-ban t-mar-20 b-mar-40" style="font-size: 150px;"></i>
-        <br/>
-        @Html.Raw(T("YouDoNotHaveAccessToThisProduct"))
-    </h4>
-    <div class="b-mar-40 pad-20 border rounded border-danger">
-        @Html.Raw(T("ToDownloadThisProductFollowTheseSteps"))
-        <ul style="list-style: initial; padding-left: 40px; margin-bottom: 0;">
-            @if (OtherExtensions.HasFlagFast(Model.UserHasAccessToFiles.Value, UserCanDownloadProductResult.UserMustLoggedIn))
-            {
-                <li>
-                    @Html.Raw(T("ToDownloadThisProductUserMustLoggedIn",
-                        Url.Action("Login", "User", new {returnUrl = HttpContext.Current.Request.RawUrl, area = ""}),
-                        Url.Action("SignUp", "User", new {area = ""})))
-                </li>
-            }
+    <!-- Modal -->
+    <div class="modal fade" id="NoAccessModal" tabindex="-1" aria-labelledby="NoAccessModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="NoAccessModalLabel">@Html.Raw(T("AccessPermissionError"))</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <h4 class="alert alert-warning text-center b-pad-25">
+                        <i class="fas fa-ban t-mar-20 b-mar-40" style="font-size: 150px;"></i>
+                        <br />
+                        @Html.Raw(T("YouDoNotHaveAccessToThisProduct"))
+                    </h4>
+                    <div class="b-mar-40 pad-20 border rounded border-danger">
+                        @Html.Raw(T("ToDownloadThisProductFollowTheseSteps"))
+                        <ul style="list-style: initial; padding-left: 40px; margin-bottom: 0;">
+                            @if (OtherExtensions.HasFlagFast(Model.UserHasAccessToFiles.Value, UserCanDownloadProductResult.UserMustLoggedIn))
+                            {
+                                <li>
+                                    @Html.Raw(T("ToDownloadThisProductUserMustLoggedIn",
+                                        Url.Action("Login", "User", new { returnUrl = HttpContext.Current.Request.RawUrl, area = "" }),
+                                        Url.Action("SignUp", "User", new { area = "" })))
+                                </li>
+                            }
 
-            @if (OtherExtensions.HasFlagFast(Model.UserHasAccessToFiles.Value, UserCanDownloadProductResult.UserMustSubscribeToAPlan))
-            {
-                <li>
-                    @Html.Raw(T("ToDownloadThisProductUserMustSubscribeToAPlan",
-                        Model.UserGroupName,
-                        Url.Action("UpgradeAccount", "Purchase")))
-                </li>
-            }
+                            @if (OtherExtensions.HasFlagFast(Model.UserHasAccessToFiles.Value, UserCanDownloadProductResult.UserMustSubscribeToAPlan))
+                            {
+                                <li>
+                                    @Html.Raw(T("ToDownloadThisProductUserMustSubscribeToAPlan",
+                                        Model.UserGroupName,
+                                        Url.Action("UpgradeAccount", "Purchase")))
+                                </li>
+                            }
 
-            @if (OtherExtensions.HasFlagFast(Model.UserHasAccessToFiles.Value, UserCanDownloadProductResult.UserMustSubscribeToAPlanOrHigher))
-            {
-                <li>
-                    @Html.Raw(T("ToDownloadThisProductUserMustSubscribeToAPlanOrHigher",
-                        Model.UserGroupName,
-                        Url.Action("UpgradeAccount", "Purchase")))
-                </li>
-            }
+                            @if (OtherExtensions.HasFlagFast(Model.UserHasAccessToFiles.Value, UserCanDownloadProductResult.UserMustSubscribeToAPlanOrHigher))
+                            {
+                                <li>
+                                    @Html.Raw(T("ToDownloadThisProductUserMustSubscribeToAPlanOrHigher",
+                                        Model.UserGroupName,
+                                        Url.Action("UpgradeAccount", "Purchase")))
+                                </li>
+                            }
 
-            @if (OtherExtensions.HasFlagFast(Model.UserHasAccessToFiles.Value, UserCanDownloadProductResult.UserMustPurchaseTheProduct))
-            {
-                <li>
-                    @Html.Raw(T("ToDownloadThisProductUserMustBuyTheProduct", Model.ProductPageUrl))
-                </li>
-            }
+                            @if (OtherExtensions.HasFlagFast(Model.UserHasAccessToFiles.Value, UserCanDownloadProductResult.UserMustPurchaseTheProduct))
+                            {
+                                <li>
+                                    @Html.Raw(T("ToDownloadThisProductUserMustBuyTheProduct", Model.ProductPageUrl))
+                                </li>
+                            }
 
-            @if (OtherExtensions.HasFlagFast(Model.UserHasAccessToFiles.Value, UserCanDownloadProductResult.UserDownloadLimitReached))
-            {
-                <li>
-                    @Html.Raw(T("YourDownloadLimitationHasBeenReached",
-                        Model.DownloadLimit.ToString("N0"),
-                        Model.DownloadLimitPer,
-                        Model.DownloadLimitResetDate.ToString("f"),
-                        Url.Action("Index", "Profile", new {area = ""})))
-                </li>
-            }
+                            @if (OtherExtensions.HasFlagFast(Model.UserHasAccessToFiles.Value, UserCanDownloadProductResult.UserDownloadLimitReached))
+                            {
+                                <li>
+                                    @Html.Raw(T("YourDownloadLimitationHasBeenReached",
+                                        Model.DownloadLimit.ToString("N0"),
+                                        Model.DownloadLimitPer,
+                                        Model.DownloadLimitResetDate.ToString("f"),
+                                        Url.Action("Index", "Profile", new { area = "" })))
+                                </li>
+                            }
 
-            @if (OtherExtensions.HasFlagFast(Model.UserHasAccessToFiles.Value, UserCanDownloadProductResult.UserGroupDownloadLimitReached))
-            {
-                <li>
-                    @Html.Raw(T("YourUserGroupDownloadLimitationHasBeenReached",
-                        Model.DownloadLimit.ToString("N0"),
-                        Model.DownloadLimitPer,
-                        Model.DownloadLimitResetDate.ToString("f"),
-                        Url.Action("Index", "Profile", new {area = ""})))
-                </li>
-            }
-        </ul>
+                            @if (OtherExtensions.HasFlagFast(Model.UserHasAccessToFiles.Value, UserCanDownloadProductResult.UserGroupDownloadLimitReached))
+                            {
+                                <li>
+                                    @Html.Raw(T("YourUserGroupDownloadLimitationHasBeenReached",
+                                        Model.DownloadLimit.ToString("N0"),
+                                        Model.DownloadLimitPer,
+                                        Model.DownloadLimitResetDate.ToString("f"),
+                                        Url.Action("Index", "Profile", new { area = "" })))
+                                </li>
+                            }
+                        </ul>
 
-        @if ((OtherExtensions.HasFlagFast(Model.UserHasAccessToFiles.Value, UserCanDownloadProductResult.UserMustSubscribeToAPlan) ||
-              OtherExtensions.HasFlagFast(Model.UserHasAccessToFiles.Value, UserCanDownloadProductResult.UserMustSubscribeToAPlanOrHigher) ||
-              OtherExtensions.HasFlagFast(Model.UserHasAccessToFiles.Value, UserCanDownloadProductResult.UserMustPurchaseTheProduct))
-             && !string.IsNullOrWhiteSpace(Model.DiscountsForUserGroups))
-        {
-            <h6 class="alert alert-warning text-center t-mar-40">
-                @T("SpecialDiscountsForVIPUsers"):
-                <br/>
-                <br/>
-                <small>@Html.Raw(Model.DiscountsForUserGroups)</small>
-            </h6>
-        }
+                        @if ((OtherExtensions.HasFlagFast(Model.UserHasAccessToFiles.Value, UserCanDownloadProductResult.UserMustSubscribeToAPlan) ||
+                              OtherExtensions.HasFlagFast(Model.UserHasAccessToFiles.Value, UserCanDownloadProductResult.UserMustSubscribeToAPlanOrHigher) ||
+                              OtherExtensions.HasFlagFast(Model.UserHasAccessToFiles.Value, UserCanDownloadProductResult.UserMustPurchaseTheProduct))
+                             && !string.IsNullOrWhiteSpace(Model.DiscountsForUserGroups))
+                        {
+                            <h6 class="alert alert-warning text-center t-mar-40">
+                                @T("SpecialDiscountsForVIPUsers"):
+                                <br />
+                                <br />
+                                <small>@Html.Raw(Model.DiscountsForUserGroups)</small>
+                            </h6>
+                        }
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">@T("Close")</button>
+                </div>
+            </div>
+        </div>
     </div>
 }
-@if (@Model.FileGroups.All(p => string.IsNullOrWhiteSpace(p.FileListTree)))
+@if (Model.FileGroups.All(p => string.IsNullOrWhiteSpace(p.FileListTree)))
 {
-    <h3 class="text-center text-muted mar-v-150">@T("NoFilesToDownload")</h3>
+    <h3 class="text-center text-muted no-b-mar t-mar-50">@T("NoFilesToDownload")</h3>
 }
 else
 {
-    <h4 class="m-3">@T("UnRarPassword") : <b onclick="CopyToClipboard('lblPassword')" style="cursor: pointer;" class="badge badge-danger" data-toggle="tooltip" title="Click to copy">DownloadDevTools.ir</b></h4>
-    <div class="accordion shadow" style="border-radius: 12px; overflow: hidden; border: solid 1px #e0e0e0;" id="accordion">
+<div id="download-links-list" class="item-info-pro-box">
+    @if (Model.UserHasAccessToFiles != null && !OtherExtensions.HasFlagFast(Model.UserHasAccessToFiles.Value, UserCanDownloadProductResult.UserCanDownloadProduct))
+    {
+        <button type="button" class="btn btn-lg btn-danger d-block m-auto" data-toggle="modal" data-target="#NoAccessModal">
+            @Html.Raw(T("YouDoNotHaveAccessToThisProduct"))
+        </button>
+    }
 
+    <div class="accordion px-3 py-4" id="accordion">
         @foreach (var group in Model.FileGroups.Where(p => !string.IsNullOrWhiteSpace(p.FileListTree)))
         {
-            <div class="bg-dark" id="heading-@counter">
+            <div id="heading-@counter" style="border-radius: 12px; background-color: #7f8890;">
                 <h2 class="m-0 p-0">
-                    <button class="btn btn-link text-light fs-20" type="button" data-toggle="collapse" data-target="#collapse-@counter" aria-expanded="true" aria-controls="collapse-@counter">
+                    <button class="btn btn-block text-light fs-20" type="button" data-toggle="collapse" data-target="#collapse-@counter" aria-expanded="true" aria-controls="collapse-@counter">
                         @group.Title
                     </button>
                 </h2>
             </div>
 
             <div id="collapse-@counter" class="collapse @Html.Raw(counter == 0 ? "show" : "")" aria-labelledby="heading-@counter" data-parent="#accordion">
-                <div class="pad-25" style="overflow-x: auto">
-                    <input type="text" id="txtSearchBox-@counter" class="form-control form-control-sm b-mar-15" placeholder="@T("Search")"/>
+                <div class="py-3" style="overflow-x: auto">
+                    <input type="text" id="txtSearchBox-@counter" class="form-control form-control-sm b-mar-15" placeholder="@T("Search")" />
                     <div id="filesListTree-@counter">
                         @Html.Raw(group.FileListTree)
                     </div>
@@ -127,41 +151,42 @@ else
             </div>
 
             Html.AddInlineScript(ResourceLocation.Footer,
-                @<script>
-                     $('#filesListTree-@counter').jstree({
-                         "plugins": ["wholerow", "search"],
-                         "core": {
-                             "themes": {
-                                 "variant": "large"
+@<script>
+                         $('#filesListTree-@counter').jstree({
+                             "plugins": ["wholerow", "search"],
+                             "core": {
+                                 "themes": {
+                                     "variant": "large"
+                                 }
                              }
-                         }
-                     }).bind("select_node.jstree",
-                         function(e, data) {
-                             var href = data.node.a_attr.href;
-                             if (href !== "#") {
-                                 var win = window.open(href, '_blank');
-                                 win.focus();
+                         }).bind("select_node.jstree",
+                             function(e, data) {
+                                 var href = data.node.a_attr.href;
+                                 if (href !== "#") {
+                                     var win = window.open(href, '_blank');
+                                     win.focus();
+                                 }
+                             });
+
+                         var to = false;
+                         $('#txtSearchBox-@counter').keyup(function() {
+                             if (to) {
+                                 clearTimeout(to);
                              }
+                             to = setTimeout(function() {
+                                     var v = $('#txtSearchBox-@counter').val();
+                                     $('#filesListTree-@counter').jstree(true).search(v);
+                                 },
+                                 250);
                          });
+</script>);
 
-                     var to = false;
-                     $('#txtSearchBox-@counter').keyup(function() {
-                         if (to) {
-                             clearTimeout(to);
-                         }
-                         to = setTimeout(function() {
-                                 var v = $('#txtSearchBox-@counter').val();
-                                 $('#filesListTree-@counter').jstree(true).search(v);
-                             },
-                             250);
-                     });
-                 </script>);
-
-            counter++;
-        }
-
+   counter++;
+}
     </div>
+
     <h4 class="m-3">@T("UnRarPassword") : <b id="lblPassword" onclick="CopyToClipboard('lblPassword')" style="cursor: pointer;" class="badge badge-danger" data-toggle="tooltip" title="Click to copy">DownloadDevTools.ir</b></h4>
+</div>
 }
 
 @{

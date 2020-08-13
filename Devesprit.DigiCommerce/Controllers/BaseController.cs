@@ -28,8 +28,8 @@ namespace Devesprit.DigiCommerce.Controllers
         private IWorkContext _workContext;
         private SiteSettings _settings;      
         private ILanguagesService _languagesService; 
-        private ICurrencyService _currencyService;    
-        private IEventPublisher _eventPublisher; 
+        private ICurrencyService _currencyService;      
+        private IEventPublisher _eventPublisher;  
                
         public ApplicationUserManager UserManager => HttpContext.GetOwinContext().Get<ApplicationUserManager>();
         public ApplicationSignInManager SignInManager => HttpContext.GetOwinContext().Get<ApplicationSignInManager>();

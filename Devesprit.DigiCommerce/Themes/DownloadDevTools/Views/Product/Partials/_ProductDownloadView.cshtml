@@ -93,8 +93,9 @@
         @*Full version download button*@
         @if (Model.ShowDownloadFullVersionBtn)
         {
-            <a href="@Url.Action("DownloadProduct", "Download", new {productId = Model.ProductId, demoFiles = false})"
-               target="_blank"
+            <a @*href="@Url.Action("DownloadProduct", "Download", new {productId = Model.ProductId, demoFiles = false})"
+                target="_blank"*@
+                href="#download-links-list"
                class="cta-pro-dl fs-20 d-block white-space-initial b-mar-30 shadow">
                 <i class="fa fa-download fa-2x"></i>
                 <br />

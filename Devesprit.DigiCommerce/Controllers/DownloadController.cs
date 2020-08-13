@@ -33,7 +33,7 @@ namespace Devesprit.DigiCommerce.Controllers
         private readonly IProductModelFactory _productModelFactory;
         private readonly ISettingService _settingService;
         private readonly IProductDownloadsLogService _downloadsLogService;
-
+         
         public DownloadController(
             IProductService productService,
             IFileServersService fileServersService,
