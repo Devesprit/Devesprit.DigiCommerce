@@ -37,8 +37,8 @@ namespace Devesprit.DigiCommerce.Controllers
             _blogPostService = blogPostService;
         }
 
-        [Route("{lang}/RSSFeed/{listType}/{page?}", Order = 0)]
-        [Route("RSSFeed/{listType}/{page?}", Order = 1)]
+        [Route("{lang}/rssfeed/{listType}/{page?}", Order = 0)]
+        [Route("rssfeed/{listType}/{page?}", Order = 1)]
         [MethodCache(Tags = new[] { nameof(TblBlogPosts), nameof(TblProducts) }, VaryByCustom = "lang")]
         public virtual ActionResult Index(PostsListType listType, int? page, int? pageSize, int? catId, DateTime? fromDate)
         {
@@ -98,8 +98,8 @@ namespace Devesprit.DigiCommerce.Controllers
             return new RssActionResult(new Rss20FeedFormatter(feed));
         }
 
-        [Route("{lang}/RSSFeed/Products/{listType}/{page?}", Order = 0)]
-        [Route("RSSFeed/Products/{listType}/{page?}", Order = 1)]
+        [Route("{lang}/rssfeed/products/{listType}/{page?}", Order = 0)]
+        [Route("rssfeed/products/{listType}/{page?}", Order = 1)]
         [MethodCache(Tags = new[] { nameof(TblBlogPosts), nameof(TblProducts) }, VaryByCustom = "lang")]
         public virtual ActionResult Products(ProductsListType listType, int? page, int? pageSize, int? catId, DateTime? fromDate)
         {
@@ -145,8 +145,8 @@ namespace Devesprit.DigiCommerce.Controllers
             return new RssActionResult(new Rss20FeedFormatter(feed));
         }
 
-        [Route("{lang}/RSSFeed/Blog/{listType}/{page?}", Order = 0)]
-        [Route("RSSFeed/Blog/{listType}/{page?}", Order = 1)]
+        [Route("{lang}/rssfeed/blog/{listType}/{page?}", Order = 0)]
+        [Route("rssfeed/blog/{listType}/{page?}", Order = 1)]
         [MethodCache(Tags = new[] { nameof(TblBlogPosts), nameof(TblProducts) }, VaryByCustom = "lang")]
         public virtual ActionResult Blog(PostsListType listType, int? page, int? pageSize, int? catId, DateTime? fromDate)
         {

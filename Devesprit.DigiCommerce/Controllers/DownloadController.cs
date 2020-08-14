@@ -55,8 +55,8 @@ namespace Devesprit.DigiCommerce.Controllers
         }
 
         // GET: Download
-        [Route("{lang}/Download/{productId}/{demoFiles}", Order = 0)]
-        [Route("Download/{productId}/{demoFiles}", Order = 1)]
+        [Route("{lang}/download/{productId}/{demoFiles}", Order = 0)]
+        [Route("download/{productId}/{demoFiles}", Order = 1)]
         public virtual async Task<ActionResult> DownloadProduct(int productId, bool? demoFiles)
         {
             var product = await _productService.FindByIdAsync(productId);

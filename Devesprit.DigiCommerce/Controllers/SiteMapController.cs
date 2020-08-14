@@ -211,8 +211,8 @@ namespace Devesprit.DigiCommerce.Controllers
 
         // GET: SiteMap
         [MethodCache(Tags = new[] { nameof(TblBlogPosts), nameof(TblProducts) })]
-        [Route("SiteMap", Order = 0)]
-        [Route("SiteMap.xml", Order = 1)]
+        [Route("sitemap", Order = 0)]
+        [Route("sitemap.xml", Order = 1)]
         public virtual async Task<ActionResult> Index()
         {
             var settings = _settingService.LoadSetting<SiteSettings>();

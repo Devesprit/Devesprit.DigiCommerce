@@ -40,10 +40,10 @@ namespace Devesprit.DigiCommerce.Controllers
             return View();
         }
 
-        [Route("{lang}/Blog/Post/{id}/{slug}", Order = 0)]
-        [Route("Blog/Post/{id}/{slug}", Order = 1)]
-        [Route("{lang}/Blog/Post/{slug}", Order = 2)]
-        [Route("Blog/Post/{slug}", Order = 3)]
+        [Route("{lang}/blog/post/{id}/{slug}", Order = 0)]
+        [Route("blog/post/{id}/{slug}", Order = 1)]
+        [Route("{lang}/blog/post/{slug}", Order = 2)]
+        [Route("blog/post/{slug}", Order = 3)]
         [MethodCache(Tags = new[] { nameof(TblBlogPosts) }, VaryByCustom = "lang" /*"lang,user"*/)]
         public virtual async Task<ActionResult> Post(int? id, string slug)
         {
@@ -103,8 +103,8 @@ namespace Devesprit.DigiCommerce.Controllers
             return View(_postModelFactory.PreparePostModel(post, currentUser, Url));
         }
 
-        [Route("{lang}/Blog/{listType}/{page?}", Order = 0)]
-        [Route("Blog/{listType}/{page?}", Order = 1)]
+        [Route("{lang}/blog/{listType}/{page?}", Order = 0)]
+        [Route("blog/{listType}/{page?}", Order = 1)]
         [MethodCache(Tags = new[] { nameof(TblBlogPosts) }, VaryByCustom = "lang")]
         public virtual ActionResult BlogExplorer(PostsListType listType, int? page, int? pageSize, int? catId, DateTime? fromDate)
         {
@@ -166,8 +166,8 @@ namespace Devesprit.DigiCommerce.Controllers
             return View("Partials/_PostsList", model);
         }
 
-        [Route("{lang}/BlogCategories/{slug}/{page?}", Order = 0)]
-        [Route("BlogCategories/{slug}/{page?}", Order = 1)]
+        [Route("{lang}/blogcategories/{slug}/{page?}", Order = 0)]
+        [Route("blogcategories/{slug}/{page?}", Order = 1)]
         [MethodCache(Tags = new[] { nameof(TblBlogPosts) }, VaryByCustom = "lang")]
         public virtual async Task<ActionResult> FilterByCategory(string slug, int? page, int? pageSize)
         {
